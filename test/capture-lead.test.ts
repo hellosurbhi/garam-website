@@ -87,6 +87,36 @@ describe("capture-lead handler", () => {
     expect(fields.sourceCitySlug.stringValue).toBe("manhattan");
   });
 
+  it("carries name and instagram through to Firestore (progressive apply capture)", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          name: "projects/test-project/databases/(default)/documents/leads/lead789",
+        }),
+        { status: 200 },
+      ),
+    );
+
+    const res = await POST(
+      makeContext(
+        makeRequest({
+          email: "person@example.com",
+          source: "apply_form_partial",
+          sourcePage: "/apply",
+          name: " Priya Sharma ",
+          instagram: " priya_applies ",
+          phone: "+1 (555) 010-0000",
+        }),
+      ),
+    );
+
+    expect(res.status).toBe(200);
+    const { fields } = firestoreBody(fetchSpy);
+    expect(fields.name.stringValue).toBe("Priya Sharma");
+    expect(fields.instagram.stringValue).toBe("priya_applies");
+    expect(fields.phone.stringValue).toBe("+1 (555) 010-0000");
+  });
+
   it("retries without click ids when deployed Firestore rules reject them", async () => {
     const fetchSpy = vi
       .spyOn(globalThis, "fetch")

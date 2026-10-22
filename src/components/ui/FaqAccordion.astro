@@ -11,26 +11,43 @@ interface Props {
   items: FaqItem[];
   groupId: string;
   answerClass?: string;
+  /** Render answers as HTML (for inline links in prose) instead of plain text. Answer strings must come from trusted data files, never user input. */
+  allowHtml?: boolean;
 }
 
-const { items, groupId, answerClass = "" } = Astro.props;
+const { items, groupId, answerClass = "", allowHtml = false } = Astro.props;
 ---
 
 <div class="faq-accordion" data-faq-group={groupId}>
   {
-    items.map((faq) => (
-      <details class="faq-accordion__item">
-        <summary class="faq-accordion__q">
-          {faq.q}
-          <span class="faq-accordion__toggle" aria-hidden="true">
-            +
-          </span>
-        </summary>
-        <p class={`faq-accordion__a${answerClass ? ` ${answerClass}` : ""}`}>
-          {faq.a}
-        </p>
-      </details>
-    ))
+    items.map((faq) =>
+      allowHtml ? (
+        <details class="faq-accordion__item">
+          <summary class="faq-accordion__q">
+            {faq.q}
+            <span class="faq-accordion__toggle" aria-hidden="true">
+              +
+            </span>
+          </summary>
+          <p
+            class={`faq-accordion__a${answerClass ? ` ${answerClass}` : ""}`}
+            set:html={faq.a}
+          />
+        </details>
+      ) : (
+        <details class="faq-accordion__item">
+          <summary class="faq-accordion__q">
+            {faq.q}
+            <span class="faq-accordion__toggle" aria-hidden="true">
+              +
+            </span>
+          </summary>
+          <p class={`faq-accordion__a${answerClass ? ` ${answerClass}` : ""}`}>
+            {faq.a}
+          </p>
+        </details>
+      ),
+    )
   }
 </div>
 

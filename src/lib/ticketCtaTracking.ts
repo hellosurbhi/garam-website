@@ -1,6 +1,38 @@
 import { capture } from "@/lib/analytics";
 import { getStoredUtms } from "@/lib/leadAttribution";
 
+// WHY module scope instead of inside wireTicketCtaTracking(): several
+// independently-authored components can call wireTicketCtaTracking() on one
+// page load (see the function's own doc comment), but Vite dedupes this
+// module to one instance, so a plain boolean here still only registers the
+// pageshow listener once per page, not once per caller.
+let pageshowListenerWired = false;
+
+/**
+ * Restores a same-tab CTA's label if the visitor lands back on this page via
+ * the back/forward cache (bfcache): browsers can restore the exact DOM state
+ * a page was in when the visitor navigated away, which would otherwise leave
+ * the button permanently reading "Opening Checkout..." after a trip to
+ * Eventbrite and back.
+ */
+function wireBfcacheRestore(): void {
+  if (pageshowListenerWired) return;
+  pageshowListenerWired = true;
+
+  window.addEventListener("pageshow", (e) => {
+    if (!e.persisted) return;
+    document
+      .querySelectorAll<HTMLAnchorElement>('[data-cta-loading="true"]')
+      .forEach((anchor) => {
+        anchor.removeAttribute("aria-busy");
+        delete anchor.dataset.ctaLoading;
+        if (anchor.dataset.originalLabel) {
+          anchor.textContent = anchor.dataset.originalLabel;
+        }
+      });
+  });
+}
+
 /**
  * Wires every `[data-go-ticket]` anchor currently in the DOM: stamps a
  * stable event_id, forwards UTMs onto the `/api/go/[slug]` href, and on
@@ -22,6 +54,8 @@ import { getStoredUtms } from "@/lib/leadAttribution";
  * already wired.
  */
 export function wireTicketCtaTracking(): void {
+  wireBfcacheRestore();
+
   document
     .querySelectorAll<HTMLAnchorElement>(
       "[data-go-ticket]:not([data-cta-wired])",
@@ -61,6 +95,21 @@ export function wireTicketCtaTracking(): void {
       }
 
       anchor.addEventListener("click", (e) => {
+        // Click-guard: a second click/tap/Enter during the loading window
+        // (CSS also sets pointer-events: none on [aria-busy], but that
+        // doesn't stop keyboard activation) must not re-fire capture() below
+        // or restart the delayed navigation. preventDefault() here too
+        // (caught by Codex review, 2026-08-27): this flag is only ever set
+        // by the same-tab branch below, so a guarded return always means
+        // "this anchor's native navigation must stay deferred to the
+        // setTimeout below" -- without it, a second Enter/click inside the
+        // 100ms window navigates immediately via the browser's default
+        // action, which can outrun the beacon flush that delay exists for.
+        if (anchor.dataset.ctaLoading === "true") {
+          e.preventDefault();
+          return;
+        }
+
         const me = e as MouseEvent;
         const isModified =
           me.metaKey ||
@@ -105,6 +154,21 @@ export function wireTicketCtaTracking(): void {
         // (same pattern as trackOutbound() in src/lib/analyticsCapture.ts).
         e.preventDefault();
         const href = anchor.href;
+
+        // Instant loading state: this is the only ticket CTA that replaces
+        // the current tab, so without visible feedback the click reads as
+        // dead for however long the redirect + navigation actually take.
+        // Stashing the original label lets wireBfcacheRestore() above put it
+        // back if the visitor returns via the back/forward cache.
+        anchor.dataset.originalLabel = anchor.textContent ?? "";
+        anchor.dataset.ctaLoading = "true";
+        anchor.setAttribute("aria-busy", "true");
+        anchor.textContent = "Opening Checkout…";
+        const spinner = document.createElement("span");
+        spinner.className = "event-cta__spinner";
+        spinner.setAttribute("aria-hidden", "true");
+        anchor.appendChild(spinner);
+
         window.setTimeout(() => {
           window.location.href = href;
         }, 100);

@@ -41,9 +41,9 @@ import {
 
 /**
  * Pulls real Eventbrite listing copy at build time for every
- * `ticketSource === "eventbrite-owned"` event so its landing page mirrors
+ * `ticketSource === "our-eventbrite"` event so its landing page mirrors
  * what's actually live on Eventbrite instead of a manually-typed description
- * silently drifting out of date. Third-party listings (`"external"`, e.g.
+ * silently drifting out of date. Third-party listings (`"their-eventbrite"`, e.g.
  * Los Angeles) are skipped entirely: we have no right to represent someone
  * else's Eventbrite listing as sourced content (see eventbriteContent.ts).
  * `fetchEventbriteContent`/`resolveEventDescription` already fail soft to
@@ -56,7 +56,7 @@ export async function getStaticPaths() {
   return Promise.all(
     allEvents.map(async (event) => {
       const shouldFetch =
-        event.ticketSource === "eventbrite-owned" &&
+        event.ticketSource === "our-eventbrite" &&
         Boolean(event.eventbriteId) &&
         Boolean(token);
 

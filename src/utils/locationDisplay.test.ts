@@ -13,7 +13,7 @@ function makeApp(overrides: Partial<Application>): Application {
     height: "5'10",
     instagram: "@test",
     community: "Hindu",
-    income: "$100k–$150k",
+    income: "$100k to $150k",
     applicationType: "contestant",
     photoUrl: "https://example.com/photo.jpg",
     status: "New",
@@ -25,7 +25,7 @@ function makeApp(overrides: Partial<Application>): Application {
       isEqual: () => true,
       valueOf: () => "",
       toJSON: () => ({ seconds: 0, nanoseconds: 0, type: "timestamp" }),
-    } as Application["submittedAt"],
+    } as unknown as Application["submittedAt"],
     ...overrides,
   };
 }

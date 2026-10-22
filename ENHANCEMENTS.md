@@ -14,6 +14,13 @@ CHANGELOG.md. Never add completed or superseded entries to this file. -->
 - [ ] ENHANCEMENT: diff-coverage.mjs's uninstrumentable-line regex doesn't recognize multi-line named imports as excludable, false-flagging them as uncovered | Why: a single-line `import { a, b } from "x"` is matched by the `import\s` exclusion pattern, but once Prettier wraps it across lines, only the opening `import {` line matches; the interior identifiers and the closing `} from "...";` line match no exclusion pattern, and since import statements are hoisted (never appear in Istanbul's statementMap) that closing line can never register as "covered," which also breaks CONTINUATION_RE's backward-rescue chain for the whole block. Hit this on PR #230: contestant-claim.ts, contestant-open-claim.ts, and contestant-show-claim.ts all false-flagged a 3-line import even though the imported functions were already fully exercised by existing tests; worked around in-session by splitting each into single-line imports rather than editing this shared gate script, since the script is pre-existing infra outside this session's scope | Files: scripts/diff-coverage.mjs | Plan: extend UNINSTRUMENTABLE_RE (or add a dedicated multi-line-import scanner) to recognize a `import {` ... `} from "...";` block spanning multiple diff lines as fully excludable, regardless of interior line content | Verify: reproduce with a synthetic multi-line named import in a throwaway diff, confirm diff-coverage.mjs no longer counts its interior/closing lines as uncovered; re-run against PR #230's original commit (0beb896) diff and confirm the three files no longer need the import-splitting workaround.
 
 ---
+
+## Test fixture duplication surfaced by the stalled Dependabot queue (2026-10-11)
+
+- [ ] ENHANCEMENT: extract one shared Application test factory and delete the duplicate locationDisplay test | Why: five test files each hand roll a Firestore `Timestamp` double, and one of them (`src/utils/locationDisplay.test.ts`) used a single cast instead of `as unknown as`, which is the type error that killed group PR #288 and blocked the whole security queue; `src/utils/locationDisplay.test.ts` and `test/locationDisplay.test.ts` are also two tests of the same `formatLocation` module, which CLAUDE.md forbids | Files: src/utils/locationDisplay.test.ts, test/locationDisplay.test.ts, src/components/admin/AdminDashboard.test.tsx, src/components/admin/ApplicantModal.test.tsx, src/components/admin/ApplicantCard.test.tsx, test/factories/application.ts (does not exist yet, this ticket creates it) | Plan: add `test/factories/application.ts` exporting `makeApplication(overrides)` that builds a valid `Application` with a real `Timestamp` from `firebase/firestore` so no cast is needed at all, point all five test files at it, then delete whichever locationDisplay test is the redundant copy and keep its unique cases | Verify: `npm run check` reports 0 errors, `npm test` passes, and `grep -r 'as unknown as Application' src/ test/` returns nothing.
+
+---
+
 ## Future city additions: batch recipe (2026-07-06)
 
 ## Apply-monitor fix follow-ups (2026-08-19)
@@ -1427,6 +1434,7 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - [ ] LOW: [dependabot] .github/dependabot.yml:14, the new ignore rule for `version-update:semver-major` on typescript also applies to Dependabot security updates, so if a future TypeScript security fix ships only in a new major version, no PR is ever filed and the vulnerable version sits in the repo with no alert-driven bump until someone remembers to remove the rule. | Files: .github/dependabot.yml | PR: #134 | Head: 5da61cf89e4daf2e275c9a7e9ad2485635a6bf92
 
 <!-- fable-routed PR #134 head 5da61cf89e4daf2e275c9a7e9ad2485635a6bf92 -->
+
 - 2026-07-14T18:13Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=24f2dfb | diff_sha=3f36b82a499ff8d0d9ce02280734d6e9abbb23b752851075f3419f08ac0c1eef
 - 2026-07-14T18:18Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=e03c81e | diff_sha=84b353635e0d0759efea2b3738befa550278c5103eef7c91876532f209e284e4
 - 2026-07-14T18:22Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=e03c81e | diff_sha=d3c4345fa4b0d7370d9f353dd1522a044210e706b984ae0b5f064c2cb1a40a66

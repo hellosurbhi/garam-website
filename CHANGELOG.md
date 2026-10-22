@@ -16,6 +16,133 @@
 - Found and logged, not fixed here (pre-existing, out of scope): `zohoMailer.ts`'s `sendMail` has no bounded SMTP timeout, sitewide — see BUGS.md.
 - Verified with `npm run check` (0 errors, 308 files).
 
+## fix(deps): remove sprintf-js from the dev tree to close Dependabot alert #111 (2026-10-19)
+
+`sprintf-js` (denial of service through unbounded precision specifiers) has no patched release: 1.1.3 is the latest and is also affected. It only reached the project through Lighthouse CI: `@lhci/cli` to `@lhci/utils` to `js-yaml@3` to `argparse@1`. Bumping the parent was not an option because `@lhci/cli` 0.15.1 is already the latest, and forcing `js-yaml@4` would break `@lhci/utils`, which still calls the removed `yaml.safeLoad`.
+
+`js-yaml@3` only imports `argparse` in its own command line tool, never in the library code Lighthouse uses, so an `overrides` entry now points that one edge at `argparse@2.0.1`. That version has no dependencies and was already in the lockfile, so no new package is added. `sprintf-js` and the nested `argparse@1.0.10` are gone from `package-lock.json`. Dev tooling only, nothing ships to the live site.
+
+**Files:** `package.json`, `package-lock.json`
+
+## fix(deploy): stop installing dev-only tools on Vercel (2026-10-19)
+
+Every Vercel build installed `firebase-tools` and `@lhci/cli`, two dev-only tools the site never uses at build or run time. They were the source of all the deprecated package warnings in the build log (rimraf, inflight, glob, node-domexception, json-ptr) and of the `re2` install script note. Those old versions are pinned inside the two tools, so they cannot be upgraded away.
+
+The Vercel install command is now `npm ci --omit=dev`. Everything the build needs (`astro`, the Vercel adapter, `firebase`, React) already lives in `dependencies`. A production-only install followed by the full `npm run build`, including the after-build runtime check, passes locally with neither tool present.
+
+Left alone on purpose: the chunk size note comes from the server bundle, so it does not affect what visitors download, and `cache-dir` is a Vercel side setting. The Vercel project Node setting still says 24.x while `package.json` pins 22; that is a dashboard change, not a repo change.
+
+**Files:** `vercel.json`
+
+## fix(runtime): restore ticket redirects and API startup (2026-10-19)
+
+Ticket clicks returned Vercel's `FUNCTION_INVOCATION_FAILED` because `@astrojs/vercel` 11.0.13 (arrived via the October Dependabot bumps) made the server entrypoint import the adapter's build-time code, including Rolldown. Rolldown's native binary is not shipped to the deployed function, so the shared server crashed on startup before handling ticket, form or lead requests. Astro fixed this upstream in 11.0.14 (withastro/astro#18328) by moving the shared constants into an import-free module. The adapter is now on 11.0.16; no bundler override is needed. The lockfile picked up in-range patch and minor updates to shiki, side-channel and a few other transitive packages.
+
+The build also starts a copy of the packaged server outside the checkout, with credentials removed and external fetches blocked. It checks API module loading, the ticket links rendered on the tickets page, attribution forwarding, location lookup and form validation guards. This gate runs before a Vercel build can complete. Rebuilding with adapter 11.0.13 fails the check with the exact production native binding error; 11.0.16 passes with 29 API modules and two ticket redirects.
+
+Verification: 1,304 unit tests passed, lint passed and Astro reported zero errors or warnings. The production build and isolated runtime check passed. Live release verification remains an owner action after merging.
+
+Both actual ticket anchors opened the expected tabs at desktop and mobile sizes with no page errors. The broader critical-flow browser suite passed 12 of 24 cases; form fixture and selector failures are recorded in `BUGS.md` for the overnight lane. Successful live form delivery is not claimed by the runtime guard checks.
+
+## feat(events): new Philadelphia show Dec 6 at Next In Line Comedy (2026-10-11)
+
+Sunday December 6 2026, 6:30 to 8 PM, BYOB, tickets on the venue's Eventbrite (ID 2002925676616). Appears on the tickets page, home shows section and gets the `/events/philadelphia-2026-12-06` landing page with Event JSON-LD. Date, time and venue verified against the live Eventbrite listing; the venue matches the existing `VENUE_NEXT_IN_LINE` constant exactly, so no new venue was added. A pin test in `test/events.test.ts` protects the date, times and venue from accidental edits.
+
+**Files:** `src/data/events.ts`, `test/events.test.ts`, `EVENTS-HISTORY.md`
+
+## fix(deps): clear the 11 production advisories blocking every Dependabot PR (2026-10-11)
+
+Eight Dependabot security PRs were all failing CI and none of them could ever pass. The audit gate checks the whole production dependency tree, so each PR fixed one advisory while its own CI still saw the other seven. Four of the advisories had no Dependabot fix at all: `@firebase/firestore` pins `@grpc/grpc-js: ~1.9.0` and the patch is 1.13.6 or newer, so the fix sits outside the range firebase allows and no firebase release changes that.
+
+Resolved in one lockfile pass plus one override, taking the gate from 11 production advisories (10 high, 1 moderate) to zero. The repeat cause is fixed too: Dependabot `groups:` default to version updates only, which is why security advisories arrived one PR each, so a `security` group with `applies-to: security-updates` now batches them.
+
+`src/utils/locationDisplay.test.ts` was the other half of the deadlock. It hand rolled a Firestore `Timestamp` and asserted it with a single cast, which breaks whenever the vendor type changes shape, and that is the type error that killed the 32 package group PR #288. The four other test files that fake a `Timestamp` all use `as unknown as`, so this one now matches them. Its `income` fixture also held a stale bracket written with an en dash that `INCOME_OPTIONS` no longer contains.
+
+**Verification:** lint passed, `astro check` 0 errors across 317 files, 1303 tests passed across 99 files, build completed, and `npm audit --audit-level=high --omit=dev` reports 0 vulnerabilities.
+
+**Files:** `package.json`, `package-lock.json`, `.github/dependabot.yml`, `src/utils/locationDisplay.test.ts`, `docs/security/REMEDIATION.md`
+
+## feat(events): reschedule Philadelphia and add Chicago (2026-09-28)
+
+Philadelphia is now Sunday October 4 2026 from 7:30 to 9 PM at Next In Line Comedy. Chicago is now Saturday October 24 2026 from 6 to 7:30 PM at The Lincoln Lodge. Both shows use their live Eventbrite listings and receive updated event landing pages with Event JSON-LD. Event schema generation now respects each show's IANA timezone, so Chicago publishes its correct Central Time UTC offset.
+
+**Files:** `src/data/events.ts`, `src/utils/eventSchema.ts`, `src/utils/timezone.ts`, `test/events.test.ts`, `src/utils/eventSchema.test.ts`, `src/utils/timezone.test.ts`, `EVENTS-HISTORY.md`
+
+## feat(mixers): guest confirmation emails + auto waitlist state once a mixer ends (2026-09-15)
+
+PR #272. Two related gaps in the mixer RSVP flow, both surfaced by tonight's Romae mixer.
+
+- **RSVPs now get an email.** `/singles-mixers`' FAQ already promised "we will email you the details too", but `notify-mixer-rsvp.ts` only ever emailed the owner. It now sends a best effort guest email too, mirroring the applicant welcome pattern in `notify-application.ts`: `mixerRsvpDetails` while the mixer is still upcoming, `mixerRsvpMissed` once it has ended. `isMixerUpcoming()` is the single shared source of truth for "has this mixer ended" that the API route, `singles-mixers.astro` and `cuffing-season.astro` all read, instead of each computing it separately.
+- **cuffing-season.astro now handles a mixer that already happened.** This page (the share link for one specific event) had no such handling at all: it would keep showing the RSVP form and sending every submitter, and every returning device, to a Partiful invite for an event that was long over. It now checks `isMixerUpcoming()` the same way `singles-mixers.astro` already did: once the mixer's end time passes, the page swaps to "This Event Has Already Happened" plus a waitlist signup, the head script stops auto redirecting returning devices to a dead invite, and a failed submit shows an inline error instead of sending the person to Partiful. Pointing `NEXT_MIXER` at a real future date brings the live event copy back automatically, on both pages.
+- **singles-mixers.astro's past state copy reworded to match:** "This Event Has Already Happened. Add your name to the list below and we will email you the moment the next mixer is on the calendar."
+
+**Files:** `src/data/emails.ts`, `src/pages/api/notify-mixer-rsvp.ts`, `src/data/mixers.ts`, `src/pages/cuffing-season.astro`, `src/data/cuffing-season.ts`, `src/pages/singles-mixers.astro`, `test/notify-mixer-rsvp.test.ts`
+
+## fix(mixers): RSVP failures still reach Partiful, form errors say what is wrong (2026-09-12)
+
+PR #265 follow-up covering the two functional gaps and the open CodeRabbit threads.
+
+- **Nobody misses the party on our error.** When saving the RSVP fails on valid input, the person is sent to Partiful anyway instead of being stranded on "Something went wrong": cuffing-season always redirects, singles-mixers redirects while the mixer is upcoming and falls back to an honest inline error once it has passed (no live invite to send anyone to). The owner is still paged with the person's name and email via the keepalive failure alert, so the lead is recoverable either way. The returning-visitor storage key is not set on failure.
+- **Specific errors before the server is ever involved.** Both forms now validate client-side with the same `validateEmail` the apply form and `/api/capture-lead` use: a bad email says "Please enter a valid email address", a missing name says "Please enter your name.", errors appear inline after leaving the field (with `aria-invalid` and `aria-describedby` wiring) and the submit button stays disabled until both fields are valid. The generic failure copy is now reserved for genuine server failures.
+- **One shared module instead of two near-duplicate scripts.** The whole flow lives in `src/lib/mixerRsvpForm.ts` with 9 DOM tests; each page's `<script>` is a TS-free init call, which also clears the known dev-server 500 on TypeScript inside `.astro` scripts for these two pages.
+- **BUGS.md scope correction per CodeRabbit.** `verify-turnstile.ts` was removed from the mail-spam Origin-auth entry (it sends no mail and reads no name or email) and got its own entry for the config-dependent fail-open when `TURNSTILE_SECRET_KEY` is unset.
+
+**Files:** `src/lib/mixerRsvpForm.ts`, `src/lib/mixerRsvpForm.test.ts`, `src/pages/cuffing-season.astro`, `src/pages/singles-mixers.astro`, `src/data/cuffing-season.ts`, `src/data/mixers.ts`, `BUGS.md`
+
+## feat(events): new Philadelphia show Sep 27 at Next In Line Comedy (2026-09-02)
+
+Sunday September 27 2026, 7:30 to 9 PM, tickets on the venue's Eventbrite (ID 1999515971095). Appears on the tickets page, home shows section and gets the `/events/philadelphia-2026-09-27` landing page with Event JSON-LD. Details verified against the live Eventbrite listing.
+
+**Files:** `src/data/events.ts`
+
+## refactor(events): plain language ticket source labels + Aug 28 Philly correction (2026-09-02)
+
+The `TicketSource` values `eventbrite-owned` and `external` said nothing about who actually sells the tickets, and `external` lumped two different situations together. New values: `our-eventbrite` (our account, order data and purchase tracking available), `their-eventbrite` (a venue or promoter's Eventbrite account, clicks only), `other-platform` (non-Eventbrite ticketing like City Winery and DC Comedy Loft) and `none` (TBA notify-me cards with nothing on sale yet). Every entry remapped mechanically by URL; zero behavior change, code still only branches on "is this our account".
+
+Data correction in the same pass: the Aug 28 Philadelphia show was ticketed on Next In Line Comedy's own Eventbrite (owner confirmed), so its entry moves from our-account to their-account.
+
+The order-sync filter was extracted into an exported `orderSyncableEvents()` helper with its own test (`test/sync-orders.test.ts`) pinning the semantics: only our-account shows with a listing ID sync, and a their-eventbrite listing with a real public ID (the Los Angeles case) stays excluded. This satisfies the CI patch coverage gate on the changed line.
+
+**Files:** `src/data/events.ts`, `src/pages/api/sync-orders.ts`, `src/pages/events/[slug].astro`, `src/lib/eventbriteContent.ts`, `src/utils/eventSchema.test.ts`, `test/go-redirect.test.ts`, `test/sync-orders.test.ts`
+
+## fix(apply): CodeRabbit review round on PR #244 (2026-08-31)
+
+Seven review findings addressed on the apply overhaul before merge (one refuted as a false positive):
+
+- `firestore.rules`: an empty `photoPaths` list is now only accepted together with `photoUploadFailed: true`, so no application can exist with zero photos and no follow-up indicator (two new emulator tests pin it; still safe to deploy before or after Vercel).
+- `/api/alert-failure`: the Redis dedupe key now carries a SHA-256 digest of the identity instead of the raw email or URL (no PII in key metadata), and when delivery fails on EVERY channel the dedupe claim is released so the next report of the incident pages instead of being suppressed for an hour. `alertOps` now reports whether any configured channel actually delivered.
+- `useApplyForm`: the completed-application lead flip is guarded on the captured email, so correcting your email mid-form can never mark the old email's lead as completed.
+- `ApplicantModal`: the photos-failed notice carries `role="alert"`.
+- The synthetic monitor's values now each CROSS the former caps that rejected real applicants (height 23 chars vs old 20, phone 38 vs old 20, pitch ~2,400 vs old 2000), so a regression to any old limit fails the monitor.
+- Test fixture fixes: `submittedAt` added to the ApplicantCard fixture (required by the `Application` type).
+
+## fix(apply): no human ever hits a length limit again, photo failures stop losing applicants, abandoned forms still leave a lead (2026-08-30)
+
+The apply form worked for short answers (the synthetic monitor stayed green) but rejected real people: Firestore rules capped every text field (pitch 2000, phone 20, height 20, type 50 vs a form maxLength of 200) and the form never validated lengths, so a long pitch or "5 feet 8 inches (172cm)" died at submit with "Missing or insufficient permissions" and the whole application was thrown away. Confirmed victims since alert emails started working Aug 27: Akshay (Aug 30, Edmonton) and Dua (Aug 27, retried 4 times producing 4 duplicate alert emails).
+
+- **Invisible anti-bot ceilings replace human-facing limits.** New `src/lib/applicationFieldLimits.ts` is the single source of truth: free text 1,000 chars, pitch 50,000 (a 20-page essay), email 320 (RFC max), phone 50, instagram 100. `firestore.rules` caps are 4x the client caps because rules `size()` counts bytes while JS `.length` counts UTF-16 units, so anything the client accepts provably passes the rules. Removed the `maxLength={200}` on the type field (the deployed rules capped it at 50, a live rejection trap). `getFieldErrors()` now validates every ceiling with a plain-words inline error on the field itself, so on the rare crossing the applicant is told exactly what to trim instead of losing everything.
+- **Photo upload failure no longer costs the application.** The document is written with whatever photos succeeded plus `photoUploadFailed: true`, the success panel tells the applicant to DM photos to @garammasaladating, a `photo_upload` failure alert still pages, and the admin dashboard shows a "Photos failed" pill (`ApplicantCard`, `ApplicantModal`). Storage path extensions are sanitized to `/^[A-Za-z0-9]{1,10}$/` with a `jpg` fallback so a filename like "holiday photo.HEIC" can never produce a rules-rejected path (closes the PHOTO-PATH-MISMATCH review finding).
+- **Progressive contact capture.** On blur of a valid email the form silently creates a lead (`source: apply_form_partial`) via the existing capture-lead path, then updates it as phone, instagram and name get filled; a completed application flips the lead to `apply_form_completed`. An abandoned form now still leaves reachable contact info. `capture-lead`/`update-lead` APIs, `validLead()`/`validLeadContactUpdate()` rules, the admin Waitlist tab and CSV export all carry the new name and instagram fields.
+- **One failure incident = one email.** `/api/alert-failure` dedupes on `alert:{flow}:{stage}:{identity}` via atomic Upstash `SET NX EX 3600`, failing open when Redis is down (an alert channel never fails closed). Dua-style retry storms now page once per hour per incident.
+- **Alert emails no longer corrupt URLs.** `zohoMailer` sends body text as base64 instead of quoted-printable, fixing `?city=Edmonton` rendering as `city�monton`.
+- **The monitor now submits like a real person.** `apply-monitor.spec.ts` fills a multi-paragraph pitch, `5'8" (172 cm)` height and a formatted phone, so a future length-contract break pages within 6 hours instead of surfacing as angry applicants. Emulator rules tests pin the contract: a 40,000-char pitch, emoji-heavy text, spelled-out height and formatted phone are ACCEPTED; `photoPaths: []` + `photoUploadFailed` accepted; non-bool `photoUploadFailed` rejected.
+- Also closes the long-open CRITICAL apply-outage entry in BUGS.md: its blocking operator step (the #135/#208 rules deploy) verifiably landed (drift check green, monitor green 10 straight runs), and this change fixes the remaining mechanism that rejected real applicants.
+- Verified with scoped vitest (capture-lead, update-lead, alert-failure, admin-leads, waitlist-tab, application types: all passing) and `npm run test:rules` (45/45 passing including the new contract pins).
+
+**Operator step:** `firebase deploy --only firestore:rules` (pure loosening, safe to run before or after the Vercel deploy; it is what un-breaks Akshay/Dua-style submissions).
+
+**Files:** `src/lib/applicationFieldLimits.ts`, `firestore.rules`, `src/components/apply/useApplyForm.ts`, `src/components/ApplyPage.tsx`, `src/components/apply/ApplySuccessPanel.tsx`, `src/data/copy.ts`, `src/types/application.ts`, `src/components/admin/ApplicantCard.tsx`, `src/components/admin/ApplicantModal.tsx`, `src/components/admin/WaitlistTab.tsx`, `src/pages/api/capture-lead.ts`, `src/pages/api/update-lead.ts`, `src/pages/api/admin/leads.ts`, `src/pages/api/alert-failure.ts`, `src/lib/leadSubmission.ts`, `src/lib/failureAlert.ts`, `src/lib/zohoMailer.ts`, `test/rules/*.rules-test.ts`, `test/capture-lead.test.ts`, `test/update-lead.test.ts`, `test/alert-failure.test.ts`, `tests/synthetic/apply-monitor.spec.ts`
+
+## fix(tickets): stop blocking the redirect on tracking calls, add loading state to same-tab CTA (2026-08-27)
+
+- `/api/go/[slug].ts` was awaiting an unbounded Redis rate-limit check and a Meta CAPI call before sending the 302, so a slow Redis/Meta response stalled the entire ticket flow for up to ~10s. Both now run after the redirect via Vercel's `waitUntil()`, with a new 1.5s timeout ceiling on the Redis call (`src/lib/rateLimit.ts`) so it can never hang unbounded again.
+- The same-tab "Get Tickets" CTA (`EventTicketCta.astro`, the page paid Instagram ads land visitors on, deliberately same-tab rather than `target="_blank"` because in-app browsers handle popups unreliably) gave no feedback while waiting. Added an instant loading state: label swap, spinner, `aria-busy`, click-guard, and bfcache restore (`src/lib/ticketCtaTracking.ts`).
+- Post-review fixes (Codex, tier E): moved `getLimiter()` inside `enforceRateLimit()`'s try block so a malformed Upstash env value fails open instead of rejecting every one of the 11 routes that call it; the click-guard now calls `preventDefault()` so a second Enter/click during the loading window can't outrun the beacon-flush delay; added a regression test proving the redirect resolves before the backgrounded rate-limit/CAPI work settles.
+- `LESSONS.md`: this exact symptom ("nothing happens for 5 to 10s after tapping Get Tickets") has now recurred twice for two different root causes. Recorded the rule that any checkout hop with a network dependency needs both a non-blocking backend and instant click feedback, not just one.
+- Verified with `npm run check` (0 errors), `npm run build`, `npm run lint`, and `npm test`.
+
+**Files:** `src/pages/api/go/[slug].ts`, `src/lib/rateLimit.ts`, `src/lib/rateLimit.test.ts`, `src/lib/ticketCtaTracking.ts`, `src/components/events/EventTicketCta.astro`, `test/go-redirect.test.ts`, `LESSONS.md`
+
 ## fix(deps): resolve npm audit high-severity findings via lockfile resync (2026-08-02)
 
 The required Lint/Types/Test/Build CI check (`npm audit --audit-level=high --omit=dev`) started failing on every PR because 5 transitive packages (`astro`, `svgo`, `postcss`, `brace-expansion`, `tar`) were pinned in `package-lock.json` at versions inside their existing `package.json` semver ranges that carried known high-severity advisories; the ranges themselves were never violated, so this was not a lockfile drift or an invalid-version problem. A plain `npm audit fix` (no `--force`) moved each package forward to a newer version still inside its existing range: `astro` 7.0.7 to 7.1.6, `svgo` 4.0.1 to 4.0.2, `postcss` 8.5.16 to 8.5.25, `brace-expansion` 5.0.7 to 5.0.9, `tar` 7.5.19 to 7.5.22 (all patch or minor). Zero breaking changes, `package.json` untouched. 3 remaining moderate `@opentelemetry/core` findings (via `firebase-tools`) are devDependency-only and already excluded by the CI gate; logged as an open item in `BUGS.md` rather than forcing a breaking `firebase-tools` downgrade for a non-gating finding.

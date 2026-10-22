@@ -30,6 +30,18 @@ updates:
       # the collision instead of resolving it after the fact.
       major:
         update-types: [major]
+      # WHY: a `groups` entry defaults to `applies-to: version-updates`, so the
+      # three groups above never covered security advisories. Dependabot opened
+      # one PR per advisory instead (8 on 2026-10-11), and because the CI audit
+      # gate is repo-wide, every one of them stayed red: each PR fixes a single
+      # advisory while its own CI still sees the other seven, so none can ever
+      # go green on its own and merging them one at a time cannot converge.
+      # Batching them into one PR makes the gate satisfiable in a single merge.
+      # Removing this entry restores the one-PR-per-advisory pile-up.
+      security:
+        applies-to: security-updates
+        patterns:
+          - "*"
     reviewers:
       - hellosurbhi
 

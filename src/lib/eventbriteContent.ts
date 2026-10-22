@@ -7,10 +7,10 @@
  * src/lib/eventbrite.ts, which handles order sync for analytics: a
  * different Eventbrite API surface entirely.
  *
- * Only ever called for `ticketSource === "eventbrite-owned"` events. A
- * third-party listing (`ticketSource: "external"`, e.g. the Los Angeles
- * show) is never queried here: we have no right to represent someone
- * else's Eventbrite listing as sourced content.
+ * Only ever called for `ticketSource === "our-eventbrite"` events. A
+ * third-party listing (`ticketSource: "their-eventbrite"`, e.g. the Los
+ * Angeles show) is never queried here: we have no right to represent
+ * someone else's Eventbrite listing as sourced content.
  *
  * WHY this fails soft, not hard: these calls run during `astro build`
  * (invoked from getStaticPaths), not at request time. A transient

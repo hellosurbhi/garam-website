@@ -37,6 +37,25 @@ function StatusBadge({ status }: { status: Application["status"] }) {
   );
 }
 
+function PhotosFailedPill() {
+  return (
+    <span
+      style={{
+        display: "inline-block",
+        padding: "2px 8px",
+        borderRadius: "100px",
+        fontSize: "11px",
+        fontWeight: 600,
+        background: "rgba(255, 214, 0, 0.25)",
+        color: "var(--charcoal)",
+        letterSpacing: "0.02em",
+      }}
+    >
+      Photos failed
+    </span>
+  );
+}
+
 function AppTypePill({ applicationType }: { applicationType: string }) {
   const isNomination = applicationType === "Nomination";
   return (
@@ -335,6 +354,7 @@ export default function ApplicantCard({
           }}
         >
           <AppTypePill applicationType={app.applicationType} />
+          {app.photoUploadFailed && <PhotosFailedPill />}
         </div>
 
         <a

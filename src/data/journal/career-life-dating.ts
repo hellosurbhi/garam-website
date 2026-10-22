@@ -140,7 +140,7 @@ export const careerLifeDatingPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Live events work differently. At Garam Masala Dating in <a href='/cities/manhattan'>NYC</a>, you commit to one evening at Top Secret Comedy Club. You meet real people in a context that generates genuine conversation without requiring a curated profile or deliberate self-presentation in advance. You know whether there&apos;s a connection in real time instead of across weeks of asynchronous texting. For a desi resident with one precious free Saturday, that directness has real value. Tickets at <a href='/'>garammasaladating.com</a>.",
+        text: "Live events work differently. At Garam Masala Dating in <a href='/cities/manhattan'>NYC</a>, you commit to one evening at City Winery NYC. You meet real people in a context that generates genuine conversation without requiring a curated profile or deliberate self-presentation in advance. You know whether there&apos;s a connection in real time instead of across weeks of asynchronous texting. For a desi resident with one precious free Saturday, that directness has real value. Tickets at <a href='/'>garammasaladating.com</a>.",
       },
     ],
     ctaConfig: {

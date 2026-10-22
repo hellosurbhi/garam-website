@@ -1,5 +1,13 @@
 # Lessons
 
+## One permission, one predicate: parallel allowlists rot into outages
+
+**What went wrong:** Every admin API route 401'd ("Unauthorized. Try again" in the Waitlist and Analytics tabs) while the Applicants tab kept working, so the failure looked like a partial breakage instead of what it was: the entire API-backed admin surface dead since it shipped.
+
+**Why:** Admin authorization existed twice with different keys. `firestore.rules` `isAdmin()` checked the token email (used by tabs that read Firestore directly); the admin API checked the uid against an `ADMIN_UIDS` env var. That check fails closed with an identical 401 whether the var is unset, empty or holds a stale uid, so the breakage was invisible to code review and indistinguishable from a permissions bug.
+
+**Rule:** The admin allowlist predicate is owned by `src/lib/adminAllowlist.ts` and `verifyToken.ts`. Copies that cannot import it (the two Firebase rules files, `scripts/verify-admin-emails.mjs`) carry drift tests that fail the commit gate, so a change to any copy forces all copies to change in the same commit. Do not reintroduce an env-var gate such as `ADMIN_UIDS` for this predicate.
+
 ## Adding a CI job does not add a gate, and nothing said so out loud
 
 **What went wrong:** The Firestore/Storage emulator suite was promoted from "too heavy for pre-commit" to its own CI job in PR #135, precisely so a rules regression could not merge. It then sat unrequired for three weeks. The required-check list in `scripts/setup-branch-protection.sh`, the ruleset in GitHub Settings, and `docs/security/REMEDIATION.md` all still named one check, so a red rules job showed a red X on the PR and merged anyway. The one gate on `firestore.rules`/`storage.rules`, the exact file pair whose mismatch took the apply form down for a week in July 2026, was decorative.

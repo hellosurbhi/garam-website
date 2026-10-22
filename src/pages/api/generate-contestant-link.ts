@@ -9,6 +9,8 @@ const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 export const POST: APIRoute = async ({ request }) => {
   // Admin-only: matches the other privileged routes. Any authenticated Firebase
   // session (including anonymous apply-form sessions) must not mint prep links.
+  // verifyAdminToken here since the #119 security hardening; the admin table in
+  // architecture-map.md documents this route as admin-restricted to match.
   const uid = await verifyAdminToken(
     request.headers.get("authorization") ?? undefined,
   );

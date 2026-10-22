@@ -1,5 +1,16 @@
 # Changelog
 
+## fix(admin): admin API 401 fixed by unifying auth on the rules email allowlist (2026-07-14)
+
+Every admin-restricted API route (Waitlist/Email List, Analytics, all applicant action buttons) returned 401 "Unauthorized" because `verifyToken.ts` required the admin's uid to be listed in an `ADMIN_UIDS` env var, while `firestore.rules` authorizes by email. The env check fails closed with the same 401 whether the var is unset, empty or holds a stale uid, and no code review can inspect which. Unifying on the email allowlist removes the dependency in every one of those states.
+
+- New `src/lib/adminAllowlist.ts`: single `ADMIN_EMAILS` source of truth for API auth, mirroring `firestore.rules` `isAdmin()`.
+- `verifyToken.ts` now authorizes on a hardened mirror of the rules predicate: non-anonymous provider AND (`admin` custom claim OR allowlisted email with `email_verified: true`). The verified requirement is what stops an attacker from registering a not-yet-claimed allowlisted address; they can never verify an inbox they do not own. No runtime env var involved.
+- `firestore.rules` and `storage.rules` `isAdmin()` now require `email_verified` on the email branch too. Rollout order matters: the verify script below must pass BEFORE merging this change (the API enforces `email_verified` the moment Vercel deploys it) and before deploying the rules files.
+- New `npm run admin:verify-emails` (`scripts/verify-admin-emails.mjs`): two-step service-account script. Without arguments it only lists every account holding an allowlisted email (uid, created, last login, providers); it marks accounts verified only for uids the operator explicitly passes via `CONFIRM_UIDS`, so a squatter account can never be verified by accident.
+- Drift-guard unit tests parse `firestore.rules`, `storage.rules` and the script. They fail the gate if any allowlist copy diverges from `ADMIN_EMAILS` and assert both rules files keep the `email_verified` requirement conjunctive with the allowlist.
+- `ADMIN_UIDS` remains only as local input to `npm run admin:grant-claims` (documented in `.env.example`). `architecture-map.md` updated to match.
+
 ## fix(ops): the security-rules gate stops drifting silently, and applicant emails stop reaching the public alert topic (2026-09-02)
 
 Two HIGH findings from the Codex 2026-08-12 review rounds, both open since the emulator suite and the push alert channel shipped.
@@ -21,6 +32,7 @@ Two HIGH findings from the Codex 2026-08-12 review rounds, both open since the e
 **Operator step:** the ruleset is the real enforcement and lives in GitHub, not in this repo. Open the repo on GitHub, then Settings, then Rules, then the "Protect Main" ruleset, and under "Require status checks to pass" add a second check named exactly `Firestore/Storage rules (emulator)` (copy the string, the parentheses and spacing must match `ci.yml`'s job name character for character). Until that is added, this change only fixes the documentation of the gate, not the gate. To confirm it took: open any PR, and the merge box should list two required checks instead of one.
 
 **Files:** `.github/workflows/ci.yml`, `scripts/setup-branch-protection.sh`, `docs/security/REMEDIATION.md`, `src/lib/opsAlert.ts`, `test/required-checks.test.ts`, `test/ops-alert.test.ts`, `BUGS.md`, `LESSONS.md`, `.gitignore`
+
 ## fix(tests): repair the 75 failing smoke tests (2026-10-21)
 
 The weekly smoke suite had failed every run since August, and the same 75 cases failed on Node 22 and Node 24. The site was fine and the tests had gone stale: the HomeSignup, LeadCaptureModal and NotifyModal tests now complete the optional phone step before expecting success, the footer test checks the data driven city list by shape instead of five fixed cities, the city page test checks the heading is in the page (it is hidden at 1024px and below by design), the waiver test uses the waiver checkbox, and the Firebase mock answers `accounts:lookup`. The Apply happy path now proves auth, photo upload and the Firestore write are reached in order; the real success path stays with the daily synthetic monitor because the Firestore write channel cannot be faked with a canned reply. The full suite passes 319 of 320 on Node 24 (one third party accessibility flake retried green, queued in BUGS.md).

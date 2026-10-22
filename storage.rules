@@ -14,10 +14,15 @@ service firebase.storage {
     // every applicant (storage/unauthorized, July 2026). Reads must stay
     // admin-only AND the client must never read; change either side only
     // together with test/rules/apply-flow.rules-test.ts.
+    //
+    // WHY: email_verified required for the same reason as firestore.rules
+    // isAdmin(): an unverified password account can claim an allowlisted
+    // address, a verified one cannot. Drift-tested from verifyToken.test.ts.
     function isAdmin() {
       return request.auth != null
         && request.auth.token.firebase.sign_in_provider != 'anonymous'
-        && (request.auth.token.email in ['messagesurbhi@gmail.com', 'contact@garammasaladating.com']
+        && ((request.auth.token.email in ['messagesurbhi@gmail.com', 'contact@garammasaladating.com']
+             && request.auth.token.email_verified == true)
             || ('admin' in request.auth.token && request.auth.token.admin == true));
     }
 

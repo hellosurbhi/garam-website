@@ -46,6 +46,7 @@ function anonContext(uid: string) {
 function adminContext() {
   return testEnv.authenticatedContext("admin-uid", {
     email: "messagesurbhi@gmail.com",
+    email_verified: true,
     firebase: { sign_in_provider: "password" },
   });
 }

@@ -55,19 +55,20 @@ Stack: Astro 5 (SSG + on-demand server routes via `@astrojs/vercel`) · React is
 | `portal-state.ts`          | GET    | invite/show param OR `portal_session` cookie (JWT)                    | Drives ContestantPortal state machine                                   |
 | `unsubscribe.ts`           | GET    | HMAC sig (`UNSUBSCRIBE_SECRET`)                                       | Resend audience unsubscribe                                             |
 
-### Admin (Firebase ID token, `ADMIN_UIDS` allowlist)
+### Admin (Firebase ID token; verified email on the `src/lib/adminAllowlist.ts` allowlist OR `admin` custom claim)
 
-| Endpoint                              | Method | Verifier                                                            | Purpose                                                   |
-| ------------------------------------- | ------ | ------------------------------------------------------------------- | --------------------------------------------------------- |
-| `analytics.ts`                        | GET    | `verifyAdminToken`                                                  | Aggregated revenue/leads/applications snapshot            |
-| `create-invite.ts`                    | POST   | `verifyAdminIdentity`                                               | Creates invite doc, emails cast link, patches application |
-| `generate-contestant-link.ts`         | POST   | `verifyIdToken` (any valid Firebase user, **not** admin-restricted) | Builds HMAC prep link                                     |
-| `actions/log-note.ts`                 | POST   | `verifyAdminIdentity`                                               | Appends `interview_note` event                            |
-| `actions/record-decision.ts`          | POST   | `verifyAdminIdentity`                                               | Records accept/reject decision                            |
-| `actions/send-scheduling-email.ts`    | POST   | `verifyAdminIdentity`                                               | Sends Cal.com invite email                                |
-| `actions/send-scheduling-followup.ts` | POST   | `verifyAdminIdentity`                                               | Sends follow-up                                           |
-| `actions/send-waiver-nudge.ts`        | POST   | `verifyAdminIdentity`                                               | Sends waiver nudge                                        |
-| `sync-orders.ts`                      | POST   | `verifyAdminToken` + rate limit                                     | Pulls Eventbrite orders into Firestore                    |
+| Endpoint                              | Method | Verifier                        | Purpose                                                   |
+| ------------------------------------- | ------ | ------------------------------- | --------------------------------------------------------- |
+| `analytics.ts`                        | GET    | `verifyAdminToken`              | Aggregated revenue/leads/applications snapshot            |
+| `admin/leads.ts`                      | GET    | `verifyAdminToken`              | Waitlist/Email List CRM read + CSV export                 |
+| `create-invite.ts`                    | POST   | `verifyAdminIdentity`           | Creates invite doc, emails cast link, patches application |
+| `generate-contestant-link.ts`         | POST   | `verifyAdminToken`              | Builds HMAC prep link                                     |
+| `actions/log-note.ts`                 | POST   | `verifyAdminIdentity`           | Appends `interview_note` event                            |
+| `actions/record-decision.ts`          | POST   | `verifyAdminIdentity`           | Records accept/reject decision                            |
+| `actions/send-scheduling-email.ts`    | POST   | `verifyAdminIdentity`           | Sends Cal.com invite email                                |
+| `actions/send-scheduling-followup.ts` | POST   | `verifyAdminIdentity`           | Sends follow-up                                           |
+| `actions/send-waiver-nudge.ts`        | POST   | `verifyAdminIdentity`           | Sends waiver nudge                                        |
+| `sync-orders.ts`                      | POST   | `verifyAdminToken` + rate limit | Pulls Eventbrite orders into Firestore                    |
 
 ### Cron / service-secret (`CRON_SECRET` bearer)
 
@@ -110,7 +111,7 @@ Storage (`storage.rules`): `photos/{photoId}` — read/write require `auth != nu
 
 | Service              | Used for                                         | Config                                                          |
 | -------------------- | ------------------------------------------------ | --------------------------------------------------------------- |
-| Firebase             | Firestore, Auth (anon + admin email/pw), Storage | `PUBLIC_FIREBASE_*`, `FIREBASE_ADMIN_*`, `ADMIN_UIDS`           |
+| Firebase             | Firestore, Auth (anon + admin email/pw), Storage | `PUBLIC_FIREBASE_*`, `FIREBASE_ADMIN_*`                         |
 | Zoho Mail            | all transactional email (SMTP)                   | `ZOHO_SMTP_USER/PASS`, `ZOHO_FROM_NAME`, `NOTIFICATION_EMAIL`   |
 | Eventbrite           | ticketing, order sync                            | `EVENTBRITE_API_TOKEN`, per-event `eventbriteId` in `events.ts` |
 | Cal.com              | interview scheduling                             | `CAL_INTERVIEW_URL`, `CAL_WEBHOOK_SECRET`                       |

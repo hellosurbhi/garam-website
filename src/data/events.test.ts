@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { allEvents } from "./events";
+import {
+  allEvents,
+  comingSoonEvents,
+  computeAllEvents,
+  events,
+  isDisplayable,
+} from "./events";
 import { formatEventLocation } from "@/utils/eventCity";
 
 describe("event location data", () => {
@@ -28,5 +34,36 @@ describe("event location data", () => {
 
     expect(labels).not.toContain("Manhattan, NY, NY");
     expect(labels).not.toContain("San Francisco, CA, CA");
+  });
+});
+
+describe("dated email-capture placeholders", () => {
+  const placeholders = ["2026-11-13", "2026-11-15", "2026-12-12"];
+
+  it("shows each placeholder with its date and no ticket link", () => {
+    for (const isoDate of placeholders) {
+      const event = events.find((e) => e.isoDate === isoDate);
+      expect(event, isoDate).toBeDefined();
+      expect(isDisplayable(event!)).toBe(true);
+      expect(event!.url).toBe("");
+      expect(event!.ticketSource).toBe("none");
+    }
+  });
+
+  it("suppresses the generic TBA card for a city with a dated placeholder", () => {
+    const merged = computeAllEvents(events, comingSoonEvents, "2026-10-22");
+    for (const slug of ["los-angeles", "san-francisco", "manhattan"]) {
+      expect(
+        merged.some((e) => e.citySlug === slug && e.date === "TBA"),
+        slug,
+      ).toBe(false);
+    }
+  });
+
+  it("lists the San Francisco Nov 14 show as a live 5 PM Eventbrite sale", () => {
+    const sf = events.find((e) => e.isoDate === "2026-11-14");
+    expect(sf?.url).toContain("eventbrite.com");
+    expect(sf?.startTime).toBe("17:00");
+    expect(sf?.endTime).toBe("19:00");
   });
 });

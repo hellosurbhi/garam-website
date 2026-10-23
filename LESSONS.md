@@ -1,5 +1,13 @@
 # Lessons
 
+## SSG bakes whatever branch runs without window, then hydration swaps it
+
+**What went wrong:** `/contestant-prep` flashed the full guide, collapsed to a skeleton, then re-expanded after auth on every emailed link: a full-page double layout shift. `/contestant-portal` had the sibling problem, a one-line "Loading..." div that a ~2,000px form replaced.
+
+**Why:** The page is statically prerendered, and its `useState` initializers read `window.location` and `sessionStorage`. At build time those reads evaluate to the no-params branch, so the build baked the FULL guide into the HTML while real visitors hydrate into the loading branch. React then discards the baked DOM and re-renders. The bake always follows the no-window branch, whatever that happens to be.
+
+**Rule:** On statically prerendered pages, the first client render must match the build output exactly. Never read `window`, URL params or storage in a state initializer when that state decides WHAT the island renders (gates, auth branches, layout-bearing content); reads that cannot change the first paint are fine. Derive gate state after a `useSyncExternalStore` hydration flag (server snapshot pins the bake), and make the baked state a layout-reserving skeleton, never the content-bearing branch. Guard it with an SSR test: `renderToString` must contain the skeleton and must not contain the gated content.
+
 ## Adding a CI job does not add a gate, and nothing said so out loud
 
 **What went wrong:** The Firestore/Storage emulator suite was promoted from "too heavy for pre-commit" to its own CI job in PR #135, precisely so a rules regression could not merge. It then sat unrequired for three weeks. The required-check list in `scripts/setup-branch-protection.sh`, the ruleset in GitHub Settings, and `docs/security/REMEDIATION.md` all still named one check, so a red rules job showed a red X on the PR and merged anyway. The one gate on `firestore.rules`/`storage.rules`, the exact file pair whose mismatch took the apply form down for a week in July 2026, was decorative.

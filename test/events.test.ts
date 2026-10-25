@@ -131,7 +131,7 @@ describe("events data", () => {
       previousDate: "2026-09-27",
       startTime: "19:30",
       endTime: "21:00",
-      slug: "philadelphia-2026-10-04",
+      slug: "philadelphia-2026-09-27",
       ticketSource: "their-eventbrite",
     });
     expect(chicago).toMatchObject({

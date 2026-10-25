@@ -38,7 +38,15 @@ describe("event location data", () => {
 });
 
 describe("dated email-capture placeholders", () => {
-  const placeholders = ["2026-11-13", "2026-11-15", "2026-12-12"];
+  const placeholders = [
+    "2026-11-13",
+    "2026-11-19",
+    "2026-11-20",
+    "2026-11-21",
+    "2026-11-22",
+    "2026-12-24",
+    "2026-12-27",
+  ];
 
   it("shows each placeholder with its date and no ticket link", () => {
     for (const isoDate of placeholders) {
@@ -60,8 +68,8 @@ describe("dated email-capture placeholders", () => {
     }
   });
 
-  it("lists the San Francisco Nov 14 show as a live 5 PM Eventbrite sale", () => {
-    const sf = events.find((e) => e.isoDate === "2026-11-14");
+  it("lists the San Francisco Dec 26 show as a live 5 PM Eventbrite sale", () => {
+    const sf = events.find((e) => e.isoDate === "2026-12-26");
     expect(sf?.url).toContain("eventbrite.com");
     expect(sf?.startTime).toBe("17:00");
     expect(sf?.endTime).toBe("19:00");

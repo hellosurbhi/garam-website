@@ -2,10 +2,10 @@
  * Runs `fn` over `items` with at most `limit` calls in flight at once,
  * instead of either fully serial (slow: N items * per-call latency) or
  * fully parallel (risks overwhelming the target API / connection pool).
- * Each `fn` call is expected to handle its own errors (this never rejects
- * the batch on one item's failure); a throwing `fn` still resolves this
- * function's returned promise, so callers must catch inside `fn` if a
- * failure needs to be observed.
+ * Each `fn` call must handle its own errors: if one throws, the returned
+ * promise rejects with that error (the other in-flight calls still finish,
+ * but items not yet started are abandoned by the failed worker only), so a
+ * caller that wants every item processed regardless catches inside `fn`.
  */
 export async function mapWithConcurrency<T>(
   items: T[],

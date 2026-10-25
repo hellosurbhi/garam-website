@@ -60,6 +60,15 @@ export interface CapiEventParams {
 export interface CapiResult {
   ok: boolean;
   error?: string;
+  /**
+   * True when Meta rejected the request in a way a retry cannot fix (4xx
+   * other than 408/429). Timeouts, network errors, 5xx and 429 are transient.
+   */
+  terminal?: boolean;
+}
+
+function isTerminalStatus(status: number): boolean {
+  return status >= 400 && status < 500 && status !== 408 && status !== 429;
 }
 
 function sha256Hex(value: string): string {
@@ -153,7 +162,11 @@ export async function sendCapiEvent(
       console.error(
         `[capi] ${params.eventName} failed: ${res.status} ${errText}`,
       );
-      return { ok: false, error: `${res.status}: ${errText}` };
+      return {
+        ok: false,
+        error: `${res.status}: ${errText}`,
+        terminal: isTerminalStatus(res.status),
+      };
     }
 
     return { ok: true };

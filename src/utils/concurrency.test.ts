@@ -27,4 +27,12 @@ describe("mapWithConcurrency", () => {
       mapWithConcurrency([], 4, async () => undefined),
     ).resolves.toBeUndefined();
   });
+
+  it("rejects with the error when fn throws", async () => {
+    await expect(
+      mapWithConcurrency([1, 2, 3], 2, async (n) => {
+        if (n === 2) throw new Error("boom");
+      }),
+    ).rejects.toThrow("boom");
+  });
 });

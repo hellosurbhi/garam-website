@@ -600,7 +600,8 @@ export const events: EventEntry[] = [
     state: "New York",
     stateAbbr: "NY",
     citySlug: "manhattan",
-    slug: buildEventSlug("manhattan", "2026-11-13"),
+    // WHY: slug keeps the original date so /events/manhattan-2026-12-12 still resolves after the reschedule (same pattern as Philadelphia Oct 4)
+    slug: buildEventSlug("manhattan", "2026-12-12"),
     description:
       "Garam Masala Dating returns to The Loft at City Winery NYC. Tickets are not on sale yet, join the list to be first to know when they drop.",
     lineup: DEFAULT_LINEUP,
@@ -705,7 +706,8 @@ export const events: EventEntry[] = [
     state: "California",
     stateAbbr: "CA",
     citySlug: "san-diego",
-    slug: buildEventSlug("san-diego", "2026-12-24"),
+    // WHY: slug keeps the original date so /events/san-diego-2026-11-15 still resolves after the reschedule (same pattern as Philadelphia Oct 4)
+    slug: buildEventSlug("san-diego", "2026-11-15"),
     description:
       "Garam Masala Dating is heading back to San Diego. Tickets are not on sale yet, join the list to be first to know when they drop.",
     lineup: DEFAULT_LINEUP,
@@ -722,7 +724,8 @@ export const events: EventEntry[] = [
     state: "California",
     stateAbbr: "CA",
     citySlug: "san-francisco",
-    slug: buildEventSlug("san-francisco", "2026-12-26"),
+    // WHY: slug keeps the original date so /events/san-francisco-2026-11-14 still resolves after the reschedule (same pattern as Philadelphia Oct 4)
+    slug: buildEventSlug("san-francisco", "2026-11-14"),
     description:
       "A Cuffing Season Coming edition of Garam Masala Dating at The Faight Collective in San Francisco, with two real singles on a blind date just in time for the cold months.",
     lineup: DEFAULT_LINEUP,
@@ -744,7 +747,8 @@ export const events: EventEntry[] = [
     state: "California",
     stateAbbr: "CA",
     citySlug: "los-angeles",
-    slug: buildEventSlug("los-angeles", "2026-12-27"),
+    // WHY: slug keeps the original date so /events/los-angeles-2026-11-13 still resolves after the reschedule (same pattern as Philadelphia Oct 4)
+    slug: buildEventSlug("los-angeles", "2026-11-13"),
     description:
       "Garam Masala Dating is coming back to Los Angeles. Tickets are not on sale yet, join the list to be first to know when they drop.",
     lineup: DEFAULT_LINEUP,

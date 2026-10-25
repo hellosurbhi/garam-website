@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { renderToString } from "react-dom/server";
 
 vi.mock("./ContestantPrepPage.module.css", () => ({
   default: new Proxy({}, { get: (_, prop) => String(prop) }),
@@ -21,6 +22,19 @@ describe("ContestantPrepPage", () => {
   afterEach(() => {
     vi.restoreAllMocks();
     sessionStorage.clear();
+  });
+
+  /* ── SSR parity: the build must bake the skeleton ──────── */
+
+  it("server render bakes the loading skeleton, never the guide", () => {
+    // WHY: this page is statically prerendered. If the server render ever
+    // resolves to the full guide again (state initializers reading
+    // window/sessionStorage), hydration on an emailed ?date&sig link swaps
+    // guide → skeleton → guide: a full-page double layout shift. This
+    // assertion pins the baked HTML to the skeleton.
+    const html = renderToString(<ContestantPrepPage />);
+    expect(html).toContain("loadingWrapper");
+    expect(html).not.toContain("Contestant Orientation");
   });
 
   /* ── No params, no session → authed (open access) ────── */

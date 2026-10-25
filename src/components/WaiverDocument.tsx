@@ -1,19 +1,20 @@
 import { parseWaiverDocument } from "@/lib/waiverDisplay";
+import styles from "@/components/ContestantPortal.module.css";
 
 type WaiverDocumentProps = {
   text: string;
-  className?: string;
 };
 
-export function WaiverDocument({ text, className }: WaiverDocumentProps) {
-  const classes = ["waiver-doc", className].filter(Boolean).join(" ");
-
+export function WaiverDocument({ text }: WaiverDocumentProps) {
   return (
-    <article className={classes} aria-label="Waiver document">
+    <article className={styles.waiverDoc} aria-label="Waiver document">
       {parseWaiverDocument(text).map((block, index) => {
         if (block.type === "title") {
           return (
-            <h2 className="waiver-doc-title" key={`${block.type}-${index}`}>
+            <h2
+              className={styles.waiverDocTitle}
+              key={`${block.type}-${index}`}
+            >
               {block.text}
             </h2>
           );
@@ -21,14 +22,20 @@ export function WaiverDocument({ text, className }: WaiverDocumentProps) {
 
         if (block.type === "section") {
           return (
-            <h3 className="waiver-doc-section" key={`${block.type}-${index}`}>
+            <h3
+              className={styles.waiverDocSection}
+              key={`${block.type}-${index}`}
+            >
               {block.text}
             </h3>
           );
         }
 
         return (
-          <p className="waiver-doc-paragraph" key={`${block.type}-${index}`}>
+          <p
+            className={styles.waiverDocParagraph}
+            key={`${block.type}-${index}`}
+          >
             {block.text}
           </p>
         );

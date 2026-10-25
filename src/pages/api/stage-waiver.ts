@@ -4,7 +4,7 @@ import type { APIRoute } from "astro";
 import { cleanPhone } from "@/lib/phone";
 import { WAIVER_VERSION, WAIVER_TEXT } from "@/data/waiver";
 import { sendMail } from "@/lib/zohoMailer";
-import { waiverReceipt } from "@/data/emails";
+import { waiverReceipt, producerWaiverNotification } from "@/data/emails";
 import { createHash } from "node:crypto";
 import { enforceRateLimit, getClientIp, RATE_LIMITS } from "@/lib/rateLimit";
 import { jsonResponse, parseJsonRequest } from "@/lib/http";
@@ -12,6 +12,7 @@ import { StageWaiverSchema } from "@/lib/schemas";
 import { verifyPortalToken } from "@/lib/portalToken";
 import { fsGet, fsAdd, fsPatch } from "@/lib/firestoreRest";
 import { alertOps } from "@/lib/opsAlert";
+import { readTrimmedEnv } from "@/lib/env";
 
 export const POST: APIRoute = async ({ request }) => {
   const limited = await enforceRateLimit(request, RATE_LIMITS.stageWaiver);
@@ -123,21 +124,48 @@ export const POST: APIRoute = async ({ request }) => {
     );
   }
 
-  try {
-    const template = waiverReceipt(firstName.trim());
-    await sendMail({
+  const notificationEmail = readTrimmedEnv(import.meta.env.NOTIFICATION_EMAIL);
+  const template = waiverReceipt(firstName.trim());
+  const [signerResult, producerResult] = await Promise.allSettled([
+    sendMail({
       to: email.trim().toLowerCase(),
       subject: template.subject,
       text: template.text,
       html: template.html,
-    });
-  } catch (err) {
+    }),
+    notificationEmail
+      ? sendMail({
+          to: notificationEmail,
+          ...producerWaiverNotification({
+            name: signerContext.name,
+            email: signerContext.email,
+            phone: signerContext.phone,
+            flow: "Stage-only waiver",
+          }),
+        })
+      : Promise.resolve(),
+  ]);
+  if (signerResult.status === "rejected") {
     // Waiver is already signed; receipt email failure should not block the
     // response, but a silently dead mailer must still page.
     await alertOps({
       flow: "waiver",
       stage: "receipt_email",
-      errorMessage: err instanceof Error ? err.message : String(err),
+      errorMessage:
+        signerResult.reason instanceof Error
+          ? signerResult.reason.message
+          : String(signerResult.reason),
+      context: signerContext,
+    });
+  }
+  if (notificationEmail && producerResult.status === "rejected") {
+    await alertOps({
+      flow: "waiver",
+      stage: "producer_notify_email",
+      errorMessage:
+        producerResult.reason instanceof Error
+          ? producerResult.reason.message
+          : String(producerResult.reason),
       context: signerContext,
     });
   }

@@ -1,0 +1,653 @@
+/* ─── Animations ──────────────────────────────────────────────── */
+
+/* Opacity-only reveal: a translateY here would read as one more layout
+   shift on a page whose whole point is to stop shifting. */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes hint-nudge {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+}
+
+/* ─── Loading skeleton ────────────────────────────────────────── */
+
+/* Reserves a full viewport so the resolve swap happens in place and the
+   footer stays off-screen; mirrors the packet-form card below. */
+.skeletonWrap {
+  min-height: 100vh;
+  min-height: 100svh;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 16px 64px;
+}
+
+.skeletonCard {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 32px 20px;
+  box-shadow: 0 8px 40px rgba(var(--black-rgb), 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.skeletonHero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0 16px;
+}
+
+.skeletonRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ─── Centered terminal views (error / expired) ───────────────── */
+
+.center {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  animation: fade-in 0.4s ease-out both;
+}
+
+.centerCard {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 48px 28px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 8px 40px rgba(var(--black-rgb), 0.08);
+  text-align: center;
+}
+
+.emoji {
+  font-size: 44px;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+
+.heading {
+  font-family: var(--font-playfair), serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--charcoal);
+  margin-bottom: 12px;
+  text-wrap: balance;
+}
+
+.headingLg {
+  font-family: var(--font-playfair), serif;
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 900;
+  line-height: 1.15;
+  color: var(--charcoal);
+  margin-bottom: 12px;
+  text-wrap: balance;
+}
+
+.body {
+  font-family: var(--font-body), sans-serif;
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  text-wrap: pretty;
+}
+
+.muted {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.link {
+  color: var(--brand-red);
+  font-weight: 700;
+}
+
+/* Always rendered above the submit button; reserved height keeps a claim
+   error from pushing the button when it appears. */
+.error {
+  min-height: 20px;
+  margin: 0;
+  color: var(--brand-red);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.errorInline {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--brand-red);
+  font-weight: 700;
+  margin: 6px 0 0;
+}
+
+.btnRow {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.btnOutline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch-target);
+  padding: 12px 24px;
+  border-radius: 50px;
+  border: 2px solid rgba(var(--black-rgb), 0.15);
+  color: var(--charcoal);
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: var(--font-body), sans-serif;
+  transition:
+    border-color 0.2s,
+    transform 0.06s;
+}
+
+.btnOutline:hover {
+  border-color: var(--charcoal);
+}
+
+.btnOutline:active {
+  transform: scale(0.97);
+}
+
+/* ─── Packet form ─────────────────────────────────────────────── */
+
+.formWrap {
+  min-height: 100vh;
+  min-height: 100svh;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 16px 64px;
+  animation: fade-in 0.4s ease-out both;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--white);
+  border-radius: 16px;
+  padding: 32px 20px;
+  box-shadow: 0 8px 40px rgba(var(--black-rgb), 0.08);
+}
+
+.packetHero {
+  text-align: center;
+  padding: 8px 0 16px;
+  border-bottom: 1px solid rgba(var(--black-rgb), 0.08);
+  margin-bottom: 8px;
+}
+
+.packetHero .body {
+  margin-bottom: 12px;
+}
+
+.kicker {
+  margin: 0 0 10px;
+  color: var(--brand-red);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.input {
+  padding: 14px 20px;
+  border: 1.5px solid rgba(var(--black-rgb), 0.12);
+  border-radius: 12px;
+  font-size: 16px;
+  font-family: var(--font-body), sans-serif;
+  color: var(--charcoal);
+  background: var(--white);
+  outline: none;
+  min-height: var(--touch-target);
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.input:focus-visible {
+  border-color: var(--brand-red);
+  outline: 2px solid var(--brand-red);
+  outline-offset: -2px;
+}
+
+.input:disabled {
+  background: var(--off-white);
+  color: var(--gray-mid);
+  cursor: not-allowed;
+}
+
+.inputSig {
+  font-style: italic;
+}
+
+.label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.roleLocked {
+  padding: 14px 16px;
+  border: 1.5px solid rgba(var(--brand-red-rgb), 0.18);
+  border-radius: 12px;
+  background: rgba(var(--brand-red-rgb), 0.06);
+}
+
+.roleLocked .label {
+  margin-bottom: 4px;
+}
+
+.roleLocked strong {
+  display: block;
+  font-size: 16px;
+  color: var(--charcoal);
+}
+
+.roleDetail {
+  display: block;
+  margin-top: 6px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.roleSelect {
+  border: 1.5px solid rgba(var(--brand-red-rgb), 0.18);
+  border-radius: 12px;
+  background: rgba(var(--brand-red-rgb), 0.06);
+  padding: 16px;
+}
+
+.roleSelect legend {
+  padding: 0 4px;
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--charcoal);
+}
+
+.roleSelect p {
+  margin: 4px 0 12px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.roleOptions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.roleOption {
+  min-height: var(--touch-target);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--white);
+  border: 1.5px solid rgba(var(--black-rgb), 0.12);
+  color: var(--charcoal);
+  font-weight: 800;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.roleOption:hover {
+  border-color: rgba(var(--brand-red-rgb), 0.4);
+}
+
+.roleOption:has(input:checked) {
+  border-color: var(--brand-red);
+}
+
+.roleOption input {
+  min-width: 20px;
+  min-height: 20px;
+  accent-color: var(--brand-red);
+}
+
+.checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 15px;
+  line-height: 1.5;
+  cursor: pointer;
+  color: var(--charcoal);
+}
+
+.checkbox input[type="checkbox"] {
+  margin-top: 3px;
+  min-width: 20px;
+  min-height: 20px;
+  accent-color: var(--brand-red);
+}
+
+.submit {
+  background: var(--brand-red);
+  color: var(--white);
+  border: none;
+  padding: 16px;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  width: 100%;
+  min-height: var(--touch-target);
+  font-family: var(--font-body), sans-serif;
+  transition:
+    background 0.2s,
+    transform 0.06s;
+}
+
+.submit:hover {
+  background: var(--brand-red-dark);
+}
+
+.submit:active {
+  transform: scale(0.97);
+}
+
+.submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ─── Waiver panel ────────────────────────────────────────────── */
+
+.waiverPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.waiverInstruction {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--charcoal);
+  margin: 0;
+}
+
+.waiverScrollWrap {
+  position: relative;
+}
+
+.waiverScroll {
+  max-height: clamp(260px, 45vh, 340px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  background: var(--off-white);
+  border: 1px solid rgba(var(--black-rgb), 0.08);
+  border-radius: 12px;
+  padding: 20px 20px 28px;
+}
+
+.waiverScroll:focus-visible {
+  outline: 2px solid var(--brand-red);
+  outline-offset: 2px;
+}
+
+.waiverFade {
+  position: absolute;
+  left: 1px;
+  right: 1px;
+  bottom: 1px;
+  height: 72px;
+  border-radius: 0 0 11px 11px;
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--off-white-rgb), 0),
+    var(--off-white) 85%
+  );
+  pointer-events: none;
+  transition: opacity 0.25s linear;
+}
+
+.waiverHint {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 16px;
+  border-radius: 50px;
+  background: var(--charcoal);
+  color: var(--white);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(var(--black-rgb), 0.2);
+  transition: opacity 0.25s linear;
+}
+
+/* Nudge arrow relies on the global prefers-reduced-motion rule in
+   src/index.css that collapses all animations and transitions. */
+.waiverHintArrow {
+  animation: hint-nudge 1.6s ease-in-out infinite;
+}
+
+.isRead .waiverFade,
+.isRead .waiverHint {
+  opacity: 0;
+}
+
+/* Stacked message slot: every child occupies the same grid cell, so the
+   slot is always as tall as its tallest message at the current width and
+   visibility swaps cannot shift surrounding controls. */
+.messageSlot {
+  display: grid;
+}
+
+.messageSlot > * {
+  grid-area: 1 / 1;
+}
+
+.slotHidden {
+  visibility: hidden;
+}
+
+.waiverStatus {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--charcoal);
+}
+
+.waiverDoc {
+  font-family: var(--font-body), sans-serif;
+  color: var(--charcoal);
+}
+
+.waiverDocTitle {
+  font-family: var(--font-playfair), serif;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--charcoal);
+  margin: 0 0 16px;
+}
+
+.waiverDocSection {
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.4;
+  color: var(--charcoal);
+  margin: 20px 0 8px;
+}
+
+.waiverDocParagraph {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--charcoal);
+  margin: 0 0 12px;
+}
+
+.waiverDocParagraph:last-child {
+  margin-bottom: 0;
+}
+
+/* ─── Active portal (prep guide) ──────────────────────────────── */
+
+.content {
+  min-height: 100vh;
+  min-height: 100svh;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 16px 64px;
+  animation: fade-in 0.4s ease-out both;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.section {
+  margin-bottom: 44px;
+}
+
+.sectionIntro {
+  background: var(--cream-warm);
+  border-radius: 16px;
+  padding: 24px 20px;
+}
+
+.sectionTitle {
+  font-family: var(--font-playfair), serif;
+  font-size: clamp(22px, 3vw, 26px);
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--charcoal);
+  text-wrap: balance;
+}
+
+.lead {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.bodyText {
+  font-size: 15px;
+  color: var(--charcoal);
+  line-height: 1.7;
+  margin-bottom: 12px;
+  text-wrap: pretty;
+}
+
+.coreLine {
+  color: var(--brand-red);
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1.4;
+  margin-top: 12px;
+}
+
+.arrivalTime {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--charcoal);
+  margin-bottom: 8px;
+}
+
+.list {
+  padding-left: 20px;
+  font-size: 15px;
+  color: var(--charcoal);
+  line-height: 1.7;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer {
+  text-align: center;
+  padding: 40px 0 0;
+  border-top: 1px solid rgba(var(--black-rgb), 0.08);
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* ─── Wider screens ───────────────────────────────────────────── */
+
+@media (min-width: 640px) {
+  .form,
+  .skeletonCard {
+    padding: 48px 40px;
+  }
+
+  .centerCard {
+    padding: 48px 36px;
+  }
+
+  .sectionIntro {
+    padding: 28px 28px;
+  }
+}
+
+@media (max-width: 520px) {
+  .fieldRow,
+  .roleOptions,
+  .skeletonRow {
+    grid-template-columns: 1fr;
+  }
+}

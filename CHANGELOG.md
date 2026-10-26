@@ -2,8 +2,8 @@
 
 ## fix(vercel): skip Preview builds so deployment storage stays under the free tier (2026-10-26)
 
-- Vercel warned the team had used 100% of the 10 GB Deployment Storage. Cause: every branch push stored a ~200 MB Preview build (60 deployments existed, 46 of them Previews). Added `ignoreCommand` to `vercel.json` so only production builds run (`VERCEL_ENV`; exit 0 means skip). Nothing used the Previews: Playwright serves `dist/client` locally.
-- Deleted 57 old deployments (kept the 3 newest production). Project retention was already 7 days.
+- Vercel warned the team had used 100% of the 10 GB Deployment Storage. Cause: every branch push stored a ~200 MB Preview build (60 deployments existed, 46 of them Previews). Added `ignoreCommand` to `vercel.json` so only production builds run (`VERCEL_ENV`; exit 0 means skip). No CI workflow uses Previews (Playwright serves `dist/client` locally). Trade-off: the manual `npm run test:smoke:preview` script (`package.json`) needs a Preview URL, so it has nothing to test until Previews are turned back on. Skipped builds still appear as Canceled deployment records.
+- Deleted 57 old deployments (kept the 3 newest production; the production alias was confirmed to point at a kept one afterwards). Project retention was already 7 days.
 
 ## test(notifications): cover producer-notification branches to satisfy patch-coverage gate (2026-08-27)
 

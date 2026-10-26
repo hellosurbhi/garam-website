@@ -21,17 +21,18 @@ export interface CapiFailureState {
  * a query slot. A timeout, 5xx or 429 is transient and keeps its full budget,
  * so a multi-day Meta outage does not permanently drop the pending purchases.
  *
- * WHY `credential` leaves the budget untouched: a bad Meta token fails every
- * order the same way, so counting it would exhaust all pending orders after
- * MAX_CAPI_ATTEMPTS daily runs and forfeit them even though replacing the
- * token fixes them all. The failure is still reported through syncErrors.
+ * WHY `holdBudget` leaves the budget untouched: a bad Meta token fails every
+ * order the same way, and a Meta-flagged transient fault clears on its own, so
+ * counting either would exhaust pending orders after MAX_CAPI_ATTEMPTS daily
+ * runs and forfeit them even though fixing the token or waiting out the
+ * outage delivers them. The failure is still reported through syncErrors.
  */
 export function nextCapiFailureState(
   attemptsSoFar: number,
   terminal: boolean,
-  credential = false,
+  holdBudget = false,
 ): CapiFailureState {
-  if (credential) return { attempts: attemptsSoFar, unrecoverable: false };
+  if (holdBudget) return { attempts: attemptsSoFar, unrecoverable: false };
   const attempts = attemptsSoFar + 1;
   return {
     attempts,

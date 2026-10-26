@@ -18,7 +18,8 @@ vi.mock("@/lib/opsAlert", () => ({ alertOps: vi.fn() }));
 vi.mock("@/lib/eventbrite", () => ({
   fetchEventOrders: (...args: unknown[]) => fetchEventOrders(...args),
 }));
-vi.mock("@/lib/capi", () => ({
+vi.mock("@/lib/capi", async (importActual) => ({
+  ...(await importActual<typeof import("@/lib/capi")>()),
   sendCapiEvent: (...args: unknown[]) => sendCapiEvent(...args),
 }));
 vi.mock("@/data/events", () => ({
@@ -69,6 +70,8 @@ interface Harness {
   upserts: Map<string, Fields>;
   /** Make the existing-state GET for this order id return a 500. */
   failStateRead: Set<string>;
+  /** Make a PATCH with this updateMask (for any order) return a 500. */
+  failPatchMask: Set<string>;
 }
 
 function installFetch(h: Harness) {
@@ -112,6 +115,9 @@ function installFetch(h: Harness) {
               .join("+")
           : undefined;
         if (method === "PATCH") {
+          if (mask && h.failPatchMask.has(mask)) {
+            return json({ error: { message: "boom" } }, 500);
+          }
           h.patches.push([id, mask ?? "full"]);
           if (!mask) {
             h.upserts.set(id, JSON.parse(String(init?.body)).fields);
@@ -161,6 +167,7 @@ beforeEach(() => {
     patches: [],
     upserts: new Map(),
     failStateRead: new Set(),
+    failPatchMask: new Set(),
   };
   installFetch(h);
 });
@@ -386,6 +393,34 @@ describe("sync-orders retry pass", () => {
 
     expect(h.patches.filter(([id]) => id === "p6")).toEqual([]);
     expect(out.errors).toContain("retry:p6: 400: token");
+  });
+
+  it("does not spend the attempt budget on a Meta-flagged transient failure", async () => {
+    h.pending = [{ id: "p7", attempts: 4 }];
+    sendCapiEvent.mockResolvedValue({
+      ok: false,
+      error: "400: transient",
+      transient: true,
+    });
+
+    const out = await runSync();
+
+    expect(h.patches.filter(([id]) => id === "p7")).toEqual([]);
+    expect(out.errors).toContain("retry:p7: 400: transient");
+  });
+
+  it("does not count a failed sent-flag write as a delivery failure", async () => {
+    h.pending = [{ id: "p8", attempts: 4 }];
+    h.failPatchMask.add("purchaseCapiSent");
+    sendCapiEvent.mockResolvedValue({ ok: true });
+
+    const out = await runSync();
+
+    expect(h.patches.filter(([id]) => id === "p8")).toEqual([]);
+    expect(out.errors.some((e) => e.startsWith("sent-flag:p8:"))).toBe(true);
+    expect(out.errors.some((e) => e.startsWith("unrecoverable:p8"))).toBe(
+      false,
+    );
   });
 
   it("counts a thrown send as a transient failure", async () => {

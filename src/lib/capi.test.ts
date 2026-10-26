@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { sendCapiEvent } from "@/lib/capi";
+import { holdsRetryBudget, sendCapiEvent } from "@/lib/capi";
 
 const params = {
   eventName: "Purchase" as const,
@@ -39,6 +39,23 @@ describe("sendCapiEvent failure classification", () => {
     expect(await sendCapiEvent(params, "tok")).toMatchObject({
       terminal: false,
     });
+  });
+
+  it("classifies code 100 subcode 33 (inaccessible pixel) as a credential failure, not terminal", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    stubFetch(400, { error: { code: 100, error_subcode: 33 } });
+    expect(await sendCapiEvent(params, "tok")).toMatchObject({
+      terminal: false,
+      credential: true,
+    });
+  });
+
+  it("flags a Meta is_transient fault so it can hold the retry budget", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    stubFetch(400, { error: { code: 2, is_transient: true } });
+    const result = await sendCapiEvent(params, "tok");
+    expect(result).toMatchObject({ transient: true, terminal: false });
+    expect(holdsRetryBudget(result)).toBe(true);
   });
 
   it("classifies an expired token (HTTP 400, code 190) as a credential failure", async () => {

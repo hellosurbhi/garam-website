@@ -5,7 +5,7 @@ import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { verifyAdminToken } from "@/lib/verifyToken";
 import { getFirestoreAccessToken } from "@/lib/firestoreAdmin";
 import { fetchEventOrders } from "@/lib/eventbrite";
-import { sendCapiEvent } from "@/lib/capi";
+import { holdsRetryBudget, sendCapiEvent } from "@/lib/capi";
 import { MAX_CAPI_ATTEMPTS, nextCapiFailureState } from "@/lib/capiRetryState";
 import { mapWithConcurrency } from "@/utils/concurrency";
 import { alertOps } from "@/lib/opsAlert";
@@ -859,7 +859,7 @@ export const POST: APIRoute = async ({ request }) => {
               const next = nextCapiFailureState(
                 existing.attempts,
                 result.terminal === true,
-                result.credential === true,
+                holdsRetryBudget(result),
               );
               orderWithMatch.purchaseCapiAttempts = next.attempts;
               orderWithMatch.purchaseCapiUnrecoverable = next.unrecoverable;
@@ -953,7 +953,7 @@ export const POST: APIRoute = async ({ request }) => {
           let capiFailed = false;
           let capiErrorMsg = "";
           let capiTerminal = false;
-          let capiCredential = false;
+          let capiHoldBudget = false;
           try {
             const result = await sendCapiEvent(
               {
@@ -977,17 +977,31 @@ export const POST: APIRoute = async ({ request }) => {
             );
 
             if (result.ok) {
-              await markPurchaseCapiSent(
-                projectId,
-                accessToken,
-                pendingOrder.orderId,
-              );
-              purchaseRetried += 1;
+              // WHY its own try: Meta already has the event, so a failed
+              // sent-flag write is a persistence fault, not a delivery
+              // failure. Sharing the send's catch burned the attempt budget
+              // (and could retire the order) for a purchase that was
+              // delivered. The flag stays false, so the next run resends the
+              // event under the same event_id.
+              try {
+                await markPurchaseCapiSent(
+                  projectId,
+                  accessToken,
+                  pendingOrder.orderId,
+                );
+                purchaseRetried += 1;
+              } catch (err) {
+                const msg = err instanceof Error ? err.message : String(err);
+                console.error(
+                  `[sync-orders] Failed to record CAPI delivery for order ${pendingOrder.orderId}: ${msg}`,
+                );
+                syncErrors.push(`sent-flag:${pendingOrder.orderId}: ${msg}`);
+              }
             } else {
               capiFailed = true;
               capiErrorMsg = result.error ?? "unknown error";
               capiTerminal = result.terminal === true;
-              capiCredential = result.credential === true;
+              capiHoldBudget = holdsRetryBudget(result);
             }
           } catch (err) {
             capiFailed = true;
@@ -1007,7 +1021,7 @@ export const POST: APIRoute = async ({ request }) => {
             const next = nextCapiFailureState(
               pendingOrder.purchaseCapiAttempts,
               capiTerminal,
-              capiCredential,
+              capiHoldBudget,
             );
             try {
               if (next.unrecoverable) {

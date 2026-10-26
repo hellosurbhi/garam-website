@@ -67,14 +67,16 @@ export interface CapiResult {
   terminal?: boolean;
   /**
    * True when Meta rejected our credentials (expired or revoked token, missing
-   * permission). Fixing the token fixes every affected order, so callers must
-   * not spend an order's retry budget on it.
+   * permission, pixel not accessible to the token). Fixing the token fixes
+   * every affected order, so callers must not spend an order's retry budget.
    */
   credential?: boolean;
+  /** True when Meta flagged the fault `is_transient`; a retry can succeed. */
+  transient?: boolean;
 }
 
 interface MetaErrorBody {
-  error?: { code?: number; is_transient?: boolean };
+  error?: { code?: number; error_subcode?: number; is_transient?: boolean };
 }
 
 function parseMetaError(errText: string): MetaErrorBody["error"] {
@@ -92,13 +94,34 @@ function parseMetaError(errText: string): MetaErrorBody["error"] {
 // payload fault a retry cannot fix; everything else stays retryable under
 // the attempt cap.
 const META_INVALID_PARAMETER = 100;
+// WHY subcode 33: Meta also answers code 100 when the dataset id does not
+// exist or the token cannot access it. That is a configuration fault fixed by
+// the token or pixel setup, not a payload fault, so it must not retire orders.
+const META_SUBCODE_INACCESSIBLE_OBJECT = 33;
 // Graph API: 190 OAuth/expired token, 102 session, 10 and 200 to 299 permissions.
-function isCredentialError(status: number, code: number | undefined): boolean {
+function isCredentialError(
+  status: number,
+  error: MetaErrorBody["error"],
+): boolean {
   if (status === 401 || status === 403) return true;
+  const code = error?.code;
   if (code === undefined) return false;
   return (
-    code === 190 || code === 102 || code === 10 || (code >= 200 && code <= 299)
+    code === 190 ||
+    code === 102 ||
+    code === 10 ||
+    (code >= 200 && code <= 299) ||
+    (code === META_INVALID_PARAMETER &&
+      error?.error_subcode === META_SUBCODE_INACCESSIBLE_OBJECT)
   );
+}
+
+/**
+ * True when a failure says nothing about the order itself (credentials or a
+ * Meta-flagged transient fault), so the order keeps its full retry budget.
+ */
+export function holdsRetryBudget(result: CapiResult): boolean {
+  return result.credential === true || result.transient === true;
 }
 
 function sha256Hex(value: string): string {
@@ -193,14 +216,18 @@ export async function sendCapiEvent(
         `[capi] ${params.eventName} failed: ${res.status} ${errText}`,
       );
       const metaError = parseMetaError(errText);
+      const credential = isCredentialError(res.status, metaError);
+      const transient = metaError?.is_transient === true;
       return {
         ok: false,
         error: `${res.status}: ${errText}`,
         terminal:
           res.status === 400 &&
           metaError?.code === META_INVALID_PARAMETER &&
-          metaError.is_transient !== true,
-        credential: isCredentialError(res.status, metaError?.code),
+          !transient &&
+          !credential,
+        credential,
+        transient,
       };
     }
 

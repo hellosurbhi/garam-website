@@ -102,11 +102,15 @@ function installFetch(h: Harness) {
           })),
         );
       }
-      const orderMatch = url.match(
-        /\/orders\/([^/?]+)(\?updateMask\.fieldPaths=(\w+))?$/,
-      );
+      const orderMatch = url.match(/\/orders\/([^/?]+)(?:\?(.+))?$/);
       if (orderMatch) {
-        const [, id, , mask] = orderMatch;
+        const [, id, query] = orderMatch;
+        // Several fieldPaths join with "+" so a two-field PATCH is one entry.
+        const mask = query
+          ? [...query.matchAll(/updateMask\.fieldPaths=(\w+)/g)]
+              .map((m) => m[1])
+              .join("+")
+          : undefined;
         if (method === "PATCH") {
           h.patches.push([id, mask ?? "full"]);
           if (!mask) {
@@ -223,7 +227,7 @@ describe("sync-orders CAPI delivery state", () => {
     });
   });
 
-  it("still records the order when the stored-state read fails", async () => {
+  it("does not overwrite stored state when the stored-state read fails", async () => {
     h.failStateRead.add("o4");
     fetchEventOrders.mockResolvedValue({
       orders: [ebOrder("o4")],
@@ -232,8 +236,50 @@ describe("sync-orders CAPI delivery state", () => {
 
     const out = await runSync();
 
-    expect(out.ok).toBe(true);
-    expect(h.patches).toContainEqual(["o4", "full"]);
+    expect(h.patches).not.toContainEqual(["o4", "full"]);
+    expect(sendCapiEvent).not.toHaveBeenCalled();
+    expect(out.errors.some((e) => e.startsWith("order:o4"))).toBe(true);
+  });
+
+  it("preserves stored state when the Meta token is missing", async () => {
+    vi.stubEnv("META_CAPI_ACCESS_TOKEN", "");
+    h.stored.set("o7", {
+      purchaseCapiSent: { booleanValue: false },
+      purchaseCapiAttempts: { integerValue: "4" },
+      purchaseCapiUnrecoverable: { booleanValue: false },
+    });
+    h.stored.set("o8", { purchaseCapiSent: { booleanValue: true } });
+    fetchEventOrders.mockResolvedValue({
+      orders: [ebOrder("o7"), ebOrder("o8")],
+      rateLimitRemaining: 500,
+    });
+
+    await runSync();
+
+    expect(sendCapiEvent).not.toHaveBeenCalled();
+    expect(h.upserts.get("o7")).toMatchObject({
+      purchaseCapiAttempts: { integerValue: "4" },
+    });
+    expect(h.upserts.get("o8")).toMatchObject({
+      purchaseCapiSent: { booleanValue: true },
+    });
+  });
+
+  it("reports a first-pass rejection in the returned errors", async () => {
+    fetchEventOrders.mockResolvedValue({
+      orders: [ebOrder("o9")],
+      rateLimitRemaining: 500,
+    });
+    sendCapiEvent.mockResolvedValue({
+      ok: false,
+      error: "400: bad",
+      terminal: true,
+    });
+
+    const out = await runSync();
+
+    expect(out.errors).toContain("capi:o9: 400: bad");
+    expect(out.errors).toContain("unrecoverable:o9: Meta rejected the event");
   });
 
   it("marks a first-time order sent on success", async () => {
@@ -306,7 +352,10 @@ describe("sync-orders retry pass", () => {
 
     const out = await runSync();
 
-    expect(h.patches).toContainEqual(["p3", "purchaseCapiUnrecoverable"]);
+    expect(h.patches).toContainEqual([
+      "p3",
+      "purchaseCapiUnrecoverable+purchaseCapiAttempts",
+    ]);
     expect(out.errors).toContain("unrecoverable:p3: Meta rejected the event");
   });
 
@@ -316,10 +365,27 @@ describe("sync-orders retry pass", () => {
 
     const out = await runSync();
 
-    expect(h.patches).toContainEqual(["p4", "purchaseCapiUnrecoverable"]);
+    expect(h.patches).toContainEqual([
+      "p4",
+      "purchaseCapiUnrecoverable+purchaseCapiAttempts",
+    ]);
     expect(out.errors).toContain(
       "unrecoverable:p4: exceeded 5 CAPI delivery attempts",
     );
+  });
+
+  it("does not spend the attempt budget on a credential failure", async () => {
+    h.pending = [{ id: "p6", attempts: 4 }];
+    sendCapiEvent.mockResolvedValue({
+      ok: false,
+      error: "400: token",
+      credential: true,
+    });
+
+    const out = await runSync();
+
+    expect(h.patches.filter(([id]) => id === "p6")).toEqual([]);
+    expect(out.errors).toContain("retry:p6: 400: token");
   });
 
   it("counts a thrown send as a transient failure", async () => {

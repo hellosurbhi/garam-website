@@ -25,4 +25,11 @@ describe("nextCapiFailureState", () => {
       unrecoverable: true,
     });
   });
+
+  it("leaves the budget untouched on a credential failure", () => {
+    expect(nextCapiFailureState(4, false, true)).toEqual({
+      attempts: 4,
+      unrecoverable: false,
+    });
+  });
 });

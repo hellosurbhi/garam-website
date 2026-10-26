@@ -354,8 +354,11 @@ async function markPurchaseCapiUnrecoverable(
   projectId: string,
   accessToken: string,
   orderId: string,
+  attempts: number,
 ): Promise<void> {
-  const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/orders/${orderId}?updateMask.fieldPaths=purchaseCapiUnrecoverable`;
+  // WHY attempts is written in the same PATCH: persisting only the flag left
+  // the stored count one behind the real number of failed deliveries.
+  const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/orders/${orderId}?updateMask.fieldPaths=purchaseCapiUnrecoverable&updateMask.fieldPaths=purchaseCapiAttempts`;
   const res = await fetch(url, {
     method: "PATCH",
     headers: {
@@ -363,7 +366,10 @@ async function markPurchaseCapiUnrecoverable(
       Authorization: `Bearer ${accessToken}`,
     },
     body: JSON.stringify({
-      fields: { purchaseCapiUnrecoverable: { booleanValue: true } },
+      fields: {
+        purchaseCapiUnrecoverable: { booleanValue: true },
+        purchaseCapiAttempts: { integerValue: String(attempts) },
+      },
     }),
   });
 
@@ -803,77 +809,72 @@ export const POST: APIRoute = async ({ request }) => {
           // failed attempt gets retried instead of silently forfeited: see
           // readOrderCapiState's doc comment and the pending-retry
           // pass after this loop.
-          if (capiAccessToken) {
-            try {
-              const existing = await readOrderCapiState(
-                projectId,
-                accessToken,
-                order.orderId,
+          // WHY the state read is not gated on the Meta token and has no
+          // catch: the full upsert below overwrites purchaseCapiSent,
+          // purchaseCapiAttempts and purchaseCapiUnrecoverable, so writing it
+          // without knowing the stored values (token missing, or the read
+          // failing) reset a delivered or exhausted order to zero. A failed
+          // read now throws into the per-order catch, which records the error
+          // and holds the cursor so the order is re-fetched next run.
+          const existing = await readOrderCapiState(
+            projectId,
+            accessToken,
+            order.orderId,
+          );
+          orderWithMatch.purchaseCapiSent = existing.sent;
+          orderWithMatch.purchaseCapiAttempts = existing.attempts;
+          orderWithMatch.purchaseCapiUnrecoverable = existing.unrecoverable;
+          if (
+            capiAccessToken &&
+            !existing.sent &&
+            !existing.unrecoverable &&
+            order.status === "placed"
+          ) {
+            // Already-delivered orders re-surface when something else changed
+            // on Eventbrite's side (e.g. a refund) and must not resend; gave-up
+            // orders must not restart delivery.
+            const result = await sendCapiEvent(
+              {
+                eventName: "Purchase",
+                eventId: order.orderId,
+                eventTime: Math.floor(
+                  new Date(order.createdAt).getTime() / 1000,
+                ),
+                eventSourceUrl: `https://garammasaladating.com/events/${event.slug}`,
+                userData: { email: order.email },
+                customData: {
+                  value: order.grossRevenue,
+                  currency: order.currency,
+                  contentIds: [event.slug],
+                  contentType: "event",
+                  numItems: order.quantity,
+                },
+              },
+              capiAccessToken,
+              CAPI_TIMEOUT_MS,
+            );
+            if (result.ok) {
+              orderWithMatch.purchaseCapiSent = true;
+            } else {
+              const next = nextCapiFailureState(
+                existing.attempts,
+                result.terminal === true,
+                result.credential === true,
               );
-              orderWithMatch.purchaseCapiAttempts = existing.attempts;
-              orderWithMatch.purchaseCapiUnrecoverable = existing.unrecoverable;
-              if (existing.sent) {
-                // Already delivered on a prior run (this fetch re-surfaced
-                // it only because something else changed on Eventbrite's
-                // side, e.g. a refund): preserve the flag, don't resend.
-                orderWithMatch.purchaseCapiSent = true;
-              } else if (existing.unrecoverable) {
-                // The retry pass already gave up on this order: a re-surface
-                // must not restart delivery (the carried-forward flag above
-                // keeps it out of findPendingPurchaseOrders).
-              } else if (order.status === "placed") {
-                const result = await sendCapiEvent(
-                  {
-                    eventName: "Purchase",
-                    eventId: order.orderId,
-                    eventTime: Math.floor(
-                      new Date(order.createdAt).getTime() / 1000,
-                    ),
-                    eventSourceUrl: `https://garammasaladating.com/events/${event.slug}`,
-                    userData: { email: order.email },
-                    customData: {
-                      value: order.grossRevenue,
-                      currency: order.currency,
-                      contentIds: [event.slug],
-                      contentType: "event",
-                      numItems: order.quantity,
-                    },
-                  },
-                  capiAccessToken,
-                  CAPI_TIMEOUT_MS,
-                );
-                if (result.ok) {
-                  orderWithMatch.purchaseCapiSent = true;
-                } else {
-                  const next = nextCapiFailureState(
-                    existing.attempts,
-                    result.terminal === true,
-                  );
-                  orderWithMatch.purchaseCapiAttempts = next.attempts;
-                  orderWithMatch.purchaseCapiUnrecoverable = next.unrecoverable;
-                  // One delivery attempt per run: the retry pass below skips
-                  // this order so a single run cannot count it twice.
-                  attemptedThisRun.add(order.orderId);
-                  console.error(
-                    `[sync-orders] CAPI Purchase failed for order ${order.orderId}: ${result.error}`,
-                  );
-                }
-              }
-            } catch (err) {
-              const msg = err instanceof Error ? err.message : String(err);
+              orderWithMatch.purchaseCapiAttempts = next.attempts;
+              orderWithMatch.purchaseCapiUnrecoverable = next.unrecoverable;
+              // One delivery attempt per run: the retry pass below skips
+              // this order so a single run cannot count it twice.
+              attemptedThisRun.add(order.orderId);
               console.error(
-                `[sync-orders] CAPI Purchase check failed for order ${order.orderId}: ${msg}`,
+                `[sync-orders] CAPI Purchase failed for order ${order.orderId}: ${result.error}`,
               );
-              // WHY: we don't know whether this order's flag was already
-              // true (the GET that would have told us is what just threw),
-              // so leaving purchaseCapiSent at its false default risks one
-              // redundant resend later rather than the old bug (losing the
-              // Purchase forever). That's the safe direction to be wrong in:
-              // sendCapiEvent's eventId is the stable order.orderId, and
-              // Meta dedupes repeated server events sharing an event_id, so
-              // a rare redundant send is a no-op there rather than double
-              // counted revenue. A Firestore GET failing right as we first
-              // see a brand new order is itself rare.
+              syncErrors.push(`capi:${order.orderId}: ${result.error}`);
+              if (next.unrecoverable) {
+                syncErrors.push(
+                  `unrecoverable:${order.orderId}: Meta rejected the event`,
+                );
+              }
             }
           }
 
@@ -932,6 +933,7 @@ export const POST: APIRoute = async ({ request }) => {
                 projectId,
                 accessToken,
                 pendingOrder.orderId,
+                pendingOrder.purchaseCapiAttempts,
               );
             } catch (err) {
               const msg = err instanceof Error ? err.message : String(err);
@@ -951,6 +953,7 @@ export const POST: APIRoute = async ({ request }) => {
           let capiFailed = false;
           let capiErrorMsg = "";
           let capiTerminal = false;
+          let capiCredential = false;
           try {
             const result = await sendCapiEvent(
               {
@@ -984,6 +987,7 @@ export const POST: APIRoute = async ({ request }) => {
               capiFailed = true;
               capiErrorMsg = result.error ?? "unknown error";
               capiTerminal = result.terminal === true;
+              capiCredential = result.credential === true;
             }
           } catch (err) {
             capiFailed = true;
@@ -1003,6 +1007,7 @@ export const POST: APIRoute = async ({ request }) => {
             const next = nextCapiFailureState(
               pendingOrder.purchaseCapiAttempts,
               capiTerminal,
+              capiCredential,
             );
             try {
               if (next.unrecoverable) {
@@ -1010,11 +1015,12 @@ export const POST: APIRoute = async ({ request }) => {
                   projectId,
                   accessToken,
                   pendingOrder.orderId,
+                  next.attempts,
                 );
                 syncErrors.push(
                   `unrecoverable:${pendingOrder.orderId}: ${capiTerminal ? "Meta rejected the event" : `exceeded ${MAX_CAPI_ATTEMPTS} CAPI delivery attempts`}`,
                 );
-              } else {
+              } else if (next.attempts !== pendingOrder.purchaseCapiAttempts) {
                 await incrementPurchaseCapiAttempts(
                   projectId,
                   accessToken,

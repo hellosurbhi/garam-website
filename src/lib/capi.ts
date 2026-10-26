@@ -61,14 +61,44 @@ export interface CapiResult {
   ok: boolean;
   error?: string;
   /**
-   * True when Meta rejected the request in a way a retry cannot fix (4xx
-   * other than 408/429). Timeouts, network errors, 5xx and 429 are transient.
+   * True when Meta rejected the payload itself (Graph API code 100, invalid
+   * parameter), which fails identically on every retry.
    */
   terminal?: boolean;
+  /**
+   * True when Meta rejected our credentials (expired or revoked token, missing
+   * permission). Fixing the token fixes every affected order, so callers must
+   * not spend an order's retry budget on it.
+   */
+  credential?: boolean;
 }
 
-function isTerminalStatus(status: number): boolean {
-  return status >= 400 && status < 500 && status !== 408 && status !== 429;
+interface MetaErrorBody {
+  error?: { code?: number; is_transient?: boolean };
+}
+
+function parseMetaError(errText: string): MetaErrorBody["error"] {
+  try {
+    return (JSON.parse(errText) as MetaErrorBody).error;
+  } catch {
+    return undefined;
+  }
+}
+
+// WHY not "any 4xx is terminal": Meta reports an expired token as HTTP 400
+// (OAuth code 190), not 401, and flags retryable faults with is_transient on
+// 4xx bodies. Treating those as terminal permanently abandoned every pending
+// purchase after one bad token. Only code 100 (invalid parameter) is a
+// payload fault a retry cannot fix; everything else stays retryable under
+// the attempt cap.
+const META_INVALID_PARAMETER = 100;
+// Graph API: 190 OAuth/expired token, 102 session, 10 and 200 to 299 permissions.
+function isCredentialError(status: number, code: number | undefined): boolean {
+  if (status === 401 || status === 403) return true;
+  if (code === undefined) return false;
+  return (
+    code === 190 || code === 102 || code === 10 || (code >= 200 && code <= 299)
+  );
 }
 
 function sha256Hex(value: string): string {
@@ -162,10 +192,15 @@ export async function sendCapiEvent(
       console.error(
         `[capi] ${params.eventName} failed: ${res.status} ${errText}`,
       );
+      const metaError = parseMetaError(errText);
       return {
         ok: false,
         error: `${res.status}: ${errText}`,
-        terminal: isTerminalStatus(res.status),
+        terminal:
+          res.status === 400 &&
+          metaError?.code === META_INVALID_PARAMETER &&
+          metaError.is_transient !== true,
+        credential: isCredentialError(res.status, metaError?.code),
       };
     }
 

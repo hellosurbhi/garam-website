@@ -7,7 +7,7 @@ import { readFileSync, readdirSync } from "fs";
 import { journalPostsPublished } from "./src/data/journal/index.ts";
 import { cities } from "./src/data/cities/index.ts";
 import { events, allEvents } from "./src/data/events.ts";
-import { buildEventRedirectMap } from "./src/data/eventRedirects.ts";
+import { buildEventRedirectMap, getBuildNowMs } from "./src/data/eventRedirects.ts";
 
 const SITE = "https://garammasaladating.com";
 const TODAY_STR = new Date().toISOString().slice(0, 10);
@@ -102,7 +102,7 @@ const eventLastmodMap = buildEventLastmodMap();
  * resolves the same logic at request time for the hours in between.
  */
 const eventRedirects = Object.fromEntries(
-  Object.entries(buildEventRedirectMap(Date.now())).map(([from, to]) => [
+  Object.entries(buildEventRedirectMap(getBuildNowMs())).map(([from, to]) => [
     from,
     { status: 302, destination: to },
   ]),

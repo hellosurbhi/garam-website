@@ -22,7 +22,7 @@ import { Picture } from "astro:assets";
 import { SHOW_IMAGES_ASSETS } from "@/assets/backgrounds";
 import { slugToImageIndex } from "@/data/images";
 import { allEvents, type EventEntry } from "@/data/events";
-import { needsRedirect } from "@/data/eventRedirects";
+import { getBuildNowMs, needsRedirect } from "@/data/eventRedirects";
 import { PERFORMERS } from "@/data/lineup";
 import {
   EXPERIENCE_STEPS,
@@ -59,7 +59,7 @@ export async function getStaticPaths() {
     // astro.config.mjs (buildEventRedirectMap); emitting a page for the same
     // path would collide with that redirect and leave a dead page behind.
     allEvents
-      .filter((event) => !needsRedirect(event, Date.now()))
+      .filter((event) => !needsRedirect(event, getBuildNowMs()))
       .map(async (event) => {
         const shouldFetch =
           event.ticketSource === "our-eventbrite" &&

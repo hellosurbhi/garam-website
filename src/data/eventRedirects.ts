@@ -64,6 +64,19 @@ export function resolveEventRedirect(
   return "/tickets";
 }
 
+/**
+ * One timestamp per build, shared by astro.config.mjs (redirect map) and
+ * /events/[slug].astro (getStaticPaths).
+ * WHY: each called Date.now() separately; a build crossing a show's end time
+ * could skip the redirect (still running) and then skip the page (now over),
+ * leaving the URL a 404. The config runs first in the same process, so the
+ * first caller pins the value in process.env and every later caller reuses it.
+ */
+export function getBuildNowMs(): number {
+  process.env.EVENT_BUILD_NOW_MS ??= String(Date.now());
+  return Number(process.env.EVENT_BUILD_NOW_MS);
+}
+
 /** slug -> destination for every event page that must redirect (astro.config.mjs). */
 export function buildEventRedirectMap(
   nowMs: number,

@@ -433,3 +433,11 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 **Why:** A scheduled workflow that only runs on a cron and is not part of PR checks has no one watching it, and a red run on a schedule alerts nobody. Each UI change shipped green because the smoke suite never ran on pull requests.
 
 **Rule:** A scheduled or manual-only test workflow must page on failure, and any change to a form flow, footer or page layout must update `tests/smoke/` in the same PR. Never fake a binary or streaming protocol (Firestore WebChannel) with a canned `page.route()` body; assert the pipeline stages instead and leave the success path to the synthetic monitor.
+
+## Vercel free-tier storage filled up from Preview builds
+
+**What went wrong:** The team hit 100% of the 10 GB Deployment Storage. 60 deployments at ~200 MB each were stored, 46 of them Previews nobody opened.
+
+**Why:** Assumed 7-day retention alone would bound storage, but a busy week of branch pushes (about 45 deployments in 5 days) exceeds 10 GB inside the retention window.
+
+**Rule:** Retention bounds age, not volume. Keep `ignoreCommand` in `vercel.json` so only production builds are stored, and check `vercel ls` count if the usage email returns.

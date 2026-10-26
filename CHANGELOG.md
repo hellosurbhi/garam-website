@@ -1,5 +1,10 @@
 # Changelog
 
+## fix(vercel): skip Preview builds so deployment storage stays under the free tier (2026-10-26)
+
+- Vercel warned the team had used 100% of the 10 GB Deployment Storage. Cause: every branch push stored a ~200 MB Preview build (60 deployments existed, 46 of them Previews). Added `ignoreCommand` to `vercel.json` so only production builds run (`VERCEL_ENV`; exit 0 means skip). Nothing used the Previews: Playwright serves `dist/client` locally.
+- Deleted 57 old deployments (kept the 3 newest production). Project retention was already 7 days.
+
 ## test(notifications): cover producer-notification branches to satisfy patch-coverage gate (2026-08-27)
 
 - PR #230's patch-coverage gate failed at 75.6% (168-line threshold requires 80%) on the producer-notification commit below. Extracted `reportClaimFailure()` (and its `PortalSignupData` type) out of `ContestantPortal.tsx` into `src/components/reportClaimFailure.ts` so it can be unit-tested directly, without a full jsdom render of `WaiverPanel` (its `ResizeObserver`-based unlock never fires in jsdom, since `clientHeight`/`scrollHeight` are always 0 there) — this also fixed a `react-refresh/only-export-components` lint error the export had introduced.
@@ -15,6 +20,7 @@
 - Does not include a fix for the underlying dead Zoho mailer itself (missing `ZOHO_SMTP_USER`/`ZOHO_SMTP_PASS`/`NOTIFICATION_EMAIL`/`ALERT_WEBHOOK_URL` in Vercel production) — that's a credential gap, not a code change, reported separately.
 - Found and logged, not fixed here (pre-existing, out of scope): `zohoMailer.ts`'s `sendMail` has no bounded SMTP timeout, sitewide — see BUGS.md.
 - Verified with `npm run check` (0 errors, 308 files).
+
 ## fix(ops): the security-rules gate stops drifting silently, and applicant emails stop reaching the public alert topic (2026-09-02)
 
 Two HIGH findings from the Codex 2026-08-12 review rounds, both open since the emulator suite and the push alert channel shipped.

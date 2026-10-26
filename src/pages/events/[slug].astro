@@ -22,6 +22,7 @@ import { Picture } from "astro:assets";
 import { SHOW_IMAGES_ASSETS } from "@/assets/backgrounds";
 import { slugToImageIndex } from "@/data/images";
 import { allEvents, type EventEntry } from "@/data/events";
+import { getBuildNowMs, needsRedirect } from "@/data/eventRedirects";
 import { PERFORMERS } from "@/data/lineup";
 import {
   EXPERIENCE_STEPS,
@@ -54,23 +55,28 @@ export async function getStaticPaths() {
   const token = import.meta.env.EVENTBRITE_API_TOKEN;
 
   return Promise.all(
-    allEvents.map(async (event) => {
-      const shouldFetch =
-        event.ticketSource === "our-eventbrite" &&
-        Boolean(event.eventbriteId) &&
-        Boolean(token);
+    // WHY filter: over, canceled and replaced-TBA slugs are real 302s from
+    // astro.config.mjs (buildEventRedirectMap); emitting a page for the same
+    // path would collide with that redirect and leave a dead page behind.
+    allEvents
+      .filter((event) => !needsRedirect(event, getBuildNowMs()))
+      .map(async (event) => {
+        const shouldFetch =
+          event.ticketSource === "our-eventbrite" &&
+          Boolean(event.eventbriteId) &&
+          Boolean(token);
 
-      const content = shouldFetch
-        ? await fetchEventbriteContent(event.eventbriteId!, token)
-        : null;
+        const content = shouldFetch
+          ? await fetchEventbriteContent(event.eventbriteId!, token)
+          : null;
 
-      const description = resolveEventDescription(event.description, content);
+        const description = resolveEventDescription(event.description, content);
 
-      return {
-        params: { slug: event.slug },
-        props: { event, description },
-      };
-    }),
+        return {
+          params: { slug: event.slug },
+          props: { event, description },
+        };
+      }),
   );
 }
 
@@ -153,8 +159,7 @@ const lineup = event.lineup.map((id) => PERFORMERS[id]);
 
 <BaseLayout title={seoTitle} description={metaDescription}>
   <Fragment slot="head">
-    {
-      /*
+    {/*
         WHY no <link rel="canonical"> here: BaseLayout already emits one,
         defaulting to new URL(Astro.url.pathname, Astro.site) which resolves
         to this exact page for a static /events/[slug] route. A second,
@@ -163,13 +168,10 @@ const lineup = event.lineup.map((id) => PERFORMERS[id]);
         guidance, multiple canonical tags on one page get ignored entirely
         in favor of Google's own canonical-selection heuristic, defeating
         the tag's purpose. Caught by Codex pre-push review (2026-08-03).
-      */
-    }
-    {
-      eventSchemas.map((schema) => (
-        <script type="application/ld+json" set:html={schema} />
-      ))
-    }
+      */}
+    {eventSchemas.map((schema) => (
+      <script type="application/ld+json" set:html={schema} />
+    ))}
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
   </Fragment>
 
@@ -217,104 +219,92 @@ const lineup = event.lineup.map((id) => PERFORMERS[id]);
       <div class="event-section__inner">
         <h2>{EVENT_PAGE.whatToExpectHeading}</h2>
         <div class="event-expect__grid">
-          {
-            EXPERIENCE_STEPS.map((step, i) => (
-              <div class="event-expect__step">
-                <div class="event-expect__num">
-                  {String(i + 1).padStart(2, "0")}
-                </div>
-                <div>
-                  <h3>{step.title}</h3>
-                  <p>{step.text}</p>
-                </div>
+          {EXPERIENCE_STEPS.map((step, i) => (
+            <div class="event-expect__step">
+              <div class="event-expect__num">
+                {String(i + 1).padStart(2, "0")}
               </div>
-            ))
-          }
+              <div>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
 
     {/* Lineup */}
-    {
-      lineup.length > 0 && (
-        <section class="event-section event-section--white">
-          <div class="event-section__inner">
-            <h2>{EVENT_PAGE.lineupHeading}</h2>
-            <div class="event-lineup__grid">
-              {lineup.map((performer) => (
-                <EventLineupCard performer={performer} />
-              ))}
-            </div>
+    {lineup.length > 0 && (
+      <section class="event-section event-section--white">
+        <div class="event-section__inner">
+          <h2>{EVENT_PAGE.lineupHeading}</h2>
+          <div class="event-lineup__grid">
+            {lineup.map((performer) => (
+              <EventLineupCard performer={performer} />
+            ))}
           </div>
-        </section>
-      )
-    }
+        </div>
+      </section>
+    )}
 
-    {
-      /* Location: always rendered (even pre-venue) so section background
+    {/* Location: always rendered (even pre-venue) so section background
         alternation never breaks for TBA/coming-soon cities. Its own
         background flips to off-white when Agenda (below) is omitted for
         a TBA event, since Location would otherwise sit directly against
         HomeFAQ's fixed cream background with nothing off-white between
-        them, repeating the same color on two adjacent sections. */
-    }
+        them, repeating the same color on two adjacent sections. */}
     <section
       class={`event-section ${showAgenda ? "event-section--cream" : "event-section--off-white"}`}
     >
       <div class="event-section__inner">
         <h2>{EVENT_PAGE.locationHeading}</h2>
-        {
-          venue ? (
-            <>
-              <p class="event-location__venue">{venue.name}</p>
-              <p class="event-location__address">{venueAddress}</p>
-              <a
-                href={mapsHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="event-location__cta"
-                data-ph-capture="cta_clicked"
-                data-ph-cta="get_directions"
-                data-ph-section="event_location"
-                data-cta-position="event_location"
-                data-cta-text={EVENT_PAGE.getDirectionsCta}
-                data-event-city={cityLabel}
-              >
-                {EVENT_PAGE.getDirectionsCta}
-              </a>
-            </>
-          ) : (
-            <p class="event-location__venue">
-              Venue announces when tickets go on sale in {cityLabel}.
-            </p>
-          )
-        }
+        {venue ? (
+          <>
+            <p class="event-location__venue">{venue.name}</p>
+            <p class="event-location__address">{venueAddress}</p>
+            <a
+              href={mapsHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="event-location__cta"
+              data-ph-capture="cta_clicked"
+              data-ph-cta="get_directions"
+              data-ph-section="event_location"
+              data-cta-position="event_location"
+              data-cta-text={EVENT_PAGE.getDirectionsCta}
+              data-event-city={cityLabel}
+            >
+              {EVENT_PAGE.getDirectionsCta}
+            </a>
+          </>
+        ) : (
+          <p class="event-location__venue">
+            Venue announces when tickets go on sale in {cityLabel}.
+          </p>
+        )}
       </div>
     </section>
 
     {/* Agenda: omitted entirely for TBA events, see showAgenda above. */}
-    {
-      showAgenda && (
-        <section class="event-section event-section--off-white">
-          <div class="event-section__inner">
-            <h2>{EVENT_PAGE.agendaHeading}</h2>
-            <ul class="event-agenda__list">
-              {agendaRows.map((row) => (
-                <li class="event-agenda__row">
-                  <span class="event-agenda__time">{row.time}</span>
-                  <span class="event-agenda__label">{row.label}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-      )
-    }
+    {showAgenda && (
+      <section class="event-section event-section--off-white">
+        <div class="event-section__inner">
+          <h2>{EVENT_PAGE.agendaHeading}</h2>
+          <ul class="event-agenda__list">
+            {agendaRows.map((row) => (
+              <li class="event-agenda__row">
+                <span class="event-agenda__time">{row.time}</span>
+                <span class="event-agenda__label">{row.label}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )}
 
-    {
-      /* FAQ: reuses the homepage's accordion component as-is (same data,
-        same interaction, same analytics) rather than rebuilding it here. */
-    }
+    {/* FAQ: reuses the homepage's accordion component as-is (same data,
+        same interaction, same analytics) rather than rebuilding it here. */}
     <HomeFAQ />
 
     {/* Social proof */}
@@ -322,16 +312,14 @@ const lineup = event.lineup.map((id) => PERFORMERS[id]);
       <div class="event-section__inner">
         <h2>{EVENT_PAGE.socialProofHeading}</h2>
         <div class="event-testimonials__grid">
-          {
-            TESTIMONIALS.map((t) => (
-              <blockquote class="event-testimonial">
-                <p class="event-testimonial__quote">&ldquo;{t.quote}&rdquo;</p>
-                <footer class="event-testimonial__author">
-                  {t.author} · {t.location}
-                </footer>
-              </blockquote>
-            ))
-          }
+          {TESTIMONIALS.map((t) => (
+            <blockquote class="event-testimonial">
+              <p class="event-testimonial__quote">&ldquo;{t.quote}&rdquo;</p>
+              <footer class="event-testimonial__author">
+                {t.author} · {t.location}
+              </footer>
+            </blockquote>
+          ))}
         </div>
       </div>
     </section>

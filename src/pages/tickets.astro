@@ -2,11 +2,11 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import NotifyModal from "@/components/NotifyModal.astro";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
-import { events, allEvents, isDisplayable } from "@/data/events";
+import { events, allEvents } from "@/data/events";
 import { buildEventSchemas } from "@/utils/eventSchema";
 import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
 import { buildTaglineMap } from "@/utils/eventTaglines";
-import { getUpcomingDated, getSchemaDated } from "@/utils/eventFilters";
+import { getUpcomingOrdered, getSchemaDated } from "@/utils/eventFilters";
 import { PAGES } from "@/data/copy";
 import TicketCard from "@/components/tickets/TicketCard.astro";
 import StickyCTA from "@/components/StickyCTA.astro";
@@ -16,9 +16,8 @@ const DESC =
   "Get tickets to Garam Masala Dating shows in New York and beyond. America's #1 live desi comedy dating show and South Asian singles mixer. Now touring LA, SF, and San Diego.";
 
 const today = new Date().toISOString().slice(0, 10);
-const datedUpcoming = getUpcomingDated(allEvents, today);
-const tbaEvents = allEvents.filter((e) => isDisplayable(e) && !e.isoDate);
-const upcomingEvents = [...datedUpcoming, ...tbaEvents];
+// Buyable shows first, "tickets coming soon" (dated placeholder or TBA) below.
+const upcomingEvents = getUpcomingOrdered(allEvents, today, Date.now());
 
 const taglineMap = buildTaglineMap(upcomingEvents);
 
@@ -64,11 +63,9 @@ const eventSeriesJsonLd = JSON.stringify({
   <Fragment slot="head">
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
     <script type="application/ld+json" set:html={eventSeriesJsonLd} />
-    {
-      eventSchemas.map((schema) => (
-        <script type="application/ld+json" set:html={schema} />
-      ))
-    }
+    {eventSchemas.map((schema) => (
+      <script type="application/ld+json" set:html={schema} />
+    ))}
   </Fragment>
 
   <main id="main-content" class="tickets-page">
@@ -87,40 +84,38 @@ const eventSeriesJsonLd = JSON.stringify({
       <div class="tickets-divider"></div>
 
       {/* Event cards */}
-      {
-        upcomingEvents.length > 0 ? (
-          <div class="tickets-list" id="shows">
-            {upcomingEvents.map((event, i) => {
-              const isLive = !!event.url && event.url !== "#";
-              const tagline =
-                (isLive ? taglineMap.get(event.url!) : undefined) ??
-                event.tagline ??
-                undefined;
-              return (
-                <TicketCard
-                  event={event}
-                  index={i}
-                  sourcePage="tickets"
-                  tagline={tagline}
-                />
-              );
-            })}
-          </div>
-        ) : (
-          <p class="tickets-empty">
-            No upcoming shows. Follow us on{" "}
-            <a
-              href="https://www.instagram.com/garammasaladating/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="tickets-empty__link"
-            >
-              Instagram
-            </a>{" "}
-            for announcements.
-          </p>
-        )
-      }
+      {upcomingEvents.length > 0 ? (
+        <div class="tickets-list" id="shows">
+          {upcomingEvents.map((event, i) => {
+            const isLive = !!event.url && event.url !== "#";
+            const tagline =
+              (isLive ? taglineMap.get(event.url!) : undefined) ??
+              event.tagline ??
+              undefined;
+            return (
+              <TicketCard
+                event={event}
+                index={i}
+                sourcePage="tickets"
+                tagline={tagline}
+              />
+            );
+          })}
+        </div>
+      ) : (
+        <p class="tickets-empty">
+          No upcoming shows. Follow us on{" "}
+          <a
+            href="https://www.instagram.com/garammasaladating/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="tickets-empty__link"
+          >
+            Instagram
+          </a>{" "}
+          for announcements.
+        </p>
+      )}
 
       <NotifyModal source="tickets-notify" />
 
@@ -167,8 +162,10 @@ const eventSeriesJsonLd = JSON.stringify({
             stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
-            ><path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path></svg
           >
+            <path d="M19 12H5"></path>
+            <path d="m12 19-7-7 7-7"></path>
+          </svg>
           Back to Home
         </a>
       </div>

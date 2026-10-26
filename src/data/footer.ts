@@ -26,7 +26,7 @@ function buildFooterShowLinks(): FooterLink[] {
   const seen = new Set<string>();
   const slugs: string[] = [];
 
-  for (const e of getUpcomingDated(allEvents, today)) {
+  for (const e of getUpcomingDated(allEvents, today, Date.now())) {
     if (!e.citySlug || seen.has(e.citySlug)) continue;
     seen.add(e.citySlug);
     slugs.push(e.citySlug);

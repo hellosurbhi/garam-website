@@ -7,6 +7,7 @@ import { readFileSync, readdirSync } from "fs";
 import { journalPostsPublished } from "./src/data/journal/index.ts";
 import { cities } from "./src/data/cities/index.ts";
 import { events, allEvents } from "./src/data/events.ts";
+import { buildEventRedirectMap, getBuildNowMs } from "./src/data/eventRedirects.ts";
 
 const SITE = "https://garammasaladating.com";
 const TODAY_STR = new Date().toISOString().slice(0, 10);
@@ -90,6 +91,25 @@ function buildEventLastmodMap() {
 }
 
 const eventLastmodMap = buildEventLastmodMap();
+
+/**
+ * /events/<slug> -> destination for every show that is over, canceled, or a
+ * coming-soon card its city has replaced with a dated show. Those slugs get a
+ * real 302 instead of a page (src/pages/events/[slug].astro skips them in
+ * getStaticPaths so the two never collide). 302, not 301, because the
+ * destination changes as new shows are announced. The daily rebuild
+ * (.github/workflows/daily-rebuild.yml) keeps this current; /api/go/[slug]
+ * resolves the same logic at request time for the hours in between.
+ */
+const eventRedirects = Object.fromEntries(
+  Object.entries(buildEventRedirectMap(getBuildNowMs())).map(([from, to]) => [
+    from,
+    { status: 302, destination: to },
+  ]),
+);
+const redirectedEventUrls = new Set(
+  Object.keys(eventRedirects).map((p) => `${SITE}${p}`),
+);
 
 /**
  * Scan src/pages/ and build a URL → git-lastmod map for all non-dynamic static pages.
@@ -207,6 +227,7 @@ export default defineConfig({
   },
   adapter: vercel(),
   redirects: {
+    ...eventRedirects,
     "/south-asian-dating-tips": "/journal",
     "/south-asian-dating-tips/how-to-find-love-as-a-desi-in-new-york":
       "/journal/how-to-find-love-as-a-desi-in-new-york",
@@ -220,6 +241,7 @@ export default defineConfig({
     sitemap({
       filter: (page) => {
         if (page.includes("?")) return false;
+        if (redirectedEventUrls.has(page)) return false;
         if (
           page.includes("/admin") ||
           page.includes("/contestant-prep") ||

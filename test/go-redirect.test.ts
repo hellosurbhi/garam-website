@@ -10,9 +10,9 @@ vi.mock("@/lib/capi", () => ({
   sendCapiEvent: vi.fn(async () => ({ ok: true })),
 }));
 
-vi.mock("@/data/events", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/data/events")>();
-  return { ...actual, getEventBySlug: vi.fn() };
+vi.mock("@/data/eventRedirects", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/data/eventRedirects")>();
+  return { ...actual, getAnyEventBySlug: vi.fn() };
 });
 
 // WHY mocked instead of letting the real @vercel/functions waitUntil run
@@ -27,7 +27,8 @@ vi.mock("@vercel/functions", () => ({ waitUntil: vi.fn() }));
 
 const { enforceRateLimit } = await import("@/lib/rateLimit");
 const { sendCapiEvent } = await import("@/lib/capi");
-const { getEventBySlug } = await import("@/data/events");
+const { getAnyEventBySlug: getEventBySlug } =
+  await import("@/data/eventRedirects");
 const { waitUntil } = await import("@vercel/functions");
 const { GET } = await import("@/pages/api/go/[slug]");
 
@@ -75,10 +76,14 @@ describe("/api/go/[slug] tracked redirect", () => {
     expect(sendCapiEvent).not.toHaveBeenCalled();
   });
 
-  it("404s an event with no checkout destination yet", async () => {
-    vi.mocked(getEventBySlug).mockReturnValue(makeEvent({ url: "" }));
-    const res = await GET(makeContext("manhattan-2099-12-31"));
-    expect(res.status).toBe(404);
+  it("sends a coming-soon show (no checkout url) to its city page, not a 404", async () => {
+    vi.mocked(getEventBySlug).mockReturnValue(
+      makeEvent({ url: "", citySlug: "chicago", slug: "chicago-2099-12-31" }),
+    );
+    const res = await GET(makeContext("chicago-2099-12-31"));
+    expect(res.status).toBe(302);
+    expect(res.headers.get("Location")).toBe("/cities/chicago");
+    expect(sendCapiEvent).not.toHaveBeenCalled();
   });
 
   it("redirects a live upcoming event to its checkout url with CAPI fired", async () => {
@@ -91,23 +96,29 @@ describe("/api/go/[slug] tracked redirect", () => {
     expect(sendCapiEvent).toHaveBeenCalledTimes(1);
   });
 
-  it("sends a canceled show to /tickets without firing CAPI", async () => {
+  it("sends a canceled show to its city page without firing CAPI", async () => {
     vi.mocked(getEventBySlug).mockReturnValue(
-      makeEvent({ status: "canceled" }),
+      makeEvent({ status: "canceled", citySlug: "chicago" }),
     );
     const res = await GET(makeContext("manhattan-2099-12-31"));
     expect(res.status).toBe(302);
-    expect(res.headers.get("Location")).toBe("/tickets");
+    expect(res.headers.get("Location")).toBe("/cities/chicago");
     expect(sendCapiEvent).not.toHaveBeenCalled();
   });
 
-  it("sends a past show to /tickets without firing CAPI", async () => {
+  it("sends a past show to the next buyable show in its city without firing CAPI", async () => {
+    vi.setSystemTime(new Date("2026-10-26T16:00:00Z"));
     vi.mocked(getEventBySlug).mockReturnValue(
-      makeEvent({ isoDate: "2020-01-01", slug: "manhattan-2020-01-01" }),
+      makeEvent({
+        citySlug: "philadelphia",
+        isoDate: "2026-10-04",
+        slug: "philadelphia-2026-10-04",
+      }),
     );
-    const res = await GET(makeContext("manhattan-2020-01-01"));
+    const res = await GET(makeContext("philadelphia-2026-10-04"));
+    vi.useRealTimers();
     expect(res.status).toBe(302);
-    expect(res.headers.get("Location")).toBe("/tickets");
+    expect(res.headers.get("Location")).toBe("/events/philadelphia-2026-12-06");
     expect(sendCapiEvent).not.toHaveBeenCalled();
   });
 

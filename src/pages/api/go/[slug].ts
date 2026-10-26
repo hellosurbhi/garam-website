@@ -2,8 +2,9 @@ export const prerender = false;
 
 import type { APIRoute } from "astro";
 import { waitUntil } from "@vercel/functions";
-import { getEventBySlug, type EventEntry } from "@/data/events";
-import { isEventDatePast } from "@/utils/eventDate";
+import type { EventEntry } from "@/data/events";
+import { getAnyEventBySlug, resolveEventRedirect } from "@/data/eventRedirects";
+import { isShowOver } from "@/data/eventAvailability";
 import { enforceRateLimit, RATE_LIMITS, getClientIp } from "@/lib/rateLimit";
 import { applyUtmsToUrl } from "@/utils/utmForwarding";
 import { withTimeout } from "@/utils/withTimeout";
@@ -111,31 +112,42 @@ async function recordClickSignals(
  *
  * The destination URL is ALWAYS resolved server-side from our own event
  * data by slug, never from a client-supplied URL param, so this can't be
- * turned into an open redirect. Unknown slugs, and events that don't have a
- * real checkout destination yet (TBA/coming-soon shows use url: ""), 404.
+ * turned into an open redirect. Unknown slugs 404. Known slugs that cannot
+ * sell (canceled, over, or coming-soon with no checkout url yet) redirect to
+ * the next buyable show in the same city, else that city's waitlist page.
  */
 export const GET: APIRoute = async ({ params, request }) => {
   const slug = params.slug;
-  const event = slug ? getEventBySlug(slug) : undefined;
+  // WHY getAnyEventBySlug and not getEventBySlug: getEventBySlug only searches
+  // allEvents, which drops a city's TBA card once that city announces a date,
+  // so old links to that card would 404 instead of reaching the new show.
+  const event = slug ? getAnyEventBySlug(slug) : undefined;
 
-  if (!event || !event.url || event.url === "#") {
+  if (!event) {
     return new Response("Not found", { status: 404 });
   }
 
-  // WHY canceled and past shows redirect to /tickets instead of the stored
+  const now = Date.now();
+  const hasCheckout = !!event.url && event.url !== "#";
+
+  // WHY canceled, past and no-checkout shows redirect to the next buyable
+  // show in the same city (else the city waitlist page) instead of the stored
   // url: entries are never deleted (never-delete events rule), landing pages
-  // are permanent, and old shared/bookmarked /api/go links keep arriving
+  // are permanent, and old shared/bookmarked/ad /api/go links keep arriving
   // after a show is canceled or over. The stored url then points at a
-  // listing that cannot sell anything, and the past check in
-  // EventTicketCta.astro is frozen at build time, so without this runtime
-  // guard a stale static page would keep handing out live checkout links
-  // between deploys. Skipping the redirect to the dead listing also means
-  // no InitiateCheckout fires for an unbuyable show, which would otherwise
-  // feed Meta's ad optimization a false conversion signal.
-  if (event.status === "canceled" || isEventDatePast(event)) {
+  // listing that cannot sell anything, and the static page is frozen at build
+  // time, so without this runtime guard a stale page would keep handing out
+  // live checkout links between deploys. /tickets used to be the answer here,
+  // but an ad for the old Philadelphia show should land on the next
+  // Philadelphia show, not a generic list. Skipping the redirect to the dead
+  // listing also means no InitiateCheckout fires for an unbuyable show, which
+  // would otherwise feed Meta's ad optimization a false conversion signal.
+  // Over is judged by endTime + timezone (isShowOver), not the UTC date, so
+  // an evening show is not cut off early.
+  if (event.status === "canceled" || isShowOver(event, now) || !hasCheckout) {
     return new Response(null, {
       status: 302,
-      headers: { Location: "/tickets" },
+      headers: { Location: resolveEventRedirect(event, now) },
     });
   }
 

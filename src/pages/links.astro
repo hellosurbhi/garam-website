@@ -7,7 +7,7 @@ import { pressItems } from "@/data/press";
 import { SOCIAL_URLS } from "@/data/socials";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 import { formatEventLocation } from "@/utils/eventCity";
-import { isDatedUpcoming } from "@/utils/eventFilters";
+import { getUpcomingDated } from "@/utils/eventFilters";
 import { buildTicketUrl } from "@/utils/eventUrl";
 import { domainFromUrl, vendorFromUrl } from "@/lib/analyticsCapture";
 
@@ -16,9 +16,7 @@ const DESC =
   "Get tickets to upcoming Garam Masala Dating shows, apply as a contestant, join a city waitlist, or watch full episodes.";
 
 const today = new Date().toISOString().slice(0, 10);
-const upcomingEvents = events
-  .filter((event) => isDatedUpcoming(event, today))
-  .sort((a, b) => a.isoDate!.localeCompare(b.isoDate!));
+const upcomingEvents = getUpcomingDated(events, today, Date.now());
 
 const liveTicketEvents = upcomingEvents.filter(
   (event) => event.url && event.url !== "#" && !event.soldOut,
@@ -121,140 +119,131 @@ const pressLinks = pressItems
       </header>
 
       <section class="primary-actions" aria-label="Primary actions">
-        {
-          primaryActions.map((action, index) =>
-            action.href ? (
-              <a
-                href={action.href}
-                class:list={[
-                  "action-link",
-                  index === 0 ? "action-link--primary" : "",
-                ]}
-                data-ph-capture={action.eventName}
-                data-ph-cta={action.ctaId}
-                data-ph-section="links_primary"
-                data-cta-position={`links_primary_${index + 1}`}
-                data-cta-text={action.label}
-                data-destination-url={action.href}
-              >
-                <Fragment set:html={iconSvg(action.icon)} />
-                <span class="action-copy">
-                  <strong>{action.label}</strong>
-                  <span>{action.description}</span>
-                </span>
-              </a>
-            ) : (
-              <button
-                type="button"
-                class:list={[
-                  "action-link",
-                  index === 0 ? "action-link--primary" : "",
-                ]}
-                data-open-modal={action.dialog}
-                data-ph-capture={action.eventName}
-                data-ph-cta={action.ctaId}
-                data-ph-section="links_primary"
-                data-cta-position={`links_primary_${index + 1}`}
-                data-cta-text={action.label}
-              >
-                <Fragment set:html={iconSvg(action.icon)} />
-                <span class="action-copy">
-                  <strong>{action.label}</strong>
-                  <span>{action.description}</span>
-                </span>
-              </button>
-            ),
-          )
-        }
+        {primaryActions.map((action, index) =>
+          action.href ? (
+            <a
+              href={action.href}
+              class:list={[
+                "action-link",
+                index === 0 ? "action-link--primary" : "",
+              ]}
+              data-ph-capture={action.eventName}
+              data-ph-cta={action.ctaId}
+              data-ph-section="links_primary"
+              data-cta-position={`links_primary_${index + 1}`}
+              data-cta-text={action.label}
+              data-destination-url={action.href}
+            >
+              <Fragment set:html={iconSvg(action.icon)} />
+              <span class="action-copy">
+                <strong>{action.label}</strong>
+                <span>{action.description}</span>
+              </span>
+            </a>
+          ) : (
+            <button
+              type="button"
+              class:list={[
+                "action-link",
+                index === 0 ? "action-link--primary" : "",
+              ]}
+              data-open-modal={action.dialog}
+              data-ph-capture={action.eventName}
+              data-ph-cta={action.ctaId}
+              data-ph-section="links_primary"
+              data-cta-position={`links_primary_${index + 1}`}
+              data-cta-text={action.label}
+            >
+              <Fragment set:html={iconSvg(action.icon)} />
+              <span class="action-copy">
+                <strong>{action.label}</strong>
+                <span>{action.description}</span>
+              </span>
+            </button>
+          ),
+        )}
       </section>
 
-      {
-        featuredEvents.length > 0 && (
-          <section class="event-strip" aria-labelledby="event-strip-heading">
-            <div class="section-heading">
-              <h2 id="event-strip-heading">Next tickets</h2>
-              <a
-                href="/tickets"
-                data-ph-capture="cta_clicked"
-                data-ph-cta="all_tickets"
-                data-ph-section="links_events"
-                data-cta-position="links_events_header"
-                data-cta-text="All shows"
-                data-destination-url="/tickets"
-              >
-                All shows
-              </a>
-            </div>
-            <div class="event-list">
-              {featuredEvents.map((event, index) => {
-                const city = formatEventLocation(event);
-                const ticketUrl = buildTicketUrl(
-                  event.url,
-                  "links",
-                  `event_${index + 1}`,
-                );
-                const title = `Garam Masala Dating - ${city} - ${event.date}`;
-                return (
-                  <a
-                    href={ticketUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="event-link"
-                    data-ph-capture="ticket_click"
-                    data-ph-cta="ticket_vendor"
-                    data-ph-section="links_events"
-                    data-cta-position={`links_event_${index + 1}`}
-                    data-cta-text={`Get Tickets: ${city}`}
-                    data-destination-url={ticketUrl}
-                    data-link-url={ticketUrl}
-                    data-link-domain={domainFromUrl(ticketUrl)}
-                    data-event-city={city}
-                    data-event-date={event.isoDate ?? event.date}
-                    data-event-title={title}
-                    data-event-vendor={vendorFromUrl(ticketUrl)}
-                  >
-                    <span>
-                      <strong>{city}</strong>
-                      <small>{event.date}</small>
-                    </span>
-                    <span class="event-link__cta">Get Tickets</span>
-                  </a>
-                );
-              })}
-            </div>
-          </section>
-        )
-      }
+      {featuredEvents.length > 0 && (
+        <section class="event-strip" aria-labelledby="event-strip-heading">
+          <div class="section-heading">
+            <h2 id="event-strip-heading">Next tickets</h2>
+            <a
+              href="/tickets"
+              data-ph-capture="cta_clicked"
+              data-ph-cta="all_tickets"
+              data-ph-section="links_events"
+              data-cta-position="links_events_header"
+              data-cta-text="All shows"
+              data-destination-url="/tickets"
+            >
+              All shows
+            </a>
+          </div>
+          <div class="event-list">
+            {featuredEvents.map((event, index) => {
+              const city = formatEventLocation(event);
+              const ticketUrl = buildTicketUrl(
+                event.url,
+                "links",
+                `event_${index + 1}`,
+              );
+              const title = `Garam Masala Dating - ${city} - ${event.date}`;
+              return (
+                <a
+                  href={ticketUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="event-link"
+                  data-ph-capture="ticket_click"
+                  data-ph-cta="ticket_vendor"
+                  data-ph-section="links_events"
+                  data-cta-position={`links_event_${index + 1}`}
+                  data-cta-text={`Get Tickets: ${city}`}
+                  data-destination-url={ticketUrl}
+                  data-link-url={ticketUrl}
+                  data-link-domain={domainFromUrl(ticketUrl)}
+                  data-event-city={city}
+                  data-event-date={event.isoDate ?? event.date}
+                  data-event-title={title}
+                  data-event-vendor={vendorFromUrl(ticketUrl)}
+                >
+                  <span>
+                    <strong>{city}</strong>
+                    <small>{event.date}</small>
+                  </span>
+                  <span class="event-link__cta">Get Tickets</span>
+                </a>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       <section class="watch-section" aria-labelledby="watch-heading">
         <div class="section-heading">
           <h2 id="watch-heading">Watch episodes</h2>
         </div>
         <div class="watch-links">
-          {
-            episodeLinks.map((link, index) => (
-              <a
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="watch-link"
-                data-ph-capture="outbound_link_clicked"
-                data-ph-cta={link.ctaId}
-                data-ph-section="links_watch"
-                data-cta-position={`links_watch_${index + 1}`}
-                data-cta-text={link.label}
-                data-destination-url={link.href}
-                data-link-url={link.href}
-                data-link-domain={domainFromUrl(link.href)}
-              >
-                <span
-                  class="watch-icon"
-                  set:html={SOCIAL_ICON_SVGS[link.icon]}
-                />
-                <span>{link.label}</span>
-              </a>
-            ))
-          }
+          {episodeLinks.map((link, index) => (
+            <a
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="watch-link"
+              data-ph-capture="outbound_link_clicked"
+              data-ph-cta={link.ctaId}
+              data-ph-section="links_watch"
+              data-cta-position={`links_watch_${index + 1}`}
+              data-cta-text={link.label}
+              data-destination-url={link.href}
+              data-link-url={link.href}
+              data-link-domain={domainFromUrl(link.href)}
+            >
+              <span class="watch-icon" set:html={SOCIAL_ICON_SVGS[link.icon]} />
+              <span>{link.label}</span>
+            </a>
+          ))}
         </div>
       </section>
 
@@ -272,29 +261,27 @@ const pressLinks = pressItems
         >
           Booking and press inquiries
         </a>
-        {
-          pressLinks.length > 0 && (
-            <div class="press-list">
-              {pressLinks.map((item, index) => (
-                <a
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  data-ph-capture="outbound_link_clicked"
-                  data-ph-cta="press_link"
-                  data-ph-section="links_press"
-                  data-cta-position={`links_press_${index + 1}`}
-                  data-cta-text={item.source}
-                  data-destination-url={item.url}
-                  data-link-url={item.url}
-                  data-link-domain={domainFromUrl(item.url)}
-                >
-                  {item.source}
-                </a>
-              ))}
-            </div>
-          )
-        }
+        {pressLinks.length > 0 && (
+          <div class="press-list">
+            {pressLinks.map((item, index) => (
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-ph-capture="outbound_link_clicked"
+                data-ph-cta="press_link"
+                data-ph-section="links_press"
+                data-cta-position={`links_press_${index + 1}`}
+                data-cta-text={item.source}
+                data-destination-url={item.url}
+                data-link-url={item.url}
+                data-link-domain={domainFromUrl(item.url)}
+              >
+                {item.source}
+              </a>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   </main>

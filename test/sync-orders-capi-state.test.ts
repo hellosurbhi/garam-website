@@ -33,7 +33,7 @@ vi.mock("@/data/events", () => ({
   ],
 }));
 
-import { POST } from "./sync-orders";
+import { POST } from "@/pages/api/sync-orders";
 
 type Fields = Record<string, Record<string, unknown>>;
 

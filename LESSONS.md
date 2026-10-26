@@ -1,5 +1,13 @@
 # Lessons
 
+## A placeholder date sorts like a real date, so "coming soon" cards outranked buyable shows
+
+**What went wrong:** Austin, Houston, San Antonio, Dallas, San Diego and LA had placeholder `isoDate`s (Nov 19-22, Dec 24) earlier than the real Philadelphia Dec 6 and SF Dec 26 shows. Every list sorted by `isoDate` only, so people saw five "Tickets coming soon" cards before the shows they could actually buy.
+
+**Why:** the wrong assumption was that a date field means a confirmed show. A card with `url: ""` has a date only to place it on the calendar.
+
+**Rule:** every upcoming list is ordered by `sortUpcoming()` in `src/data/eventAvailability.ts` (buyable, then sold out or presale, then coming soon). Never sort events by date directly. "Show is over" means `endTime` in the show's timezone, not a UTC date comparison.
+
 ## SSG bakes whatever branch runs without window, then hydration swaps it
 
 **What went wrong:** `/contestant-prep` flashed the full guide, collapsed to a skeleton, then re-expanded after auth on every emailed link: a full-page double layout shift. `/contestant-portal` had the sibling problem, a one-line "Loading..." div that a ~2,000px form replaced.

@@ -17,19 +17,22 @@ import { CREATOR_URLS } from "@/data/socials";
 import { PAGES } from "@/data/copy";
 import { buildOrganizationJsonLd } from "@/utils/organizationSchema";
 import { YOUTUBE_VIDEO_ID, VIDEO_METADATA } from "@/lib/constants";
-import { events, allEvents, isDisplayable } from "@/data/events";
-import { isUpcomingByIso } from "@/utils/eventDate";
-import { getSchemaDated } from "@/utils/eventFilters";
+import { events, allEvents } from "@/data/events";
+import {
+  getSchemaDated,
+  getUpcomingDated,
+  getUpcomingOrdered,
+} from "@/utils/eventFilters";
 import { buildEventSchemas } from "@/utils/eventSchema";
 
 const HIDDEN_FROM_HOME = ["Salt Lake City", "Denver"];
 const today = new Date().toISOString().slice(0, 10);
-const upcomingEvents = allEvents.filter(
-  (e) => isUpcomingByIso(e, today) && !HIDDEN_FROM_HOME.includes(e.city),
+const upcomingEvents = getUpcomingOrdered(allEvents, today, Date.now()).filter(
+  (e) => !HIDDEN_FROM_HOME.includes(e.city),
 );
 const firstTicketUrl = "/tickets";
-const heroEvents = events
-  .filter((e) => isDisplayable(e) && e.isoDate && e.isoDate >= today && e.url)
+const heroEvents = getUpcomingDated(events, today, Date.now())
+  .filter((e) => e.url)
   .slice(0, 5);
 
 // Organization JSON-LD
@@ -124,11 +127,9 @@ const speakableJsonLd = JSON.stringify({
     <script type="application/ld+json" set:html={speakableJsonLd} />
     <script type="application/ld+json" set:html={videoJsonLd} />
     <script type="application/ld+json" set:html={eventSeriesJsonLd} />
-    {
-      eventSchemas.map((schema) => (
-        <script type="application/ld+json" set:html={schema} />
-      ))
-    }
+    {eventSchemas.map((schema) => (
+      <script type="application/ld+json" set:html={schema} />
+    ))}
   </Fragment>
 
   <HomeNav ticketsUrl={firstTicketUrl} />
@@ -161,8 +162,10 @@ const speakableJsonLd = JSON.stringify({
           stroke-linecap="round"
           stroke-linejoin="round"
           aria-hidden="true"
-          ><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg
         >
+          <path d="M18 6 6 18"></path>
+          <path d="m6 6 12 12"></path>
+        </svg>
       </button>
 
       <!-- min-height prevents CLS when switching between steps -->
@@ -196,13 +199,19 @@ const speakableJsonLd = JSON.stringify({
               autocomplete="address-level2"
               toolparamdescription="City the subscriber lives in, used to alert them when a show comes near them (optional)"
             />
-            <p id="popup-email-error" class="popup-error" hidden role="alert">
-            </p>
-            <button type="submit" class="popup-submit"
-              >Get My Discount Code!</button
-            >
+            <p
+              id="popup-email-error"
+              class="popup-error"
+              hidden
+              role="alert"
+            ></p>
+            <button type="submit" class="popup-submit">
+              Get My Discount Code!
+            </button>
           </form>
-          <button type="button" class="popup-dismiss">No thanks</button>
+          <button type="button" class="popup-dismiss">
+            No thanks
+          </button>
         </div>
 
         <div id="popup-step-2" hidden>
@@ -224,11 +233,19 @@ const speakableJsonLd = JSON.stringify({
               aria-label="Phone number"
               toolparamdescription="Mobile phone number for SMS-only deals (optional)"
             />
-            <p id="popup-phone-error" class="popup-error" hidden role="alert">
-            </p>
-            <button type="submit" class="popup-submit">Send Me Deals!</button>
+            <p
+              id="popup-phone-error"
+              class="popup-error"
+              hidden
+              role="alert"
+            ></p>
+            <button type="submit" class="popup-submit">
+              Send Me Deals!
+            </button>
           </form>
-          <button type="button" class="popup-skip">Maybe later</button>
+          <button type="button" class="popup-skip">
+            Maybe later
+          </button>
         </div>
       </div>
     </div>

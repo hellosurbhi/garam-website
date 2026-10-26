@@ -1,5 +1,12 @@
 # Changelog
 
+## fix(events): buyable shows always first, and finished shows redirect instead of dying (2026-10-26)
+
+- **Ordering**: Austin, Houston, San Antonio, Dallas, San Diego and LA carry placeholder dates earlier than the real Philadelphia Dec 6 and SF Dec 26 shows, and every list sorted by date alone, so "Tickets coming soon" cards sat above the shows people can buy. New `src/data/eventAvailability.ts` owns `isBuyableNow`, `ticketTier` and `sortUpcoming` (buyable, then sold out or presale, then coming soon; soonest first; undated last). `/tickets`, the home list, the hero, `/links` and the footer all go through it via `getUpcomingOrdered` / `getUpcomingDated`. Over-ness is judged by `endTime` + `timezone`, not the UTC date.
+- **Redirects**: new `src/data/eventRedirects.ts` (`resolveEventRedirect`, `needsRedirect`, `buildEventRedirectMap`). A past, canceled or replaced coming-soon show now goes to the next buyable show in the same city, else `/cities/<city>` (the waitlist), else `/tickets`. `/api/go/[slug]` resolves it at request time (and no longer 404s a known coming-soon slug or the suppressed `*-tba` slugs); `astro.config.mjs` emits a 302 for each `/events/<slug>` that no longer has a page, `getStaticPaths` skips those slugs, and the sitemap drops them.
+- Tests: `test/eventRedirects.test.ts` (new, including real-data ordering and redirect-target checks), `test/go-redirect.test.ts` updated.
+- Not changed: the now-unreachable "canceled" and "already happened" branches in `EventTicketCta.astro` stay until a cleanup pass (queued in ENHANCEMENTS.md).
+
 ## test(notifications): cover producer-notification branches to satisfy patch-coverage gate (2026-08-27)
 
 - PR #230's patch-coverage gate failed at 75.6% (168-line threshold requires 80%) on the producer-notification commit below. Extracted `reportClaimFailure()` (and its `PortalSignupData` type) out of `ContestantPortal.tsx` into `src/components/reportClaimFailure.ts` so it can be unit-tested directly, without a full jsdom render of `WaiverPanel` (its `ResizeObserver`-based unlock never fires in jsdom, since `clientHeight`/`scrollHeight` are always 0 there) — this also fixed a `react-refresh/only-export-components` lint error the export had introduced.
@@ -15,6 +22,7 @@
 - Does not include a fix for the underlying dead Zoho mailer itself (missing `ZOHO_SMTP_USER`/`ZOHO_SMTP_PASS`/`NOTIFICATION_EMAIL`/`ALERT_WEBHOOK_URL` in Vercel production) — that's a credential gap, not a code change, reported separately.
 - Found and logged, not fixed here (pre-existing, out of scope): `zohoMailer.ts`'s `sendMail` has no bounded SMTP timeout, sitewide — see BUGS.md.
 - Verified with `npm run check` (0 errors, 308 files).
+
 ## fix(ops): the security-rules gate stops drifting silently, and applicant emails stop reaching the public alert topic (2026-09-02)
 
 Two HIGH findings from the Codex 2026-08-12 review rounds, both open since the emulator suite and the push alert channel shipped.

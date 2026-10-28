@@ -1574,3 +1574,5 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - [ ] LOW: [CONFLICT] package-lock.json:519, @astrojs/react 7.1.0 declares optional peer oxc-transform-react ^0.145.0 while @vitejs/plugin-react 6.1.2 declares ^0.152.0, disjoint 0.x caret ranges that cannot both be satisfied, so any future attempt to adopt the oxc transform path hits an unresolvable dependency error. | Files: package-lock.json | PR: #305 | Head: 480c968ea5f120a4b15ac0f75a9b445d257c738d
 
 <!-- fable-routed PR #305 head 480c968ea5f120a4b15ac0f75a9b445d257c738d -->
+
+- [ ] ENHANCEMENT: Shrink the ~150 MB `_astro` build output so each production deploy stores less | Why: each deploy is ~207 MB (`_astro` 150 MB, `cities` 13 MB, `journal` 11 MB, functions 25 MB), which is what filled the Vercel 10 GB free tier | Files: astro.config.mjs, public/** | Plan: list the largest files in `dist/client/_astro`, find what imports them (images, bundled data), move heavy assets to compressed formats or external storage, rebuild and compare sizes | Verify: `du -sh dist/client/_astro` drops materially and the site renders unchanged

@@ -15,6 +15,11 @@ Closes the BUGS.md entries UNBOUNDED-SYNC-RUNTIME (both) and PERMANENT-RETRY-STA
 
 **Files:** `src/pages/api/sync-orders.ts`, `src/utils/concurrency.ts`, `src/lib/capi.ts`, `src/lib/capiRetryState.ts`, `src/lib/eventbrite.ts`, `src/types/analytics.ts`, plus tests
 
+## fix(vercel): skip Preview builds so deployment storage stays under the free tier (2026-10-26)
+
+- Vercel warned the team had used 100% of the 10 GB Deployment Storage. Cause: every branch push stored a ~200 MB Preview build (60 deployments existed, 46 of them Previews). Added `ignoreCommand` to `vercel.json` so only production builds run (`VERCEL_ENV`; exit 0 means skip). No CI workflow uses Previews (Playwright serves `dist/client` locally). Trade-off: the manual `npm run test:smoke:preview` script (`package.json`) needs a Preview URL, so it has nothing to test until Previews are turned back on. Skipped builds still appear as Canceled deployment records.
+- Deleted 57 old deployments (kept the 3 newest production; the production alias was confirmed to point at a kept one afterwards). Project retention was already 7 days.
+
 ## test(notifications): cover producer-notification branches to satisfy patch-coverage gate (2026-08-27)
 
 - PR #230's patch-coverage gate failed at 75.6% (168-line threshold requires 80%) on the producer-notification commit below. Extracted `reportClaimFailure()` (and its `PortalSignupData` type) out of `ContestantPortal.tsx` into `src/components/reportClaimFailure.ts` so it can be unit-tested directly, without a full jsdom render of `WaiverPanel` (its `ResizeObserver`-based unlock never fires in jsdom, since `clientHeight`/`scrollHeight` are always 0 there) — this also fixed a `react-refresh/only-export-components` lint error the export had introduced.

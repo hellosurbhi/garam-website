@@ -441,3 +441,11 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 **Why:** Astro treats every file under `src/pages` as a route and bundles it for the server, so the test's `vitest` import was pulled into the production build. Colocating tests next to the file under test is the habit that caused it.
 
 **Rule:** Tests never live under `src/pages`. Route handler tests go in `test/` (existing `test/sync-orders.test.ts` is the pattern; use a distinct filename when one exists).
+
+## Vercel free-tier storage filled up from Preview builds
+
+**What went wrong:** The team hit 100% of the 10 GB Deployment Storage. 60 deployments at ~200 MB each were stored, 46 of them Previews.
+
+**Why:** Assumed 7-day retention alone would bound storage, but about 40 deployments landed in 5 days, which is already past 10 GB inside the retention window.
+
+**Rule:** Retention bounds age, not volume. Keep `ignoreCommand` in `vercel.json` so only production builds are stored. The limit is in bytes, so when the usage email returns check the Usage page, not just the `vercel ls` count. Before deleting old deployments, resolve which one the production alias points to and keep it. Before turning Previews off, grep `package.json` for scripts that need a Preview URL (like `test:smoke:preview`).

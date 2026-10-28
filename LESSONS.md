@@ -434,6 +434,14 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 
 **Rule:** A scheduled or manual-only test workflow must page on failure, and any change to a form flow, footer or page layout must update `tests/smoke/` in the same PR. Never fake a binary or streaming protocol (Firestore WebChannel) with a canned `page.route()` body; assert the pipeline stages instead and leave the success path to the synthetic monitor.
 
+## A test file under src/pages broke the Vercel build while CI stayed green
+
+**What went wrong:** A new `src/pages/api/sync-orders.test.ts` passed vitest and lint, but the Vercel deployment failed with "Rolldown failed to resolve import vitest".
+
+**Why:** Astro treats every file under `src/pages` as a route and bundles it for the server, so the test's `vitest` import was pulled into the production build. Colocating tests next to the file under test is the habit that caused it.
+
+**Rule:** Tests never live under `src/pages`. Route handler tests go in `test/` (existing `test/sync-orders.test.ts` is the pattern; use a distinct filename when one exists).
+
 ## Vercel free-tier storage filled up from Preview builds
 
 **What went wrong:** The team hit 100% of the 10 GB Deployment Storage. 60 deployments at ~200 MB each were stored, 46 of them Previews.

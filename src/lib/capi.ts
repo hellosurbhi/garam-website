@@ -60,6 +60,68 @@ export interface CapiEventParams {
 export interface CapiResult {
   ok: boolean;
   error?: string;
+  /**
+   * True when Meta rejected the payload itself (Graph API code 100, invalid
+   * parameter), which fails identically on every retry.
+   */
+  terminal?: boolean;
+  /**
+   * True when Meta rejected our credentials (expired or revoked token, missing
+   * permission, pixel not accessible to the token). Fixing the token fixes
+   * every affected order, so callers must not spend an order's retry budget.
+   */
+  credential?: boolean;
+  /** True when Meta flagged the fault `is_transient`; a retry can succeed. */
+  transient?: boolean;
+}
+
+interface MetaErrorBody {
+  error?: { code?: number; error_subcode?: number; is_transient?: boolean };
+}
+
+function parseMetaError(errText: string): MetaErrorBody["error"] {
+  try {
+    return (JSON.parse(errText) as MetaErrorBody).error;
+  } catch {
+    return undefined;
+  }
+}
+
+// WHY not "any 4xx is terminal": Meta reports an expired token as HTTP 400
+// (OAuth code 190), not 401, and flags retryable faults with is_transient on
+// 4xx bodies. Treating those as terminal permanently abandoned every pending
+// purchase after one bad token. Only code 100 (invalid parameter) is a
+// payload fault a retry cannot fix; everything else stays retryable under
+// the attempt cap.
+const META_INVALID_PARAMETER = 100;
+// WHY subcode 33: Meta also answers code 100 when the dataset id does not
+// exist or the token cannot access it. That is a configuration fault fixed by
+// the token or pixel setup, not a payload fault, so it must not retire orders.
+const META_SUBCODE_INACCESSIBLE_OBJECT = 33;
+// Graph API: 190 OAuth/expired token, 102 session, 10 and 200 to 299 permissions.
+function isCredentialError(
+  status: number,
+  error: MetaErrorBody["error"],
+): boolean {
+  if (status === 401 || status === 403) return true;
+  const code = error?.code;
+  if (code === undefined) return false;
+  return (
+    code === 190 ||
+    code === 102 ||
+    code === 10 ||
+    (code >= 200 && code <= 299) ||
+    (code === META_INVALID_PARAMETER &&
+      error?.error_subcode === META_SUBCODE_INACCESSIBLE_OBJECT)
+  );
+}
+
+/**
+ * True when a failure says nothing about the order itself (credentials or a
+ * Meta-flagged transient fault), so the order keeps its full retry budget.
+ */
+export function holdsRetryBudget(result: CapiResult): boolean {
+  return result.credential === true || result.transient === true;
 }
 
 function sha256Hex(value: string): string {
@@ -107,10 +169,19 @@ function buildCustomData(
  * or misconfigured CAPI call must never break the redirect/sync flow that
  * calls it, so every failure is caught and returned as `{ ok: false }` for
  * the caller to log and move on from.
+ *
+ * `timeoutMs` is enforced via `AbortSignal.timeout`, not the codebase's
+ * `withTimeout` (a `Promise.race` that lets the loser keep running): a
+ * caller processing many orders (see sync-orders.ts's retry pass) needs the
+ * underlying request actually cancelled at the deadline, or a hung Meta
+ * endpoint leaves that many dangling in-flight fetches piling up in the
+ * background instead of freeing the connection. Caught by Codex pre-push
+ * review (2026-08-03).
  */
 export async function sendCapiEvent(
   params: CapiEventParams,
   accessToken: string,
+  timeoutMs = 5000,
 ): Promise<CapiResult> {
   const body = {
     data: [
@@ -135,6 +206,7 @@ export async function sendCapiEvent(
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
+        signal: AbortSignal.timeout(timeoutMs),
       },
     );
 
@@ -143,7 +215,20 @@ export async function sendCapiEvent(
       console.error(
         `[capi] ${params.eventName} failed: ${res.status} ${errText}`,
       );
-      return { ok: false, error: `${res.status}: ${errText}` };
+      const metaError = parseMetaError(errText);
+      const credential = isCredentialError(res.status, metaError);
+      const transient = metaError?.is_transient === true;
+      return {
+        ok: false,
+        error: `${res.status}: ${errText}`,
+        terminal:
+          res.status === 400 &&
+          metaError?.code === META_INVALID_PARAMETER &&
+          !transient &&
+          !credential,
+        credential,
+        transient,
+      };
     }
 
     return { ok: true };

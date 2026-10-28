@@ -1,5 +1,9 @@
 # Changelog
 
+## fix(vercel): key the ignored build step on the branch, not VERCEL_ENV (2026-10-28)
+
+- The change below also canceled the production build of its own merge commit (deployment `dpl_J9ss2PnGGMaNZPFbcDt6rFAVVAEq`, "canceled because the Ignored Build Step command is configured to skip this build"). `VERCEL_ENV` is not reliably set when the ignored build step runs, so `[ "$VERCEL_ENV" != "production" ]` skipped every build. The live site was unaffected because the skipped commit held only config and docs. `ignoreCommand` now compares the branch name to `main` (exit 0 skips every other branch), the documented variable for this step and the original plan.
+
 ## fix(vercel): skip Preview builds so deployment storage stays under the free tier (2026-10-26)
 
 - Vercel warned the team had used 100% of the 10 GB Deployment Storage. Cause: every branch push stored a ~200 MB Preview build (60 deployments existed, 46 of them Previews). Added `ignoreCommand` to `vercel.json` so only production builds run (`VERCEL_ENV`; exit 0 means skip). No CI workflow uses Previews (Playwright serves `dist/client` locally). Trade-off: the manual `npm run test:smoke:preview` script (`package.json`) needs a Preview URL, so it has nothing to test until Previews are turned back on. Skipped builds still appear as Canceled deployment records.

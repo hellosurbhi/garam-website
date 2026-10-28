@@ -441,3 +441,11 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 **Why:** Assumed 7-day retention alone would bound storage, but about 40 deployments landed in 5 days, which is already past 10 GB inside the retention window.
 
 **Rule:** Retention bounds age, not volume. Keep `ignoreCommand` in `vercel.json` so only production builds are stored. The limit is in bytes, so when the usage email returns check the Usage page, not just the `vercel ls` count. Before deleting old deployments, resolve which one the production alias points to and keep it. Before turning Previews off, grep `package.json` for scripts that need a Preview URL (like `test:smoke:preview`).
+
+## An ignored build step keyed on VERCEL_ENV skipped production
+
+**What went wrong:** `ignoreCommand` used `$VERCEL_ENV` and the merge commit's own production deploy was canceled, so main would have stopped deploying.
+
+**Why:** Assumed a system variable available in the build was also set in the ignored build step, and tested only the shell exit codes with a hand-set value instead of a real Vercel run.
+
+**Rule:** Key `ignoreCommand` on the branch name variable. After any change to it, confirm the next push to main produces a Ready production deployment, not only that a branch push is skipped.

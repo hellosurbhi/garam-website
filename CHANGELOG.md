@@ -1,5 +1,9 @@
 # Changelog
 
+## New York ticket link (2026-11-02)
+
+- Added the City Winery ticket link for the November 13 Manhattan show using the existing ticket button flow. Added the required start time, end time and price from the City Winery listing.
+
 ## test(notifications): cover producer-notification branches to satisfy patch-coverage gate (2026-08-27)
 
 - PR #230's patch-coverage gate failed at 75.6% (168-line threshold requires 80%) on the producer-notification commit below. Extracted `reportClaimFailure()` (and its `PortalSignupData` type) out of `ContestantPortal.tsx` into `src/components/reportClaimFailure.ts` so it can be unit-tested directly, without a full jsdom render of `WaiverPanel` (its `ResizeObserver`-based unlock never fires in jsdom, since `clientHeight`/`scrollHeight` are always 0 there) — this also fixed a `react-refresh/only-export-components` lint error the export had introduced.
@@ -15,6 +19,7 @@
 - Does not include a fix for the underlying dead Zoho mailer itself (missing `ZOHO_SMTP_USER`/`ZOHO_SMTP_PASS`/`NOTIFICATION_EMAIL`/`ALERT_WEBHOOK_URL` in Vercel production) — that's a credential gap, not a code change, reported separately.
 - Found and logged, not fixed here (pre-existing, out of scope): `zohoMailer.ts`'s `sendMail` has no bounded SMTP timeout, sitewide — see BUGS.md.
 - Verified with `npm run check` (0 errors, 308 files).
+
 ## fix(ops): the security-rules gate stops drifting silently, and applicant emails stop reaching the public alert topic (2026-09-02)
 
 Two HIGH findings from the Codex 2026-08-12 review rounds, both open since the emulator suite and the push alert channel shipped.

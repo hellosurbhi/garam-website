@@ -1,5 +1,9 @@
 # Changelog
 
+## New York event copy (2026-11-02)
+
+- Replaced the November 13 show description with the requested first Friday date copy.
+
 ## New York ticket link (2026-11-02)
 
 - Added the City Winery ticket link for the November 13 Manhattan show using the existing ticket button flow. Added the required start time, end time and price from the City Winery listing.

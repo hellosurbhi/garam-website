@@ -603,7 +603,7 @@ export const events: EventEntry[] = [
     // WHY: slug keeps the original date so /events/manhattan-2026-12-12 still resolves after the reschedule (same pattern as Philadelphia Oct 4)
     slug: buildEventSlug("manhattan", "2026-12-12"),
     description:
-      "Garam Masala Dating returns to The Loft at City Winery NYC. Tickets are not on sale yet, join the list to be first to know when they drop.",
+      "New York City, our first Friday date. You better come by. No excuses this time.",
     lineup: DEFAULT_LINEUP,
     ticketSource: "other-platform",
     url: "https://tickets.citywinery.com/event/garam-masala-comedy-dating-show-as6jo1",

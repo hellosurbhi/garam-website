@@ -612,9 +612,8 @@ export const events: EventEntry[] = [
     endTime: "21:30",
     price: "36",
     venue: VENUE_CITY_WINERY_NYC,
-    tagline: "Tickets coming soon",
     previousDate: "2026-12-12",
-    note: "Moved from Dec 12. Placeholder date, email capture only until tickets exist",
+    note: "Moved from Dec 12",
   },
   {
     date: "Nov 19",

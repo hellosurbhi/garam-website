@@ -39,7 +39,6 @@ describe("event location data", () => {
 
 describe("dated email-capture placeholders", () => {
   const placeholders = [
-    "2026-11-13",
     "2026-11-19",
     "2026-11-20",
     "2026-11-21",

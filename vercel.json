@@ -1,6 +1,11 @@
 {
   "buildCommand": "npm run build",
-  "ignoreCommand": "[ \"$VERCEL_ENV\" != \"production\" ]",
+  "git": {
+    "deploymentEnabled": {
+      "**": false,
+      "main": true
+    }
+  },
   "installCommand": "npm install -g npm@11 && npm ci --omit=dev",
   "crons": [
     { "path": "/api/cron/followups", "schedule": "0 14 * * *" },

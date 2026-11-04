@@ -1,5 +1,9 @@
 # Changelog
 
+## Restore production deployments (2026-11-03)
+
+- Replaced the environment-dependent ignored build command with Vercel Git branch rules that enable `main` and disable feature-branch previews. The previous command canceled production deployment of the merged New York ticket update, leaving the old Notify Me button live.
+
 ## New York ticket metadata (2026-11-03)
 
 - Removed stale ticket placeholder metadata and recorded the live ticket link in the show history.

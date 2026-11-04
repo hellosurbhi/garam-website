@@ -1,5 +1,9 @@
 # Lessons
 
+## A merged ticket update still needs a successful production deployment
+
+The New York ticket change passed local checks and merged, but Vercel canceled its production deployment at the ignored build step. Checking only the PR status missed this. For this ticket rollout, verify the merged commit reaches a ready production deployment and the public ticket button reaches the vendor. Use Vercel Git branch rules for the existing main-only deployment policy rather than the environment-dependent ignore command.
+
 ## SSG bakes whatever branch runs without window, then hydration swaps it
 
 **What went wrong:** `/contestant-prep` flashed the full guide, collapsed to a skeleton, then re-expanded after auth on every emailed link: a full-page double layout shift. `/contestant-portal` had the sibling problem, a one-line "Loading..." div that a ~2,000px form replaced.

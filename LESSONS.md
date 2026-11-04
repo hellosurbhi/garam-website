@@ -1,5 +1,9 @@
 # Lessons
 
+## Check city prefill before the geo cache refresh completes
+
+The first local browser check found that the newsletter script could read an old encoded city before attribution bootstrap cleared it. Guard geo-city reads with the cache version, then verify both forms with a seeded old session and a manually entered city. API tests alone did not catch the script-order race.
+
 ## A merged ticket update still needs a successful production deployment
 
 The New York ticket change passed local checks and merged, but Vercel canceled its production deployment at the ignored build step. Checking only the PR status missed this. For this ticket rollout, verify the merged commit reaches a ready production deployment and the public ticket button reaches the vendor. Use Vercel Git branch rules for the existing main-only deployment policy rather than the environment-dependent ignore command.

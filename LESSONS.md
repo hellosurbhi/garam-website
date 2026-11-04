@@ -448,4 +448,4 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 
 **Why:** Assumed 7-day retention alone would bound storage, but about 40 deployments landed in 5 days, which is already past 10 GB inside the retention window.
 
-**Rule:** Retention bounds age, not volume. Keep `ignoreCommand` in `vercel.json` so only production builds are stored. The limit is in bytes, so when the usage email returns check the Usage page, not just the `vercel ls` count. Before deleting old deployments, resolve which one the production alias points to and keep it. Before turning Previews off, grep `package.json` for scripts that need a Preview URL (like `test:smoke:preview`).
+**Rule:** Retention bounds age, not volume. Keep `git.deploymentEnabled` in `vercel.json` configured to enable `main` and disable feature-branch deployments. The limit is in bytes, so when the usage email returns check the Usage page, not just the `vercel ls` count. Before deleting old deployments, resolve which one the production alias points to and keep it. Before turning Previews off, grep `package.json` for scripts that need a Preview URL (like `test:smoke:preview`).

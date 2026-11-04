@@ -1,5 +1,9 @@
 # Changelog
 
+## Geo route coverage and deployment guidance (2026-11-04)
+
+- Added direct geo endpoint tests so the decoding regression cases count toward CI patch coverage. Corrected the older deployment lesson to match the Git branch configuration.
+
 ## Decode signup city names (2026-11-04)
 
 - Decode the Vercel city header before returning geo data. Invalid city encoding leaves the optional city blank. Refresh older session caches without reusing the encoded HTTP response, so existing visitors also get readable city names.

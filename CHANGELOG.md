@@ -1,5 +1,13 @@
 # Changelog
 
+## Automatic deployment cleanup (2026-11-05)
+
+- Added a project-scoped cleanup workflow after successful Vercel statuses and hourly. It protects the live production target, custom domains and in-flight releases. Requires the one-time `VERCEL_TOKEN` Actions secret; artifact reclamation follows Vercel recovery periods.
+
+## Clear packaged rate-limit checks (2026-11-05)
+
+- Replaced intentionally rejected Redis calls in packaged smoke checks with local allow and deny fixtures. Configured builds must enforce a simulated denial with HTTP 429. Output explicitly distinguishes these checks from live Redis connectivity.
+
 ## Tickets page Texas listings (2026-11-05)
 
 - Removed Texas show listings and their event structured data from the tickets page.

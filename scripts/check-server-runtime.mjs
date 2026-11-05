@@ -24,17 +24,31 @@ if (process.argv[2] === "--worker") {
   // analytics or customer services. Astro can inline build-time configuration,
   // so clearing the child environment alone does not prevent external calls.
   const networkAttempts = [];
-  globalThis.fetch = async (input) => {
+  let redisCalls = 0;
+  let denyRedisRequests = false;
+  globalThis.fetch = async (input, init) => {
     const url = new URL(input instanceof Request ? input.url : input);
     // The adapter fetches the static error page from Vercel after a 404.
     // Supply that asset locally rather than starting a second HTTP server.
     if (url.href === "https://localhost/404.html") {
       return new Response("Not found", { status: 404 });
     }
-    // Exercise the existing rate-limit fail-open path when a Vercel build
-    // contains Redis configuration. No request or credential leaves the test.
+    // Model the sliding-window Redis response locally. The package check must
+    // verify allow/deny handling without contacting the production database.
     if (url.hostname.endsWith(".upstash.io") && url.pathname === "/pipeline") {
-      throw new Error("Redis intentionally offline during runtime smoke check");
+      redisCalls++;
+      const commands =
+        input instanceof Request ? await input.json() : JSON.parse(init.body);
+      const results = commands.map((command) => {
+        assert.ok(
+          ["evalsha", "eval"].includes(String(command[0]).toLowerCase()),
+          "Unexpected Redis command in runtime smoke check",
+        );
+        const limit = Number(command[3 + Number(command[2])]);
+        assert.ok(Number.isFinite(limit) && limit > 0);
+        return { result: [denyRedisRequests ? -1 : limit - 1, limit] };
+      });
+      return Response.json(results);
     }
     networkAttempts.push(`${url.origin}${url.pathname}`);
     throw new Error("Runtime smoke checks must not call external services");
@@ -107,6 +121,29 @@ if (process.argv[2] === "--worker") {
     });
     assert.equal(response.status, 403, `Origin guard failed: ${path}`);
     assert.equal((await response.json()).error, "Forbidden");
+  }
+  if (redisCalls > 0) {
+    denyRedisRequests = true;
+    const limited = await request("/api/capture-lead", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-real-ip": "192.0.2.123",
+      },
+      body: "{}",
+    });
+    assert.equal(
+      limited.status,
+      429,
+      "Configured Redis denial must enforce rate limits",
+    );
+    console.log(
+      "Rate-limit integration passed with local Redis fixtures (allow and deny). Live Redis connectivity is not tested here.",
+    );
+  } else {
+    console.log(
+      "Redis is not configured in this artifact; live Redis connectivity is not tested here.",
+    );
   }
   assert.deepEqual(networkAttempts, []);
   console.log(

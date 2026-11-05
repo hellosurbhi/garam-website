@@ -98,3 +98,11 @@ Code conventions and AI-assistant rules live in `CLAUDE.md`.
 Source code is licensed under the [MIT License](LICENSE).
 
 Brand assets, host photography, the WebGL hero shader, and all editorial content (journal articles, city pages, tips) are proprietary and are NOT covered by the MIT License. See [NOTICE](NOTICE) for details.
+
+### Automatic deployment cleanup
+
+`Keep current Vercel deployment` runs after successful Vercel commit statuses and hourly. It deletes older finished deployments for this project, preserves the ready production target and custom domains, and stops if production changes during cleanup. In-progress deployments and builds newer than the live target are preserved until a successful release replaces it. Deleted artifacts follow Vercel's recovery and garbage-collection periods, so deletion does not prove immediate storage reclamation.
+
+One-time setup: add a Vercel token scoped to the owning team as the repository Actions secret `VERCEL_TOKEN`. The existing `VERCEL_DEPLOY_HOOK` cannot authorize cleanup. The workflow reports failure if the token is absent. No token belongs in source control. The script defaults to a dry run; the workflow explicitly uses `--apply`.
+
+Packaged runtime checks use local Redis allow/deny fixtures when Redis is configured. They verify the rate-limit integration, including HTTP 429 on denial, without contacting the production database. Live Redis connectivity requires a separate production check.

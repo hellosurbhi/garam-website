@@ -1,5 +1,9 @@
 # Lessons
 
+## Distinguish packaged fixtures from production connectivity
+
+Intentionally rejecting Redis calls in the packaged smoke test produced alarming fallback errors in successful builds. Use explicit local allow and deny fixtures for the package integration check, and label its limits. Verify the public ticket redirect and inspect production logs separately before reporting a rollout complete.
+
 ## Preserve usable cache data during format migrations
 
 The first city fix deleted valid cached data before a network refresh. Decode the completed legacy cache synchronously instead, then use one version-aware reader for form prefill and lead attribution. Verify offline sessions and partial responses.

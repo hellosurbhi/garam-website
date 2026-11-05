@@ -12,7 +12,7 @@
 
 ## Tickets page Texas listings (2026-11-05)
 
-- Removed Texas show listings and their event structured data from the tickets page.
+- Removed Texas show listings and their event structured data from the tickets page. Hide the sticky ticket CTA when no listed shows remain.
 
 ## Preserve cached signup locations (2026-11-05)
 

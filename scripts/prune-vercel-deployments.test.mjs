@@ -125,4 +125,21 @@ describe("deployment cleanup safeguards", () => {
       pruneDeployments(api, { apply: true, log: vi.fn() }),
     ).rejects.toThrow("permission denied");
   });
+  it.each([
+    "https://garammasaladating.com.attacker.test",
+    ["garammasaladating.com.attacker.test"],
+  ])("rejects non-exact production aliases %j", async (alias) => {
+    const base = fixture();
+    const api = vi.fn(async (path, method) => {
+      const value = await base(path, method);
+      if (path.startsWith("/v9/")) value.targets.production.alias = alias;
+      return value;
+    });
+    await expect(
+      pruneDeployments(api, { apply: true, log: vi.fn() }),
+    ).rejects.toThrow("Production domain");
+    expect(api.mock.calls.some(([, method]) => method === "DELETE")).toBe(
+      false,
+    );
+  });
 });

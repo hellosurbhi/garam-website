@@ -184,11 +184,13 @@ const eventSeriesJsonLd = JSON.stringify({
   <script>
     import "@/lib/presaleReveal";
   </script>
-  <StickyCTA
-    triggerSelector=".tickets-header"
-    label="Grab My Spot"
-    href="#shows"
-  />
+  {upcomingEvents.length > 0 && (
+    <StickyCTA
+      triggerSelector=".tickets-header"
+      label="Grab My Spot"
+      href="#shows"
+    />
+  )}
 </BaseLayout>
 
 <style>

@@ -19,7 +19,8 @@ export async function pruneDeployments(
       "No ready production target; refusing cleanup",
     );
     assert.ok(
-      current.alias?.includes("garammasaladating.com"),
+      Array.isArray(current.alias) &&
+        current.alias.some((alias) => alias === "garammasaladating.com"),
       "Production domain is not assigned; refusing cleanup",
     );
     assert.ok(
@@ -61,7 +62,11 @@ export async function pruneDeployments(
       PROJECT_ID,
       "Deployment belongs to another project",
     );
-    if (detail.alias?.some((alias) => !alias.endsWith(".vercel.app"))) {
+    assert.ok(
+      Array.isArray(detail.alias),
+      "Missing deployment aliases; refusing cleanup",
+    );
+    if (detail.alias.some((alias) => !alias.endsWith(".vercel.app"))) {
       log(`Preserved ${deployment.uid}: custom domain attached`);
       continue;
     }

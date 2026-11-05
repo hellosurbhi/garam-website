@@ -117,10 +117,12 @@ function getCachedGeo(): GeoResponse {
   };
 }
 
+/** Return a city only from a completed, migrated cache; incomplete or failed caches expose no city. */
 export function getGeoCity(): string | null {
   return getCachedGeo().city || null;
 }
 
+/** Fetch once per session when no completed cache exists, clearing partial fields before storing a coherent response. */
 function bootstrapGeoData(): void {
   getCachedGeo();
   const cacheState = safeSessionStorage.getItem(GEO_FETCHED_KEY);

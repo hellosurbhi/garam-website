@@ -37,6 +37,7 @@ const withdrawnTicketSlugs = new Set([
   "dallas-2026-11-22",
 ]);
 
+/** Return upcoming dated shows while excluding the explicitly withdrawn Texas placeholders. */
 export function getTicketPageUpcoming(
   events: EventEntry[],
   todayISO: string,

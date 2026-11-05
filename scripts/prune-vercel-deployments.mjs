@@ -5,11 +5,13 @@ const PROJECT_ID = "prj_9ByFOoPnfaBp2DKY30DcWI8TDeJq";
 const TEAM_ID = "team_tn5J4k4lUV5PSlx7jxjjNu3r";
 const TERMINAL_STATES = new Set(["READY", "ERROR", "CANCELED"]);
 
+/** List or delete obsolete finished deployments while protecting production, custom domains and newer ready builds. Defaults to a dry run; unsafe API state throws. */
 export async function pruneDeployments(
   api,
   { apply = false, log = console.log } = {},
 ) {
   const projectPath = `/v9/projects/${PROJECT_ID}`;
+  /** Validate the project, ready production target and assigned domain before any deletion. */
   const readProduction = async () => {
     const project = await api(projectPath);
     assert.equal(project.id, PROJECT_ID, "Unexpected Vercel project");
@@ -96,6 +98,7 @@ if (
       token,
       "Configure the VERCEL_TOKEN repository Actions secret before running cleanup",
     );
+    /** Call the team-scoped Vercel API with a bounded timeout and reject unsuccessful responses. */
     const api = async (path, method = "GET") => {
       const url = new URL(path, "https://api.vercel.com");
       url.searchParams.set("teamId", TEAM_ID);

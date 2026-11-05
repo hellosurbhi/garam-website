@@ -109,7 +109,7 @@ Packaged runtime checks use local Redis allow/deny fixtures when Redis is config
 
 ### Ticket-page city waitlists
 
-Dated shows appear first. Chicago December 4, 2026 collects Notify Me signups until a ticket link is supplied. The bottom ten undated cities are ranked by unique normalized email per explicitly selected city, excluding cities with upcoming listed shows. Only notify, waitlist and city-request sources count; geolocation and general newsletter submissions do not. Equal counts sort alphabetically.
+Dated shows appear first. Chicago December 4, 2026 collects Notify Me signups until a ticket link is supplied. The ten undated cities with the most signups appear below the dated shows. Cities are ranked by unique normalized email per explicitly selected city, excluding cities with upcoming listed shows. Only notify, waitlist and city-request sources count; geolocation and general newsletter submissions do not. Equal counts sort alphabetically.
 
 `src/lib/waitlistRanking.server.ts` refreshes a server-only aggregate in `systemConfig/ticketWaitlistRanking` on the first request after 24 hours. The waitlist server island is cached at the CDN for one hour. It reads only email, city, source city slug and source from leads; it stores only city slugs, counts and refresh time in the aggregate. Existing Firebase admin configuration is used. No scheduled deployments or new service credentials are required. If refresh fails, the previous aggregate remains available. If no aggregate can be loaded, a city-request prompt replaces the list; static ticket purchase links remain available.
 

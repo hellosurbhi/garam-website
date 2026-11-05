@@ -582,6 +582,21 @@ describe("bootstrapLeadAttribution — geo data", () => {
     expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 
+  it("withholds stale geo fields from a failed cache without fetching", async () => {
+    sessionStorage.setItem("gmd-geo-fetched", "failed");
+    for (const field of ["city", "region", "country", "timezone"]) {
+      sessionStorage.setItem(`gmd-geo-${field}`, "stale");
+    }
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    expect(getGeoCity()).toBeNull();
+    const result = await buildLeadAttribution({ source: "test" });
+    expect(result.geoCity).toBeUndefined();
+    expect(result.geoRegion).toBeUndefined();
+    expect(result.geoCountry).toBeUndefined();
+    expect(result.geoTimezone).toBeUndefined();
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
   it("does not mix incomplete old fields with a partial response", async () => {
     for (const field of ["city", "region", "country", "timezone"]) {
       sessionStorage.setItem(`gmd-geo-${field}`, "stale");

@@ -58,18 +58,19 @@ describe("deployment cleanup safeguards", () => {
       false,
     );
   });
-  it.each([{ ready: false }, { domain: false }, { changes: true }])(
-    "refuses unsafe production state %j",
-    async (options) => {
-      const api = fixture(options);
-      await expect(
-        pruneDeployments(api, { apply: true, log: vi.fn() }),
-      ).rejects.toThrow();
-      expect(api.mock.calls.some(([, method]) => method === "DELETE")).toBe(
-        false,
-      );
-    },
-  );
+  it.each([
+    [{ ready: false }, "No ready production target"],
+    [{ domain: false }, "Production domain"],
+    [{ changes: true }, "Production changed during cleanup"],
+  ])("refuses unsafe production state %j", async (options, message) => {
+    const api = fixture(options);
+    await expect(
+      pruneDeployments(api, { apply: true, log: vi.fn() }),
+    ).rejects.toThrow(message);
+    expect(api.mock.calls.some(([, method]) => method === "DELETE")).toBe(
+      false,
+    );
+  });
   it("fails if the API is unavailable", async () => {
     await expect(
       pruneDeployments(vi.fn().mockRejectedValue(new Error("offline"))),

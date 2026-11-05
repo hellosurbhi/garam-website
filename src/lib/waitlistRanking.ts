@@ -8,6 +8,7 @@ export interface CityWaitlistCount {
   count: number;
 }
 
+/** Normalize city labels for matching, retaining malformed URL encoding literally. */
 function normalize(value: string): string {
   let decoded = value;
   try {
@@ -47,6 +48,7 @@ for (const [name, slug] of Object.entries({
 }))
   aliases.set(name, slug);
 
+/** Count unique normalized emails for explicitly requested cities, excluding smoke fixtures and unrelated signup sources. */
 export function rankWaitlistCities(
   leads: Array<Record<string, unknown>>,
 ): CityWaitlistCount[] {
@@ -88,6 +90,7 @@ export function rankWaitlistCities(
     );
 }
 
+/** Build the ten highest-demand undated cards, excluding scheduled cities and breaking ties alphabetically. */
 export function selectWaitlistCards(
   counts: CityWaitlistCount[],
   upcoming: EventEntry[],

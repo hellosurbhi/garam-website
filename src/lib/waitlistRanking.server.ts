@@ -14,6 +14,7 @@ const cacheSchema = z.object({
 });
 let pending: Promise<CityWaitlistCount[]> | undefined;
 
+/** Read the daily aggregate or refresh it from selected lead fields. Retain a valid old aggregate if refreshing fails. */
 async function refresh(): Promise<CityWaitlistCount[]> {
   const parsed = cacheSchema.safeParse(await fsGet(CACHE_PATH));
   const cached = parsed.success ? parsed.data : undefined;
@@ -88,6 +89,7 @@ async function refresh(): Promise<CityWaitlistCount[]> {
   }
 }
 
+/** Share one bounded ranking lookup across concurrent requests and release it after settlement. */
 export function getWaitlistRanking(): Promise<CityWaitlistCount[]> {
   pending ??= withTimeout(refresh(), 15_000, "waitlist ranking").finally(() => {
     pending = undefined;

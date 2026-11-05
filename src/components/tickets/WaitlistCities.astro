@@ -1,4 +1,5 @@
 ---
+import { PAGES } from "@/data/copy";
 import { allEvents } from "@/data/events";
 import { getTicketPageUpcoming } from "@/utils/eventFilters";
 import { getWaitlistRanking } from "@/lib/waitlistRanking.server";
@@ -32,4 +33,4 @@ try {
     sourcePage="tickets"
   />
 ))}
-{cards.length === 0 && <p>Want a show near you? Request your city below.</p>}
+{cards.length === 0 && <p>{PAGES.tickets.waitlistEmpty}</p>}

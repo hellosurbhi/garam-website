@@ -1,5 +1,9 @@
 # Changelog
 
+## PR review follow-up (2026-11-05)
+
+- Name the waitlist region for assistive technology, centralize its fallback copy and clarify that the highest-demand cities appear below dated shows. Strengthen failed-cache and deployment-safety regression tests and document the affected functions.
+
 ## Automatic rescheduled-show redirects (2026-11-05)
 
 - Generate permanent event-page and ticket-route redirects from each show’s current and historical dates. Preserve canonical URLs, support repeated reschedules and reject ambiguous aliases. Restore old Philadelphia links and add current-date aliases for NYC, SF, LA and San Diego without duplicate sitemap entries.

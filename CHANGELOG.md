@@ -1,5 +1,9 @@
 # Changelog
 
+## Tickets page Texas listings (2026-11-05)
+
+- Removed Texas show listings and their event structured data from the tickets page.
+
 ## Preserve cached signup locations (2026-11-05)
 
 - Decode completed legacy city caches in place so offline visitors retain their location. Read city, region, country and timezone from the same completed cache. Discard incomplete records before a fresh lookup and keep failures distinct from success.

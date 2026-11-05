@@ -5,6 +5,35 @@
 - `scripts/check-server-runtime.mjs` faked Upstash being offline by throwing a network error. `@upstash/redis` retries thrown fetch errors 5 times with exponential backoff, which outlasted the 1500ms ceiling in `src/lib/rateLimit.ts`, so every `postbuild` run logged "Timeout: Upstash rate limit check" instead of failing open at once. The stub now returns a 503 response, which is not retried and matches how a real outage looks. Production traffic was never affected.
 - `eslint.config.js` now ignores `.claude/worktrees`. Nested session checkouts each carry a tsconfig and made `npm run lint` fail with "multiple candidate TSConfigRootDirs", which blocked pre-push.
 - Verified: `npm run test:runtime` exits 0 with no timeout lines, `npm run lint` exits 0, Codex tier E review APPROVED.
+## Geo route coverage and deployment guidance (2026-11-04)
+
+- Added direct geo endpoint tests so the decoding regression cases count toward CI patch coverage. Corrected the older deployment lesson to match the Git branch configuration.
+
+## Decode signup city names (2026-11-04)
+
+- Decode the Vercel city header before returning geo data. Invalid city encoding leaves the optional city blank. Refresh older session caches without reusing the encoded HTTP response, so existing visitors also get readable city names.
+- Added packaged API regression checks for encoded spaces, accented names and malformed headers, plus session-cache migration tests.
+
+## Restore production deployments (2026-11-03)
+
+- Replaced the environment-dependent ignored build command with Vercel Git branch rules that enable `main` and disable feature-branch previews. The previous command canceled production deployment of the merged New York ticket update, leaving the old Notify Me button live.
+
+## New York ticket metadata (2026-11-03)
+
+- Removed stale ticket placeholder metadata and recorded the live ticket link in the show history.
+
+## New York event copy (2026-11-02)
+
+- Replaced the November 13 show description with the requested first Friday date copy.
+
+## New York ticket link (2026-11-02)
+
+- Added the City Winery ticket link for the November 13 Manhattan show using the existing ticket button flow. Added the required start time, end time and price from the City Winery listing.
+
+## fix(vercel): skip Preview builds so deployment storage stays under the free tier (2026-10-26)
+
+- Vercel warned the team had used 100% of the 10 GB Deployment Storage. Cause: every branch push stored a ~200 MB Preview build (60 deployments existed, 46 of them Previews). Added `ignoreCommand` to `vercel.json` so only production builds run (`VERCEL_ENV`; exit 0 means skip). No CI workflow uses Previews (Playwright serves `dist/client` locally). Trade-off: the manual `npm run test:smoke:preview` script (`package.json`) needs a Preview URL, so it has nothing to test until Previews are turned back on. Skipped builds still appear as Canceled deployment records.
+- Deleted 57 old deployments (kept the 3 newest production; the production alias was confirmed to point at a kept one afterwards). Project retention was already 7 days.
 
 ## test(notifications): cover producer-notification branches to satisfy patch-coverage gate (2026-08-27)
 

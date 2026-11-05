@@ -13,13 +13,17 @@ const leadSource = `spice-list-${pageName}`;
   aria-labelledby="spicelist-heading"
   data-lead-source={leadSource}
 >
-  <h2 id="spicelist-heading" data-reveal>Join the Spice List</h2>
+  <h2 id="spicelist-heading" data-reveal>
+    Join the Spice List
+  </h2>
 
   <!-- min-height prevents CLS when switching between steps -->
   <div class="nl-steps-wrapper" data-reveal>
     <div id="nl-already-subscribed" class="nl-alt-cta" hidden>
       <p>You're already on the list!</p>
-      <a href="/apply" class="spicelist-alt-btn">Apply to Be on Stage!</a>
+      <a href="/apply" class="spicelist-alt-btn">
+        Apply to Be on Stage!
+      </a>
     </div>
     <div id="nl-step-1">
       <p>
@@ -51,9 +55,9 @@ const leadSource = `spice-list-${pageName}`;
           toolparamdescription="City the subscriber lives in, used to alert them when a show comes near them (optional)"
         />
         <p id="nl-email-error" class="spicelist-error" hidden role="alert"></p>
-        <button type="submit" data-testid="signup-submit"
-          >Get My Discount Code!</button
-        >
+        <button type="submit" data-testid="signup-submit">
+          Get My Discount Code!
+        </button>
       </form>
       <p class="spicelist-trust">Just discount codes and show announcements.</p>
     </div>
@@ -79,9 +83,9 @@ const leadSource = `spice-list-${pageName}`;
         <p id="nl-phone-error" class="spicelist-error" hidden role="alert"></p>
         <button type="submit">Send Me Deals!</button>
       </form>
-      <button type="button" id="nl-skip" class="spicelist-skip"
-        >Maybe later</button
-      >
+      <button type="button" id="nl-skip" class="spicelist-skip">
+        Maybe later
+      </button>
     </div>
 
     <div
@@ -99,9 +103,9 @@ const leadSource = `spice-list-${pageName}`;
 <script>
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent, trackError } from "@/lib/analytics";
-  import { buildLeadAttribution } from "@/lib/leadAttribution";
+  import { buildLeadAttribution, getGeoCity } from "@/lib/leadAttribution";
   import { reportFailure } from "@/lib/failureAlert";
-  import { safeLocalStorage, safeSessionStorage } from "@/lib/safeStorage";
+  import { safeLocalStorage } from "@/lib/safeStorage";
   import {
     captureLead,
     updateLeadPhone,
@@ -135,7 +139,7 @@ const leadSource = `spice-list-${pageName}`;
   ) as HTMLInputElement | null;
   if (nlCityInput) {
     const prefillCity = () => {
-      const geoCity = safeSessionStorage.getItem("gmd-geo-city");
+      const geoCity = getGeoCity();
       if (geoCity && !nlCityInput.value) nlCityInput.value = geoCity;
       return Boolean(geoCity);
     };

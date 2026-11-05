@@ -70,11 +70,25 @@ if (process.argv[2] === "--worker") {
     assert.equal(response.status, 404, `API module failed to load: ${route}`);
   }
 
-  const geo = await request("/api/geo", {
-    headers: { "x-vercel-ip-city": "Chicago", "x-vercel-ip-country": "US" },
-  });
-  assert.equal(geo.status, 200);
-  assert.equal((await geo.json()).city, "Chicago");
+  for (const [header, expected] of [
+    ["Chicago", "Chicago"],
+    ["New%20York%20City", "New York City"],
+    ["S%C3%A3o%20Paulo", "São Paulo"],
+    ["New York City", "New York City"],
+    ["City%2520Name", "City%20Name"],
+    ["%E0%A4%A", undefined],
+    ["%", undefined],
+    ["", undefined],
+    [undefined, undefined],
+  ]) {
+    const headers = new Headers({ "x-vercel-ip-country": "US" });
+    if (header !== undefined) headers.set("x-vercel-ip-city", header);
+    const geo = await request("/api/geo", { headers });
+    assert.equal(geo.status, 200);
+    const data = await geo.json();
+    assert.equal(data.city, expected, `Geo city decoding failed for ${header}`);
+    assert.equal(data.country, "US");
+  }
 
   const unknown = await request("/api/go/runtime-smoke-missing-event");
   assert.equal(unknown.status, 404);

@@ -85,7 +85,7 @@ scripts/          # Build-time scripts (prerender, data migration)
 
 ## Deployment
 
-The site deploys to **Vercel**. Git deployments run from `main`; feature-branch previews are disabled through `git.deploymentEnabled` in `vercel.json` and the project-level `previewDeploymentsDisabled` setting to prevent older branches from creating previews. `npm run build` generates Astro's static pages and server function, then checks that the packaged server starts in isolation and handles ticket redirects and safe API requests. This check runs in CI and Vercel builds before release. It blocks external fetches and does not submit customer data. Security headers (CSP, HSTS, X-Frame-Options) are configured in `vercel.json`.
+The site deploys to **Vercel**. Git deployments run from `main`; feature-branch previews are disabled through `git.deploymentEnabled` in `vercel.json` and the project-level `previewDeploymentsDisabled` setting to prevent older branches from creating previews. `npm run build` generates Astro's static pages and server function, then checks that the packaged server starts in isolation and handles ticket redirects and safe API requests. This check runs in CI and Vercel builds before release. It blocks external fetches except one authenticated, read-only Redis PING and does not submit customer data. Security headers (CSP, HSTS, X-Frame-Options) are configured in `vercel.json`.
 
 ## Contributing
 
@@ -105,7 +105,7 @@ Brand assets, host photography, the WebGL hero shader, and all editorial content
 
 One-time setup: add a Vercel token scoped to the owning team as the repository Actions secret `VERCEL_TOKEN`. The existing `VERCEL_DEPLOY_HOOK` cannot authorize cleanup. The workflow reports failure if the token is absent. No token belongs in source control. The script defaults to a dry run; the workflow explicitly uses `--apply`.
 
-Packaged runtime checks use local Redis allow/deny fixtures when Redis is configured. They verify the rate-limit integration, including HTTP 429 on denial, without contacting the production database. Live Redis connectivity requires a separate production check.
+Packaged runtime checks use local Redis allow/deny fixtures when Redis is configured. They verify the rate-limit integration, including HTTP 429 on denial, without contacting the production database. The packaged smoke test also sends one real authenticated PING using the Redis connection exercised by the artifact. It requires PONG within five seconds and fails on authentication, network or response errors. Production builds fail if no Redis connection was exercised; unconfigured local and CI builds explicitly report the health check as skipped. The PING does not write keys or change rate-limit counters.
 
 ### Ticket-page city waitlists
 

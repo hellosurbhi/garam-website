@@ -11,19 +11,26 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
+import { checkRedisHealth } from "./check-redis-health.mjs";
+
 const script = fileURLToPath(import.meta.url);
 
 if (process.argv[2] === "--worker") {
   const artifact = process.argv[3];
-  const { routes, ticketLinks } = JSON.parse(readFileSync(0, "utf8"));
+  const { routes, ticketLinks, requireRedisHealth } = JSON.parse(
+    readFileSync(0, "utf8"),
+  );
   const config = JSON.parse(
     readFileSync(join(artifact, ".vc-config.json"), "utf8"),
   );
 
-  // WHY: exercise the real packaged handler without contacting vendors,
-  // analytics or customer services. Astro can inline build-time configuration,
+  // WHY: exercise the real packaged handler without submitting data to vendors,
+  // analytics or customer services. Only the explicit Redis PING may use the network.
+  // Astro can inline build-time configuration,
   // so clearing the child environment alone does not prevent external calls.
   const networkAttempts = [];
+  const realFetch = globalThis.fetch.bind(globalThis);
+  let redisConnection;
   let redisCalls = 0;
   let denyRedisRequests = false;
   globalThis.fetch = async (input, init) => {
@@ -40,6 +47,13 @@ if (process.argv[2] === "--worker") {
     // verify allow/deny handling without contacting the production database.
     if (url.hostname.endsWith(".upstash.io") && url.pathname === "/pipeline") {
       redisCalls++;
+      redisConnection ??= {
+        url: url.origin,
+        authorization: new Headers(
+          init?.headers ??
+            (input instanceof Request ? input.headers : undefined),
+        ).get("authorization"),
+      };
       const commands =
         input instanceof Request ? await input.json() : JSON.parse(init.body);
       const results = commands.map((command) => {
@@ -141,14 +155,14 @@ if (process.argv[2] === "--worker") {
       "Configured Redis denial must enforce rate limits",
     );
     console.log(
-      "Rate-limit integration passed with local Redis fixtures (allow and deny). Live Redis connectivity is not tested here.",
-    );
-  } else {
-    console.log(
-      "Redis is not configured in this artifact; live Redis connectivity is not tested here.",
+      "Rate-limit integration passed with local Redis fixtures (allow and deny). Connectivity is verified by the separate read-only PING below.",
     );
   }
   assert.deepEqual(networkAttempts, []);
+  await checkRedisHealth(redisConnection, {
+    fetch: realFetch,
+    required: requireRedisHealth,
+  });
   console.log(
     `Packaged server passed: ${routes.length} API modules, ${ticketLinks.length} ticket redirects, geo and form guards.`,
   );
@@ -201,7 +215,11 @@ if (process.argv[2] === "--worker") {
     const child = spawnSync(process.execPath, [script, "--worker", isolated], {
       cwd: isolated,
       env: { NODE_ENV: "production" },
-      input: JSON.stringify({ routes, ticketLinks }),
+      input: JSON.stringify({
+        routes,
+        ticketLinks,
+        requireRedisHealth: process.env.VERCEL_ENV === "production",
+      }),
       encoding: "utf8",
       timeout: 30_000,
       maxBuffer: 2 * 1024 * 1024,

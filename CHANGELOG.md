@@ -1,5 +1,9 @@
 # Changelog
 
+## Live Redis health in packaged smoke tests (2026-11-05)
+
+- Add one authenticated read-only Redis PING to the packaged smoke test, using the artifact’s actual connection. Require PONG within five seconds and fail production builds on missing configuration or failed health checks. Keep allow/deny fixtures for behavior tests without changing real counters.
+
 ## Integrate runtime smoke fixes from main (2026-11-05)
 
 - Resolve the overlap with PR #332 by retaining local Redis allow/deny fixtures without thrown fetch errors or external requests. Preserve main’s lint configuration, automation changes and documentation alongside this branch’s fixes.

@@ -69,6 +69,7 @@ export interface EventEntry {
   timezone?: string; // IANA timezone identifier, e.g. "America/New_York" (default: "America/New_York")
   status?: "canceled"; // Canceled shows stay in this file forever; every surface hides them
   previousDate?: string; // YYYY-MM-DD the show was originally scheduled for, set on reschedule
+  previousDates?: string[]; // Additional former dates, retained across repeated reschedules
   note?: string; // Human log note, e.g. "Canceled", "Moved from Aug 2"; see EVENTS-HISTORY.md
 }
 

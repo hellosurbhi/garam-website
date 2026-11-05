@@ -1,5 +1,9 @@
 # Changelog
 
+## Automatic rescheduled-show redirects (2026-11-05)
+
+- Generate permanent event-page and ticket-route redirects from each show’s current and historical dates. Preserve canonical URLs, support repeated reschedules and reject ambiguous aliases. Restore old Philadelphia links and add current-date aliases for NYC, SF, LA and San Diego without duplicate sitemap entries.
+
 ## Correct deployment-storage accounting (2026-11-05)
 
 - Corrected cleanup output and documentation: deleted deployments stop counting toward storage immediately, while daily usage peaks can remain visible. Recovery retention does not continue charging storage. Verified the account is Hobby and its Deployment Storage allowance is 10 GB.

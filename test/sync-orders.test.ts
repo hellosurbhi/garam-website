@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { EventEntry } from "@/data/events";
 import { DEFAULT_LINEUP } from "@/data/lineup";
-import { orderSyncableEvents } from "@/pages/api/sync-orders";
+import { orderSyncableEvents, SYNC_WINDOW_DAYS } from "@/pages/api/sync-orders";
 
 function makeEvent(overrides: Partial<EventEntry> = {}): EventEntry {
   return {
@@ -47,5 +47,39 @@ describe("orderSyncableEvents", () => {
     const tba = makeEvent({ ticketSource: "none", url: "" });
 
     expect(orderSyncableEvents([otherPlatform, tba])).toEqual([]);
+  });
+
+  describe("trailing window", () => {
+    const now = new Date("2026-08-28T12:00:00Z");
+
+    it("keeps a show inside the window and drops one past it", () => {
+      const recent = makeEvent({ eventbriteId: "1", isoDate: "2026-08-26" });
+      const cutoff = new Date(now);
+      cutoff.setUTCDate(cutoff.getUTCDate() - (SYNC_WINDOW_DAYS + 1));
+      const tooOld = makeEvent({
+        eventbriteId: "2",
+        isoDate: cutoff.toISOString().slice(0, 10),
+      });
+      expect(orderSyncableEvents([recent, tooOld], now)).toEqual([recent]);
+    });
+
+    it("keeps a TBA show with no isoDate regardless of age", () => {
+      const tba = makeEvent({ eventbriteId: "3", isoDate: undefined });
+      expect(orderSyncableEvents([tba], now)).toEqual([tba]);
+    });
+
+    it("computes the cutoff in the event's own timezone, not UTC", () => {
+      // 2026-08-28T01:00:00Z is 2026-08-27 9pm in America/New_York. A naive
+      // UTC cutoff lands on 2026-08-25 and would wrongly drop a show dated
+      // 2026-08-24, which is only three local days ago.
+      const eveningUtc = new Date("2026-08-28T01:00:00Z");
+      const stillWithin = makeEvent({
+        eventbriteId: "4",
+        isoDate: "2026-08-24",
+      });
+      expect(orderSyncableEvents([stillWithin], eveningUtc)).toEqual([
+        stillWithin,
+      ]);
+    });
   });
 });

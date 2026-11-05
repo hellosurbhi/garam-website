@@ -461,3 +461,7 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 ## 2026-11-05: Smoke tests must intercept the actual persistence boundary
 
 Browser interception of Firestore does not intercept server-side Firestore writes behind `/api/capture-lead`. The weekly critical-flow tests submitted the reserved smoke identity into production. Mock the same-origin lead API, block unmocked mutations and verify the returned fixture ID. Count unique emails per selected city and exclude the confirmed fixture when reporting historical demand.
+
+## 2026-11-05: Verify storage accounting separately from recovery retention
+
+Vercel's recovery window is not a continued billing window. Its Deployment Storage documentation says a deleted deployment stops contributing immediately, although reported daily peaks can remain. The authenticated Hobby dashboard showed 2.37 GB / 10 GB on November 5. Verify the actual Usage screen when billing APIs return costs_not_found; do not infer storage usage from deployment counts or treat separate storage allowances as one interchangeable pool.

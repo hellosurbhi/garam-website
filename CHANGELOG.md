@@ -1,5 +1,9 @@
 # Changelog
 
+## Correct deployment-storage accounting (2026-11-05)
+
+- Corrected cleanup output and documentation: deleted deployments stop counting toward storage immediately, while daily usage peaks can remain visible. Recovery retention does not continue charging storage. Verified the account is Hobby and its Deployment Storage allowance is 10 GB.
+
 ## Ranked city waitlists and isolated smoke tests (2026-11-05)
 
 - Removed 599 verified historical smoke-test lead records after owner approval. Exact identity, fixture contact values, source pages and unchanged document versions were checked before deletion. Post-cleanup verification found zero fixture records and all 650 non-test records unchanged.
@@ -16,7 +20,7 @@
 
 - Enabled project-level preview blocking so branches with older configuration cannot create preview deployments. Production auto-assignment remains enabled on `main`.
 
-- Added a project-scoped cleanup workflow after successful Vercel statuses and hourly. It protects the live production target, custom domains and in-flight releases. Requires the one-time `VERCEL_TOKEN` Actions secret; artifact reclamation follows Vercel recovery periods.
+- Added a project-scoped cleanup workflow after successful Vercel statuses and hourly. It protects the live production target, custom domains and in-flight releases. Requires the one-time `VERCEL_TOKEN` Actions secret; deleted deployments immediately stop contributing to storage usage.
 
 ## Clear packaged rate-limit checks (2026-11-05)
 

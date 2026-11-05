@@ -81,7 +81,7 @@ export async function pruneDeployments(
     removed++;
   }
   log(
-    `Preserved production ${current.id}; ${apply ? "deleted" : "eligible"}: ${removed}. Storage reclamation follows Vercel's recovery period.`,
+    `Preserved production ${current.id}; ${apply ? "deleted" : "eligible"}: ${removed}. Deleted deployments stop contributing to storage usage immediately; dashboard totals can reflect earlier daily peaks.`,
   );
   return removed;
 }

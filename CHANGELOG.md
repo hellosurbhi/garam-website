@@ -1,5 +1,11 @@
 # Changelog
 
+## fix(test): runtime smoke check fails open instantly, and lint stops scanning session worktrees (2026-11-05)
+
+- `scripts/check-server-runtime.mjs` faked Upstash being offline by throwing a network error. `@upstash/redis` retries thrown fetch errors 5 times with exponential backoff, which outlasted the 1500ms ceiling in `src/lib/rateLimit.ts`, so every `postbuild` run logged "Timeout: Upstash rate limit check" instead of failing open at once. The stub now returns a 503 response, which is not retried and matches how a real outage looks. Production traffic was never affected.
+- `eslint.config.js` now ignores `.claude/worktrees`. Nested session checkouts each carry a tsconfig and made `npm run lint` fail with "multiple candidate TSConfigRootDirs", which blocked pre-push.
+- Verified: `npm run test:runtime` exits 0 with no timeout lines, `npm run lint` exits 0, Codex tier E review APPROVED.
+
 ## test(notifications): cover producer-notification branches to satisfy patch-coverage gate (2026-08-27)
 
 - PR #230's patch-coverage gate failed at 75.6% (168-line threshold requires 80%) on the producer-notification commit below. Extracted `reportClaimFailure()` (and its `PortalSignupData` type) out of `ContestantPortal.tsx` into `src/components/reportClaimFailure.ts` so it can be unit-tested directly, without a full jsdom render of `WaiverPanel` (its `ResizeObserver`-based unlock never fires in jsdom, since `clientHeight`/`scrollHeight` are always 0 there) — this also fixed a `react-refresh/only-export-components` lint error the export had introduced.
@@ -15,6 +21,7 @@
 - Does not include a fix for the underlying dead Zoho mailer itself (missing `ZOHO_SMTP_USER`/`ZOHO_SMTP_PASS`/`NOTIFICATION_EMAIL`/`ALERT_WEBHOOK_URL` in Vercel production) — that's a credential gap, not a code change, reported separately.
 - Found and logged, not fixed here (pre-existing, out of scope): `zohoMailer.ts`'s `sendMail` has no bounded SMTP timeout, sitewide — see BUGS.md.
 - Verified with `npm run check` (0 errors, 308 files).
+
 ## fix(ops): the security-rules gate stops drifting silently, and applicant emails stop reaching the public alert topic (2026-09-02)
 
 Two HIGH findings from the Codex 2026-08-12 review rounds, both open since the emulator suite and the push alert channel shipped.

@@ -17,24 +17,18 @@ export default {
   // mutate: ['src/utils/**/*.ts', 'src/lib/**/*.ts'],
 
   // Reporters
-  // "json" (default output: reports/mutation/mutation.json) feeds
-  // scripts/mutation-audit-summary.mjs, the weekly scheduled audit
-  // (.github/workflows/mutation-audit.yml) -- it needs per-mutant file/line/
-  // mutator detail that the clear-text table doesn't carry.
-  reporters: ["html", "clear-text", "progress", "json"],
+  reporters: ["html", "clear-text", "progress"],
   htmlReporter: {
     fileName: "reports/mutation/index.html",
   },
 
   // Thresholds: reporting bands only. The absolute break gate is null on purpose,
-  // and there is deliberately no push-time or PR-time mutation gate at all as of
-  // 2026-07-16 (see .github/workflows/mutation-audit.yml). Mutation testing takes
-  // 15-20 minutes and was wired into the push path as a ratchet that could only
-  // ever get weaker over time (any dip became the new floor) while also blocking
-  // routine pushes for minutes. It now runs on a schedule instead and opens a
-  // draft PR with findings; a human decides what to do with them. Running
-  // `npm run mutation:ratchet` locally is still available as an optional,
-  // manual, non-blocking check, not an enforced gate.
+  // and there is deliberately no push-time, PR-time or scheduled mutation gate.
+  // Mutation testing takes 15-20 minutes; wired into the push path as a ratchet
+  // it could only ever get weaker (any dip became the new floor) while blocking
+  // routine pushes, and the scheduled GitHub workflow that replaced it was
+  // removed 2026-11-05 because its report-only PRs were never read. Running
+  // `npm run mutation:ratchet` locally is an optional, manual, non-blocking check.
   thresholds: {
     high: 80,
     low: 65,

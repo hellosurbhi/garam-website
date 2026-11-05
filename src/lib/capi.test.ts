@@ -58,6 +58,28 @@ describe("sendCapiEvent failure classification", () => {
     expect(holdsRetryBudget(result)).toBe(true);
   });
 
+  it.each([429, 500, 503])(
+    "holds the retry budget on HTTP %i even without Meta's is_transient flag",
+    async (status) => {
+      vi.spyOn(console, "error").mockImplementation(() => undefined);
+      stubFetch(status);
+      const result = await sendCapiEvent(params, "tok");
+      expect(result).toMatchObject({ transient: true, terminal: false });
+      expect(holdsRetryBudget(result)).toBe(true);
+    },
+  );
+
+  it("holds the retry budget on a timeout or network error", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockRejectedValue(new DOMException("timed out", "TimeoutError")),
+    );
+    const result = await sendCapiEvent(params, "tok");
+    expect(result).toMatchObject({ ok: false, transient: true });
+    expect(holdsRetryBudget(result)).toBe(true);
+  });
+
   it("classifies an expired token (HTTP 400, code 190) as a credential failure", async () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
     stubFetch(400, { error: { code: 190 } });

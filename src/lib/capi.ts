@@ -71,7 +71,11 @@ export interface CapiResult {
    * every affected order, so callers must not spend an order's retry budget.
    */
   credential?: boolean;
-  /** True when Meta flagged the fault `is_transient`; a retry can succeed. */
+  /**
+   * True when the failure says nothing about the order and a later retry can
+   * succeed: Meta flagged it `is_transient`, or it was a 429, a 5xx or a
+   * network/timeout error that never reached Meta's validation.
+   */
   transient?: boolean;
 }
 
@@ -117,8 +121,9 @@ function isCredentialError(
 }
 
 /**
- * True when a failure says nothing about the order itself (credentials or a
- * Meta-flagged transient fault), so the order keeps its full retry budget.
+ * True when a failure says nothing about the order itself (credentials, a
+ * Meta-flagged transient fault, 429, 5xx or a network/timeout error), so the
+ * order keeps its full retry budget.
  */
 export function holdsRetryBudget(result: CapiResult): boolean {
   return result.credential === true || result.transient === true;
@@ -217,7 +222,14 @@ export async function sendCapiEvent(
       );
       const metaError = parseMetaError(errText);
       const credential = isCredentialError(res.status, metaError);
-      const transient = metaError?.is_transient === true;
+      // WHY 429 and 5xx count as transient, not only Meta's is_transient flag:
+      // Meta rate limits and outages often omit the flag, and the daily cron
+      // would then burn MAX_CAPI_ATTEMPTS in five days and forfeit every
+      // pending purchase even though Meta recovers on its own.
+      const transient =
+        metaError?.is_transient === true ||
+        res.status === 429 ||
+        res.status >= 500;
       return {
         ok: false,
         error: `${res.status}: ${errText}`,
@@ -235,6 +247,8 @@ export async function sendCapiEvent(
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error(`[capi] ${params.eventName} error: ${msg}`);
-    return { ok: false, error: msg };
+    // A timeout or network failure never reached Meta's validation, so it
+    // says nothing about the order and must not spend its retry budget.
+    return { ok: false, error: msg, transient: true };
   }
 }

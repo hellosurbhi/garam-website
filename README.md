@@ -85,7 +85,7 @@ scripts/          # Build-time scripts (prerender, data migration)
 
 ## Deployment
 
-The site deploys to **Vercel**. Git deployments run from `main`; feature-branch previews are disabled through `git.deploymentEnabled` in `vercel.json` to limit deployment storage. `npm run build` generates Astro's static pages and server function, then checks that the packaged server starts in isolation and handles ticket redirects and safe API requests. This check runs in CI and Vercel builds before release. It blocks external fetches and does not submit customer data. Security headers (CSP, HSTS, X-Frame-Options) are configured in `vercel.json`.
+The site deploys to **Vercel**. Git deployments run from `main`; feature-branch previews are disabled through `git.deploymentEnabled` in `vercel.json` and the project-level `previewDeploymentsDisabled` setting to prevent older branches from creating previews. `npm run build` generates Astro's static pages and server function, then checks that the packaged server starts in isolation and handles ticket redirects and safe API requests. This check runs in CI and Vercel builds before release. It blocks external fetches and does not submit customer data. Security headers (CSP, HSTS, X-Frame-Options) are configured in `vercel.json`.
 
 ## Contributing
 
@@ -101,7 +101,7 @@ Brand assets, host photography, the WebGL hero shader, and all editorial content
 
 ### Automatic deployment cleanup
 
-`Keep current Vercel deployment` runs after successful Vercel commit statuses and hourly. It deletes older finished deployments for this project, preserves the ready production target and custom domains, and stops if production changes during cleanup. In-progress deployments and builds newer than the live target are preserved until a successful release replaces it. Deleted artifacts follow Vercel's recovery and garbage-collection periods, so deletion does not prove immediate storage reclamation.
+`Keep current Vercel deployment` runs after successful Vercel commit statuses and hourly. It deletes older finished deployments for this project, preserves the ready production target and custom domains, and stops if production changes during cleanup. In-progress deployments and ready builds newer than the live target are preserved until a successful release replaces it. Deleted artifacts follow Vercel's recovery and garbage-collection periods, so deletion does not prove immediate storage reclamation.
 
 One-time setup: add a Vercel token scoped to the owning team as the repository Actions secret `VERCEL_TOKEN`. The existing `VERCEL_DEPLOY_HOOK` cannot authorize cleanup. The workflow reports failure if the token is absent. No token belongs in source control. The script defaults to a dry run; the workflow explicitly uses `--apply`.
 

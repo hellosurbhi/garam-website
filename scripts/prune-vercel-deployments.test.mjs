@@ -27,6 +27,7 @@ function fixture({ ready = true, domain = true, changes = false } = {}) {
           { uid: "dpl_old", state: "READY", created: 50 },
           { uid: "dpl_building", state: "BUILDING", created: 90 },
           { uid: "dpl_newer", state: "READY", created: 110 },
+          { uid: "dpl_failed", state: "ERROR", created: 110 },
           { uid: "dpl_custom", state: "READY", created: 50 },
         ],
         pagination: { next: null },
@@ -44,9 +45,10 @@ function fixture({ ready = true, domain = true, changes = false } = {}) {
 describe("deployment cleanup safeguards", () => {
   it("deletes only older terminal deployments without custom domains", async () => {
     const api = fixture();
-    expect(await pruneDeployments(api, { apply: true, log: vi.fn() })).toBe(1);
+    expect(await pruneDeployments(api, { apply: true, log: vi.fn() })).toBe(2);
     expect(api.mock.calls.filter(([, method]) => method === "DELETE")).toEqual([
       ["/v13/deployments/dpl_old", "DELETE"],
+      ["/v13/deployments/dpl_failed", "DELETE"],
     ]);
   });
   it("defaults to a dry run", async () => {
@@ -94,7 +96,7 @@ describe("deployment cleanup safeguards", () => {
         return { deployments: [], pagination: { next: 75 } };
       return base(path, method);
     });
-    expect(await pruneDeployments(api, { apply: true, log: vi.fn() })).toBe(1);
+    expect(await pruneDeployments(api, { apply: true, log: vi.fn() })).toBe(2);
     expect(api.mock.calls.some(([path]) => path.includes("until=75"))).toBe(
       true,
     );

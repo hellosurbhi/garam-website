@@ -51,7 +51,7 @@ export async function pruneDeployments(
       deployment.uid === current.id ||
       !TERMINAL_STATES.has(deployment.state) ||
       !Number.isFinite(deployment.created) ||
-      deployment.created > current.createdAt
+      (deployment.state === "READY" && deployment.created > current.createdAt)
     )
       continue;
     assert.match(deployment.uid, /^dpl_[a-zA-Z0-9]+$/);

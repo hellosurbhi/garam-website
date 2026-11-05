@@ -2,6 +2,8 @@
 
 ## Automatic deployment cleanup (2026-11-05)
 
+- Enabled project-level preview blocking so branches with older configuration cannot create preview deployments. Production auto-assignment remains enabled on `main`.
+
 - Added a project-scoped cleanup workflow after successful Vercel statuses and hourly. It protects the live production target, custom domains and in-flight releases. Requires the one-time `VERCEL_TOKEN` Actions secret; artifact reclamation follows Vercel recovery periods.
 
 ## Clear packaged rate-limit checks (2026-11-05)

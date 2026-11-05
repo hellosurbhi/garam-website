@@ -1,5 +1,9 @@
 # Changelog
 
+## Houston and Dallas waitlists (2026-11-05)
+
+- Keep Houston and Dallas as the last two tickets-page listings with Notify Me and no dates. Austin and San Antonio remain excluded.
+
 ## Automatic deployment cleanup (2026-11-05)
 
 - Enabled project-level preview blocking so branches with older configuration cannot create preview deployments. Production auto-assignment remains enabled on `main`.

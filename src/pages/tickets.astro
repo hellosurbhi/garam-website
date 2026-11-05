@@ -21,7 +21,13 @@ const datedUpcoming = getUpcomingDated(ticketPageEvents, today);
 const tbaEvents = ticketPageEvents.filter(
   (e) => isDisplayable(e) && !e.isoDate,
 );
-const upcomingEvents = [...datedUpcoming, ...tbaEvents];
+const texasWaitlist = ["houston", "dallas"].flatMap((citySlug) => {
+  const event = allEvents.find(
+    (entry) => entry.citySlug === citySlug && isDisplayable(entry),
+  );
+  return event ? [{ ...event, date: "", isoDate: undefined }] : [];
+});
+const upcomingEvents = [...datedUpcoming, ...tbaEvents, ...texasWaitlist];
 
 const taglineMap = buildTaglineMap(upcomingEvents);
 

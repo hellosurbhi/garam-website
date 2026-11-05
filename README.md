@@ -106,3 +106,11 @@ Brand assets, host photography, the WebGL hero shader, and all editorial content
 One-time setup: add a Vercel token scoped to the owning team as the repository Actions secret `VERCEL_TOKEN`. The existing `VERCEL_DEPLOY_HOOK` cannot authorize cleanup. The workflow reports failure if the token is absent. No token belongs in source control. The script defaults to a dry run; the workflow explicitly uses `--apply`.
 
 Packaged runtime checks use local Redis allow/deny fixtures when Redis is configured. They verify the rate-limit integration, including HTTP 429 on denial, without contacting the production database. Live Redis connectivity requires a separate production check.
+
+### Ticket-page city waitlists
+
+Dated shows appear first. Chicago December 4, 2026 collects Notify Me signups until a ticket link is supplied. The bottom ten undated cities are ranked by unique normalized email per explicitly selected city, excluding cities with upcoming listed shows. Only notify, waitlist and city-request sources count; geolocation and general newsletter submissions do not. Equal counts sort alphabetically.
+
+`src/lib/waitlistRanking.server.ts` refreshes a server-only aggregate in `systemConfig/ticketWaitlistRanking` on the first request after 24 hours. The waitlist server island is cached at the CDN for one hour. It reads only email, city, source city slug and source from leads; it stores only city slugs, counts and refresh time in the aggregate. Existing Firebase admin configuration is used. No scheduled deployments or new service credentials are required. If refresh fails, the previous aggregate remains available. If no aggregate can be loaded, a city-request prompt replaces the list; static ticket purchase links remain available.
+
+Browser critical-flow smoke tests mock lead capture and updates and block unmocked mutations. The reserved smoke identity is rejected by the capture API and excluded from rankings. Historical fixture records are not deleted by this change.

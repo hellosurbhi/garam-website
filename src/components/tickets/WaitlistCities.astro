@@ -1,0 +1,35 @@
+---
+import { allEvents } from "@/data/events";
+import { getTicketPageUpcoming } from "@/utils/eventFilters";
+import { getWaitlistRanking } from "@/lib/waitlistRanking.server";
+import { selectWaitlistCards } from "@/lib/waitlistRanking";
+import TicketCard from "./TicketCard.astro";
+
+const upcoming = getTicketPageUpcoming(
+  allEvents,
+  new Date().toISOString().slice(0, 10),
+);
+let cards: ReturnType<typeof selectWaitlistCards> = [];
+try {
+  cards = selectWaitlistCards(await getWaitlistRanking(), upcoming);
+  Astro.response.headers.set(
+    "Cache-Control",
+    "public, max-age=0, s-maxage=3600",
+  );
+} catch (error) {
+  console.error(
+    "[waitlist-ranking] Unable to load city list",
+    error instanceof Error ? error.message : "Unknown error",
+  );
+  Astro.response.headers.set("Cache-Control", "no-store");
+}
+---
+
+{cards.map((event, index) => (
+  <TicketCard
+    event={event}
+    index={index + upcoming.length}
+    sourcePage="tickets"
+  />
+))}
+{cards.length === 0 && <p>Want a show near you? Request your city below.</p>}

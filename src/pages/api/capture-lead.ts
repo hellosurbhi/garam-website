@@ -1,3 +1,4 @@
+import { SMOKE_TEST_EMAIL } from "@/lib/smokeTestIdentity";
 import type { APIRoute } from "astro";
 import { validateEmail } from "@/utils/validateEmail";
 import { addKitSubscriber, type KitSubscriberFields } from "@/lib/kit";
@@ -104,7 +105,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   // Validate email
   const email = body.email?.trim().toLowerCase();
-  if (!email || validateEmail(email)) {
+  if (!email || email === SMOKE_TEST_EMAIL || validateEmail(email)) {
     return new Response(JSON.stringify({ error: "Valid email required" }), {
       status: 400,
       headers: { "Content-Type": "application/json" },

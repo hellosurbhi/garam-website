@@ -32,6 +32,17 @@ function firestoreBody(fetchSpy: ReturnType<typeof vi.spyOn>, callIndex = 0) {
 }
 
 describe("capture-lead handler", () => {
+  it("rejects the reserved smoke identity before persistence or notifications", async () => {
+    const network = vi.spyOn(globalThis, "fetch");
+    const response = await POST(
+      makeContext(
+        makeRequest({ email: " SmokeTest@Example.com ", city: "Houston" }),
+      ),
+    );
+    expect(response.status).toBe(400);
+    expect(network).not.toHaveBeenCalled();
+  });
+
   beforeEach(() => {
     vi.restoreAllMocks();
     import.meta.env.PUBLIC_FIREBASE_PROJECT_ID = "test-project";

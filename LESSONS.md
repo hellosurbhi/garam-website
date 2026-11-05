@@ -457,3 +457,7 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 **Why:** Assumed 7-day retention alone would bound storage, but about 40 deployments landed in 5 days, which is already past 10 GB inside the retention window.
 
 **Rule:** Retention bounds age, not volume. Keep `git.deploymentEnabled` in `vercel.json` configured to enable `main` and disable feature-branch deployments. The limit is in bytes, so when the usage email returns check the Usage page, not just the `vercel ls` count. Before deleting old deployments, resolve which one the production alias points to and keep it. Before turning Previews off, grep `package.json` for scripts that need a Preview URL (like `test:smoke:preview`).
+
+## 2026-11-05: Smoke tests must intercept the actual persistence boundary
+
+Browser interception of Firestore does not intercept server-side Firestore writes behind `/api/capture-lead`. The weekly critical-flow tests submitted the reserved smoke identity into production. Mock the same-origin lead API, block unmocked mutations and verify the returned fixture ID. Count unique emails per selected city and exclude the confirmed fixture when reporting historical demand.

@@ -1,0 +1,96 @@
+import { z } from "zod";
+import { fsGet, fsPatch } from "./firestoreRest";
+import { getFirestoreAccessToken } from "./firestoreAdmin";
+import { rankWaitlistCities, type CityWaitlistCount } from "./waitlistRanking";
+import { withTimeout } from "@/utils/withTimeout";
+
+const CACHE_PATH = "systemConfig/ticketWaitlistRanking";
+const DAY_MS = 86_400_000;
+const cacheSchema = z.object({
+  updatedAt: z.number(),
+  counts: z.array(
+    z.object({ citySlug: z.string(), count: z.number().int().positive() }),
+  ),
+});
+let pending: Promise<CityWaitlistCount[]> | undefined;
+
+async function refresh(): Promise<CityWaitlistCount[]> {
+  const parsed = cacheSchema.safeParse(await fsGet(CACHE_PATH));
+  const cached = parsed.success ? parsed.data : undefined;
+  if (cached && Date.now() - cached.updatedAt < DAY_MS) return cached.counts;
+  try {
+    const token = await getFirestoreAccessToken();
+    const project = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
+    if (!project) throw new Error("PUBLIC_FIREBASE_PROJECT_ID is required");
+    const response = await fetch(
+      `https://firestore.googleapis.com/v1/projects/${project}/databases/(default)/documents:runQuery`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        signal: AbortSignal.timeout(10_000),
+        body: JSON.stringify({
+          structuredQuery: {
+            from: [{ collectionId: "leads" }],
+            select: {
+              fields: ["email", "city", "sourceCitySlug", "source"].map(
+                (fieldPath) => ({ fieldPath }),
+              ),
+            },
+          },
+        }),
+      },
+    );
+    if (!response.ok)
+      throw new Error(`Waitlist query failed: ${response.status}`);
+    const rows = z
+      .array(
+        z
+          .object({
+            document: z
+              .object({
+                fields: z
+                  .record(
+                    z.string(),
+                    z
+                      .object({ stringValue: z.string().optional() })
+                      .passthrough(),
+                  )
+                  .optional(),
+              })
+              .optional(),
+          })
+          .passthrough(),
+      )
+      .parse(await response.json());
+    const leads = rows
+      .filter((row) => row.document)
+      .map((row) =>
+        Object.fromEntries(
+          Object.entries(row.document?.fields ?? {}).map(([key, value]) => [
+            key,
+            value.stringValue ?? "",
+          ]),
+        ),
+      );
+    const counts = rankWaitlistCities(leads);
+    await fsPatch(CACHE_PATH, { updatedAt: Date.now(), counts });
+    return counts;
+  } catch (error) {
+    if (!cached) throw error;
+    console.error(
+      "[waitlist-ranking] Refresh failed; retaining last successful ranking",
+      error instanceof Error ? error.message : "Unknown error",
+    );
+    return cached.counts;
+  }
+}
+
+export function getWaitlistRanking(): Promise<CityWaitlistCount[]> {
+  pending ??= withTimeout(refresh(), 15_000, "waitlist ranking").finally(() => {
+    pending = undefined;
+  });
+  return pending;
+}

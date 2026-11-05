@@ -2,13 +2,14 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import NotifyModal from "@/components/NotifyModal.astro";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
-import { events, allEvents, isDisplayable } from "@/data/events";
+import { allEvents } from "@/data/events";
 import { buildEventSchemas } from "@/utils/eventSchema";
 import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
 import { buildTaglineMap } from "@/utils/eventTaglines";
-import { getUpcomingDated, getSchemaDated } from "@/utils/eventFilters";
+import { getTicketPageUpcoming } from "@/utils/eventFilters";
 import { PAGES } from "@/data/copy";
 import TicketCard from "@/components/tickets/TicketCard.astro";
+import WaitlistCities from "@/components/tickets/WaitlistCities.astro";
 import StickyCTA from "@/components/StickyCTA.astro";
 
 const TITLE = "Tickets & Upcoming Shows";
@@ -16,18 +17,7 @@ const DESC =
   "Get tickets to Garam Masala Dating shows in New York and beyond. America's #1 live desi comedy dating show and South Asian singles mixer. Now touring LA, SF, and San Diego.";
 
 const today = new Date().toISOString().slice(0, 10);
-const ticketPageEvents = allEvents.filter((event) => event.stateAbbr !== "TX");
-const datedUpcoming = getUpcomingDated(ticketPageEvents, today);
-const tbaEvents = ticketPageEvents.filter(
-  (e) => isDisplayable(e) && !e.isoDate,
-);
-const texasWaitlist = ["houston", "dallas"].flatMap((citySlug) => {
-  const event = allEvents.find(
-    (entry) => entry.citySlug === citySlug && isDisplayable(entry),
-  );
-  return event ? [{ ...event, date: "", isoDate: undefined }] : [];
-});
-const upcomingEvents = [...datedUpcoming, ...tbaEvents, ...texasWaitlist];
+const upcomingEvents = getTicketPageUpcoming(allEvents, today);
 
 const taglineMap = buildTaglineMap(upcomingEvents);
 
@@ -37,12 +27,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 ]);
 
 // Individual Event JSON-LD blocks (one per upcoming dated show)
-const eventSchemas = buildEventSchemas(
-  getSchemaDated(
-    events.filter((event) => event.stateAbbr !== "TX"),
-    today,
-  ),
-);
+const eventSchemas = buildEventSchemas(upcomingEvents);
 
 // EventSeries JSON-LD — signals this is a recurring show, not a one-off
 const eventSeriesJsonLd = JSON.stringify({
@@ -131,6 +116,16 @@ const eventSeriesJsonLd = JSON.stringify({
           for announcements.
         </p>
       )}
+
+      <div
+        class="tickets-list"
+        id="waitlist-cities"
+        aria-label="Cities waiting for a show"
+      >
+        <WaitlistCities server:defer>
+          <p slot="fallback">Loading waitlist cities…</p>
+        </WaitlistCities>
+      </div>
 
       <NotifyModal source="tickets-notify" />
 

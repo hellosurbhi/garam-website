@@ -6,8 +6,8 @@
  * Group C: Ticket / watch link integrity
  * Group D: Primary CTA sanity
  *
- * Firebase SDK calls go directly to googleapis.com; page.route() intercepts
- * them at the Playwright network layer so no real Firebase account is needed.
+ * Form writes are intercepted before they reach either the site API or Firebase.
+ * Unmocked mutations are blocked, including when this suite targets production.
  */
 
 import { test, expect, type Page } from "@playwright/test";
@@ -60,6 +60,58 @@ async function mockFirebase(page: Page) {
     }),
   );
 }
+
+// These tests exercise form behavior. Server persistence is covered separately.
+// A context-level backstop blocks mutations that a future form adds without a mock.
+test.beforeEach(async ({ context, page }) => {
+  await context.route("**/*", (route) =>
+    ["GET", "HEAD", "OPTIONS"].includes(route.request().method())
+      ? route.continue()
+      : route.abort("blockedbyclient"),
+  );
+  await mockFirebase(page);
+  await page.route("**/api/capture-lead", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        ok: true,
+        id: "smoke-lead-local",
+        updateToken: "smoke-update-local",
+      }),
+    }),
+  );
+  await page.route("**/api/update-lead", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ ok: true }),
+    }),
+  );
+});
+
+test("form isolation: lead writes are mocked and unmocked writes are blocked", async ({
+  page,
+}) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  const capture = await page.evaluate(async () => {
+    const response = await fetch("/api/capture-lead", {
+      method: "POST",
+      body: JSON.stringify({ email: "smoketest@example.com" }),
+    });
+    return response.json();
+  });
+  expect(capture.id).toBe("smoke-lead-local");
+  const blocked = await page.evaluate(async () => {
+    try {
+      await fetch("/api/unmocked-smoke-write", { method: "POST" });
+      return false;
+    } catch {
+      return true;
+    }
+  });
+  expect(blocked).toBe(true);
+});
 
 /** Fill every required apply form field so isValid becomes true. */
 async function fillApplyForm(page: Page) {

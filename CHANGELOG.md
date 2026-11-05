@@ -1,5 +1,11 @@
 # Changelog
 
+## Ranked city waitlists and isolated smoke tests (2026-11-05)
+
+- Add Chicago December 4 as Notify Me. Below dated shows, display the ten highest waitlist cities without an upcoming tickets-page show, sorted by unique email count with alphabetical ties. Refresh counts daily on demand using a server-only aggregate cache; repeated submissions and the known smoke fixture do not inflate rankings.
+- Keep purchase links static and available independently of the waitlist lookup. Reuse the Notify Me dialog for asynchronously loaded cards.
+- Intercept lead capture and phone updates in browser smoke tests, block unmocked mutations and reject the reserved smoke email at the lead API before persistence or notifications.
+
 ## Houston and Dallas waitlists (2026-11-05)
 
 - Keep Houston and Dallas as the last two tickets-page listings with Notify Me and no dates. Austin and San Antonio remain excluded.

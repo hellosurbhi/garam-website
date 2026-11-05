@@ -6,7 +6,17 @@ import tseslint from "typescript-eslint";
 import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig([
-  globalIgnores(["dist", ".astro", ".stryker-tmp", ".worktrees"]),
+  // WHY .claude/worktrees: Claude Code session worktrees live inside the
+  // checkout and each carries its own tsconfig, so linting them made
+  // typescript-eslint fail with "multiple candidate TSConfigRootDirs" and
+  // blocked every pre-push. They are gitignored copies of other branches.
+  globalIgnores([
+    "dist",
+    ".astro",
+    ".stryker-tmp",
+    ".worktrees",
+    ".claude/worktrees",
+  ]),
   {
     files: ["**/*.{ts,tsx}"],
     extends: [

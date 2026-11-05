@@ -33,6 +33,9 @@ if (process.argv[2] === "--worker") {
     if (url.href === "https://localhost/404.html") {
       return new Response("Not found", { status: 404 });
     }
+    // WHY return a local response instead of throwing: thrown fetch errors
+    // trigger Redis retries and misleading timeout logs. The allow/deny fixtures
+    // preserve the no-network intent of PR #332 while checking HTTP 429 as well.
     // Model the sliding-window Redis response locally. The package check must
     // verify allow/deny handling without contacting the production database.
     if (url.hostname.endsWith(".upstash.io") && url.pathname === "/pipeline") {

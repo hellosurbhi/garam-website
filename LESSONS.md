@@ -106,7 +106,7 @@ The New York ticket change passed local checks and merged, but Vercel canceled i
 
 **Why:** Two separate bugs compounded. First, the gate's own condition ran Stryker only if a test file had changed in the last 7 days, meant to save time on unrelated pushes, but this is backwards: it skips exactly the PRs that add production code with no test at all, which is the case that most needs catching. Second, the invocation was `run_stryker || true`, so even a real regression could never fail the push; the "All pre-push checks passed" line printed unconditionally afterward regardless of what Stryker actually found.
 
-**Rule:** A slow, thorough check (mutation testing, 15 to 20 minutes) does not belong on the push path at all, gated or not; it belongs on a schedule, reviewed by a human (see CHANGELOG.md, 2026-07-16, `.github/workflows/mutation-audit.yml`). The checks that do belong on the push/PR path are fast and precise: the full test suite on every commit (already `.husky/pre-commit`) and patch/diff coverage in CI on the lines a PR actually changed (`scripts/diff-coverage.mjs`), not a proxy like "did a test file change in the last N days" or a ratchet that can invoke its own failure branch with `|| true` and still report success.
+**Rule:** A slow, thorough check (mutation testing, 15 to 20 minutes) does not belong on the push path at all, gated or not; it does not belong on the push path. A scheduled run was tried (CHANGELOG.md, 2026-07-16) and removed 2026-11-05: see the report-only PR lesson below. The checks that do belong on the push/PR path are fast and precise: the full test suite on every commit (already `.husky/pre-commit`) and patch/diff coverage in CI on the lines a PR actually changed (`scripts/diff-coverage.mjs`), not a proxy like "did a test file change in the last N days" or a ratchet that can invoke its own failure branch with `|| true` and still report success.
 
 ## A monitor that cannot name the root cause gets blamed instead of believed
 
@@ -465,3 +465,11 @@ Browser interception of Firestore does not intercept server-side Firestore write
 ## 2026-11-05: Verify storage accounting separately from recovery retention
 
 Vercel's recovery window is not a continued billing window. Its Deployment Storage documentation says a deleted deployment stops contributing immediately, although reported daily peaks can remain. The authenticated Hobby dashboard showed 2.37 GB / 10 GB on November 5. Verify the actual Usage screen when billing APIs return costs_not_found; do not infer storage usage from deployment counts or treat separate storage allowances as one interchangeable pool.
+
+## A report is not a PR
+
+**What went wrong:** The weekly mutation audit opened a draft PR (#326) every Monday just to carry a report file. It could never be merged, nobody read it, and it sat in the PR list as noise.
+
+**Why:** Assumed a PR is a good way to put findings in front of a human. A PR means "merge me"; for a solo owner who never opens GitHub Actions it is just clutter.
+
+**Rule:** Automation that only reports must not open PRs. Either it alerts (email) only when something is wrong, or it does not exist. A scheduled job nobody acts on gets deleted, not routed to a PR.

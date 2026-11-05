@@ -1,5 +1,9 @@
 # Changelog
 
+## Integrate runtime smoke fixes from main (2026-11-05)
+
+- Resolve the overlap with PR #332 by retaining local Redis allow/deny fixtures without thrown fetch errors or external requests. Preserve main’s lint configuration, automation changes and documentation alongside this branch’s fixes.
+
 ## PR review follow-up (2026-11-05)
 
 - Name the waitlist region for assistive technology, centralize its fallback copy and clarify that the highest-demand cities appear below dated shows. Strengthen failed-cache and deployment-safety regression tests and document the affected functions.
@@ -41,6 +45,18 @@
 ## Preserve cached signup locations (2026-11-05)
 
 - Decode completed legacy city caches in place so offline visitors retain their location. Read city, region, country and timezone from the same completed cache. Discard incomplete records before a fresh lookup and keep failures distinct from success.
+
+## chore(ci): remove the weekly mutation audit workflow (2026-11-05)
+
+- Deleted `.github/workflows/mutation-audit.yml`, `scripts/mutation-audit-summary.mjs` and `MUTATION-AUDIT.md`. The workflow opened a draft PR (#326) every Monday to carry a report that could never be merged and was never read. The owner closed #326 and disabled the workflow; this removes the files so it cannot return.
+- `stryker.config.mjs` drops the `json` reporter (only the deleted script read it) and its stale comments. `npm run mutation:ratchet` is unchanged.
+- Removed the two queued ENHANCEMENTS.md findings about the deleted workflow. The Mac-side `weekly-quality-audit.sh` launchd job still runs Stryker; that is global config and was left alone.
+
+## fix(test): runtime smoke check fails open instantly, and lint stops scanning session worktrees (2026-11-05)
+
+- `scripts/check-server-runtime.mjs` faked Upstash being offline by throwing a network error. `@upstash/redis` retries thrown fetch errors 5 times with exponential backoff, which outlasted the 1500ms ceiling in `src/lib/rateLimit.ts`, so every `postbuild` run logged "Timeout: Upstash rate limit check" instead of failing open at once. The stub now returns a 503 response, which is not retried and matches how a real outage looks. Production traffic was never affected.
+- `eslint.config.js` now ignores `.claude/worktrees`. Nested session checkouts each carry a tsconfig and made `npm run lint` fail with "multiple candidate TSConfigRootDirs", which blocked pre-push.
+- Verified: `npm run test:runtime` exits 0 with no timeout lines, `npm run lint` exits 0, Codex tier E review APPROVED.
 
 ## Geo route coverage and deployment guidance (2026-11-04)
 

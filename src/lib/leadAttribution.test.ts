@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import {
   bootstrapLeadAttribution,
   buildLeadAttribution,
+  getGeoCity,
 } from "./leadAttribution";
 
 describe("bootstrapLeadAttribution", () => {
@@ -313,6 +314,7 @@ describe("buildLeadAttribution", () => {
   /* ── Geo data in build ──────────────────────────────── */
 
   it("includes geoCity when present in sessionStorage", async () => {
+    sessionStorage.setItem("gmd-geo-fetched", "2");
     sessionStorage.setItem("gmd-geo-city", "New York");
     const result = await buildLeadAttribution({ source: "apply" });
     expect(result.geoCity).toBe("New York");
@@ -345,6 +347,7 @@ describe("buildLeadAttribution", () => {
   });
 
   it("includes all geo fields when all present", async () => {
+    sessionStorage.setItem("gmd-geo-fetched", "2");
     sessionStorage.setItem("gmd-geo-city", "Boston");
     sessionStorage.setItem("gmd-geo-region", "MA");
     sessionStorage.setItem("gmd-geo-country", "US");
@@ -355,8 +358,6 @@ describe("buildLeadAttribution", () => {
     expect(result.geoCountry).toBe("US");
     expect(result.geoTimezone).toBe("America/New_York");
   });
-
-
 
   /* ── posthog edge cases ─────────────────────────────── */
 
@@ -511,16 +512,61 @@ describe("bootstrapLeadAttribution — geo data", () => {
       .spyOn(globalThis, "fetch")
       .mockResolvedValue(new Response(JSON.stringify({}), { status: 200 }));
     bootstrapLeadAttribution();
-    expect(fetchSpy).toHaveBeenCalledWith("/api/geo");
+    expect(fetchSpy).toHaveBeenCalledWith("/api/geo", { cache: "no-store" });
   });
 
   it("does not fetch geo data on second bootstrap", () => {
-    sessionStorage.setItem("gmd-geo-fetched", "1");
+    sessionStorage.setItem("gmd-geo-fetched", "2");
     const fetchSpy = vi
       .spyOn(globalThis, "fetch")
       .mockResolvedValue(new Response("{}", { status: 200 }));
     bootstrapLeadAttribution();
     expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("does not expose an old encoded city before attribution bootstrap runs", () => {
+    sessionStorage.setItem("gmd-geo-fetched", "1");
+    sessionStorage.setItem("gmd-geo-city", "New%20York%20City");
+    expect(getGeoCity()).toBeNull();
+    sessionStorage.setItem("gmd-geo-fetched", "2");
+    sessionStorage.setItem("gmd-geo-city", "New York City");
+    expect(getGeoCity()).toBe("New York City");
+  });
+
+  it("replaces an encoded city from an old session without using the HTTP cache", async () => {
+    sessionStorage.setItem("gmd-geo-fetched", "1");
+    sessionStorage.setItem("gmd-geo-city", "New%20York%20City");
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ city: "New York City" }), {
+        status: 200,
+      }),
+    );
+    bootstrapLeadAttribution();
+    expect(sessionStorage.getItem("gmd-geo-city")).toBeNull();
+    bootstrapLeadAttribution();
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(fetchSpy).toHaveBeenCalledWith("/api/geo", { cache: "no-store" });
+    await vi.waitFor(() => {
+      expect(sessionStorage.getItem("gmd-geo-city")).toBe("New York City");
+    });
+    expect(sessionStorage.getItem("gmd-geo-fetched")).toBe("2");
+    bootstrapLeadAttribution();
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("leaves the city blank if refreshing an old session fails", async () => {
+    sessionStorage.setItem("gmd-geo-fetched", "1");
+    sessionStorage.setItem("gmd-geo-city", "New%20York%20City");
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockRejectedValue(new Error("offline"));
+    bootstrapLeadAttribution();
+    await vi.waitFor(() => {
+      expect(sessionStorage.getItem("gmd-geo-fetched")).toBe("2");
+    });
+    expect(sessionStorage.getItem("gmd-geo-city")).toBeNull();
+    bootstrapLeadAttribution();
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 
   it("stores geo city from API response", async () => {
@@ -573,7 +619,7 @@ describe("bootstrapLeadAttribution — geo data", () => {
     bootstrapLeadAttribution();
     await new Promise((r) => setTimeout(r, 50));
     expect(sessionStorage.getItem("gmd-geo-city")).toBeNull();
-    expect(sessionStorage.getItem("gmd-geo-fetched")).toBe("1");
+    expect(sessionStorage.getItem("gmd-geo-fetched")).toBe("2");
   });
 
   it("handles geo fetch failure gracefully", async () => {
@@ -590,7 +636,7 @@ describe("bootstrapLeadAttribution — geo data", () => {
     );
     bootstrapLeadAttribution();
     await new Promise((r) => setTimeout(r, 50));
-    expect(sessionStorage.getItem("gmd-geo-fetched")).toBe("1");
+    expect(sessionStorage.getItem("gmd-geo-fetched")).toBe("2");
   });
 
   it("stores only region when response has only region field", async () => {

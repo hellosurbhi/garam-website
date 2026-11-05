@@ -2,6 +2,17 @@ import type { APIRoute } from "astro";
 
 export const prerender = false;
 
+function decodeCity(city: string | null): string | undefined {
+  if (!city) return undefined;
+  try {
+    return decodeURIComponent(city);
+  } catch (error) {
+    // Malformed optional location data must not break the signup form.
+    if (error instanceof URIError) return undefined;
+    throw error;
+  }
+}
+
 export const GET: APIRoute = ({ request }) => {
   const headers = request.headers;
 
@@ -25,7 +36,7 @@ export const GET: APIRoute = ({ request }) => {
   }
 
   const geo = {
-    city: headers.get("x-vercel-ip-city") ?? undefined,
+    city: decodeCity(headers.get("x-vercel-ip-city")),
     region: headers.get("x-vercel-ip-country-region") ?? undefined,
     country: headers.get("x-vercel-ip-country") ?? undefined,
     timezone: headers.get("x-vercel-ip-timezone") ?? undefined,

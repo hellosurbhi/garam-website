@@ -2,6 +2,8 @@
 
 ## Ranked city waitlists and isolated smoke tests (2026-11-05)
 
+- Removed 599 verified historical smoke-test lead records after owner approval. Exact identity, fixture contact values, source pages and unchanged document versions were checked before deletion. Post-cleanup verification found zero fixture records and all 650 non-test records unchanged.
+
 - Add Chicago December 4 as Notify Me. Below dated shows, display the ten highest waitlist cities without an upcoming tickets-page show, sorted by unique email count with alphabetical ties. Refresh counts daily on demand using a server-only aggregate cache; repeated submissions and the known smoke fixture do not inflate rankings.
 - Keep purchase links static and available independently of the waitlist lookup. Reuse the Notify Me dialog for asynchronously loaded cards.
 - Intercept lead capture and phone updates in browser smoke tests, block unmocked mutations and reject the reserved smoke email at the lead API before persistence or notifications.

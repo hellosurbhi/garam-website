@@ -14,6 +14,30 @@ Recovered from the old sessions 65918 and 8546 after confirming main lacked each
 Closes the BUGS.md entries UNBOUNDED-SYNC-RUNTIME (both) and PERMANENT-RETRY-STARVATION (both).
 
 **Files:** `src/pages/api/sync-orders.ts`, `src/utils/concurrency.ts`, `src/lib/capi.ts`, `src/lib/capiRetryState.ts`, `src/lib/eventbrite.ts`, `src/types/analytics.ts`, plus tests
+## Geo route coverage and deployment guidance (2026-11-04)
+
+- Added direct geo endpoint tests so the decoding regression cases count toward CI patch coverage. Corrected the older deployment lesson to match the Git branch configuration.
+
+## Decode signup city names (2026-11-04)
+
+- Decode the Vercel city header before returning geo data. Invalid city encoding leaves the optional city blank. Refresh older session caches without reusing the encoded HTTP response, so existing visitors also get readable city names.
+- Added packaged API regression checks for encoded spaces, accented names and malformed headers, plus session-cache migration tests.
+
+## Restore production deployments (2026-11-03)
+
+- Replaced the environment-dependent ignored build command with Vercel Git branch rules that enable `main` and disable feature-branch previews. The previous command canceled production deployment of the merged New York ticket update, leaving the old Notify Me button live.
+
+## New York ticket metadata (2026-11-03)
+
+- Removed stale ticket placeholder metadata and recorded the live ticket link in the show history.
+
+## New York event copy (2026-11-02)
+
+- Replaced the November 13 show description with the requested first Friday date copy.
+
+## New York ticket link (2026-11-02)
+
+- Added the City Winery ticket link for the November 13 Manhattan show using the existing ticket button flow. Added the required start time, end time and price from the City Winery listing.
 
 ## fix(vercel): skip Preview builds so deployment storage stays under the free tier (2026-10-26)
 

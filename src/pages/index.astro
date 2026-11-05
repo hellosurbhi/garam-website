@@ -124,11 +124,9 @@ const speakableJsonLd = JSON.stringify({
     <script type="application/ld+json" set:html={speakableJsonLd} />
     <script type="application/ld+json" set:html={videoJsonLd} />
     <script type="application/ld+json" set:html={eventSeriesJsonLd} />
-    {
-      eventSchemas.map((schema) => (
-        <script type="application/ld+json" set:html={schema} />
-      ))
-    }
+    {eventSchemas.map((schema) => (
+      <script type="application/ld+json" set:html={schema} />
+    ))}
   </Fragment>
 
   <HomeNav ticketsUrl={firstTicketUrl} />
@@ -161,8 +159,10 @@ const speakableJsonLd = JSON.stringify({
           stroke-linecap="round"
           stroke-linejoin="round"
           aria-hidden="true"
-          ><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg
         >
+          <path d="M18 6 6 18"></path>
+          <path d="m6 6 12 12"></path>
+        </svg>
       </button>
 
       <!-- min-height prevents CLS when switching between steps -->
@@ -196,13 +196,19 @@ const speakableJsonLd = JSON.stringify({
               autocomplete="address-level2"
               toolparamdescription="City the subscriber lives in, used to alert them when a show comes near them (optional)"
             />
-            <p id="popup-email-error" class="popup-error" hidden role="alert">
-            </p>
-            <button type="submit" class="popup-submit"
-              >Get My Discount Code!</button
-            >
+            <p
+              id="popup-email-error"
+              class="popup-error"
+              hidden
+              role="alert"
+            ></p>
+            <button type="submit" class="popup-submit">
+              Get My Discount Code!
+            </button>
           </form>
-          <button type="button" class="popup-dismiss">No thanks</button>
+          <button type="button" class="popup-dismiss">
+            No thanks
+          </button>
         </div>
 
         <div id="popup-step-2" hidden>
@@ -224,11 +230,19 @@ const speakableJsonLd = JSON.stringify({
               aria-label="Phone number"
               toolparamdescription="Mobile phone number for SMS-only deals (optional)"
             />
-            <p id="popup-phone-error" class="popup-error" hidden role="alert">
-            </p>
-            <button type="submit" class="popup-submit">Send Me Deals!</button>
+            <p
+              id="popup-phone-error"
+              class="popup-error"
+              hidden
+              role="alert"
+            ></p>
+            <button type="submit" class="popup-submit">
+              Send Me Deals!
+            </button>
           </form>
-          <button type="button" class="popup-skip">Maybe later</button>
+          <button type="button" class="popup-skip">
+            Maybe later
+          </button>
         </div>
       </div>
     </div>
@@ -239,8 +253,8 @@ const speakableJsonLd = JSON.stringify({
 <script>
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
-  import { buildLeadAttribution } from "@/lib/leadAttribution";
-  import { safeLocalStorage, safeSessionStorage } from "@/lib/safeStorage";
+  import { buildLeadAttribution, getGeoCity } from "@/lib/leadAttribution";
+  import { safeLocalStorage } from "@/lib/safeStorage";
   import {
     captureLead,
     updateLeadPhone,
@@ -281,7 +295,7 @@ const speakableJsonLd = JSON.stringify({
       const cityInput = document.getElementById(
         "popup-city",
       ) as HTMLInputElement | null;
-      const geoCity = safeSessionStorage.getItem("gmd-geo-city");
+      const geoCity = getGeoCity();
       if (cityInput && geoCity && !cityInput.value) cityInput.value = geoCity;
       trackLeadEvent("popup_opened", {
         source: "popup",

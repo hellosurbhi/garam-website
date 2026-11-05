@@ -34,6 +34,7 @@ const GEO_REGION_KEY = "gmd-geo-region";
 const GEO_COUNTRY_KEY = "gmd-geo-country";
 const GEO_TIMEZONE_KEY = "gmd-geo-timezone";
 const GEO_FETCHED_KEY = "gmd-geo-fetched";
+const GEO_CACHE_VERSION = "2";
 const FBCLID_KEY = "gmd-fbclid";
 const GCLID_KEY = "gmd-gclid";
 
@@ -92,11 +93,21 @@ async function readGeoResponse(res: Response): Promise<GeoResponse | null> {
   }
 }
 
+/** Only expose decoded geo data, even before bootstrap refreshes an old session. */
+export function getGeoCity(): string | null {
+  if (safeSessionStorage.getItem(GEO_FETCHED_KEY) !== GEO_CACHE_VERSION)
+    return null;
+  return safeSessionStorage.getItem(GEO_CITY_KEY);
+}
+
 function bootstrapGeoData(): void {
-  if (safeSessionStorage.getItem(GEO_FETCHED_KEY)) return;
+  if (safeSessionStorage.getItem(GEO_FETCHED_KEY) === GEO_CACHE_VERSION) return;
   if (geoFetchPromise) return; // already in-flight on this page
 
-  geoFetchPromise = fetch("/api/geo")
+  // Version 1 cached URL-encoded cities. Clear that value before form prefill
+  // and bypass the old HTTP response cache when fetching the decoded format.
+  safeSessionStorage.removeItem(GEO_CITY_KEY);
+  geoFetchPromise = fetch("/api/geo", { cache: "no-store" })
     .then(readGeoResponse)
     .then((geo) => {
       if (geo) {
@@ -108,10 +119,10 @@ function bootstrapGeoData(): void {
           safeSessionStorage.setItem(GEO_TIMEZONE_KEY, geo.timezone);
         // lat/lon intentionally omitted (clear-text storage of precise location — CodeQL)
       }
-      safeSessionStorage.setItem(GEO_FETCHED_KEY, "1");
+      safeSessionStorage.setItem(GEO_FETCHED_KEY, GEO_CACHE_VERSION);
     })
     .catch(() => {
-      safeSessionStorage.setItem(GEO_FETCHED_KEY, "1"); // prevent retry storm
+      safeSessionStorage.setItem(GEO_FETCHED_KEY, GEO_CACHE_VERSION); // prevent retry storm
     })
     .finally(() => {
       geoFetchPromise = null; // release so test isolation and retry work correctly
@@ -238,7 +249,7 @@ export async function buildLeadAttribution(params: {
   }
 
   // Geo data from /api/geo (cached in sessionStorage)
-  const geoCity = safeSessionStorage.getItem(GEO_CITY_KEY) ?? undefined;
+  const geoCity = getGeoCity() ?? undefined;
   if (geoCity) attribution.geoCity = geoCity;
 
   const geoRegion = safeSessionStorage.getItem(GEO_REGION_KEY) ?? undefined;

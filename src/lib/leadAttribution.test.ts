@@ -321,18 +321,21 @@ describe("buildLeadAttribution", () => {
   });
 
   it("includes geoRegion when present in sessionStorage", async () => {
+    sessionStorage.setItem("gmd-geo-fetched", "2");
     sessionStorage.setItem("gmd-geo-region", "NY");
     const result = await buildLeadAttribution({ source: "apply" });
     expect(result.geoRegion).toBe("NY");
   });
 
   it("includes geoCountry when present in sessionStorage", async () => {
+    sessionStorage.setItem("gmd-geo-fetched", "2");
     sessionStorage.setItem("gmd-geo-country", "US");
     const result = await buildLeadAttribution({ source: "apply" });
     expect(result.geoCountry).toBe("US");
   });
 
   it("includes geoTimezone when present in sessionStorage", async () => {
+    sessionStorage.setItem("gmd-geo-fetched", "2");
     sessionStorage.setItem("gmd-geo-timezone", "America/New_York");
     const result = await buildLeadAttribution({ source: "apply" });
     expect(result.geoTimezone).toBe("America/New_York");
@@ -524,49 +527,74 @@ describe("bootstrapLeadAttribution — geo data", () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
-  it("does not expose an old encoded city before attribution bootstrap runs", () => {
-    sessionStorage.setItem("gmd-geo-fetched", "1");
-    sessionStorage.setItem("gmd-geo-city", "New%20York%20City");
-    expect(getGeoCity()).toBeNull();
-    sessionStorage.setItem("gmd-geo-fetched", "2");
-    sessionStorage.setItem("gmd-geo-city", "New York City");
-    expect(getGeoCity()).toBe("New York City");
-  });
+  it.each([
+    ["Chicago", "Chicago"],
+    ["New%20York%20City", "New York City"],
+    ["S%C3%A3o%20Paulo", "São Paulo"],
+    ["City%2520Name", "City%20Name"],
+    ["%E0%A4%A", null],
+    ["", null],
+  ])(
+    "migrates %s once without a network dependency",
+    async (stored, expected) => {
+      sessionStorage.setItem("gmd-geo-fetched", "1");
+      sessionStorage.setItem("gmd-geo-city", stored);
+      sessionStorage.setItem("gmd-geo-region", "NY");
+      sessionStorage.setItem("gmd-geo-country", "US");
+      sessionStorage.setItem("gmd-geo-timezone", "America/New_York");
+      const fetchSpy = vi
+        .spyOn(globalThis, "fetch")
+        .mockRejectedValue(new Error("offline"));
+      expect(getGeoCity()).toBe(expected);
+      expect(getGeoCity()).toBe(expected);
+      const result = await buildLeadAttribution({ source: "test" });
+      expect(result.geoCity).toBe(expected || undefined);
+      expect(result.geoRegion).toBe("NY");
+      expect(result.geoCountry).toBe("US");
+      expect(result.geoTimezone).toBe("America/New_York");
+      expect(sessionStorage.getItem("gmd-geo-fetched")).toBe("2");
+      expect(fetchSpy).not.toHaveBeenCalled();
+    },
+  );
 
-  it("replaces an encoded city from an old session without using the HTTP cache", async () => {
-    sessionStorage.setItem("gmd-geo-fetched", "1");
-    sessionStorage.setItem("gmd-geo-city", "New%20York%20City");
-    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify({ city: "New York City" }), {
-        status: 200,
-      }),
-    );
-    bootstrapLeadAttribution();
-    expect(sessionStorage.getItem("gmd-geo-city")).toBeNull();
-    bootstrapLeadAttribution();
-    expect(fetchSpy).toHaveBeenCalledTimes(1);
-    expect(fetchSpy).toHaveBeenCalledWith("/api/geo", { cache: "no-store" });
-    await vi.waitFor(() => {
-      expect(sessionStorage.getItem("gmd-geo-city")).toBe("New York City");
-    });
-    expect(sessionStorage.getItem("gmd-geo-fetched")).toBe("2");
-    bootstrapLeadAttribution();
-    expect(fetchSpy).toHaveBeenCalledTimes(1);
-  });
-
-  it("leaves the city blank if refreshing an old session fails", async () => {
+  it("migrates a legacy record on immediate submission without prefill", async () => {
     sessionStorage.setItem("gmd-geo-fetched", "1");
     sessionStorage.setItem("gmd-geo-city", "New%20York%20City");
     const fetchSpy = vi
       .spyOn(globalThis, "fetch")
       .mockRejectedValue(new Error("offline"));
-    bootstrapLeadAttribution();
-    await vi.waitFor(() => {
-      expect(sessionStorage.getItem("gmd-geo-fetched")).toBe("2");
-    });
-    expect(sessionStorage.getItem("gmd-geo-city")).toBeNull();
+    const result = await buildLeadAttribution({ source: "test" });
+    expect(result.geoCity).toBe("New York City");
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("keeps a failed lookup distinct from a completed cache without retrying", async () => {
+    sessionStorage.setItem("gmd-geo-region", "stale");
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockRejectedValue(new Error("offline"));
+    const result = await buildLeadAttribution({ source: "test" });
+    expect(result.geoCity).toBeUndefined();
+    expect(result.geoRegion).toBeUndefined();
+    expect(getGeoCity()).toBeNull();
+    expect(sessionStorage.getItem("gmd-geo-fetched")).toBe("failed");
     bootstrapLeadAttribution();
     expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not mix incomplete old fields with a partial response", async () => {
+    for (const field of ["city", "region", "country", "timezone"]) {
+      sessionStorage.setItem(`gmd-geo-${field}`, "stale");
+    }
+    expect(getGeoCity()).toBeNull();
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ city: "Boston" })),
+    );
+    const result = await buildLeadAttribution({ source: "test" });
+    expect(result.geoCity).toBe("Boston");
+    expect(result.geoRegion).toBeUndefined();
+    expect(result.geoCountry).toBeUndefined();
+    expect(result.geoTimezone).toBeUndefined();
   });
 
   it("stores geo city from API response", async () => {
@@ -619,7 +647,7 @@ describe("bootstrapLeadAttribution — geo data", () => {
     bootstrapLeadAttribution();
     await new Promise((r) => setTimeout(r, 50));
     expect(sessionStorage.getItem("gmd-geo-city")).toBeNull();
-    expect(sessionStorage.getItem("gmd-geo-fetched")).toBe("2");
+    expect(sessionStorage.getItem("gmd-geo-fetched")).toBe("failed");
   });
 
   it("handles geo fetch failure gracefully", async () => {
@@ -726,9 +754,15 @@ describe("bootstrapLeadAttribution — geo data", () => {
 
   it("caps the geo wait at 1500ms and returns attribution without geo when fetch is slow", async () => {
     vi.useFakeTimers();
-    // Fetch that never resolves (simulates a very slow network)
+    for (const field of ["city", "region", "country", "timezone"]) {
+      sessionStorage.setItem(`gmd-geo-${field}`, "stale");
+    }
+    let finishFetch: (response: Response) => void = () => {};
     vi.spyOn(globalThis, "fetch").mockImplementation(
-      () => new Promise<Response>(() => {}),
+      () =>
+        new Promise<Response>((resolve) => {
+          finishFetch = resolve;
+        }),
     );
     const buildPromise = buildLeadAttribution({ source: "test" });
     // Advance past the 1500ms race timeout
@@ -736,6 +770,12 @@ describe("bootstrapLeadAttribution — geo data", () => {
     const result = await buildPromise;
     expect(result).not.toHaveProperty("geoCity");
     expect(result.source).toBe("test");
+    expect(result.geoRegion).toBeUndefined();
+    expect(result.geoCountry).toBeUndefined();
+    expect(result.geoTimezone).toBeUndefined();
+    finishFetch(new Response(JSON.stringify({ city: "Boston" })));
+    await vi.runAllTimersAsync();
+    expect(getGeoCity()).toBe("Boston");
     vi.useRealTimers();
   });
 });

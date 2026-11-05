@@ -1,5 +1,9 @@
 # Lessons
 
+## Preserve usable cache data during format migrations
+
+The first city fix deleted valid cached data before a network refresh. Decode the completed legacy cache synchronously instead, then use one version-aware reader for form prefill and lead attribution. Verify offline sessions and partial responses.
+
 ## Check city prefill before the geo cache refresh completes
 
 The first local browser check found that the newsletter script could read an old encoded city before attribution bootstrap cleared it. Guard geo-city reads with the cache version, then verify both forms with a seeded old session and a manually entered city. API tests alone did not catch the script-order race.

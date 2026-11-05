@@ -33,8 +33,20 @@ if (process.argv[2] === "--worker") {
     }
     // Exercise the existing rate-limit fail-open path when a Vercel build
     // contains Redis configuration. No request or credential leaves the test.
+    // WHY a 503 response, not a thrown error: the first version threw here, but
+    // @upstash/redis retries any thrown fetch error 5 times with exponential
+    // backoff (about 4s total), which outlasts the 1500ms ceiling in
+    // src/lib/rateLimit.ts. The smoke run then logged "Timeout: Upstash rate
+    // limit check" instead of failing open instantly. A non-ok response is not
+    // retried: the client throws UpstashError at once and enforceRateLimit
+    // fails open. Reverting to a throw brings the timeout spam back.
     if (url.hostname.endsWith(".upstash.io") && url.pathname === "/pipeline") {
-      throw new Error("Redis intentionally offline during runtime smoke check");
+      return new Response(
+        JSON.stringify({
+          error: "Redis intentionally offline during runtime smoke check",
+        }),
+        { status: 503, headers: { "content-type": "application/json" } },
+      );
     }
     networkAttempts.push(`${url.origin}${url.pathname}`);
     throw new Error("Runtime smoke checks must not call external services");

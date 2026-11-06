@@ -47,8 +47,30 @@ describe("packaged Redis health check", () => {
     await expect(checkRedisHealth(connection, { fetch })).rejects.toThrow(
       "network error, timeout",
     );
-    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledTimes(2);
   });
+  it.each(["network", 429, 503])(
+    "recovers after one transient failure %s",
+    async (failure) => {
+      const fetch = vi.fn();
+      if (failure === "network")
+        fetch.mockRejectedValueOnce(new Error("offline"));
+      else fetch.mockResolvedValueOnce(new Response("", { status: failure }));
+      fetch.mockResolvedValueOnce(Response.json([{ result: "PONG" }]));
+      await checkRedisHealth(connection, { fetch, log: vi.fn() });
+      expect(fetch).toHaveBeenCalledTimes(2);
+    },
+  );
+  it.each([401, 403])(
+    "does not retry invalid authorization HTTP %s",
+    async (status) => {
+      const fetch = vi.fn().mockResolvedValue(new Response("", { status }));
+      await expect(checkRedisHealth(connection, { fetch })).rejects.toThrow(
+        `HTTP ${status}`,
+      );
+      expect(fetch).toHaveBeenCalledTimes(1);
+    },
+  );
   it("fails on malformed JSON", async () => {
     const fetch = vi.fn().mockResolvedValue(new Response("not JSON"));
     await expect(checkRedisHealth(connection, { fetch })).rejects.toThrow(

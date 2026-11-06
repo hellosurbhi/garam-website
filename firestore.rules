@@ -17,6 +17,8 @@ service cloud.firestore {
       return d.keys().hasOnly(['email', 'city', 'state', 'country', 'phone', 'name', 'instagram', 'source', 'sourcePage', 'landingPage', 'referrerHost', 'utmSource', 'utmMedium', 'utmCampaign', 'utmContent', 'utmTerm', 'fbclid', 'gclid', 'posthogDistinctId', 'sourceCitySlug', 'createdAt', 'geoCity', 'geoRegion', 'geoCountry', 'geoLatitude', 'geoLongitude', 'geoTimezone'])
         && d.keys().hasAll(['email', 'source', 'sourcePage', 'createdAt'])
         && d.email is string && d.email.size() > 0 && d.email.size() <= 1280
+        // Browser smoke success is mocked; real test writes belong in the emulator.
+        && !d.email.lower().matches('\\s*smoketest@example[.]com\\s*')
         && d.source is string && d.source.size() > 0 && d.source.size() <= 50
         && d.sourcePage is string && d.sourcePage.size() > 0 && d.sourcePage.size() <= 200
         && d.createdAt is string && d.createdAt.size() > 0 && d.createdAt.size() <= 30

@@ -28,22 +28,10 @@ export function getSchemaDated(
   );
 }
 
-// These withdrawn Texas placeholders are not upcoming ticket-page shows.
-// A newly announced Texas show has its own slug and remains eligible.
-const withdrawnTicketSlugs = new Set([
-  "austin-2026-11-19",
-  "houston-2026-11-20",
-  "san-antonio-2026-11-21",
-  "dallas-2026-11-22",
-]);
-
-/** Return upcoming dated shows while excluding the explicitly withdrawn Texas placeholders. */
+/** Return ticket-page shows through the shared cancellation-aware filter. */
 export function getTicketPageUpcoming(
   events: EventEntry[],
   todayISO: string,
 ): EventEntry[] {
-  return getUpcomingDated(
-    events.filter((event) => !withdrawnTicketSlugs.has(event.slug)),
-    todayISO,
-  );
+  return getUpcomingDated(events, todayISO);
 }

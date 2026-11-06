@@ -24,7 +24,13 @@ function fixture({ ready = true, domain = true, changes = false } = {}) {
       return {
         deployments: [
           { uid: "dpl_current", state: "READY", created: 100 },
-          { uid: "dpl_old", state: "READY", created: 50 },
+          { uid: "dpl_old", state: "READY", created: 50, target: "production" },
+          {
+            uid: "dpl_rollback",
+            state: "READY",
+            created: 80,
+            target: "production",
+          },
           { uid: "dpl_building", state: "BUILDING", created: 90 },
           { uid: "dpl_newer", state: "READY", created: 110 },
           { uid: "dpl_failed", state: "ERROR", created: 110 },
@@ -50,6 +56,36 @@ describe("deployment cleanup safeguards", () => {
       ["/v13/deployments/dpl_old", "DELETE"],
       ["/v13/deployments/dpl_failed", "DELETE"],
     ]);
+  });
+  it("protects only the newest older READY production build, not a newer preview", async () => {
+    const base = fixture();
+    const api = vi.fn(async (path, method) => {
+      const result = await base(path, method);
+      if (path.startsWith("/v6/"))
+        result.deployments.push(
+          {
+            uid: "dpl_preview",
+            state: "READY",
+            created: 95,
+            target: "preview",
+          },
+          {
+            uid: "dpl_failedprod",
+            state: "ERROR",
+            created: 99,
+            target: "production",
+          },
+        );
+      return result;
+    });
+    await pruneDeployments(api, { apply: true, log: vi.fn() });
+    const deleted = api.mock.calls
+      .filter(([, method]) => method === "DELETE")
+      .map(([path]) => path);
+    expect(deleted).not.toContain("/v13/deployments/dpl_rollback");
+    expect(deleted).toContain("/v13/deployments/dpl_old");
+    expect(deleted).toContain("/v13/deployments/dpl_preview");
+    expect(deleted).toContain("/v13/deployments/dpl_failedprod");
   });
   it("defaults to a dry run", async () => {
     const api = fixture();

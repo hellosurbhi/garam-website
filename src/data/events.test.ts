@@ -38,14 +38,7 @@ describe("event location data", () => {
 });
 
 describe("dated email-capture placeholders", () => {
-  const placeholders = [
-    "2026-11-19",
-    "2026-11-20",
-    "2026-11-21",
-    "2026-11-22",
-    "2026-12-24",
-    "2026-12-27",
-  ];
+  const placeholders = ["2026-12-24", "2026-12-27"];
 
   it("shows each placeholder with its date and no ticket link", () => {
     for (const isoDate of placeholders) {
@@ -72,5 +65,19 @@ describe("dated email-capture placeholders", () => {
     expect(sf?.url).toContain("eventbrite.com");
     expect(sf?.startTime).toBe("17:00");
     expect(sf?.endTime).toBe("19:00");
+  });
+});
+
+// Withdrawals must apply to every event-list consumer, not just tickets.
+describe("withdrawn Texas placeholders", () => {
+  it.each([
+    "austin-2026-11-19",
+    "houston-2026-11-20",
+    "san-antonio-2026-11-21",
+    "dallas-2026-11-22",
+  ])("keeps %s in history but not displayable", (slug) => {
+    const event = events.find((event) => event.slug === slug)!;
+    expect(event.status).toBe("canceled");
+    expect(isDisplayable(event)).toBe(false);
   });
 });

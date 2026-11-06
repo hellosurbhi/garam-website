@@ -1,5 +1,10 @@
 # Changelog
 
+## Approved Claude review follow-up (2026-11-05)
+
+- Add a read-only deployed-redirect check for canonical destinations and tracking-query preservation. Run it after the matching build reaches production.
+- Retry transient Redis health failures once, preserve one older successful production deployment for rollback and use the shared canceled status for the four withdrawn Texas placeholders. Reject the reserved smoke identity at the Firestore lead-create boundary while preserving mocked browser flows and emulator-only database tests.
+
 ## Live Redis health in packaged smoke tests (2026-11-05)
 
 - Add one authenticated read-only Redis PING to the packaged smoke test, using the artifact’s actual connection. Require PONG within five seconds and fail production builds on missing configuration or failed health checks. Keep allow/deny fixtures for behavior tests without changing real counters.

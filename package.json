@@ -24,6 +24,7 @@
     "migrate:locations": "npx tsx scripts/migrate-locations.ts",
     "admin:grant-claims": "node --env-file=.env.local scripts/grant-admin-claims.mjs",
     "test": "vitest run",
+    "test:redirects": "node scripts/check-event-redirects.mjs",
     "test:runtime": "node scripts/check-server-runtime.mjs",
     "test:coverage": "vitest run --coverage",
     "test:rules": "firebase emulators:exec --only firestore,storage --project demo-garam-masala \"vitest run --config vitest.rules.config.ts\"",

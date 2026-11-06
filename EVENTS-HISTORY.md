@@ -4,6 +4,8 @@ Permanent record of every show change: cancellations, date moves, time moves, ro
 
 ## Log
 
+- 2026-11-05: Mark Austin November 19, Houston November 20, San Antonio November 21 and Dallas November 22 placeholders canceled using the shared event status. Keep their historical entries and allow the cities to appear as undated waitlists according to demand.
+
 - 2026-11-05: Add Chicago December 4, 2026 with Notify Me and no ticket link. On the tickets page, replace the fixed undated roster with the top ten unique city waitlists excluding cities with upcoming listed shows. Texas placeholder dates remain excluded from this page.
 
 - 2026-11-03: Added the City Winery ticket link for the November 13 Manhattan show, with a 7:30 PM start, 9:30 PM end and $36 listed price. Removed the ticket placeholder status.

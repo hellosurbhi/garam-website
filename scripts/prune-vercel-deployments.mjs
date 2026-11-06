@@ -48,10 +48,24 @@ export async function pruneDeployments(
     }
   } while (until != null);
 
+  // Keep one older successful production build available for rollback.
+  const rollback = deployments
+    .filter(
+      (deployment) =>
+        deployment.uid !== current.id &&
+        deployment.target === "production" &&
+        deployment.state === "READY" &&
+        Number.isFinite(deployment.created) &&
+        deployment.created < current.createdAt,
+    )
+    .sort((a, b) => b.created - a.created)[0];
+  if (rollback) log(`Preserved rollback deployment ${rollback.uid}`);
+
   let removed = 0;
   for (const deployment of deployments) {
     if (
       deployment.uid === current.id ||
+      deployment.uid === rollback?.uid ||
       !TERMINAL_STATES.has(deployment.state) ||
       !Number.isFinite(deployment.created) ||
       (deployment.state === "READY" && deployment.created > current.createdAt)

@@ -623,6 +623,7 @@ export const events: EventEntry[] = [
     stateAbbr: "TX",
     citySlug: "austin",
     slug: buildEventSlug("austin", "2026-11-19"),
+    status: "canceled",
     description:
       "Garam Masala Dating is coming to Austin. Tickets are not on sale yet, join the list to be first to know when they drop.",
     lineup: DEFAULT_LINEUP,
@@ -640,6 +641,7 @@ export const events: EventEntry[] = [
     stateAbbr: "TX",
     citySlug: "houston",
     slug: buildEventSlug("houston", "2026-11-20"),
+    status: "canceled",
     description:
       "Garam Masala Dating is coming to Houston. Tickets are not on sale yet, join the list to be first to know when they drop.",
     lineup: DEFAULT_LINEUP,
@@ -657,6 +659,7 @@ export const events: EventEntry[] = [
     stateAbbr: "TX",
     citySlug: "san-antonio",
     slug: buildEventSlug("san-antonio", "2026-11-21"),
+    status: "canceled",
     description:
       "Garam Masala Dating is coming to San Antonio. Tickets are not on sale yet, join the list to be first to know when they drop.",
     lineup: DEFAULT_LINEUP,
@@ -674,6 +677,7 @@ export const events: EventEntry[] = [
     stateAbbr: "TX",
     citySlug: "dallas",
     slug: buildEventSlug("dallas", "2026-11-22"),
+    status: "canceled",
     description:
       "Garam Masala Dating is coming to Dallas. Tickets are not on sale yet, join the list to be first to know when they drop.",
     lineup: DEFAULT_LINEUP,

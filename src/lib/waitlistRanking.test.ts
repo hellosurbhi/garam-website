@@ -17,6 +17,7 @@ describe("waitlist ranking", () => {
     )!;
     const newlyAnnounced = {
       ...houston,
+      status: undefined,
       slug: "houston-2027-01-15",
       isoDate: "2027-01-15",
     };

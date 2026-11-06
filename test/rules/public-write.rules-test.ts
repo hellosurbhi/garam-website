@@ -82,6 +82,23 @@ describe("firestore.rules: leads", () => {
     );
   });
 
+  it.each([
+    "smoketest@example.com",
+    "SmokeTest@Example.com",
+    "  smoketest@example.com  ",
+  ])(
+    "rejects the reserved smoke identity on direct client writes: %s",
+    async (email) => {
+      const db = testEnv.unauthenticatedContext().firestore();
+      await assertFails(
+        setDoc(doc(collection(db, "leads"), "smoke-blocked"), {
+          ...validLead,
+          email,
+        }),
+      );
+    },
+  );
+
   it("unknown fields are rejected (hasOnly allowlist)", async () => {
     const db = testEnv.unauthenticatedContext().firestore();
     await assertFails(

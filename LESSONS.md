@@ -1,5 +1,13 @@
 # Lessons
 
+## Distinguish packaged fixtures from production connectivity
+
+Intentionally rejecting Redis calls in the packaged smoke test produced alarming fallback errors in successful builds. Use explicit local allow and deny fixtures for the package integration check, and label its limits. Verify the public ticket redirect and inspect production logs separately before reporting a rollout complete.
+
+## Preserve usable cache data during format migrations
+
+The first city fix deleted valid cached data before a network refresh. Decode the completed legacy cache synchronously instead, then use one version-aware reader for form prefill and lead attribution. Verify offline sessions and partial responses.
+
 ## Check city prefill before the geo cache refresh completes
 
 The first local browser check found that the newsletter script could read an old encoded city before attribution bootstrap cleared it. Guard geo-city reads with the cache version, then verify both forms with a seeded old session and a manually entered city. API tests alone did not catch the script-order race.
@@ -449,6 +457,14 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 **Why:** Assumed 7-day retention alone would bound storage, but about 40 deployments landed in 5 days, which is already past 10 GB inside the retention window.
 
 **Rule:** Retention bounds age, not volume. Keep `git.deploymentEnabled` in `vercel.json` configured to enable `main` and disable feature-branch deployments. The limit is in bytes, so when the usage email returns check the Usage page, not just the `vercel ls` count. Before deleting old deployments, resolve which one the production alias points to and keep it. Before turning Previews off, grep `package.json` for scripts that need a Preview URL (like `test:smoke:preview`).
+
+## 2026-11-05: Smoke tests must intercept the actual persistence boundary
+
+Browser interception of Firestore does not intercept server-side Firestore writes behind `/api/capture-lead`. The weekly critical-flow tests submitted the reserved smoke identity into production. Mock the same-origin lead API, block unmocked mutations and verify the returned fixture ID. Count unique emails per selected city and exclude the confirmed fixture when reporting historical demand.
+
+## 2026-11-05: Verify storage accounting separately from recovery retention
+
+Vercel's recovery window is not a continued billing window. Its Deployment Storage documentation says a deleted deployment stops contributing immediately, although reported daily peaks can remain. The authenticated Hobby dashboard showed 2.37 GB / 10 GB on November 5. Verify the actual Usage screen when billing APIs return costs_not_found; do not infer storage usage from deployment counts or treat separate storage allowances as one interchangeable pool.
 
 ## A report is not a PR
 

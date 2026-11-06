@@ -69,6 +69,7 @@ export interface EventEntry {
   timezone?: string; // IANA timezone identifier, e.g. "America/New_York" (default: "America/New_York")
   status?: "canceled"; // Canceled shows stay in this file forever; every surface hides them
   previousDate?: string; // YYYY-MM-DD the show was originally scheduled for, set on reschedule
+  previousDates?: string[]; // Additional former dates, retained across repeated reschedules
   note?: string; // Human log note, e.g. "Canceled", "Moved from Aug 2"; see EVENTS-HISTORY.md
 }
 
@@ -622,6 +623,7 @@ export const events: EventEntry[] = [
     stateAbbr: "TX",
     citySlug: "austin",
     slug: buildEventSlug("austin", "2026-11-19"),
+    status: "canceled",
     description:
       "Garam Masala Dating is coming to Austin. Tickets are not on sale yet, join the list to be first to know when they drop.",
     lineup: DEFAULT_LINEUP,
@@ -639,6 +641,7 @@ export const events: EventEntry[] = [
     stateAbbr: "TX",
     citySlug: "houston",
     slug: buildEventSlug("houston", "2026-11-20"),
+    status: "canceled",
     description:
       "Garam Masala Dating is coming to Houston. Tickets are not on sale yet, join the list to be first to know when they drop.",
     lineup: DEFAULT_LINEUP,
@@ -656,6 +659,7 @@ export const events: EventEntry[] = [
     stateAbbr: "TX",
     citySlug: "san-antonio",
     slug: buildEventSlug("san-antonio", "2026-11-21"),
+    status: "canceled",
     description:
       "Garam Masala Dating is coming to San Antonio. Tickets are not on sale yet, join the list to be first to know when they drop.",
     lineup: DEFAULT_LINEUP,
@@ -673,6 +677,7 @@ export const events: EventEntry[] = [
     stateAbbr: "TX",
     citySlug: "dallas",
     slug: buildEventSlug("dallas", "2026-11-22"),
+    status: "canceled",
     description:
       "Garam Masala Dating is coming to Dallas. Tickets are not on sale yet, join the list to be first to know when they drop.",
     lineup: DEFAULT_LINEUP,
@@ -682,6 +687,21 @@ export const events: EventEntry[] = [
     tagline: "Tickets coming soon",
     timezone: "America/Chicago",
     note: "Placeholder date, email capture only until tickets exist",
+  },
+  {
+    date: "Dec 4",
+    city: "Chicago",
+    state: "Illinois",
+    stateAbbr: "IL",
+    citySlug: "chicago",
+    slug: buildEventSlug("chicago", "2026-12-04"),
+    description: "Chicago, December 4. Join the list for tickets.",
+    lineup: DEFAULT_LINEUP,
+    ticketSource: "none",
+    url: "",
+    isoDate: "2026-12-04",
+    tagline: "Tickets coming soon",
+    timezone: "America/Chicago",
   },
   {
     date: "Dec 6",

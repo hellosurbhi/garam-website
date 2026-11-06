@@ -1,0 +1,29 @@
+name: Keep current Vercel deployment
+
+on:
+  status:
+  schedule:
+    - cron: "23 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prune-vercel-deployments
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    if: github.event_name != 'status' || (github.event.context == 'Vercel' && github.event.state == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Remove obsolete deployments after protecting the live production target
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: node scripts/prune-vercel-deployments.mjs --apply

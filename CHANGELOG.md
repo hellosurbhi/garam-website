@@ -1,5 +1,60 @@
 # Changelog
 
+## Approved Claude review follow-up (2026-11-05)
+
+- Add a read-only deployed-redirect check for canonical destinations and tracking-query preservation. Run it after the matching build reaches production.
+- Retry transient Redis health failures once, preserve one older successful production deployment for rollback and use the shared canceled status for the four withdrawn Texas placeholders. Reject the reserved smoke identity at the Firestore lead-create boundary while preserving mocked browser flows and emulator-only database tests.
+
+## Live Redis health in packaged smoke tests (2026-11-05)
+
+- Add one authenticated read-only Redis PING to the packaged smoke test, using the artifact’s actual connection. Require PONG within five seconds and fail production builds on missing configuration or failed health checks. Keep allow/deny fixtures for behavior tests without changing real counters.
+
+## Integrate runtime smoke fixes from main (2026-11-05)
+
+- Resolve the overlap with PR #332 by retaining local Redis allow/deny fixtures without thrown fetch errors or external requests. Preserve main’s lint configuration, automation changes and documentation alongside this branch’s fixes.
+
+## PR review follow-up (2026-11-05)
+
+- Name the waitlist region for assistive technology, centralize its fallback copy and clarify that the highest-demand cities appear below dated shows. Strengthen failed-cache and deployment-safety regression tests and document the affected functions.
+
+## Automatic rescheduled-show redirects (2026-11-05)
+
+- Generate permanent event-page and ticket-route redirects from each show’s current and historical dates. Preserve canonical URLs, support repeated reschedules and reject ambiguous aliases. Restore old Philadelphia links and add current-date aliases for NYC, SF, LA and San Diego without duplicate sitemap entries.
+
+## Correct deployment-storage accounting (2026-11-05)
+
+- Corrected cleanup output and documentation: deleted deployments stop counting toward storage immediately, while daily usage peaks can remain visible. Recovery retention does not continue charging storage. Verified the account is Hobby and its Deployment Storage allowance is 10 GB.
+
+## Ranked city waitlists and isolated smoke tests (2026-11-05)
+
+- Removed 599 verified historical smoke-test lead records after owner approval. Exact identity, fixture contact values, source pages and unchanged document versions were checked before deletion. Post-cleanup verification found zero fixture records and all 650 non-test records unchanged.
+
+- Add Chicago December 4 as Notify Me. Below dated shows, display the ten highest waitlist cities without an upcoming tickets-page show, sorted by unique email count with alphabetical ties. Refresh counts daily on demand using a server-only aggregate cache; repeated submissions and the known smoke fixture do not inflate rankings.
+- Keep purchase links static and available independently of the waitlist lookup. Reuse the Notify Me dialog for asynchronously loaded cards.
+- Intercept lead capture and phone updates in browser smoke tests, block unmocked mutations and reject the reserved smoke email at the lead API before persistence or notifications.
+
+## Houston and Dallas waitlists (2026-11-05)
+
+- Keep Houston and Dallas as the last two tickets-page listings with Notify Me and no dates. Austin and San Antonio remain excluded.
+
+## Automatic deployment cleanup (2026-11-05)
+
+- Enabled project-level preview blocking so branches with older configuration cannot create preview deployments. Production auto-assignment remains enabled on `main`.
+
+- Added a project-scoped cleanup workflow after successful Vercel statuses and hourly. It protects the live production target, custom domains and in-flight releases. Requires the one-time `VERCEL_TOKEN` Actions secret; deleted deployments immediately stop contributing to storage usage.
+
+## Clear packaged rate-limit checks (2026-11-05)
+
+- Replaced intentionally rejected Redis calls in packaged smoke checks with local allow and deny fixtures. Configured builds must enforce a simulated denial with HTTP 429. Output explicitly distinguishes these checks from live Redis connectivity.
+
+## Tickets page Texas listings (2026-11-05)
+
+- Removed Texas show listings and their event structured data from the tickets page. Hide the sticky ticket CTA when no listed shows remain.
+
+## Preserve cached signup locations (2026-11-05)
+
+- Decode completed legacy city caches in place so offline visitors retain their location. Read city, region, country and timezone from the same completed cache. Discard incomplete records before a fresh lookup and keep failures distinct from success.
+
 ## chore(ci): remove the weekly mutation audit workflow (2026-11-05)
 
 - Deleted `.github/workflows/mutation-audit.yml`, `scripts/mutation-audit-summary.mjs` and `MUTATION-AUDIT.md`. The workflow opened a draft PR (#326) every Monday to carry a report that could never be merged and was never read. The owner closed #326 and disabled the workflow; this removes the files so it cannot return.
@@ -11,6 +66,7 @@
 - `scripts/check-server-runtime.mjs` faked Upstash being offline by throwing a network error. `@upstash/redis` retries thrown fetch errors 5 times with exponential backoff, which outlasted the 1500ms ceiling in `src/lib/rateLimit.ts`, so every `postbuild` run logged "Timeout: Upstash rate limit check" instead of failing open at once. The stub now returns a 503 response, which is not retried and matches how a real outage looks. Production traffic was never affected.
 - `eslint.config.js` now ignores `.claude/worktrees`. Nested session checkouts each carry a tsconfig and made `npm run lint` fail with "multiple candidate TSConfigRootDirs", which blocked pre-push.
 - Verified: `npm run test:runtime` exits 0 with no timeout lines, `npm run lint` exits 0, Codex tier E review APPROVED.
+
 ## Geo route coverage and deployment guidance (2026-11-04)
 
 - Added direct geo endpoint tests so the decoding regression cases count toward CI patch coverage. Corrected the older deployment lesson to match the Git branch configuration.

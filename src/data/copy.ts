@@ -108,6 +108,7 @@ export const PAGES = {
       "Garam Masala Dating is America's #1 live desi comedy dating show. Watch real South Asian singles go on blind dates live on stage in front of 250 people in NYC. Hosted by comedians Surbhi & Wyatt. Tickets available now.",
   },
   tickets: {
+    waitlistEmpty: "Want a show near you? Request your city below.",
     intro:
       "Two real singles. One blind date on stage. 250 people watching. Pick your show below.",
   },

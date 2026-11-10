@@ -74,6 +74,127 @@ export async function fsGet(
   return doc.fields ? fromFields(doc.fields) : {};
 }
 
+/**
+ * Expand `{"a.b": 1}` into `{a: {b: 1}}`. Firestore's updateMask addresses a
+ * nested map entry by dotted path, but the request BODY must carry the nested
+ * shape; sending the dotted string as a literal key would create a top-level
+ * field named "a.b" and leave the real map untouched.
+ */
+export function expandDottedKeys(
+  fields: Record<string, unknown>,
+): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const [path, value] of Object.entries(fields)) {
+    const parts = path.split(".");
+    let cursor = out;
+    for (const part of parts.slice(0, -1)) {
+      const next = cursor[part];
+      cursor = (
+        next && typeof next === "object" && !(next instanceof Date)
+          ? next
+          : (cursor[part] = {})
+      ) as Record<string, unknown>;
+    }
+    cursor[parts[parts.length - 1]] = value;
+  }
+  return out;
+}
+
+/** A document with the server's updateTime, for optimistic concurrency. */
+export interface FsDocMeta {
+  fields: Record<string, unknown>;
+  updateTime: string;
+}
+
+/** Read one document plus its updateTime. Returns null if not found. */
+export async function fsGetMeta(docPath: string): Promise<FsDocMeta | null> {
+  const token = await getFirestoreAccessToken();
+  const res = await fetch(`${baseUrl()}/${docPath}`, {
+    headers: { Authorization: `Bearer ${token}` },
+    signal: AbortSignal.timeout(10_000),
+  });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`fsGetMeta ${docPath}: ${res.status}`);
+  const doc = (await res.json()) as {
+    fields?: FirestoreFields;
+    updateTime?: string;
+  };
+  return {
+    fields: doc.fields ? fromFields(doc.fields) : {},
+    updateTime: doc.updateTime ?? "",
+  };
+}
+
+/** Thrown when a conditional write lost a race; callers re-read and retry. */
+export class FsConflictError extends Error {}
+
+/**
+ * Create a document with a caller-chosen ID. Throws FsConflictError when the
+ * ID already exists (two first-saves racing on the same draft).
+ */
+export async function fsCreateWithId(
+  collectionPath: string,
+  docId: string,
+  fields: Record<string, unknown>,
+): Promise<void> {
+  const token = await getFirestoreAccessToken();
+  const res = await fetch(
+    `${baseUrl()}/${collectionPath}?documentId=${encodeURIComponent(docId)}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ fields: toFields(expandDottedKeys(fields)) }),
+      signal: AbortSignal.timeout(10_000),
+    },
+  );
+  if (res.status === 409) {
+    throw new FsConflictError(`${collectionPath}/${docId}`);
+  }
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(
+      `fsCreateWithId ${collectionPath}/${docId}: ${res.status} ${body}`,
+    );
+  }
+}
+
+/**
+ * Patch fields only if the document is unchanged since `updateTime`.
+ * Throws FsConflictError on a lost race so the caller can merge again.
+ */
+export async function fsPatchIfUnchanged(
+  docPath: string,
+  fields: Record<string, unknown>,
+  updateTime: string,
+): Promise<void> {
+  const token = await getFirestoreAccessToken();
+  const params = [
+    ...Object.keys(fields).map(
+      (f) => `updateMask.fieldPaths=${encodeURIComponent(f)}`,
+    ),
+    `currentDocument.updateTime=${encodeURIComponent(updateTime)}`,
+  ].join("&");
+  const res = await fetch(`${baseUrl()}/${docPath}?${params}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ fields: toFields(expandDottedKeys(fields)) }),
+    signal: AbortSignal.timeout(10_000),
+  });
+  if (res.status === 409 || res.status === 412) {
+    throw new FsConflictError(docPath);
+  }
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`fsPatchIfUnchanged ${docPath}: ${res.status} ${body}`);
+  }
+}
+
 /** Update specific fields on an existing document. */
 export async function fsPatch(
   docPath: string,

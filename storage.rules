@@ -1,19 +1,9 @@
 rules_version = "2";
 service firebase.storage {
   match /b/{bucket}/o {
-    // Same admin gate as firestore.rules: the apply flow signs visitors in
-    // anonymously to upload photos, so plain `request.auth != null` is not
-    // an admin check. Reads (applicant photos are PII) require a
-    // non-anonymous allowlisted account or an admin custom claim. The
-    // apply flow stores storage PATHS in Firestore (never download URLs), so
-    // applicants need zero read access: the admin dashboard resolves paths
-    // with its own authenticated session (getBlob).
-    // WHY: the previous revision allowed reads to any signed-in user and the
-    // client called getDownloadURL() after upload. Locking reads to admins
-    // without removing that client read call took the apply form down for
-    // every applicant (storage/unauthorized, July 2026). Reads must stay
-    // admin-only AND the client must never read; change either side only
-    // together with test/rules/apply-flow.rules-test.ts.
+    // Same admin gate as firestore.rules. Applicant photos are PII: only a
+    // non-anonymous allowlisted account or an admin custom claim reads them
+    // (the dashboard resolves stored paths with getBlob).
     function isAdmin() {
       return request.auth != null
         && request.auth.token.firebase.sign_in_provider != 'anonymous'
@@ -21,32 +11,17 @@ service firebase.storage {
             || ('admin' in request.auth.token && request.auth.token.admin == true));
     }
 
-    match /photos/{photoId} {
+    // WHY there is no client create rule: applicant photos are uploaded with a
+    // short-lived signed URL minted by /api/upload-application-photo (or relayed
+    // through that endpoint). Signed URLs and the service account bypass these
+    // rules, so photos are never rejected by a rule (size, type and anonymous
+    // login rules rejected real applicants before). Re-adding a public create
+    // rule re-creates that outage class. `{path=**}` matches both the current
+    // photos/<draftId>/<n> shape and legacy single-segment photos/<id> objects.
+    match /photos/{path=**} {
       allow read: if isAdmin();
-      // Applicants upload from an anonymous session; size and type stay
-      // enforced. Any image type is accepted (the client normalizes to JPEG
-      // via compressImage; originals only arrive on its rare fallback path).
-      // 25 MB must stay aligned with MAX_UPLOAD_BYTES in useApplyForm.ts.
-      // The owner tag is required AT CREATE and must be the uploader's own
-      // uid: the delete rule below authorizes cleanup through it, so an
-      // untagged or mistagged upload would leave failure cleanup silently
-      // broken (or delegable to another session) in production.
-      allow create: if request.auth != null
-        && request.resource.size < 25 * 1024 * 1024
-        && request.resource.contentType.matches('image/.*')
-        // SVG can carry scripts; an admin opening a resolved blob URL
-        // directly would execute them in the site origin. The client
-        // normalizes to JPEG anyway, so nothing legitimate is lost.
-        && request.resource.contentType != 'image/svg+xml'
-        && request.resource.metadata.owner == request.auth.uid;
-      // WHY: delete used to fall under a single `write` rule that evaluated
-      // request.resource.size, which is null on deletes, so the apply form's
-      // failure cleanup always got denied and orphaned uploaded photos. The
-      // uploader tags customMetadata.owner with their anonymous uid at create
-      // time; only that session (or an admin) may delete the object.
-      allow delete: if isAdmin()
-        || (request.auth != null
-            && resource.metadata.owner == request.auth.uid);
+      allow delete: if isAdmin();
+      allow create, update: if false;
     }
   }
 }

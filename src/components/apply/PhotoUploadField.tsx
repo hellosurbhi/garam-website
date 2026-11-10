@@ -4,6 +4,8 @@ import styles from "@/components/ApplyPage.module.css";
 
 interface PhotoUploadFieldProps {
   photoPreviews: string[];
+  /** Live save state ("Saving 2 photos...", "All photos saved"), announced politely. */
+  photoStatus?: string;
   error?: string;
   onAddPhotos: (e: ChangeEvent<HTMLInputElement>) => void;
   onRemovePhoto: (index: number) => void;
@@ -13,6 +15,7 @@ const MAX_PHOTOS = 10;
 
 export function PhotoUploadField({
   photoPreviews,
+  photoStatus,
   error,
   onAddPhotos,
   onRemovePhoto,
@@ -97,6 +100,14 @@ export function PhotoUploadField({
         onChange={onAddPhotos}
         className={styles.hiddenInput}
       />
+
+      <p
+        className={styles.photoGuidanceFooter}
+        role="status"
+        aria-live="polite"
+      >
+        {photoStatus}
+      </p>
 
       {error && (
         <p className={styles.photoError} role="alert">

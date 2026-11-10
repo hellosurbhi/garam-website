@@ -1,6 +1,7 @@
 import type { Timestamp } from "firebase/firestore";
 
 export type ApplicantStatus =
+  | "Draft"
   | "New"
   | "Contacted"
   | "Responded"
@@ -16,21 +17,24 @@ export type ApplicantStatus =
 /** Firestore document shape for a contestant application. */
 export interface Application {
   id: string;
-  name: string;
-  age: number;
-  gender: string;
-  orientation: string;
-  city: string;
+  // WHY every form field is optional: a Draft is saved as the person types, so
+  // a name-only draft is a normal document. Render code must guard each one.
+  name?: string;
+  age?: number;
+  ageUnder18?: boolean; // set by the server when age < 18; saved, never rejected
+  gender?: string;
+  orientation?: string;
+  city?: string;
   country?: string;
   state?: string;
   email?: string;
   emailNormalized?: string; // email.toLowerCase(), set on create; used for webhook correlation
   phone?: string;
   height?: string;
-  instagram: string;
+  instagram?: string;
   community?: string;
   income?: string;
-  applicationType: string;
+  applicationType?: string;
   referrerName?: string;
   nominationConsent?: boolean;
   pitch?: string;
@@ -48,7 +52,8 @@ export interface Application {
   deletedAt?: Timestamp | null;
   status: ApplicantStatus;
   notes?: string;
-  submittedAt: Timestamp;
+  submittedAt: Timestamp; // first-save time; drafts carry it so admin ordering works
+  finalizedAt?: Timestamp; // set when the applicant pressed Submit
 
   // Contestant workflow fields (P2+) — all optional, not present on older docs
   contactedAt?: Timestamp;
@@ -69,6 +74,7 @@ export interface Application {
 
 /** Hex colour for each application status, used in admin UI status badges. */
 export const STATUS_COLORS: Record<ApplicantStatus, string> = {
+  Draft: "#B45309",
   New: "#D4A843",
   Contacted: "#3B82F6",
   Responded: "#10B981",
@@ -84,6 +90,7 @@ export const STATUS_COLORS: Record<ApplicantStatus, string> = {
 
 /** Pipeline order for admin dashboard sections. Participated and Deleted are handled separately. */
 export const STATUS_ORDER: readonly ApplicantStatus[] = [
+  "Draft",
   "New",
   "Contacted",
   "Responded",
@@ -98,6 +105,7 @@ export const STATUS_ORDER: readonly ApplicantStatus[] = [
 
 /** Whether each section starts expanded (true) or collapsed (false). */
 export const STATUS_SECTION_DEFAULTS: Record<ApplicantStatus, boolean> = {
+  Draft: true,
   New: true,
   Contacted: true,
   Responded: true,

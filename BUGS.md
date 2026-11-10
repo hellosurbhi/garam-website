@@ -405,15 +405,10 @@ This review ran on the merge of main into `fix/eventbrite-widget-silent-failure`
 
 ### CodeRabbit PR #135 review — 2026-08-12 (deferred, heavy lifts; quick wins fixed same day)
 
-- [ ] MEDIUM: `isSynthetic` remains in the public Firestore write schema, so an anonymous client can mark its own application synthetic and hide it from the dashboard. The notification-suppression half was closed same day (server derives synthetic from the verified email in `/api/notify-application`); removing the field from the public schema needs a trusted server-side write path for the monitor and matching rules-test updates.
-- [ ] MEDIUM: photo previews in the apply form read every accepted file through `FileReader.readAsDataURL()` before compression; a multi-photo selection of large originals can hold hundreds of MB of base64 in memory on mobile. Switch previews to `URL.createObjectURL` with revocation. at src/components/apply/useApplyForm.ts:262
 - [ ] MEDIUM: `contestant-claim`, `contestant-open-claim` and `contestant-show-claim` group several non-idempotent Firestore writes in one try block and return a retryable 500; a retry after a partial failure creates duplicate contestant records and waiver submissions. Needs idempotency keys or preflighting the fallible config (portal token signing) before the first write.
-- [ ] LOW: `.github/workflows/synthetic-apply.yml` runs verification/cleanup only when Playwright succeeds; a submission written before a later assertion failure is left behind and can trip the 48-hour cleanup guard. Run cleanup unconditionally (`if: always()`).
 
 ### Codex (2026-08-12T17:53Z)
 
-- [ ] HIGH: [FALSE-PAGER-SUCCESS] `src/lib/opsAlert.ts:81` swallows every delivery failure with `Promise.allSettled`, and `src/pages/api/alert-failure.ts:77` always returns 200. The workflow heartbeat and failure notification can therefore report success when neither email nor webhook delivered. Executor: the 3:00 overnight fixer (product repos are in its lane per the 2026-08-19 cadence decision); the independent GitHub-issue pager covers the owner meanwhile, but real applicants' failure emails still ride this swallowing path.
-- [ ] MEDIUM: `.github/workflows/synthetic-apply.yml:49` runs verification and cleanup only after Playwright succeeds. A submission that reaches Firestore before a later browser assertion fails is left behind. Once older than 48 hours, it can make the cleanup script refuse subsequent cleanup runs.
 - [ ] MEDIUM: `src/data/waiverPage.ts:22` promises that a receipt was emailed, but `src/pages/api/stage-waiver.ts:131` intentionally returns success after receipt delivery fails. Users can receive a false confirmation.
 
 ### Codex (2026-08-12T18:28Z)
@@ -421,8 +416,6 @@ This review ran on the merge of main into `fix/eventbrite-widget-silent-failure`
 - [ ] HIGH: [BROKEN-SMOKE-SELECTOR] `tests/smoke/critical-flows.spec.ts:204` selects `apply-terms` on `/waiver`, but `StandaloneWaiverForm.tsx:205` has no such attribute. The waiver smoke flow now fails before submission.
 
 ### Codex (2026-08-12T18:28Z)
-
-- [ ] MEDIUM: [FALSE-POSITIVE-RULE-TEST] The non-image test at `test/rules/apply-flow.rules-test.ts:87` omits required owner metadata. It now fails regardless of the content-type rule, so removing the image restriction would not make this regression test fail.
 
 ## Critical (round cap reached, push allowed, fix before merge)
 
@@ -451,11 +444,9 @@ This review ran on the merge of main into `fix/speed-insights-node-env` (PR #157
 - CRITICAL `UNSAFE-ROLLOUT` re-filed against PR #157's merge commit: same recorded decision as the Codex 2026-08-12T20:05Z entry above, on identical grounds (client code published on main via PR #135, sequencing tracked by the apply-outage entry at the top of this file plus PR #135's operator steps). Kept so the report is not re-filed against further merge commits of main into open branches.
 - CRITICAL `FABRICATED-REFERENCE` re-filed against the `38cb5df`, `4ec96f3` and `e520120` commit bodies (exact lint and test counts stated without committed logs): same won't-fix decision as the two entries in the round-cap section below. `4ec96f3` and `e520120` are published main history and cannot be reworded without a prohibited force push. `38cb5df`'s Verified line follows the format the repo's own commit-msg hook mandates and rejects commits without (its own examples state exact counts such as "npm test -> 47/47 pass"); the counts were produced by the pre-commit gate that ran on that very commit, and the repo intentionally stores no test logs as artifacts. CI re-runs the full suite on every PR, which is the guarantee the repo relies on.
 
-- [ ] HIGH: [FALSE-PAGER-SUCCESS] `src/lib/opsAlert.ts:72` does not reject non-success webhook responses, `src/lib/opsAlert.ts:92` swallows every channel failure and `src/pages/api/alert-failure.ts:77` always returns 200. The heartbeat and failure notification curls at `.github/workflows/synthetic-apply.yml:72` and `:86` can therefore pass when no alert was delivered.
       [PUSH-GUARD-BYPASS] `.husky/pre-push:4` checks the checked-out branch instead of the refs received on stdin. From a feature branch, pushes such as `git push origin HEAD:main` bypass the main protection.
       [BROKEN-SMOKE-SELECTOR] `tests/smoke/critical-flows.spec.ts:204` checks `apply-terms` on `/waiver`, but the waiver checkbox at `src/components/waiver/StandaloneWaiverForm.tsx:205` has no such attribute. Both waiver smoke flows fail before submission.
       [NON-IDEMPOTENT-WRITES] The claim routes write a contestant before token signing or invite updates at `src/pages/api/contestant-claim.ts:110`, `contestant-open-claim.ts:98` and `contestant-show-claim.ts:117`. `stage-waiver.ts:97` similarly writes the waiver before linkage writes. Later failure returns a retryable 500, so retries create duplicate legal records.
-      [MOBILE-OOM] `useApplyForm.ts:253` accepts ten files approaching 50 MB each, then `useApplyForm.ts:275` converts every original to a base64 data URL before compression. Large iPhone selections can allocate hundreds of megabytes and kill the tab.
       [UNTRUSTED-MIGRATION-INPUT] `firestore.rules:100` permits unvalidated public `photoUrls`, while `scripts/migrate-legacy-photo-urls.mjs:67` accepts any URL containing `/o/photos...` without validating host or bucket. A crafted application can make the privileged migration revoke a known unrelated photo token.
       [SCOPE-CREEP] `LESSONS.md:247` turns one JotForm failure into a universal ban on third-party payments. That was not part of the stated waiver change and conflicts with the existing Eventbrite payment architecture documented at `src/data/legal.ts:73`.
       [UNASKED-CHANGE] The apply-outage commit also changes repository-wide hook architecture through `.husky/pre-commit`, `.husky/pre-push`, `.gitignore:70` and `package.json:28`. This developer-workflow refactor does not trace to the stated apply, waiver, alerting or dependency intent.
@@ -463,34 +454,22 @@ This review ran on the merge of main into `fix/speed-insights-node-env` (PR #157
 ### Codex (2026-08-12T20:05Z)
 
 - [ ] MEDIUM: [NONATOMIC-MIGRATION] Despite the WHY comment, `scripts/migrate-legacy-photo-urls.mjs:197` revokes tokens before writing `photoPaths`. A patch failure leaves documents pointing only to dead URLs until an operator reruns the script.
-      [PHOTO-PATH-MISMATCH] `useApplyForm.ts:449` copies an arbitrary filename suffix into the Storage path, while `firestore.rules:42` permits only ASCII path characters. Valid image files with spaces or Unicode in the suffix upload successfully and then fail the application write.
       [FALSE-RECEIPT-CONFIRMATION] `src/data/waiverPage.ts:22` promises that a receipt was emailed, but `src/pages/api/stage-waiver.ts:134` suppresses delivery failures and still returns success.
-      [FALSE-POSITIVE-RULE-TEST] The non-image regression at `test/rules/apply-flow.rules-test.ts:87` omits required owner metadata. It fails even if the content-type restriction is removed.
-      [STALE-SYNTHETIC-DATA] Cleanup at `.github/workflows/synthetic-apply.yml:51` runs only after Playwright succeeds. A document written before a later browser assertion fails is left behind and can eventually exceed the cleanup script’s 48-hour safety window.
-      [PUBLIC-SYNTHETIC-FLAG] `firestore.rules:102` lets anonymous writers set `isSynthetic`, while `AdminDashboard.tsx:211` hides every marked application. The monitor marker needs a trusted write path rather than a public boolean.
       [CONTRADICTORY-INCIDENT-RECORD] `LESSONS.md:227` says every July application failed because admin-only rules were live. `LESSONS.md:251` and `BUGS.md:11` correctly state those rules were never deployed and only large-photo submissions failed.
       [SILENT-PHOTO-FAILURE] `useApplicantPhotos.ts:81` converts download errors to `null` and `:87` removes them without exposing an error count. The dashboard renders a no-photo placeholder indistinguishable from an applicant who uploaded nothing.
-      [SVG-CONTRACT-MISMATCH] `useApplyForm.ts:241` accepts every `image/*`, but `storage.rules:40` rejects SVG. Small SVG files bypass compression and produce an avoidable submission failure.
 
 ### Codex (2026-08-12T20:16Z)
 
-- [ ] HIGH: [FALSE-PAGER-SUCCESS] `src/lib/opsAlert.ts:72-102` neither rejects unsuccessful webhook responses nor propagates channel failures. `src/pages/api/alert-failure.ts:75-79` consequently returns 200 when every channel failed. The workflow curls at `.github/workflows/synthetic-apply.yml:72` and `:86` also omit HTTP failure handling, so both the heartbeat and outage page can report success without delivering anything.
       [INCOMPLETE-PII-MIGRATION] `scripts/migrate-legacy-photo-urls.mjs:74-89` only queries `photoUrls`. Legacy `photoUrl` documents explicitly supported at `src/types/application.ts:42` and `src/utils/applicantPhotos.ts:24` are never migrated or revoked. Documents already containing `photoPaths` also retain `photoUrls` because the patch is skipped at `scripts/migrate-legacy-photo-urls.mjs:205`.
       [PUSH-GUARD-BYPASS] `.husky/pre-push:4-8` checks the checked-out branch instead of the refs received on stdin. From a feature branch, `git push origin HEAD:main`, `git push origin main` and deletion of remote main all bypass the guard.
       [BROKEN-SMOKE-SELECTOR] `tests/smoke/critical-flows.spec.ts:204` selects `apply-terms` on `/waiver`, but the checkbox at `src/components/waiver/StandaloneWaiverForm.tsx:205-213` has no such attribute. Both new waiver smoke tests fail before submission.
-      [MOBILE-OOM] `src/components/apply/useApplyForm.ts:253-289` accepts ten files approaching 50 MB each and converts every original to a base64 data URL before compression. This can allocate hundreds of megabytes and terminate the mobile tab.
       [NON-IDEMPOTENT-WRITES] The claim routes write contestant records before token signing or linkage at `src/pages/api/contestant-claim.ts:110-122`, `contestant-open-claim.ts:98-104` and `contestant-show-claim.ts:117-118`. `stage-waiver.ts:97-109` similarly writes the waiver first. Later failures return retryable 500 responses, so retries create duplicate legal records.
       [SCOPE-CREEP] `LESSONS.md:247` expands one JotForm failure into a universal ban on third-party payments, despite the existing Eventbrite payment architecture documented at `src/data/legal.ts:73`.
       [UNASKED-CHANGE] The apply-outage change also rewrites repository-wide hook architecture through `.husky/pre-commit`, `.husky/pre-push`, `.gitignore:70-77` and `package.json:28`. This does not trace to the stated apply, waiver, alerting or dependency intent.
 
 ### Codex (2026-08-12T20:16Z)
 
-- [ ] MEDIUM: [PUBLIC-SYNTHETIC-FLAG] `firestore.rules:102` allows anonymous writers to set `isSynthetic`, while `src/components/admin/AdminDashboard.tsx:211-213` and `:252-254` hide every marked application.
-      [PHOTO-CONTRACT-MISMATCH] `useApplyForm.ts:239-242` accepts SVG, but small files bypass compression at `compressImage.ts:20` and are rejected by `storage.rules:40`. Arbitrary filename suffixes are also copied at `useApplyForm.ts:449`, while `firestore.rules:42` rejects spaces and Unicode.
-      [FALSE-RECEIPT-CONFIRMATION] `src/data/waiverPage.ts:22` promises an emailed receipt, but `src/pages/api/stage-waiver.ts:134-145` suppresses receipt failures and still returns success.
-      [STALE-SYNTHETIC-DATA] Verification and cleanup at `.github/workflows/synthetic-apply.yml:51-52` run only after Playwright succeeds. A submission written before a later assertion fails remains and eventually triggers the permanent 48-hour cleanup refusal at `scripts/synthetic-apply-verify.mjs:163-168`.
-      [FALSE-POSITIVE-RULE-TEST] The non-image test at `test/rules/apply-flow.rules-test.ts:87-93` omits required owner metadata, so it still fails if the content-type restriction is accidentally removed.
-      [RULE-TEST-ISOLATION] Both rules suites use project `demo-garam-masala` and clear its Firestore state in `beforeEach`, while `vitest.rules.config.ts:14-19` leaves file parallelism enabled. Parallel files can erase each other’s fixtures.
+- [ ] MEDIUM: [FALSE-RECEIPT-CONFIRMATION] `src/data/waiverPage.ts:22` promises an emailed receipt, but `src/pages/api/stage-waiver.ts:134-145` suppresses receipt failures and still returns success.
       [SILENT-PHOTO-FAILURE] `src/components/admin/useApplicantPhotos.ts:77-88` converts every download failure to `null`. The modal then renders the same no-photo placeholder at `ApplicantModal.tsx:287-296`, with no failed count or error state.
       [CONTRADICTORY-INCIDENT-RECORD] `LESSONS.md:227` still says every July submission failed under deployed admin-only rules. `BUGS.md:7-11` correctly records that those rules were never deployed and only large-photo applications failed.
 
@@ -506,12 +485,10 @@ This review ran on the merge of main into `fix/speed-insights-node-env` (PR #157
 
 ### Codex (2026-08-14T16:21Z)
 
-- [ ] HIGH: [FALSE-PAGER-SUCCESS] `src/lib/opsAlert.ts:72-102` neither rejects unsuccessful webhook responses nor propagates delivery failures. `src/pages/api/alert-failure.ts:75-79` always returns 200, while both workflow curls omit HTTP failure handling. The heartbeat and outage pager can pass without delivering an alert.
       [PUSH-GUARD-BYPASS] `.husky/pre-push:4-8` checks the checked-out branch instead of the refs supplied on stdin. A feature branch can still push or delete remote `main`.
       [BROKEN-SMOKE-SELECTOR] `tests/smoke/critical-flows.spec.ts:204` selects `apply-terms` on `/waiver`, but `StandaloneWaiverForm.tsx:205-213` has no such attribute. Both new waiver smoke flows fail before submission.
       [FALSE-BRIEFING-SUCCESS] `src/pages/api/cron/followups.ts:271-293` records the briefing date and reports `briefingSent: true` when no recipient is configured or every delivery fails, preventing a retry.
       [NON-IDEMPOTENT-WRITES] The claim routes and `stage-waiver.ts` persist legal records before later token or linkage operations. A subsequent retryable 500 can produce duplicate contestants or waivers.
-      [MOBILE-OOM] `useApplyForm.ts:253-289` accepts ten files approaching 50 MB each, then converts every original to a base64 data URL before compression. This can exhaust memory on the mobile browsers the change targets.
       [UNTRUSTED-MIGRATION-INPUT] `firestore.rules:100` permits unvalidated public `photoUrls`, while `migrate-legacy-photo-urls.mjs:67-71` accepts any host containing a matching `/o/photos...` path. A crafted application can make the privileged migration revoke an unrelated photo token.
       [INCOMPLETE-PII-MIGRATION] The migration queries only `photoUrls`, missing supported legacy `photoUrl` records. It also retains `photoUrls` when `photoPaths` already exists, leaving tokened PII URLs stored.
       [RECOVERY-ORDERING] `eventbriteRecovery.ts:135-138` checks `defaultPrevented` before later or ancestor listeners run. If one of those listeners suppresses navigation, the fallback has already returned and the CTA remains dead.
@@ -520,12 +497,7 @@ This review ran on the merge of main into `fix/speed-insights-node-env` (PR #157
 
 ### Codex (2026-08-14T16:21Z)
 
-- [ ] MEDIUM: [PUBLIC-SYNTHETIC-FLAG] `firestore.rules:102` lets anonymous writers set `isSynthetic`, while `AdminDashboard.tsx:211-213` and `:252-254` hide every marked application.
-      [PHOTO-CONTRACT-MISMATCH] The client accepts SVG but Storage rejects it. It also copies arbitrary filename suffixes into paths that Firestore restricts to ASCII, allowing an upload to succeed before the application write fails.
-      [FALSE-RECEIPT-CONFIRMATION] `waiverPage.ts:22` promises an emailed receipt, but `stage-waiver.ts:134-145` suppresses delivery failures and still returns success.
-      [STALE-SYNTHETIC-DATA] Verification and cleanup run only after Playwright succeeds. A document written before a later assertion failure remains and can eventually trigger the cleanup script’s permanent 48-hour refusal.
-      [FALSE-POSITIVE-RULE-TEST] The non-image test at `apply-flow.rules-test.ts:87-93` omits required owner metadata, so it still fails if the content-type restriction is removed.
-      [RULE-TEST-ISOLATION] Both rules suites share project `demo-garam-masala` and clear its state in `beforeEach`, while file parallelism remains enabled. Parallel suites can erase each other’s fixtures.
+- [ ] MEDIUM: [FALSE-RECEIPT-CONFIRMATION] `waiverPage.ts:22` promises an emailed receipt, but `stage-waiver.ts:134-145` suppresses delivery failures and still returns success.
       [SILENT-PHOTO-FAILURE] `useApplicantPhotos.ts` converts download failures to missing photos, leaving the admin UI unable to distinguish access or network failures from applicants who uploaded nothing.
       [CONTRADICTORY-INCIDENT-RECORD] `LESSONS.md` says every July application failed under admin-only rules, while `BUGS.md:5-11` correctly says those rules were not deployed and only large-photo submissions failed.
 
@@ -609,11 +581,7 @@ Split from a shared checkbox into one line per finding, same pass as above (Fabl
 
 ### Codex (2026-08-19T19:00Z)
 
-- [ ] HIGH: Make heartbeat delivery failure observable. (.github/workflows/synthetic-apply.yml:78-82)
-
 ### Codex (2026-08-19T19:00Z)
-
-- [ ] MEDIUM: Do not describe the heartbeat as proof of alert delivery. (CHANGELOG.md:5-16)
 
 - WONTFIX(MEDIUM, 2026-08-19): Trim optional text before deciding whether to include it (useApplyForm.ts payload builder) | Reason: every untrimmed inclusion check in buildApplicationData (country, state, community, income, howHeard) is a select or geo-dataset value that cannot contain whitespace; every free-text field (name, email, phone, height, instagram, referrerName, pitch, type) was already trimmed. The one real gap, city (free-text input) sent untrimmed, was fixed in the same session with city.trim().
 
@@ -623,16 +591,10 @@ Split from a shared checkbox into one line per finding, same pass as above (Fabl
 
 ### Codex (2026-08-20T14:49Z)
 
-- [ ] HIGH: Operator step 2 falsely expects an email after a successful manual monitor run. `.github/workflows/synthetic-apply.yml:71` sends a heartbeat only during Monday 13 UTC runs, while `src/pages/api/notify-application.ts:192` explicitly suppresses synthetic-submission emails. Most successful manual runs therefore produce no email and would falsely implicate alert delivery.
-
 ### Codex (2026-08-20T14:49Z)
-
-- [ ] MEDIUM: [COPY-VOICE] Added prose violates the repository ban on em dashes in `.github/workflows/synthetic-apply.yml:49`, `src/components/apply/useApplyForm.ts:136`, `src/components/apply/useApplyForm.ts:177` and `test/rules/apply-flow.rules-test.ts:245`.
-- [ ] MEDIUM: [SILENT-FAILURE] .github/workflows/synthetic-apply.yml:50, moving the drift check before the Playwright step means a drift failure now stops the job before the Playwright spec runs, and per BUGS.md that spec's failure path is what POSTs to /api/alert-failure; unless the workflow has an `if: always()` alert step outside this diff, the most likely outage class (stale rules — the exact Aug 12 scenario) fails CI with no immediate alert attempt and surfaces only via the absent Monday-13:30 heartbeat, up to ~7 days later. | Files: .github/workflows/synthetic-apply.yml BUGS.md | PR: #208 | Head: 112b1694598499bda676c576ac04eeb0a394324d
 
 <!-- fable-routed PR #208 head 112b1694598499bda676c576ac04eeb0a394324d -->
 
-- [ ] MEDIUM: [ALWAYS-RUNS-ON-CANCEL] .github/workflows/synthetic-apply.yml:62, `if: always()` (unlike `!cancelled()`) makes the verify/cleanup and rules-drift steps execute even on a cancelled run, so a run cancelled mid-flight (manually or via the `synthetic-apply` concurrency group) still performs its Firestore cleanup sweep and can delete the synthetic document a superseding run just created, making that run's verify step fail and fire a false page. | Files: .github/workflows/synthetic-apply.yml | PR: #207 | Head: 56f4a6e2a2ab4f28a568a9221bd072b9b7d73619
 - [ ] MEDIUM: [OVERBROAD-CONTRACT] CHANGELOG.md:5, the claim "can no longer fail silently" is violated because both pager steps gate on `failure()`, which is false for cancelled runs, and no run fires at all if the scheduled workflow is auto-disabled after 60 days of repo inactivity or the runner is lost — leaving silent-death modes covered only by the weekly heartbeat over the site channel that is documented (FALSE-PAGER-SUCCESS) to swallow delivery failures. | Files: CHANGELOG.md | PR: #207 | Head: 56f4a6e2a2ab4f28a568a9221bd072b9b7d73619
 
 <!-- fable-routed PR #207 head 56f4a6e2a2ab4f28a568a9221bd072b9b7d73619 -->

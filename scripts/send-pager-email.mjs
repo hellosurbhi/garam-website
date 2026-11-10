@@ -66,21 +66,30 @@ export async function sendPagerEmail(mode, env, fetchImpl) {
   const to = env.PAGER_EMAIL_TO?.trim() || user;
   const runUrl = env.RUN_URL?.trim() ?? "";
 
+  // The verify step's own output, so the email names the exact failure
+  // instead of a canned sentence. Capped so a runaway log cannot bloat it.
+  const detail = env.DETAIL?.trim().slice(0, 4000) ?? "";
+
   const subject =
     mode === "page"
-      ? "APPLY MONITOR FAILED: production form likely broken"
-      : "Weekly pager test: the Gmail alert channel works. No action needed.";
+      ? `APPLY FAILED: ${
+          detail
+            .split("\n")
+            .find((l) => l.startsWith("- "))
+            ?.slice(2, 160) ?? "production canary could not file an application"
+        }`
+      : "Pager test: the Gmail alert channel works. No action needed.";
   const text =
     mode === "page"
       ? [
-          "The synthetic apply monitor FAILED. The production apply form is likely rejecting real applicants right now.",
+          "The production apply canary FAILED. Real applicants may be affected.",
           "",
-          `Workflow run with the diagnosis: ${runUrl || "(run URL unavailable)"}`,
+          detail || "(the failing step printed no detail, open the run)",
           "",
-          "The verify and rules-drift step outputs in that run show the cause and the applicant impact.",
+          `Workflow run with full logs: ${runUrl || "(run URL unavailable)"}`,
         ].join("\n")
       : [
-          "This is the scheduled proof that the Gmail pager channel still works end to end.",
+          "This is a manual proof that the Gmail pager channel works end to end.",
           "",
           runUrl
             ? `Sent by workflow run: ${runUrl}`

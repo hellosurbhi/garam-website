@@ -1,11 +1,9 @@
 /**
- * Shared markers for the daily synthetic apply-form monitor
- * (.github/workflows/synthetic-apply.yml).
- *
- * The monitor submits a real application through the production UI using this
- * reserved email. Every layer that must treat synthetic traffic specially
- * (client flag, notification skip, admin dashboard filter, cleanup script)
- * keys off these values, so real applicant data can never match them.
+ * Shared markers for synthetic traffic. The apply canary (.github/workflows/
+ * apply-canary.yml) no longer creates applications, but the mixer RSVP monitor
+ * still submits with this reserved email, so every layer that must treat that
+ * traffic specially (notification skip) keys off these values, so real
+ * applicant data can never match them.
  */
 export const SYNTHETIC_MONITOR_EMAIL =
   "synthetic-monitor@garammasaladating.com";

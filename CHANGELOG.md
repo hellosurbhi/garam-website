@@ -1,5 +1,16 @@
 # Changelog
 
+## fix(apply): the form no longer depends on database rules, saves as people type and never rejects a photo (2026-11-10)
+
+- Root cause of the recurring "Missing or insufficient permissions": the browser wrote straight to Firestore and Storage, so two rule books, hand deploys and anonymous phone login all sat between an applicant and a successful submit. All three are removed from the applicant path.
+- New `/api/save-application` files every field as it is typed (debounced, retried, resumed after reload, flushed on page hide) under a signed draft token. The server never rejects on content: no age upper bound, long text is trimmed only at flood scale, under 18 is saved and flagged `ageUnder18`.
+- Photos go straight to Storage over a signed URL (`/api/upload-application-photo`), any format and size. Compression is an optimization only; the original uploads if it fails, a 4MB server relay is the fallback, and a failed photo never blocks the application.
+- `firestore.rules` and `storage.rules` are now the lockdown state (admin only, no client creates). They are deployed by Surbhi once the canary is green and the digest shows 0 old-client writes for 48 hours.
+- Email: per-signup and per-application emails are gone. One daily digest (`/api/cron/daily-digest`, 12:00 UTC) lists signups, applications, unfinished drafts and problems, with tripwires for drops, missing photos and dirty env values. Failure alerts are the only instant email, with subject `APPLY FAILED: <stage>: <raw error>` and the real cause, field lengths, photo sizes and what was saved anyway. Alerts are also written to `incidents` for the digest. The alert endpoint now returns 502 when no channel delivered, and a webhook that answers 5xx no longer counts as delivered.
+- Monitoring: the fake-application synthetic monitor, the rules-drift apply check and the mocked weekly Firebase apply smoke are replaced by a production canary (`apply-canary.yml`) that overwrites one fixed `_canary` document per browser profile, never creates or deletes, and pages through its own channel.
+- Admin: partial drafts show as `Draft` and every field render is guarded for missing data.
+- Tests rewritten from scratch: the save endpoint, draft merge fuzzing, the autosave queue, the photo pipeline, the upload endpoint, storage signing, the digest and its cron route, the form-to-server contract, the alert path, the rules tests and the apply smoke tests.
+
 ## chore(ci): remove the weekly mutation audit workflow (2026-11-05)
 
 - Deleted `.github/workflows/mutation-audit.yml`, `scripts/mutation-audit-summary.mjs` and `MUTATION-AUDIT.md`. The workflow opened a draft PR (#326) every Monday to carry a report that could never be merged and was never read. The owner closed #326 and disabled the workflow; this removes the files so it cannot return.
@@ -11,6 +22,7 @@
 - `scripts/check-server-runtime.mjs` faked Upstash being offline by throwing a network error. `@upstash/redis` retries thrown fetch errors 5 times with exponential backoff, which outlasted the 1500ms ceiling in `src/lib/rateLimit.ts`, so every `postbuild` run logged "Timeout: Upstash rate limit check" instead of failing open at once. The stub now returns a 503 response, which is not retried and matches how a real outage looks. Production traffic was never affected.
 - `eslint.config.js` now ignores `.claude/worktrees`. Nested session checkouts each carry a tsconfig and made `npm run lint` fail with "multiple candidate TSConfigRootDirs", which blocked pre-push.
 - Verified: `npm run test:runtime` exits 0 with no timeout lines, `npm run lint` exits 0, Codex tier E review APPROVED.
+
 ## Geo route coverage and deployment guidance (2026-11-04)
 
 - Added direct geo endpoint tests so the decoding regression cases count toward CI patch coverage. Corrected the older deployment lesson to match the Git branch configuration.

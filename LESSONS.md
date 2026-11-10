@@ -1,5 +1,11 @@
 # Lessons
 
+## Never put form validation in the database rules
+
+**What went wrong:** The apply form failed with "Missing or insufficient permissions" in July, August and again in November, each time for different applicants, and the synthetic monitor stayed green.
+**Why:** The wrong assumption was that rules are a safe place to decide what a valid application looks like. Rules, Storage rules and anonymous login are three separate things a real phone can fail, they are deployed by hand, and the error they produce names no field and no cause. A monitor with one clean desktop browser cannot reproduce a strict-rule rejection of an unusual real submission.
+**Rule:** Public forms post to our server, which accepts everything, files it and flags what looks wrong. Rules stay admin-only and are never in the applicant's path. Every failure alert names the stage and the raw error, and a monitor overwrites one fixed document instead of creating and deleting fake ones.
+
 ## Check city prefill before the geo cache refresh completes
 
 The first local browser check found that the newsletter script could read an old encoded city before attribution bootstrap cleared it. Guard geo-city reads with the cache version, then verify both forms with a seeded old session and a manually entered city. API tests alone did not catch the script-order race.

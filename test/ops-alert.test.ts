@@ -56,7 +56,7 @@ describe("alertOps push webhook", () => {
     expect(body).toContain("[email redacted]");
     // The diagnosis itself survives; only the identity is removed.
     expect(body).toContain("SMTP 535");
-    expect(body).toContain("Failure in ops/cron_post_show");
+    expect(body).toContain("OPS FAILED: cron_post_show");
   });
 
   it("keeps the unredacted message on the private email channel", async () => {
@@ -152,6 +152,32 @@ describe("alertOps push webhook", () => {
     const body = lastPushBody();
     expect(body).toContain("storage/unauthorized on photos/x.jpeg");
     expect(body).not.toContain("redacted");
+  });
+
+  it("a webhook that answers 5xx does not count as a delivered page", async () => {
+    mockSend.mockRejectedValue(new Error("SMTP down"));
+    vi.spyOn(globalThis, "fetch").mockImplementation(
+      (async () =>
+        new Response("bad gateway", { status: 502 })) as typeof fetch,
+    );
+    const delivered = await alertOps({
+      flow: "ops",
+      stage: "cron_post_show",
+      errorMessage: "boom",
+    });
+    expect(delivered).toBe(false);
+  });
+
+  it("still counts as delivered when email works and the webhook is down", async () => {
+    vi.spyOn(globalThis, "fetch").mockImplementation(
+      (async () => new Response("no", { status: 500 })) as typeof fetch,
+    );
+    const delivered = await alertOps({
+      flow: "ops",
+      stage: "cron_post_show",
+      errorMessage: "boom",
+    });
+    expect(delivered).toBe(true);
   });
 
   it("never sends context entries over the webhook", async () => {

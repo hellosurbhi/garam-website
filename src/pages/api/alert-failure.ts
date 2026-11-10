@@ -18,7 +18,7 @@ export const prerender = false;
  * failure, not surface in a weekly analytics digest. Clients post here from
  * their failure paths with whatever contact fields the user had filled in,
  * so a failed user is reachable and recoverable even when nothing was saved.
- * The "ops" flow carries the weekly pager heartbeat and CI monitor alerts.
+ * The "ops" flow carries cron failures and other server-side alerts.
  */
 const FailureSchema = z.object({
   flow: z.enum(["apply", "waiver", "portal", "lead", "ops"]),
@@ -33,6 +33,15 @@ const FailureSchema = z.object({
       phone: z.string().max(50).optional(),
       instagram: z.string().max(100).optional(),
     })
+    .optional(),
+  /**
+   * Plain facts about the failure: failing field, every field's length, photo
+   * count and sizes, what was saved anyway, HTTP status. Rendered under
+   * "WHAT WE KNOW" in the alert.
+   */
+  details: z
+    .record(z.string().max(60), z.string().max(500))
+    .refine((d) => Object.keys(d).length <= 40, "too many detail entries")
     .optional(),
 });
 
@@ -52,7 +61,14 @@ function alertKey(report: z.infer<typeof FailureSchema>): string {
   // for dedupe in a private store; a server-keyed HMAC would add a secret to
   // rotate for no additional protection here.
   const digest = createHash("sha256").update(identity).digest("hex");
-  return `alert:${report.flow}:${report.stage}:${digest}`;
+  // WHY the reason hash: keyed on stage alone, a second DIFFERENT failure for
+  // the same person (say a photo timeout after a save error) collapsed into the
+  // first email and its distinct cause was never reported.
+  const reason = createHash("sha256")
+    .update(report.errorMessage)
+    .digest("hex")
+    .slice(0, 12);
+  return `alert:${report.flow}:${report.stage}:${reason}:${digest}`;
 }
 
 interface DedupeClaim {
@@ -145,11 +161,9 @@ export const POST: APIRoute = async ({ request }) => {
     flow: report.flow,
     stage: report.stage,
     errorMessage: report.errorMessage,
-    context: {
-      ...(report.contact ?? {}),
-      pageUrl: report.pageUrl,
-      userAgent: report.userAgent,
-    },
+    context: report.contact ?? {},
+    details: report.details,
+    footer: { pageUrl: report.pageUrl, userAgent: report.userAgent },
   };
 
   // alertOps never throws; the client fires and forgets either way.
@@ -160,8 +174,11 @@ export const POST: APIRoute = async ({ request }) => {
     );
     await claim.release();
   }
-  return new Response(JSON.stringify({ ok: true }), {
-    status: 200,
+  // WHY: a 200 here used to mean "received", even when every channel failed, so
+  // a caller could not tell a delivered page from a lost one. 502 reports the
+  // truth; the browser still fires and forgets and ignores the status.
+  return new Response(JSON.stringify({ ok: delivered }), {
+    status: delivered ? 200 : 502,
     headers: { "Content-Type": "application/json" },
   });
 };

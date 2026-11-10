@@ -32,6 +32,18 @@ export const RATE_LIMITS = {
     limit: 10,
     windowSeconds: 60,
   },
+  // Autosave fires per field, so a real applicant makes dozens of calls in a
+  // minute. Sized well above any human; the limiter also fails open.
+  saveApplication: {
+    prefix: "ratelimit:save-application",
+    limit: 120,
+    windowSeconds: 60,
+  },
+  uploadApplicationPhoto: {
+    prefix: "ratelimit:upload-application-photo",
+    limit: 60,
+    windowSeconds: 60,
+  },
   notifyApplication: {
     prefix: "ratelimit:notify-application",
     limit: 5,

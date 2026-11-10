@@ -177,6 +177,13 @@ export const APPLY_PAGE = {
   photosFailedTitle: "One thing: your photos did not come through",
   photosFailedNote:
     "Your application is safely with us, but the photo upload failed on your connection. DM your photos to @garammasaladating on Instagram and we will attach them for you.",
+  submitFailed: (detail: string): string =>
+    `We could not finish sending your application (${detail}). Your answers are still on this page and we have kept what you typed. Tap Submit again, or DM us @garammasaladating on Instagram and we will sort it out.`,
+  photoStatusSaving: (count: number): string =>
+    `Saving ${count} ${count === 1 ? "photo" : "photos"}...`,
+  photoStatusSaved: "All photos saved",
+  photoStatusRetrying: (count: number): string =>
+    `${count} ${count === 1 ? "photo is" : "photos are"} still retrying. You can keep going, we will try again when you submit.`,
   photoGuidanceHeading: "Photos: up to 10",
   photoGuidanceIntro: "We need to be able to tell what you look like. Include:",
   photoGuidanceItems: [

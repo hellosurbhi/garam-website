@@ -4,6 +4,7 @@ import { Modal } from "@/components/ui/Modal";
 import { getFirebaseAuth } from "@/lib/firebase";
 import { events, isDisplayable } from "@/data/events";
 import { type Application } from "@/types/application";
+import { applicantName } from "@/utils/applicantDisplay";
 import styles from "./ContestantInviteModal.module.css";
 
 type ContestantRole = "female" | "male";
@@ -103,7 +104,7 @@ export default function ContestantInviteModal({
       };
       setInviteResult(result);
       onSuccess(
-        app.email ?? app.name,
+        app.email ?? applicantName(app),
         result.inviteUrl,
         result.emailSent,
         result.emailError,

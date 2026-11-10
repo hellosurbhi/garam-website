@@ -58,6 +58,11 @@ const validReport = {
   },
 };
 
+/** Mirrors alertKey in alert-failure.ts: the reason is part of the dedupe key. */
+function reasonHash(message: string): string {
+  return createHash("sha256").update(message).digest("hex").slice(0, 12);
+}
+
 describe("alert-failure handler", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -77,7 +82,10 @@ describe("alert-failure handler", () => {
     expect(mockSend).toHaveBeenCalledTimes(1);
     const mail = mockSend.mock.calls[0][0];
     expect(mail.to).toBe("admin@example.com");
-    expect(mail.subject).toBe("FAILURE [apply/submit]");
+    // The subject names the real cause, never a canned sentence.
+    expect(mail.subject).toBe(
+      "APPLY FAILED: submit: Firebase Storage: User does not have permission to access 'photos/x.jpeg'. (storage/unauthorized)",
+    );
     expect(mail.html).toContain("storage/unauthorized");
     expect(mail.html).toContain("priya@example.com");
     expect(mail.text).toContain("instagram: applicant_fixture_1");
@@ -93,20 +101,43 @@ describe("alert-failure handler", () => {
     expect(mockSend).not.toHaveBeenCalled();
   });
 
-  it("accepts a report without contact fields (ops heartbeat shape)", async () => {
+  it("accepts a report without contact fields (cron failure shape)", async () => {
     const res = await POST(
       makeContext(
         makeRequest({
           flow: "ops",
-          stage: "heartbeat",
-          errorMessage:
-            "Weekly pager test: if you received this, alerting works.",
+          stage: "cron_daily_digest",
+          errorMessage: "Zoho SMTP 535 authentication failed",
         }),
       ),
     );
     expect(res.status).toBe(200);
     expect(mockSend).toHaveBeenCalledTimes(1);
-    expect(mockSend.mock.calls[0][0].subject).toBe("FAILURE [ops/heartbeat]");
+    expect(mockSend.mock.calls[0][0].subject).toBe(
+      "OPS FAILED: cron_daily_digest: Zoho SMTP 535 authentication failed",
+    );
+  });
+
+  it("two different failures for the same person are two emails, never collapsed", async () => {
+    import.meta.env.UPSTASH_REDIS_REST_URL = "https://fake.upstash.io";
+    import.meta.env.UPSTASH_REDIS_REST_TOKEN = "test-token";
+    mockRedisSet.mockResolvedValue("OK");
+    try {
+      await POST(makeContext(makeRequest(validReport)));
+      await POST(
+        makeContext(
+          makeRequest({
+            ...validReport,
+            errorMessage: "photo 2 of 3 timed out",
+          }),
+        ),
+      );
+      const keys = mockRedisSet.mock.calls.map((c) => c[0]);
+      expect(new Set(keys).size).toBe(2);
+    } finally {
+      delete import.meta.env.UPSTASH_REDIS_REST_URL;
+      delete import.meta.env.UPSTASH_REDIS_REST_TOKEN;
+    }
   });
 
   it("rejects unknown flows and empty error messages", async () => {
@@ -138,10 +169,11 @@ describe("alert-failure handler", () => {
     expect(html).toContain("&lt;script&gt;");
   });
 
-  it("still returns 200 when the mail send fails (client fires and forgets)", async () => {
+  it("reports 502, not a false 200, when the mail send fails and nothing else delivered", async () => {
     mockSend.mockRejectedValue(new Error("SMTP down"));
     const res = await POST(makeContext(makeRequest(validReport)));
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(502);
+    expect(await res.json()).toEqual({ ok: false });
   });
 
   describe("one failure incident = one email (Upstash dedupe)", () => {
@@ -169,7 +201,7 @@ describe("alert-failure handler", () => {
         .update("priya@example.com")
         .digest("hex");
       expect(mockRedisSet).toHaveBeenCalledWith(
-        `alert:apply:submit:${digest}`,
+        `alert:apply:submit:${reasonHash(validReport.errorMessage)}:${digest}`,
         "1",
         {
           nx: true,
@@ -183,14 +215,17 @@ describe("alert-failure handler", () => {
       mockRedisDel.mockResolvedValue(1);
       mockSend.mockRejectedValue(new Error("SMTP down"));
       const res = await POST(makeContext(makeRequest(validReport)));
-      expect(res.status).toBe(200);
+      // Honest status: a page that reached nobody is not a success.
+      expect(res.status).toBe(502);
       // The claim is freed so the NEXT report of this incident can page,
       // instead of an hour of suppression behind an alert that never sent.
       expect(mockRedisDel).toHaveBeenCalledTimes(1);
       const digest = createHash("sha256")
         .update("priya@example.com")
         .digest("hex");
-      expect(mockRedisDel).toHaveBeenCalledWith(`alert:apply:submit:${digest}`);
+      expect(mockRedisDel).toHaveBeenCalledWith(
+        `alert:apply:submit:${reasonHash(validReport.errorMessage)}:${digest}`,
+      );
     });
 
     it("keeps the dedupe claim when the alert delivers", async () => {
@@ -229,7 +264,7 @@ describe("alert-failure handler", () => {
         expect.objectContaining({
           method: "POST",
           headers: expect.objectContaining({
-            Title: "FAILURE apply/submit",
+            Title: expect.stringContaining("APPLY FAILED: submit:"),
             Priority: "urgent",
           }),
         }),

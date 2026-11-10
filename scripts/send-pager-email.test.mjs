@@ -146,13 +146,27 @@ describe("sendPagerEmail", () => {
 
   it("page mode names the outage and links the run", async () => {
     const { subject } = await sendPagerEmail("page", env, mockFetch);
-    expect(subject).toContain("APPLY MONITOR FAILED");
+    expect(subject).toContain("APPLY FAILED");
     expect(decodeSentMessage()).toContain(env.RUN_URL);
+  });
+
+  it("page mode puts the exact failure reason in the subject and body", async () => {
+    const detail =
+      "CANARY VERIFY FAILED:\n- iphone-safari: saved but photoPaths is empty.";
+    const { subject } = await sendPagerEmail(
+      "page",
+      { ...env, DETAIL: detail },
+      mockFetch,
+    );
+    expect(subject).toBe(
+      "APPLY FAILED: iphone-safari: saved but photoPaths is empty.",
+    );
+    expect(decodeSentMessage()).toContain("photoPaths is empty");
   });
 
   it("test mode is unmistakably a drill", async () => {
     const { subject } = await sendPagerEmail("test", env, mockFetch);
-    expect(subject).toContain("pager test");
+    expect(subject).toContain("Pager test");
     expect(subject).toContain("No action needed");
     expect(subject).not.toContain("FAILED");
   });

@@ -6,8 +6,8 @@
  * Group C: Ticket / watch link integrity
  * Group D: Primary CTA sanity
  *
- * Firebase SDK calls go directly to googleapis.com; page.route() intercepts
- * them at the Playwright network layer so no real Firebase account is needed.
+ * Our own /api/* calls are intercepted at the Playwright network layer, so no
+ * real backend or Firebase account is needed.
  */
 
 import { test, expect, type Page } from "@playwright/test";
@@ -16,49 +16,48 @@ import { test, expect, type Page } from "@playwright/test";
 // Helpers
 // ---------------------------------------------------------------------------
 
-/** Intercept every Firebase googleapis.com call so the form submits offline. */
-async function mockFirebase(page: Page) {
-  // Anonymous auth
-  // signInAnonymously POSTs accounts:signUp, then the SDK POSTs accounts:lookup
-  // and reads `users.length` from the reply, so lookup needs its own shape.
-  await page.route("**/identitytoolkit.googleapis.com/**", (route) => {
-    const isLookup = route.request().url().includes("accounts:lookup");
+/**
+ * Stand in for our own apply endpoints so the form can be driven offline. The
+ * apply page talks only to /api/* and one signed storage URL (no Firebase SDK),
+ * so these three routes are the whole surface. The real stack is exercised by
+ * the production canary (.github/workflows/apply-canary.yml).
+ */
+async function mockApplyApi(
+  page: Page,
+  opts: { saveStatus?: number; saveBody?: Record<string, unknown> } = {},
+) {
+  const saves: Array<Record<string, unknown>> = [];
+  await page.route("**/api/save-application", (route) => {
+    saves.push(route.request().postDataJSON() as Record<string, unknown>);
+    return route.fulfill({
+      status: opts.saveStatus ?? 200,
+      contentType: "application/json",
+      body: JSON.stringify(
+        opts.saveBody ?? { ok: true, draftId: "d".repeat(32), token: "tok" },
+      ),
+    });
+  });
+  await page.route("**/api/upload-application-photo", (route) => {
+    const { action } = route.request().postDataJSON() as { action: string };
     return route.fulfill({
       status: 200,
       contentType: "application/json",
       body: JSON.stringify(
-        isLookup
-          ? { users: [{ localId: "smoke-uid", providerUserInfo: [] }] }
-          : {
-              localId: "smoke-uid",
-              idToken: "smoke-tok",
-              refreshToken: "smoke-ref",
-              expiresIn: "3600",
-            },
+        action === "reserve"
+          ? {
+              ok: true,
+              path: `photos/${"d".repeat(32)}/1-smoke.png`,
+              uploadUrl: "https://storage.example.com/photos/smoke.png",
+              contentType: "image/png",
+            }
+          : { ok: true },
       ),
     });
   });
-  // Storage upload (resumable and single-request)
-  await page.route("**/firebasestorage.googleapis.com/**", (route) =>
-    route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({
-        name: "applications/smoke.png",
-        downloadTokens: "smoke-token",
-      }),
-    }),
+  await page.route("https://storage.example.com/**", (route) =>
+    route.fulfill({ status: 200, body: "" }),
   );
-  // Firestore write
-  await page.route("**/firestore.googleapis.com/**", (route) =>
-    route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({
-        name: "projects/p/databases/(default)/documents/applications/smoke123",
-      }),
-    }),
-  );
+  return saves;
 }
 
 /** Fill every required apply form field so isValid becomes true. */
@@ -88,21 +87,11 @@ async function fillApplyForm(page: Page) {
 // ---------------------------------------------------------------------------
 
 test.describe("Apply form", () => {
-  // WHY this stops at the Firestore write instead of asserting the success
-  // panel: addDoc resolves only when the Firestore Write channel (a stateful
-  // WebChannel protocol, not REST) acknowledges the write, and a canned JSON
-  // body from page.route() can never speak it, so the write hangs until the
-  // 15s "Firestore write" timeout. The original version asserted the success
-  // panel and failed every weekly run since Aug 2026. Hand-faking the protocol
-  // would rot on every firebase bump, so the real success path is owned by
-  // tests/synthetic/apply-monitor.spec.ts (live stack, 4x/day) and
-  // useApplyForm.test.ts; this test proves the submit pipeline reaches each
-  // stage in order: anonymous auth, photo upload, Firestore write.
-  test("happy path: fills, submits, reaches auth, upload and the Firestore write", async ({
+  test("happy path: fills, submits, and shows the success panel", async ({
     page,
   }) => {
     test.setTimeout(60_000);
-    await mockFirebase(page);
+    const saves = await mockApplyApi(page);
     await page.goto("/apply", { waitUntil: "domcontentloaded" });
     await page.waitForSelector("[data-testid=apply-form]", {
       state: "visible",
@@ -111,54 +100,65 @@ test.describe("Apply form", () => {
 
     await fillApplyForm(page);
 
-    // Submit button must become enabled once form is valid
     const submit = page.locator("[data-testid=apply-submit]");
     await expect(submit).not.toBeDisabled({ timeout: 5_000 });
-
-    const stages = [
-      page.waitForRequest(/identitytoolkit\.googleapis\.com.*accounts:signUp/, {
-        timeout: 30_000,
-      }),
-      page.waitForRequest(/firebasestorage\.googleapis\.com/, {
-        timeout: 30_000,
-      }),
-      page.waitForRequest(/firestore\.googleapis\.com.*Write\/channel/, {
-        timeout: 30_000,
-      }),
-    ];
     await submit.click();
-    await Promise.all(stages);
+
+    await expect(page.locator("[data-testid=apply-success]")).toBeVisible({
+      timeout: 30_000,
+    });
+    expect(saves.some((body) => body.finalize === true)).toBe(true);
   });
 
-  test("timeout regression: spinner always stops when Firebase hangs", async ({
+  test("autosave: a name typed and abandoned is still filed with the server", async ({
     page,
   }) => {
-    test.setTimeout(60_000);
-
-    // Auth hangs forever — simulates Firebase Auth service down
-    await page.route("**/identitytoolkit.googleapis.com/**", () => {
-      // Never fulfill — route just absorbs the request
+    const saves = await mockApplyApi(page);
+    await page.goto("/apply", { waitUntil: "domcontentloaded" });
+    await page.waitForSelector("[data-testid=apply-form]", {
+      state: "visible",
+      timeout: 15_000,
     });
-    // Storage / Firestore don't matter (never reached)
-    await page.route("**/firebasestorage.googleapis.com/**", (route) =>
-      route.abort(),
-    );
-    await page.route("**/firestore.googleapis.com/**", (route) =>
-      route.abort(),
-    );
+
+    await page.fill("#field-name", "Half Done");
+    await page.locator("#field-name").blur();
+
+    await expect
+      .poll(
+        () =>
+          saves.some((body) =>
+            JSON.stringify(body.fields ?? body).includes("Half Done"),
+          ),
+        { timeout: 10_000 },
+      )
+      .toBe(true);
+  });
+
+  test("a server failure names the real cause, keeps the form, and pages once", async ({
+    page,
+  }) => {
+    test.setTimeout(90_000);
+    await mockApplyApi(page, {
+      saveStatus: 500,
+      saveBody: {
+        error: "save_failed",
+        stage: "finalize",
+        detail: "deadline exceeded after 15s",
+      },
+    });
     // The static preview has no API routes; fulfill the alert endpoint so the
     // fire-and-forget request is observable.
     await page.route("**/api/alert-failure", (route) =>
       route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify({ sent: true }),
+        body: JSON.stringify({ ok: true }),
       }),
     );
     const alertRequest = page.waitForRequest(
       (req) =>
         req.url().includes("/api/alert-failure") && req.method() === "POST",
-      { timeout: 20_000 },
+      { timeout: 60_000 },
     );
 
     await page.goto("/apply", { waitUntil: "domcontentloaded" });
@@ -166,29 +166,30 @@ test.describe("Apply form", () => {
       state: "visible",
       timeout: 15_000,
     });
-
     await fillApplyForm(page);
 
     const submit = page.locator("[data-testid=apply-submit]");
     await expect(submit).not.toBeDisabled({ timeout: 5_000 });
     await submit.click();
 
-    // Within 15s (well inside the 10s Firebase auth timeout), the button must
-    // re-enable (finally block ran) and an error toast/alert must be visible.
+    // The spinner must always stop and the person must see an alert.
+    await expect(page.locator('[role="alert"]').first()).toBeVisible({
+      timeout: 60_000,
+    });
     await expect(submit).not.toBeDisabled({ timeout: 15_000 });
-    const alert = page.locator('[role="alert"]');
-    await expect(alert.first()).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator("#field-name")).toHaveValue("Smoke Tester");
 
-    // One failed submission = one immediate producer alert, carrying the
-    // applicant's contact fields for recovery.
-    const req = await alertRequest;
-    const body = req.postDataJSON() as {
+    // One failed submission = one alert carrying the raw reason and the
+    // applicant's contact so they can be recovered.
+    const body = (await alertRequest).postDataJSON() as {
       flow: string;
       stage: string;
+      errorMessage: string;
       contact?: { email?: string };
     };
     expect(body.flow).toBe("apply");
-    expect(body.stage).toBe("submit");
+    expect(body.stage).toBe("finalize");
+    expect(body.errorMessage).toContain("deadline exceeded after 15s");
     expect(body.contact?.email).toBe("smoketest@example.com");
   });
 });

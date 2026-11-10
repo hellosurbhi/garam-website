@@ -452,32 +452,6 @@ function producerNotificationTable(
   );
 }
 
-export function producerLeadNotification(opts: {
-  email: string;
-  city?: string;
-  phone?: string;
-  source?: string;
-  sourcePage?: string;
-}): EmailTemplate {
-  const subject = `New Spice List Signup: ${subjectSafe(opts.email)}`;
-
-  const rows: [string, string][] = [["Email", opts.email]];
-  if (opts.city) rows.push(["City", opts.city]);
-  if (opts.phone) rows.push(["Phone", opts.phone]);
-  if (opts.source) rows.push(["Source", opts.source]);
-  if (opts.sourcePage) rows.push(["Page", opts.sourcePage]);
-
-  const text = [
-    "New Spice List signup",
-    "",
-    ...rows.map(([label, value]) => `${label}: ${value}`),
-  ].join("\n");
-
-  const html = producerNotificationTable("New Spice List signup", rows);
-
-  return { subject, text, html };
-}
-
 export function mixerRsvpDetails(
   name: string,
   mixer: MixerDetails,

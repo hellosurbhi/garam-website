@@ -1,6 +1,6 @@
 import { randomBytes } from "crypto";
 import type { APIRoute } from "astro";
-import { isAllowedOrigin } from "@/lib/allowedOrigin";
+import { isAllowedApplyOrigin } from "@/lib/allowedOrigin";
 import { resolveDraftAuth, type DraftAuth } from "@/lib/draftAuth";
 import { upsertDoc } from "@/lib/draftStore";
 import { jsonResponse } from "@/lib/http";
@@ -77,7 +77,7 @@ export const POST: APIRoute = async ({ request, url }) => {
   );
   if (limited) return limited;
 
-  if (!isAllowedOrigin(request.headers.get("origin"))) {
+  if (!isAllowedApplyOrigin(request.headers.get("origin"))) {
     return jsonResponse({ error: "forbidden", reason: "origin" }, 403);
   }
 

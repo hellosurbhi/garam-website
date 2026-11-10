@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { applicationReceived } from "@/data/emails";
-import { isAllowedOrigin } from "@/lib/allowedOrigin";
+import { isAllowedApplyOrigin } from "@/lib/allowedOrigin";
 import { mergeDraft, sanitizeFields } from "@/lib/applicationDraft";
 import { resolveDraftAuth } from "@/lib/draftAuth";
 import { upsertDoc } from "@/lib/draftStore";
@@ -55,7 +55,7 @@ export const POST: APIRoute = async ({ request }) => {
   const limited = await enforceRateLimit(request, RATE_LIMITS.saveApplication);
   if (limited) return limited;
 
-  if (!isAllowedOrigin(request.headers.get("origin"))) {
+  if (!isAllowedApplyOrigin(request.headers.get("origin"))) {
     return jsonResponse({ error: "forbidden", reason: "origin" }, 403);
   }
 
@@ -80,6 +80,11 @@ export const POST: APIRoute = async ({ request }) => {
     collection = resolved.auth.collection;
     canary = resolved.auth.canaryKey !== null;
   } else if (resolved.reason === "no_token") {
+    const tooMany = await enforceRateLimit(
+      request,
+      RATE_LIMITS.newApplicationDraft,
+    );
+    if (tooMany) return tooMany;
     draftId = newDraftId();
     issueToken = true;
   } else {

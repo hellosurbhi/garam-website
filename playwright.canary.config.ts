@@ -24,7 +24,10 @@ export default defineConfig({
   use: {
     baseURL: process.env.PLAYWRIGHT_BASE_URL,
     screenshot: "only-on-failure",
-    trace: "on-first-retry",
+    // WHY off: traces embed request headers, including the x-canary-sig
+    // credential, and the failure report is uploaded as a CI artifact that
+    // anyone with Actions read access can download.
+    trace: "off",
   },
   reporter: [["html", { open: "never" }], ["list"]],
   projects: [

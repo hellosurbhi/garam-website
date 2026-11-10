@@ -103,7 +103,7 @@ async function putToStorage(
     throw new ApplyRequestError(
       "photo_put",
       null,
-      `network error: ${err instanceof Error ? `${err.name}: ${err.message}` : String(err)}`,
+      `network error: ${err instanceof Error ? `${err.name}: ${err.message}` : String(err)} (the browser could not complete the upload to the storage host: blocked by the site security policy, a bucket CORS rule, or a dropped connection)`,
     );
   }
   if (!res.ok) {

@@ -39,6 +39,14 @@ export const RATE_LIMITS = {
     limit: 120,
     windowSeconds: 60,
   },
+  // Creating a NEW draft (no token yet) is the only unauthenticated write, so
+  // it gets its own tighter bound against bots filling the admin Draft list.
+  // Sized for a shared carrier or venue wifi IP; the limiter fails open.
+  newApplicationDraft: {
+    prefix: "ratelimit:new-application-draft",
+    limit: 30,
+    windowSeconds: 3600,
+  },
   uploadApplicationPhoto: {
     prefix: "ratelimit:upload-application-photo",
     limit: 60,

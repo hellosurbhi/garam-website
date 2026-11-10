@@ -78,6 +78,7 @@ vi.mock("@/lib/rateLimit", async (importOriginal) => {
 });
 
 const { POST } = await import("@/pages/api/save-application");
+const { enforceRateLimit, RATE_LIMITS } = await import("@/lib/rateLimit");
 const { issueDraftToken, newDraftId } = await import("@/lib/draftToken");
 
 const ORIGIN = "https://garammasaladating.com";
@@ -181,9 +182,30 @@ describe("save-application: filing whatever arrives", () => {
     expect((await json(res)).reason).toBe("not_json");
   });
 
-  it("returns 403 for a foreign or missing origin", async () => {
+  it("returns 403 for a foreign origin", async () => {
     expect((await post({}, {}, "https://evil.example.com")).status).toBe(403);
-    expect((await post({}, {}, null)).status).toBe(403);
+  });
+
+  it("rate-limits tokenless draft creation but not updates of an existing draft", async () => {
+    const limiter = vi.mocked(enforceRateLimit);
+    limiter.mockClear();
+    const first = await json(await post({ rev: 1, fields: { name: "A" } }));
+    expect(limiter).toHaveBeenCalledWith(
+      expect.anything(),
+      RATE_LIMITS.newApplicationDraft,
+    );
+    limiter.mockClear();
+    await post({ token: first.token, rev: 2, fields: { city: "NYC" } });
+    expect(limiter).not.toHaveBeenCalledWith(
+      expect.anything(),
+      RATE_LIMITS.newApplicationDraft,
+    );
+  });
+
+  it("accepts a request with no Origin header (privacy tools strip it)", async () => {
+    expect(
+      (await post({ rev: 1, fields: { name: "A" } }, {}, null)).status,
+    ).toBe(200);
   });
 });
 

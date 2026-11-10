@@ -376,4 +376,24 @@ describe("AutosaveController.ensureDraft", () => {
     await c.ensureDraft();
     expect(calls).toHaveLength(1);
   });
+
+  it("five photos picked at once on a fresh form share ONE draft", async () => {
+    const { calls, fetchImpl } = harness();
+    const c = new AutosaveController({ fetchImpl });
+    const tokens = await Promise.all(
+      [1, 2, 3, 4, 5].map(() => c.ensureDraft()),
+    );
+    expect(calls).toHaveLength(1);
+    expect(new Set(tokens).size).toBe(1);
+  });
+
+  it("a typed field racing a photo does not mint a second draft", async () => {
+    const { calls, fetchImpl } = harness();
+    const c = new AutosaveController({ fetchImpl });
+    c.setField("name", "Priya");
+    const photo = c.ensureDraft();
+    await vi.advanceTimersByTimeAsync(1_000);
+    await photo;
+    expect(calls.filter((x) => x.body.token === undefined)).toHaveLength(1);
+  });
 });

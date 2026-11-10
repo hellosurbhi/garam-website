@@ -31,17 +31,19 @@ export type DraftAuthResult =
       reason: "no_token" | "malformed" | "bad_signature" | "expired";
     };
 
-function canaryFromHeaders(request: Request): CanaryKey | null {
+/** null: not a canary request. "invalid": claims to be one but cannot prove it. */
+function canaryFromHeaders(request: Request): CanaryKey | "invalid" | null {
   const key = request.headers.get("x-canary-key");
   const sig = request.headers.get("x-canary-sig");
-  if (!key || !sig || !isCanaryKey(key)) return null;
+  if (!key && !sig) return null;
+  if (!key || !sig || !isCanaryKey(key)) return "invalid";
   try {
     const expected = Buffer.from(canarySignature(getSecret(), key), "hex");
     const given = Buffer.from(sig, "hex");
-    if (expected.length !== given.length) return null;
-    return timingSafeEqual(expected, given) ? key : null;
+    if (expected.length !== given.length) return "invalid";
+    return timingSafeEqual(expected, given) ? key : "invalid";
   } catch {
-    return null;
+    return "invalid";
   }
 }
 
@@ -55,6 +57,10 @@ export function resolveDraftAuth(
   token: unknown,
 ): DraftAuthResult {
   const canaryKey = canaryFromHeaders(request);
+  // WHY a hard refusal: treating a bad canary signature as "no token" filed
+  // the canary's fake applicant as a real one (plus a welcome email) every
+  // run whenever the GitHub and Vercel secrets differed by a byte.
+  if (canaryKey === "invalid") return { ok: false, reason: "bad_signature" };
   if (canaryKey) {
     return {
       ok: true,

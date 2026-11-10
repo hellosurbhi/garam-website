@@ -320,7 +320,12 @@ export function useApplyForm() {
       // Send every value, not just unacknowledged ones, so the finished
       // document never depends on an earlier autosave having landed.
       for (const [key, value] of Object.entries(
-        toDraftFields(form, termsAgreed, nominationConsent),
+        toDraftFields(
+          form,
+          termsAgreed,
+          nominationConsent,
+          failedPhotos.length > 0,
+        ),
       )) {
         autosave.setField(key, value);
       }

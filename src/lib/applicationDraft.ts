@@ -34,6 +34,7 @@ export const FORM_FIELD_KEYS = [
   "howHeard",
   "marketingConsent",
   "termsAgreed",
+  "photoUploadFailed",
 ] as const;
 
 export type FormFieldKey = (typeof FORM_FIELD_KEYS)[number];
@@ -136,6 +137,11 @@ export function sanitizeFields(raw: unknown): SanitizedFields {
         break;
       case "nominationConsent":
         values.nominationConsent = value === true;
+        break;
+      case "photoUploadFailed":
+        // Set by the client at submit when a photo could not be filed, so the
+        // admin dashboard can show the "Photos failed" pill and chase them.
+        values.photoUploadFailed = value === true;
         break;
       case "termsAgreed":
         // Stored as termsAgreedAt by the endpoint (needs the server clock).

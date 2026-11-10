@@ -113,11 +113,13 @@ export function toDraftFields(
   form: FormState,
   termsAgreed: boolean,
   nominationConsent: boolean,
+  photoUploadFailed = false,
 ): FieldMap {
   return {
     ...form,
     nominationConsent,
     termsAgreed,
+    photoUploadFailed,
   };
 }
 

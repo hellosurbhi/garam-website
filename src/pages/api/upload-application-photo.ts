@@ -120,9 +120,13 @@ export const POST: APIRoute = async ({ request, url }) => {
 
     if (action === "reserve") {
       const reservations = Number(draft.photoReservations) || 0;
+      // WHY the canary is exempt from both caps: its document is reused
+      // forever, so a lifetime reservation cap ran out within a day and the
+      // canary silently fell back to the relay while staying green.
       if (
-        (!auth.canaryKey && kept.length >= MAX_PHOTOS_PER_DRAFT) ||
-        reservations >= MAX_RESERVATIONS_PER_DRAFT
+        !auth.canaryKey &&
+        (kept.length >= MAX_PHOTOS_PER_DRAFT ||
+          reservations >= MAX_RESERVATIONS_PER_DRAFT)
       ) {
         return jsonResponse({ error: "photo_quota", kept: kept.length }, 409);
       }

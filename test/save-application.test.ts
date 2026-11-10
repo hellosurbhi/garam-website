@@ -446,14 +446,12 @@ describe("save-application: production canary", () => {
     ).toBe("run4");
   });
 
-  it("a wrong canary signature is treated as no credentials and cannot reach _canary", async () => {
+  it("a wrong canary signature is refused: it never reaches _canary and never files a real applicant", async () => {
     const res = await post(
       { rev: 1, fields: { name: "x" } },
       { "x-canary-key": "iphone-safari", "x-canary-sig": "00".repeat(32) },
     );
-    expect(res.status).toBe(200);
-    expect(
-      [...mocks.state.docs.keys()].some((k) => k.startsWith("_canary/")),
-    ).toBe(false);
+    expect(res.status).toBe(401);
+    expect(mocks.state.docs.size).toBe(0);
   });
 });

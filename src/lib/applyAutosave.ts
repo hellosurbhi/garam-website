@@ -111,6 +111,8 @@ export class AutosaveController {
   private pending: FieldMap = {};
   private timer: ReturnType<typeof setTimeout> | null = null;
   private inFlight: Promise<void> | null = null;
+  private queue: Promise<unknown> = Promise.resolve();
+  private ensuring: Promise<string> | null = null;
   private failures = 0;
   private reportedFailure = false;
   private finalized = false;
@@ -169,6 +171,7 @@ export class AutosaveController {
 
   /** Send pending fields now, serially, retrying until acknowledged. */
   private async drain(): Promise<void> {
+    if (this.finalized) return;
     if (this.inFlight) {
       await this.inFlight;
       return;
@@ -211,9 +214,22 @@ export class AutosaveController {
    * unchanged when the server acknowledges are cleared, so typing during the
    * request is never lost.
    */
-  private async sendOnce(
+  private sendOnce(
     finalize: boolean,
     keepalive = false,
+  ): Promise<SaveResponse> {
+    // WHY a queue: every request must see the token the previous one returned.
+    // Concurrent tokenless sends (several photos picked at once, or a typed
+    // field racing a photo) each minted their own draft and left empty
+    // orphan drafts in the admin list.
+    const run = this.queue.then(() => this.sendUnqueued(finalize, keepalive));
+    this.queue = run.catch(() => undefined);
+    return run;
+  }
+
+  private async sendUnqueued(
+    finalize: boolean,
+    keepalive: boolean,
   ): Promise<SaveResponse> {
     const snapshot = { ...this.pending };
     this.rev += 1;
@@ -258,7 +274,7 @@ export class AutosaveController {
       this.draftId = null;
       this.pending = { ...this.latest };
       this.persist();
-      return this.sendOnce(finalize, keepalive);
+      return this.sendUnqueued(finalize, keepalive);
     }
 
     if (!res.ok || data.ok !== true) {
@@ -286,18 +302,24 @@ export class AutosaveController {
   }
 
   /** Make sure a draft exists on the server (photos attach to it). */
-  async ensureDraft(): Promise<string> {
-    if (!this.token) {
-      await this.sendWithRetry(false);
-    }
-    if (!this.token) {
-      throw new ApplyRequestError(
-        "save_draft",
-        null,
-        "the server did not return a draft token",
-      );
-    }
-    return this.token;
+  ensureDraft(): Promise<string> {
+    if (this.token) return Promise.resolve(this.token);
+    // Single flight: concurrent callers share one creation request.
+    this.ensuring ??= this.sendWithRetry(false)
+      .then(() => {
+        if (!this.token) {
+          throw new ApplyRequestError(
+            "save_draft",
+            null,
+            "the server did not return a draft token",
+          );
+        }
+        return this.token;
+      })
+      .finally(() => {
+        this.ensuring = null;
+      });
+    return this.ensuring;
   }
 
   /** A few quick retries for calls the person is actively waiting on. */

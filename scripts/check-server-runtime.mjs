@@ -32,6 +32,7 @@ if (process.argv[2] === "--worker") {
   const realFetch = globalThis.fetch.bind(globalThis);
   let redisConnection;
   let redisCalls = 0;
+  let redisFixtureError;
   let denyRedisRequests = false;
   globalThis.fetch = async (input, init) => {
     const url = new URL(input instanceof Request ? input.url : input);
@@ -54,18 +55,28 @@ if (process.argv[2] === "--worker") {
             (input instanceof Request ? input.headers : undefined),
         ).get("authorization"),
       };
-      const commands =
-        input instanceof Request ? await input.json() : JSON.parse(init.body);
-      const results = commands.map((command) => {
-        assert.ok(
-          ["evalsha", "eval"].includes(String(command[0]).toLowerCase()),
-          "Unexpected Redis command in runtime smoke check",
+      try {
+        const commands =
+          input instanceof Request ? await input.json() : JSON.parse(init.body);
+        assert.ok(Array.isArray(commands) && commands.length > 0);
+        const results = commands.map((command) => {
+          assert.ok(Array.isArray(command) && command.length >= 4);
+          assert.ok(
+            ["evalsha", "eval"].includes(String(command[0]).toLowerCase()),
+            "Unexpected Redis command in runtime smoke check",
+          );
+          const limit = Number(command[3 + Number(command[2])]);
+          assert.ok(Number.isFinite(limit) && limit > 0);
+          return { result: [denyRedisRequests ? -1 : limit - 1, limit] };
+        });
+        return Response.json(results);
+      } catch {
+        // Keep errors outside the SDK fetch retry loop and never print request bodies.
+        redisFixtureError ??= new Error(
+          "Unexpected Redis command or malformed body in runtime smoke check",
         );
-        const limit = Number(command[3 + Number(command[2])]);
-        assert.ok(Number.isFinite(limit) && limit > 0);
-        return { result: [denyRedisRequests ? -1 : limit - 1, limit] };
-      });
-      return Response.json(results);
+        return Response.json([{ result: [0, 1] }]);
+      }
     }
     networkAttempts.push(`${url.origin}${url.pathname}`);
     throw new Error("Runtime smoke checks must not call external services");
@@ -74,13 +85,15 @@ if (process.argv[2] === "--worker") {
     pathToFileURL(join(artifact, config.handler)).href
   );
   assert.equal(typeof handler.fetch, "function");
-  const request = (path, init = {}) => {
+  const request = async (path, init = {}) => {
     const headers = new Headers(init.headers);
     // Use the existing bot exclusion so smoke clicks do not count as sales intent.
     headers.set("user-agent", "Googlebot (packaged runtime smoke test)");
-    return handler.fetch(
+    const response = await handler.fetch(
       new Request(`https://garammasaladating.com${path}`, { ...init, headers }),
     );
+    if (redisFixtureError) throw redisFixtureError;
+    return response;
   };
 
   // OPTIONS loads each API module without executing a submission or cron.
@@ -158,6 +171,7 @@ if (process.argv[2] === "--worker") {
       "Rate-limit integration passed with local Redis fixtures (allow and deny). Connectivity is verified by the separate read-only PING below.",
     );
   }
+  if (redisFixtureError) throw redisFixtureError;
   assert.deepEqual(networkAttempts, []);
   await checkRedisHealth(redisConnection, {
     fetch: realFetch,

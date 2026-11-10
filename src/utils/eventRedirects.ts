@@ -41,3 +41,11 @@ export function buildEventRedirects(
   }
   return redirects;
 }
+
+/** Match redirect aliases independently of sitemap trailing-slash formatting. */
+export function isEventRedirectUrl(
+  page: string,
+  redirects: Record<string, unknown>,
+): boolean {
+  return Object.hasOwn(redirects, new URL(page).pathname.replace(/\/+$/, ""));
+}

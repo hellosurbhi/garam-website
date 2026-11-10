@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { allEvents, type EventEntry } from "../data/events";
-import { buildEventRedirects } from "./eventRedirects";
+import { buildEventRedirects, isEventRedirectUrl } from "./eventRedirects";
 
 const show: EventEntry = {
   city: "Philadelphia",
@@ -92,5 +92,26 @@ describe("automatic event redirects", () => {
         status: 308,
       });
     }
+  });
+});
+
+describe("sitemap alias exclusion", () => {
+  const redirects = buildEventRedirects([show]);
+  it.each([
+    "/events/philadelphia-2026-09-27",
+    "/events/philadelphia-2026-09-27/",
+  ])("excludes %s", (path) => {
+    expect(
+      isEventRedirectUrl(`https://garammasaladating.com${path}`, redirects),
+    ).toBe(true);
+  });
+  it.each([
+    "/",
+    "/events/philadelphia-2026-10-04",
+    "/events/philadelphia-2026-10-04/",
+  ])("retains canonical %s", (path) => {
+    expect(
+      isEventRedirectUrl(`https://garammasaladating.com${path}`, redirects),
+    ).toBe(false);
   });
 });

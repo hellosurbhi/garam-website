@@ -63,9 +63,12 @@ function baseUrl(): string {
 /** Read a single document. Returns null if not found. */
 export async function fsGet(
   docPath: string,
+  signal?: AbortSignal,
 ): Promise<Record<string, unknown> | null> {
-  const token = await getFirestoreAccessToken();
+  const token = await getFirestoreAccessToken(signal);
+  signal?.throwIfAborted();
   const res = await fetch(`${baseUrl()}/${docPath}`, {
+    signal,
     headers: { Authorization: `Bearer ${token}` },
   });
   if (res.status === 404) return null;
@@ -78,14 +81,17 @@ export async function fsGet(
 export async function fsPatch(
   docPath: string,
   fields: Record<string, unknown>,
+  signal?: AbortSignal,
 ): Promise<void> {
-  const token = await getFirestoreAccessToken();
+  const token = await getFirestoreAccessToken(signal);
   const fieldNames = Object.keys(fields);
   const mask = fieldNames
     .map((f) => `updateMask.fieldPaths=${encodeURIComponent(f)}`)
     .join("&");
 
+  signal?.throwIfAborted();
   const res = await fetch(`${baseUrl()}/${docPath}?${mask}`, {
+    signal,
     method: "PATCH",
     headers: {
       Authorization: `Bearer ${token}`,

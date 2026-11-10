@@ -1,5 +1,9 @@
 # Changelog
 
+## Review reliability fixes (2026-11-10)
+
+- Exclude slash variants of show aliases from the sitemap, trigger cleanup on successful production deployment events and retain waitlist rankings across bounded refresh failures. Add explicit Redis fixture failures, a short retry delay, complete redirect failure reporting and keyboard regression coverage.
+
 ## Complete review guard edge cases (2026-11-06)
 
 - Match JavaScript email trimming at the Firestore boundary, including Unicode whitespace, and verify each supported whitespace character in the emulator. Record the November 5 withdrawal directly on each canceled Texas placeholder.

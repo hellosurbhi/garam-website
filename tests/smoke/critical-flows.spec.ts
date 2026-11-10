@@ -514,3 +514,41 @@ test.describe("Primary CTAs", () => {
     await expect(applyCta).toBeVisible();
   });
 });
+
+test("Notify Me supports native keyboard activation on existing and late cards", async ({
+  page,
+}) => {
+  await page.goto("/tickets", { waitUntil: "domcontentloaded" });
+  // A fixed native trigger keeps this regression useful even when all shows sell tickets.
+  if ((await page.locator("button[data-notify-city]").count()) === 0) {
+    await page.evaluate(() => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.dataset.notifyCity = "Chicago";
+      button.textContent = "Notify Me keyboard fixture";
+      document.body.append(button);
+    });
+  }
+  const button = page.locator("button[data-notify-city]").first();
+  await expect(button).toBeVisible();
+  const dialog = page.locator("dialog#notify-modal");
+  for (const key of ["Enter", "Space"]) {
+    await button.focus();
+    await page.keyboard.press(key);
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(dialog).not.toBeVisible();
+    await expect(button).toBeFocused();
+  }
+  await button.evaluate((element) => {
+    const clone = element.cloneNode(true) as HTMLElement;
+    clone.id = "late-notify-test";
+    element.after(clone);
+  });
+  const late = page.locator("#late-notify-test");
+  await late.focus();
+  await page.keyboard.press("Enter");
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(late).toBeFocused();
+});

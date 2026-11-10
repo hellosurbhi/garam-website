@@ -102,3 +102,49 @@ describe("packaged Redis health check", () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 });
+
+it("pauses once before a transient retry but never after an auth failure", async () => {
+  const sleep = vi.fn().mockResolvedValue(undefined);
+  const fetch = vi
+    .fn()
+    .mockResolvedValueOnce(new Response(null, { status: 503 }))
+    .mockResolvedValueOnce(Response.json([{ result: "PONG" }]));
+  await checkRedisHealth(connection, { fetch, sleep, log: vi.fn() });
+  expect(sleep).toHaveBeenCalledExactlyOnceWith(250);
+  expect(sleep.mock.invocationCallOrder[0]).toBeLessThan(
+    fetch.mock.invocationCallOrder[1],
+  );
+  sleep.mockClear();
+  await expect(
+    checkRedisHealth(connection, {
+      fetch: vi.fn().mockResolvedValue(new Response(null, { status: 401 })),
+      sleep,
+    }),
+  ).rejects.toThrow("HTTP 401");
+  expect(sleep).not.toHaveBeenCalled();
+});
+
+it.each(["network", "body", 429, 503])(
+  "delays exactly once on transient %s failures",
+  async (kind) => {
+    const sleep = vi.fn().mockResolvedValue(undefined);
+    const fetch = vi.fn();
+    if (kind === "network") fetch.mockRejectedValue(new Error("offline"));
+    else if (kind === "body")
+      fetch.mockResolvedValue({
+        ok: true,
+        json: async () => {
+          throw new Error("transport");
+        },
+      });
+    else
+      fetch.mockImplementation(
+        async () => new Response(null, { status: kind }),
+      );
+    await expect(
+      checkRedisHealth(connection, { fetch, sleep, log: vi.fn() }),
+    ).rejects.toThrow();
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(sleep).toHaveBeenCalledExactlyOnceWith(250);
+  },
+);

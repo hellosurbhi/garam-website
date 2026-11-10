@@ -6,11 +6,13 @@ const mocks = vi.hoisted(() => ({
 }));
 vi.mock("./firestoreRest", () => ({ fsGet: mocks.get, fsPatch: mocks.patch }));
 vi.mock("./firestoreAdmin", () => ({ getFirestoreAccessToken: mocks.token }));
-import { getWaitlistRanking } from "./waitlistRanking.server";
+let getWaitlistRanking: typeof import("./waitlistRanking.server").getWaitlistRanking;
 
 const counts = [{ citySlug: "houston", count: 4 }];
 const fetchMock = vi.fn();
-beforeEach(() => {
+beforeEach(async () => {
+  vi.resetModules();
+  ({ getWaitlistRanking } = await import("./waitlistRanking.server"));
   vi.useFakeTimers();
   vi.resetAllMocks();
   vi.stubEnv("PUBLIC_FIREBASE_PROJECT_ID", "demo-test");
@@ -61,6 +63,7 @@ describe("daily waitlist aggregate cache", () => {
     expect(mocks.patch).toHaveBeenCalledWith(
       "systemConfig/ticketWaitlistRanking",
       { updatedAt: expect.any(Number), counts: a },
+      expect.any(AbortSignal),
     );
     const query = JSON.parse(fetchMock.mock.calls[0][1].body);
     expect(
@@ -106,4 +109,80 @@ describe("daily waitlist aggregate cache", () => {
     await vi.advanceTimersByTimeAsync(15_000);
     await result;
   });
+});
+
+it("returns stale counts on deadline without launching overlapping refreshes", async () => {
+  vi.spyOn(console, "error").mockImplementation(() => {});
+  mocks.get.mockResolvedValue({ updatedAt: 0, counts });
+  let finish!: (value: string) => void;
+  mocks.token.mockReturnValue(
+    new Promise<string>((resolve) => {
+      finish = resolve;
+    }),
+  );
+  const first = getWaitlistRanking();
+  await vi.advanceTimersByTimeAsync(15_000);
+  expect(await first).toEqual(counts);
+  expect(await getWaitlistRanking()).toEqual(counts);
+  expect(mocks.get).toHaveBeenCalledTimes(1);
+  expect(mocks.token.mock.calls[0][0].aborted).toBe(true);
+  finish("late-token");
+  await vi.advanceTimersByTimeAsync(0);
+  expect(fetchMock).not.toHaveBeenCalled();
+  expect(mocks.patch).not.toHaveBeenCalled();
+  mocks.get.mockResolvedValue({ updatedAt: Date.now(), counts });
+  expect(await getWaitlistRanking()).toEqual(counts);
+  expect(mocks.get).toHaveBeenCalledTimes(2);
+});
+
+it("clears its deadline after normal completion", async () => {
+  mocks.get.mockResolvedValue({ updatedAt: Date.now(), counts });
+  expect(await getWaitlistRanking()).toEqual(counts);
+  expect(vi.getTimerCount()).toBe(0);
+});
+it("aborts a hanging cache write and retains the old ranking", async () => {
+  vi.spyOn(console, "error").mockImplementation(() => {});
+  mocks.get.mockResolvedValue({ updatedAt: 0, counts });
+  fetchMock.mockResolvedValue(Response.json([]));
+  mocks.patch.mockImplementation(
+    (_path, _data, signal: AbortSignal) =>
+      new Promise((_, reject) => {
+        signal.addEventListener("abort", () => reject(signal.reason), {
+          once: true,
+        });
+      }),
+  );
+  const result = getWaitlistRanking();
+  await vi.advanceTimersByTimeAsync(15_000);
+  expect(await result).toEqual(counts);
+  expect(mocks.patch.mock.calls[0][2].aborted).toBe(true);
+  mocks.get.mockResolvedValue({ updatedAt: Date.now(), counts });
+  expect(await getWaitlistRanking()).toEqual(counts);
+  expect(mocks.get).toHaveBeenCalledTimes(2);
+});
+
+it("propagates the overall deadline to the cache read and lead query", async () => {
+  vi.spyOn(console, "error").mockImplementation(() => {});
+  mocks.get.mockResolvedValue({ updatedAt: 0, counts });
+  fetchMock.mockImplementation(
+    (_url, options: RequestInit) =>
+      new Promise((_, reject) => {
+        options.signal?.addEventListener(
+          "abort",
+          () => reject(options.signal?.reason),
+          { once: true },
+        );
+      }),
+  );
+  const result = getWaitlistRanking();
+  await vi.advanceTimersByTimeAsync(0);
+  const readSignal: AbortSignal = mocks.get.mock.calls[0][1];
+  const querySignal: AbortSignal = fetchMock.mock.calls[0][1].signal;
+  expect(readSignal.aborted).toBe(false);
+  expect(querySignal.aborted).toBe(false);
+  await vi.advanceTimersByTimeAsync(15_000);
+  expect(readSignal.aborted).toBe(true);
+  expect(querySignal.aborted).toBe(true);
+  expect(await result).toEqual(counts);
+  expect(mocks.patch).not.toHaveBeenCalled();
 });

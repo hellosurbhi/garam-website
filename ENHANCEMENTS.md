@@ -1467,9 +1467,16 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 
 <!-- fable-routed PR #328 head 5e4d9b64a4dd75ed8ed50b1fd0a6afaacaac8b2c -->
 
-## Claude follow-up suggestions awaiting owner decision (2026-11-06)
+## Claude follow-up suggestions implemented (2026-11-10)
 
-These are proposals, not authorized overnight implementation tasks. Claude approved commit 248eef19 with these low-priority suggestions.
+The owner approved both suggestions for https://github.com/hellosurbhi/garam-website/pull/331.
 
-- Redis retry pacing: consider a short fixed delay before the one allowed retry in `scripts/check-redis-health.mjs`. Plan, if approved: preserve the two-attempt maximum and per-attempt timeout, delay only transient retries and test that authentication failures still do not retry. Verify with injected transport failures and HTTP 429/503 followed by PONG.
-- Redirect-check reporting: consider collecting failures for all aliases instead of stopping at the first one in `scripts/check-event-redirects.mjs`. Plan, if approved: retain read-only requests, manual redirect handling and a nonzero exit when any alias fails; report each failed path and missing parameter without following ticket destinations. Verify multiple broken aliases appear in one report while successful aliases remain silent.
+- Redis retry pacing: implemented a 250 ms pause before the single transient retry, preserving the two-attempt maximum and immediate authentication failure. Regression tests cover network errors, body transport errors and HTTP 429/503.
+- Redirect-check reporting: implemented complete failure aggregation with at most four concurrent read-only requests. Tests cover multiple failures, transport errors and successful aliases in the same run.
+
+## Claude cache follow-up awaiting owner decision (2026-11-10)
+
+These are proposals awaiting the owner, not authorized overnight tasks.
+
+- A cancellation-ignoring waitlist operation can retain its in-flight lock indefinitely. The approved implementation keeps that lock until settlement to prevent overlapping refreshes. All production token and Firestore requests now receive the deadline signal, with guards before later queries and writes. Claude proposes releasing the lock at the deadline after aborting. The owner has been asked to choose. If approved, release only the matching operation and test retry after an ignored abort without late cache writes.
+- Claude suggests returning freshly computed rankings when aggregate persistence fails, instead of retaining the last persisted ranking. This predates the timeout fix. If approved, retain validated computed counts in memory separately from persisted freshness, avoid stamping failed writes as fresh and test cold-cache and stale-cache PATCH failures.

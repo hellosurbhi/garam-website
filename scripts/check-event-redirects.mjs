@@ -20,37 +20,50 @@ export async function checkEventRedirects(
     aliases.length > 0,
     "No generated event aliases found; build the site first",
   );
-  for (const route of aliases) {
-    assert.match(route.src, /^\^\/(events|api\/go)\/[a-z0-9-]+\$$/);
-    const source = new URL(route.src.slice(1, -1), origin);
-    source.search = new URLSearchParams({
-      utm_source: "redirect-smoke",
-      utm_campaign: "city test",
-      eid: "redirect-smoke-only",
-    }).toString();
-    const response = await fetchImpl(source, {
-      redirect: "manual",
-      signal: AbortSignal.timeout(10000),
-      headers: { "user-agent": "Googlebot (read-only redirect smoke check)" },
-    });
-    assert.equal(
-      response.status,
-      308,
-      `Alias did not redirect: ${source.pathname}`,
-    );
-    const location = response.headers.get("location");
-    assert.ok(location, `Missing Location: ${source.pathname}`);
-    const destination = new URL(location, source);
-    assert.equal(destination.origin, source.origin);
-    assert.equal(destination.pathname, route.headers.Location);
-    for (const [key, value] of source.searchParams) {
+  const failures = [];
+  const check = async (route) => {
+    try {
+      assert.match(route.src, /^\^\/(events|api\/go)\/[a-z0-9-]+\$$/);
+      const source = new URL(route.src.slice(1, -1), origin);
+      source.search = new URLSearchParams({
+        utm_source: "redirect-smoke",
+        utm_campaign: "city test",
+        eid: "redirect-smoke-only",
+      }).toString();
+      const response = await fetchImpl(source, {
+        redirect: "manual",
+        signal: AbortSignal.timeout(10000),
+        headers: { "user-agent": "Googlebot (read-only redirect smoke check)" },
+      });
       assert.equal(
-        destination.searchParams.get(key),
-        value,
-        `Lost ${key} on ${source.pathname}`,
+        response.status,
+        308,
+        `Alias did not redirect: ${source.pathname}`,
+      );
+      const location = response.headers.get("location");
+      assert.ok(location, `Missing Location: ${source.pathname}`);
+      const destination = new URL(location, source);
+      assert.equal(destination.origin, source.origin);
+      assert.equal(destination.pathname, route.headers.Location);
+      for (const [key, value] of source.searchParams) {
+        assert.equal(
+          destination.searchParams.get(key),
+          value,
+          `Lost ${key} on ${source.pathname}`,
+        );
+      }
+    } catch (error) {
+      failures.push(
+        `${route.src}: ${error instanceof Error ? error.message : "Redirect check failed"}`,
       );
     }
+  };
+  // Bound simultaneous requests while still visiting every alias after failures.
+  for (let offset = 0; offset < aliases.length; offset += 4) {
+    await Promise.all(aliases.slice(offset, offset + 4).map(check));
   }
+  if (failures.length)
+    throw new Error(`Redirect verification failed:\n${failures.join("\n")}`);
   log(
     `Verified ${aliases.length} live event aliases preserve tracking queries; no ticket destinations followed.`,
   );

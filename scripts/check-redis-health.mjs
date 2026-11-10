@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
+import { setTimeout as delay } from "node:timers/promises";
 
 /** Probe the artifact's Redis connection with read-only PING and one transient retry, never a limiter command. */
 export async function checkRedisHealth(
   connection,
-  { fetch: fetchImpl, required = false, log = console.log },
+  { fetch: fetchImpl, required = false, log = console.log, sleep = delay },
 ) {
   if (!connection) {
     assert.ok(
@@ -46,6 +47,7 @@ export async function checkRedisHealth(
         log(
           "Redis health check: retrying once after a network error or timeout.",
         );
+        await sleep(250);
         continue;
       }
       throw new Error(
@@ -59,6 +61,7 @@ export async function checkRedisHealth(
     ) {
       await response.body?.cancel();
       log(`Redis health check: retrying once after HTTP ${response.status}.`);
+      await sleep(250);
       continue;
     }
     assert.ok(
@@ -73,6 +76,7 @@ export async function checkRedisHealth(
         log(
           "Redis health check: retrying once after a response timeout or transport error.",
         );
+        await sleep(250);
         continue;
       }
       // Do not print response bodies or transport errors that could contain credentials.

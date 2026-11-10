@@ -2,7 +2,6 @@ import { z } from "zod";
 import { fsGet, fsPatch } from "./firestoreRest";
 import { getFirestoreAccessToken } from "./firestoreAdmin";
 import { rankWaitlistCities, type CityWaitlistCount } from "./waitlistRanking";
-import { withTimeout } from "@/utils/withTimeout";
 
 const CACHE_PATH = "systemConfig/ticketWaitlistRanking";
 const DAY_MS = 86_400_000;
@@ -13,14 +12,18 @@ const cacheSchema = z.object({
   ),
 });
 let pending: Promise<CityWaitlistCount[]> | undefined;
+let lastGood: CityWaitlistCount[] | undefined;
 
 /** Read the daily aggregate or refresh it from selected lead fields. Retain a valid old aggregate if refreshing fails. */
-async function refresh(): Promise<CityWaitlistCount[]> {
-  const parsed = cacheSchema.safeParse(await fsGet(CACHE_PATH));
+async function refresh(signal: AbortSignal): Promise<CityWaitlistCount[]> {
+  const parsed = cacheSchema.safeParse(await fsGet(CACHE_PATH, signal));
   const cached = parsed.success ? parsed.data : undefined;
+  signal.throwIfAborted();
+  if (cached) lastGood = cached.counts;
   if (cached && Date.now() - cached.updatedAt < DAY_MS) return cached.counts;
   try {
-    const token = await getFirestoreAccessToken();
+    const token = await getFirestoreAccessToken(signal);
+    signal.throwIfAborted();
     const project = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
     if (!project) throw new Error("PUBLIC_FIREBASE_PROJECT_ID is required");
     const response = await fetch(
@@ -31,7 +34,7 @@ async function refresh(): Promise<CityWaitlistCount[]> {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        signal: AbortSignal.timeout(10_000),
+        signal: AbortSignal.any([signal, AbortSignal.timeout(10_000)]),
         body: JSON.stringify({
           structuredQuery: {
             from: [{ collectionId: "leads" }],
@@ -77,7 +80,10 @@ async function refresh(): Promise<CityWaitlistCount[]> {
         ),
       );
     const counts = rankWaitlistCities(leads);
-    await fsPatch(CACHE_PATH, { updatedAt: Date.now(), counts });
+    signal.throwIfAborted();
+    await fsPatch(CACHE_PATH, { updatedAt: Date.now(), counts }, signal);
+    signal.throwIfAborted();
+    lastGood = counts;
     return counts;
   } catch (error) {
     if (!cached) throw error;
@@ -91,8 +97,33 @@ async function refresh(): Promise<CityWaitlistCount[]> {
 
 /** Share one bounded ranking lookup across concurrent requests and release it after settlement. */
 export function getWaitlistRanking(): Promise<CityWaitlistCount[]> {
-  pending ??= withTimeout(refresh(), 15_000, "waitlist ranking").finally(() => {
-    pending = undefined;
+  if (pending) return pending;
+  const controller = new AbortController();
+  const work = refresh(controller.signal);
+  let timer: ReturnType<typeof setTimeout>;
+  const deadline = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => {
+      const error = new Error("Timeout: waitlist ranking (15000ms)");
+      controller.abort(error);
+      reject(error);
+    }, 15_000);
   });
-  return pending;
+  const result = Promise.race([work, deadline]).catch((error: unknown) => {
+    if (lastGood) {
+      console.error(
+        "[waitlist-ranking] Lookup failed; retaining cached ranking",
+        error instanceof Error ? error.message : "Unknown error",
+      );
+      return lastGood;
+    }
+    throw error;
+  });
+  pending = result;
+  // The timeout bounds callers, but only settlement releases the in-flight work.
+  const release = () => {
+    clearTimeout(timer);
+    if (pending === result) pending = undefined;
+  };
+  void work.then(release, release);
+  return result;
 }

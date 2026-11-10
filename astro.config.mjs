@@ -8,7 +8,10 @@ import { journalPostsPublished } from "./src/data/journal/index.ts";
 import { cities } from "./src/data/cities/index.ts";
 import { events, allEvents } from "./src/data/events.ts";
 
-import { buildEventRedirects } from "./src/utils/eventRedirects.ts";
+import {
+  buildEventRedirects,
+  isEventRedirectUrl,
+} from "./src/utils/eventRedirects.ts";
 
 const eventRedirects = buildEventRedirects(allEvents);
 
@@ -225,7 +228,7 @@ export default defineConfig({
     sitemap({
       filter: (page) => {
         if (page.includes("?")) return false;
-        if (Object.hasOwn(eventRedirects, new URL(page).pathname)) return false;
+        if (isEventRedirectUrl(page, eventRedirects)) return false;
         if (
           page.includes("/admin") ||
           page.includes("/contestant-prep") ||

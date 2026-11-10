@@ -1,5 +1,9 @@
 # Changelog
 
+## Complete review guard edge cases (2026-11-06)
+
+- Match JavaScript email trimming at the Firestore boundary, including Unicode whitespace, and verify each supported whitespace character in the emulator. Record the November 5 withdrawal directly on each canceled Texas placeholder.
+
 ## Approved Claude review follow-up (2026-11-05)
 
 - Add a read-only deployed-redirect check for canonical destinations and tracking-query preservation. Run it after the matching build reaches production.

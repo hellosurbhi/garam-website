@@ -14,11 +14,13 @@ service cloud.firestore {
     // applicants (long pitch, spelled-out height, formatted phone).
     function validLead() {
       let d = request.resource.data;
+      // Match JavaScript trim(), including Unicode spaces that RE2 \s omits.
+      let trimWhitespace = '[\\x09-\\x0D\\x20\\x{A0}\\x{1680}\\x{2000}-\\x{200A}\\x{2028}\\x{2029}\\x{202F}\\x{205F}\\x{3000}\\x{FEFF}]*';
       return d.keys().hasOnly(['email', 'city', 'state', 'country', 'phone', 'name', 'instagram', 'source', 'sourcePage', 'landingPage', 'referrerHost', 'utmSource', 'utmMedium', 'utmCampaign', 'utmContent', 'utmTerm', 'fbclid', 'gclid', 'posthogDistinctId', 'sourceCitySlug', 'createdAt', 'geoCity', 'geoRegion', 'geoCountry', 'geoLatitude', 'geoLongitude', 'geoTimezone'])
         && d.keys().hasAll(['email', 'source', 'sourcePage', 'createdAt'])
         && d.email is string && d.email.size() > 0 && d.email.size() <= 1280
         // Browser smoke success is mocked; real test writes belong in the emulator.
-        && !d.email.lower().matches('\\s*smoketest@example[.]com\\s*')
+        && !d.email.lower().matches(trimWhitespace + 'smoketest@example[.]com' + trimWhitespace)
         && d.source is string && d.source.size() > 0 && d.source.size() <= 50
         && d.sourcePage is string && d.sourcePage.size() > 0 && d.sourcePage.size() <= 200
         && d.createdAt is string && d.createdAt.size() > 0 && d.createdAt.size() <= 30

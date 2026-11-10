@@ -1466,3 +1466,10 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - [ ] LOW: [PRERELEASE-PIN] package-lock.json:947, the Babel 8 toolchain pulled in via @stryker-mutator/instrumenter now hard-pins the pre-release @jridgewell/gen-mapping@0.4.0-beta.0 (which itself wants sourcemap-codec ^1.6.0-beta.0); an unstable sourcemap component in the mutation-testing path could produce wrong source locations or crash the weekly mutation audit (`mutation:ratchet`) on its next run. | Files: package-lock.json | PR: #328 | Head: 5e4d9b64a4dd75ed8ed50b1fd0a6afaacaac8b2c
 
 <!-- fable-routed PR #328 head 5e4d9b64a4dd75ed8ed50b1fd0a6afaacaac8b2c -->
+
+## Claude follow-up suggestions awaiting owner decision (2026-11-06)
+
+These are proposals, not authorized overnight implementation tasks. Claude approved commit 248eef19 with these low-priority suggestions.
+
+- Redis retry pacing: consider a short fixed delay before the one allowed retry in `scripts/check-redis-health.mjs`. Plan, if approved: preserve the two-attempt maximum and per-attempt timeout, delay only transient retries and test that authentication failures still do not retry. Verify with injected transport failures and HTTP 429/503 followed by PONG.
+- Redirect-check reporting: consider collecting failures for all aliases instead of stopping at the first one in `scripts/check-event-redirects.mjs`. Plan, if approved: retain read-only requests, manual redirect handling and a nonzero exit when any alias fails; report each failed path and missing parameter without following ticket destinations. Verify multiple broken aliases appear in one report while successful aliases remain silent.

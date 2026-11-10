@@ -632,7 +632,7 @@ export const events: EventEntry[] = [
     isoDate: "2026-11-19",
     tagline: "Tickets coming soon",
     timezone: "America/Chicago",
-    note: "Placeholder date, email capture only until tickets exist",
+    note: "Placeholder withdrawn November 5, 2026. No ticket link was published",
   },
   {
     date: "Nov 20",
@@ -650,7 +650,7 @@ export const events: EventEntry[] = [
     isoDate: "2026-11-20",
     tagline: "Tickets coming soon",
     timezone: "America/Chicago",
-    note: "Placeholder date, email capture only until tickets exist",
+    note: "Placeholder withdrawn November 5, 2026. No ticket link was published",
   },
   {
     date: "Nov 21",
@@ -668,7 +668,7 @@ export const events: EventEntry[] = [
     isoDate: "2026-11-21",
     tagline: "Tickets coming soon",
     timezone: "America/Chicago",
-    note: "Placeholder date, email capture only until tickets exist",
+    note: "Placeholder withdrawn November 5, 2026. No ticket link was published",
   },
   {
     date: "Nov 22",
@@ -686,7 +686,7 @@ export const events: EventEntry[] = [
     isoDate: "2026-11-22",
     tagline: "Tickets coming soon",
     timezone: "America/Chicago",
-    note: "Placeholder date, email capture only until tickets exist",
+    note: "Placeholder withdrawn November 5, 2026. No ticket link was published",
   },
   {
     date: "Dec 4",

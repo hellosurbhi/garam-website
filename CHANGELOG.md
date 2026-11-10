@@ -1,5 +1,9 @@
 # Changelog
 
+## Waitlist timeout recovery (2026-11-10)
+
+- Release a canceled ranking refresh at its 15-second deadline so the next visitor can retry. Retain the last good ranking and prevent late work from clearing a newer refresh or starting cache writes.
+
 ## Review reliability fixes (2026-11-10)
 
 - Exclude slash variants of show aliases from the sitemap, trigger cleanup on successful production deployment events and retain waitlist rankings across bounded refresh failures. Add explicit Redis fixture failures, a short retry delay, complete redirect failure reporting and keyboard regression coverage.

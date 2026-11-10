@@ -95,7 +95,7 @@ async function refresh(signal: AbortSignal): Promise<CityWaitlistCount[]> {
   }
 }
 
-/** Share one bounded ranking lookup across concurrent requests and release it after settlement. */
+/** Share one bounded ranking lookup across concurrent requests and release it on settlement or deadline. */
 export function getWaitlistRanking(): Promise<CityWaitlistCount[]> {
   if (pending) return pending;
   const controller = new AbortController();
@@ -105,6 +105,7 @@ export function getWaitlistRanking(): Promise<CityWaitlistCount[]> {
     timer = setTimeout(() => {
       const error = new Error("Timeout: waitlist ranking (15000ms)");
       controller.abort(error);
+      release();
       reject(error);
     }, 15_000);
   });
@@ -119,7 +120,7 @@ export function getWaitlistRanking(): Promise<CityWaitlistCount[]> {
     throw error;
   });
   pending = result;
-  // The timeout bounds callers, but only settlement releases the in-flight work.
+  // Release only this operation, so late settlement cannot unlock a newer refresh.
   const release = () => {
     clearTimeout(timer);
     if (pending === result) pending = undefined;

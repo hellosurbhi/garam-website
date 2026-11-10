@@ -1478,5 +1478,7 @@ The owner approved both suggestions for https://github.com/hellosurbhi/garam-web
 
 These are proposals awaiting the owner, not authorized overnight tasks.
 
-- A cancellation-ignoring waitlist operation can retain its in-flight lock indefinitely. The approved implementation keeps that lock until settlement to prevent overlapping refreshes. All production token and Firestore requests now receive the deadline signal, with guards before later queries and writes. Claude proposes releasing the lock at the deadline after aborting. The owner has been asked to choose. If approved, release only the matching operation and test retry after an ignored abort without late cache writes.
+- Implemented after owner approval: abort and release the matching waitlist refresh at its 15-second deadline. Later requests can retry, and regression tests verify late settlement cannot clear a newer lock or start a query or cache write.
 - Claude suggests returning freshly computed rankings when aggregate persistence fails, instead of retaining the last persisted ranking. This predates the timeout fix. If approved, retain validated computed counts in memory separately from persisted freshness, avoid stamping failed writes as fresh and test cold-cache and stale-cache PATCH failures.
+
+- Optional future cooldown after repeated ranking deadlines: Claude approved the requested retry behavior but noted visitors could repeatedly wait 15 seconds during a persistent outage. If the owner later requests it, add a short per-instance cooldown that immediately returns stale counts, without delaying cold-cache recovery indefinitely; verify time-based retry eligibility and that normal successful refreshes reset the cooldown. This is not authorized for implementation.

@@ -111,28 +111,69 @@ describe("daily waitlist aggregate cache", () => {
   });
 });
 
-it("returns stale counts on deadline without launching overlapping refreshes", async () => {
+it("retries after a stale-cache deadline and late work cannot unlock the retry", async () => {
   vi.spyOn(console, "error").mockImplementation(() => {});
   mocks.get.mockResolvedValue({ updatedAt: 0, counts });
-  let finish!: (value: string) => void;
-  mocks.token.mockReturnValue(
-    new Promise<string>((resolve) => {
-      finish = resolve;
-    }),
-  );
+  let finishOld!: (value: string) => void;
+  let finishNew!: (value: string) => void;
+  mocks.token
+    .mockReturnValueOnce(
+      new Promise<string>((resolve) => {
+        finishOld = resolve;
+      }),
+    )
+    .mockReturnValueOnce(
+      new Promise<string>((resolve) => {
+        finishNew = resolve;
+      }),
+    );
   const first = getWaitlistRanking();
+  const concurrent = getWaitlistRanking();
+  expect(concurrent).toBe(first);
   await vi.advanceTimersByTimeAsync(15_000);
   expect(await first).toEqual(counts);
-  expect(await getWaitlistRanking()).toEqual(counts);
-  expect(mocks.get).toHaveBeenCalledTimes(1);
+  expect(await concurrent).toEqual(counts);
   expect(mocks.token.mock.calls[0][0].aborted).toBe(true);
-  finish("late-token");
+  const retry = getWaitlistRanking();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(mocks.get).toHaveBeenCalledTimes(2);
+  finishOld("late-token");
   await vi.advanceTimersByTimeAsync(0);
   expect(fetchMock).not.toHaveBeenCalled();
   expect(mocks.patch).not.toHaveBeenCalled();
+  expect(getWaitlistRanking()).toBe(retry);
+  expect(mocks.get).toHaveBeenCalledTimes(2);
+  fetchMock.mockResolvedValue(Response.json([]));
+  finishNew("new-token");
+  expect(await retry).toEqual([]);
+  expect(mocks.patch).toHaveBeenCalledTimes(1);
+  expect(vi.getTimerCount()).toBe(0);
+});
+
+it("allows recovery after a cold-cache read ignores cancellation", async () => {
+  vi.spyOn(console, "error").mockImplementation(() => {});
+  let finishOld!: (value: unknown) => void;
+  mocks.get.mockReturnValueOnce(
+    new Promise((resolve) => {
+      finishOld = resolve;
+    }),
+  );
+  const failed = expect(getWaitlistRanking()).rejects.toThrow(
+    "Timeout: waitlist ranking",
+  );
+  await vi.advanceTimersByTimeAsync(15_000);
+  await failed;
   mocks.get.mockResolvedValue({ updatedAt: Date.now(), counts });
   expect(await getWaitlistRanking()).toEqual(counts);
-  expect(mocks.get).toHaveBeenCalledTimes(2);
+  finishOld({
+    updatedAt: Date.now(),
+    counts: [{ citySlug: "old-city", count: 99 }],
+  });
+  await vi.advanceTimersByTimeAsync(0);
+  expect(fetchMock).not.toHaveBeenCalled();
+  expect(mocks.patch).not.toHaveBeenCalled();
+  mocks.get.mockRejectedValue(new Error("offline"));
+  expect(await getWaitlistRanking()).toEqual(counts);
 });
 
 it("clears its deadline after normal completion", async () => {

@@ -1,5 +1,9 @@
 # Lessons
 
+## Test real SDK protocol selection
+
+Calling uploadBytesResumable does not guarantee a resumable HTTP request for a small file. Firebase uses multipart uploads below its threshold. Observe both formats and assert upload evidence in the test body so an unused route assertion cannot create false confidence.
+
 ## Prove the exact test and its cleanup
 
 A recent record can belong to a previous run. Give each production attempt its own reserved identity and persist upload ownership before forwarding requests. Deletion acceptance is not absence verification. Keep cleanup evidence through crashes and refuse mismatched customer records.

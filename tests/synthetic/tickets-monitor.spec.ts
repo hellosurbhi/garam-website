@@ -21,7 +21,7 @@ test("live ticket redirects use their configured checkout destinations", async (
       maxRedirects: 0,
       timeout: 10_000,
       headers: {
-        "User-Agent": "Googlebot (production synthetic ticket check)",
+        "User-Agent": "GaramMasalaMonitor/1.0",
       },
     });
     expect(response.status(), event.slug).toBe(302);

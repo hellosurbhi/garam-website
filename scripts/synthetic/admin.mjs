@@ -127,13 +127,20 @@ export function createStore(project, bucket, token, fetchImpl) {
         const query = new URLSearchParams({ pageSize: "100" });
         if (pageToken) query.set("pageToken", pageToken);
         const data = await request(`${base}/syntheticRuns?${query}`);
-        for (const doc of data.documents ?? [])
+        for (const doc of data.documents ?? []) {
+          let value = null;
+          try {
+            value = JSON.parse(doc.fields?.data?.stringValue ?? "null");
+          } catch {
+            /* Invalid evidence is returned for isolated refusal, never deleted. */
+          }
           result.push({
             name: doc.name,
             updateTime: doc.updateTime,
-            createdAt: doc.fields.createdAt.timestampValue,
-            data: JSON.parse(doc.fields.data.stringValue),
+            createdAt: doc.fields?.createdAt?.timestampValue,
+            data: value,
           });
+        }
         pageToken = data.nextPageToken;
         if (!pageToken) return result;
       }

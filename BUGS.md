@@ -12,6 +12,18 @@ fixed entries, [x] checkboxes or "Status: Fixed" records to this file. -->
 
 ## Open
 
+### [LOW] Review retention of anonymous Firebase Auth identities created by production monitoring
+
+- **Files:** `src/components/apply/useApplyForm.ts`, `scripts/synthetic/ledger.mjs`, `tests/synthetic/monitor-fixture.ts`.
+- Production application tests create anonymous Auth identities. The current cleanup contract removes verified Firestore submissions and Storage photos, not authentication accounts.
+- Overnight plan: inventory only uploader UIDs recorded in private syntheticRuns evidence. Check whether automatic anonymous-account cleanup is enabled. Before proposing deletion, prove each account is anonymous and has no real customer documents or other active use. Retain evidence until successful cleanup. Add tests for linked accounts, shared UIDs, missing evidence and repeated cleanup. Obtain the required Auth permissions through the authorized process, then verify a single controlled attempt before enabling recovery. Never sweep all anonymous users. Production investigation and deletion require authorized administrator access; the overnight lane can prepare code and isolated tests but cannot execute those operations.
+
+### [LOW] Audit legacy fixed-identity monitoring leftovers without durable ledgers
+
+- **Files:** `scripts/synthetic-apply-verify.mjs`, `scripts/synthetic/ledger.mjs`, `src/lib/syntheticMonitor.ts`.
+- Previous production tests used synthetic-monitor@garammasaladating.com. Those records cannot have the new per-attempt cleanup evidence, so the new sweeper deliberately does not infer ownership from the email alone.
+- Overnight plan: perform an administrator read-only inventory for that exact identity. Cross-check the reserved name, marker, server timestamps and historical monitor runs. For each photo, establish upload ownership before preparing conditional deletes. Present exact verified counts and unresolved evidence separately. Delete only proven test records through the authorized cleanup process, verify absence and prove unrelated records unchanged. Do not treat arbitrary matching addresses or old photos as sufficient evidence. Production investigation is an access-gated operator task, not an unattended overnight deletion.
+
 ### [HIGH] zohoMailer.sendMail has no bounded timeout, sitewide
 
 - **Date:** 2026-08-27

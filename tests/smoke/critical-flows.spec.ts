@@ -19,6 +19,7 @@ import { test, expect, type Page } from "@playwright/test";
 
 /** Intercept every Firebase googleapis.com call so the form submits offline. */
 async function mockFirebase(page: Page) {
+  const uploadOwners: string[] = [];
   // Anonymous auth
   // signInAnonymously POSTs accounts:signUp, then the SDK POSTs accounts:lookup
   // and reads `users.length` from the reply, so lookup needs its own shape.
@@ -44,16 +45,17 @@ async function mockFirebase(page: Page) {
   await page.route("**/firebasestorage.googleapis.com/**", async (route) => {
     const req = route.request();
     const headers = await req.allHeaders();
+    const bucket = new URL(req.url()).pathname.split("/")[3];
+    // WebKit's intercepted Blob request can omit postData. This is an
+    // offline UI fixture only. The production Chromium monitor fails closed
+    // if upload metadata is unavailable; Chromium below proves its parser.
+    const body = req.postData();
+    const upload =
+      body === null
+        ? null
+        : parseUpload(req.url(), req.method(), headers, body, bucket);
+    if (upload) uploadOwners.push(upload.owner);
     if (headers["x-goog-upload-command"] === "start") {
-      const bucket = new URL(req.url()).pathname.split("/")[3];
-      const upload = parseUpload(
-        req.url(),
-        req.method(),
-        headers,
-        req.postData(),
-        bucket,
-      );
-      expect(upload?.owner).toBe("smoke-uid");
       return route.fulfill({
         status: 200,
         headers: {
@@ -88,6 +90,7 @@ async function mockFirebase(page: Page) {
       }),
     }),
   );
+  return uploadOwners;
 }
 
 // These tests exercise form behavior. Server persistence is covered separately.
@@ -181,9 +184,10 @@ test.describe("Apply form", () => {
   // stage in order: anonymous auth, photo upload, Firestore write.
   test("happy path: fills, submits, reaches auth, upload and the Firestore write", async ({
     page,
+    browserName,
   }) => {
     test.setTimeout(60_000);
-    await mockFirebase(page);
+    const uploadOwners = await mockFirebase(page);
     await page.goto("/apply", { waitUntil: "domcontentloaded" });
     await page.waitForSelector("[data-testid=apply-form]", {
       state: "visible",
@@ -209,6 +213,10 @@ test.describe("Apply form", () => {
     ];
     await submit.click();
     await Promise.all(stages);
+    if (browserName === "chromium")
+      expect(uploadOwners.length).toBeGreaterThan(0);
+    else expect(browserName).toBe("webkit");
+    expect(uploadOwners.every((owner) => owner === "smoke-uid")).toBe(true);
   });
 
   test("timeout regression: spinner always stops when Firebase hangs", async ({

@@ -45,14 +45,38 @@ export function parseUpload(urlString, method, headers, body, bucket) {
   const url = new URL(urlString);
   if (url.hostname !== "firebasestorage.googleapis.com" || method !== "POST")
     return null;
-  if (headers["x-goog-upload-command"] !== "start") return null;
+  const protocol = headers["x-goog-upload-protocol"];
+  if (headers["x-goog-upload-command"] !== "start" && protocol !== "multipart")
+    return null;
   if (url.pathname !== `/v0/b/${bucket}/o`)
     throw new Error("Upload targets an unexpected bucket");
-  if (headers["x-goog-upload-protocol"] !== "resumable")
+  let metadataBody = body ?? "";
+  if (protocol === "multipart") {
+    const boundary = headers["content-type"]?.match(
+      /^multipart\/related;\s*boundary="?([A-Za-z0-9_-]{1,70})"?$/i,
+    )?.[1];
+    if (!boundary || !metadataBody.startsWith(`--${boundary}\r\n`))
+      throw new Error("Unexpected multipart boundary");
+    const separator = metadataBody.indexOf("\r\n\r\n");
+    const end = metadataBody.indexOf(`\r\n--${boundary}\r\n`, separator + 4);
+    if (
+      separator < 0 ||
+      end < 0 ||
+      end > 65536 ||
+      !metadataBody
+        .slice(0, separator)
+        .toLowerCase()
+        .includes("content-type: application/json")
+    )
+      throw new Error("Unexpected multipart metadata");
+    metadataBody = metadataBody.slice(separator + 4, end);
+  } else if (protocol !== "resumable")
     throw new Error("Unexpected upload protocol");
-  const metadata = JSON.parse(body ?? "");
+  const metadata = JSON.parse(metadataBody);
   const path = metadata.name;
   const owner = metadata.metadata?.owner;
+  if (url.searchParams.has("name") && url.searchParams.get("name") !== path)
+    throw new Error("Upload path disagrees with metadata");
   if (
     !/^photos\/[A-Za-z0-9._-]+$/.test(path) ||
     typeof owner !== "string" ||
@@ -61,13 +85,35 @@ export function parseUpload(urlString, method, headers, body, bucket) {
     throw new Error("Upload ownership metadata is missing");
   return { path, owner };
 }
+const journalWrites = new WeakMap();
 export async function recordUpload(store, ledger, upload) {
-  validateLedger(ledger);
-  const prior = ledger.data.photos.find((p) => p.path === upload.path);
-  if (prior && prior.owner !== upload.owner)
-    throw new Error("Upload owner changed");
-  if (!prior) ledger.data.photos.push(upload);
-  await store.save(ledger);
+  const previous = journalWrites.get(ledger) ?? Promise.resolve();
+  const pending = previous.then(async () => {
+    validateLedger(ledger);
+    const prior = ledger.data.photos.find(
+      (photo) => photo.path === upload.path,
+    );
+    if (prior && prior.owner !== upload.owner)
+      throw new Error("Upload owner changed");
+    const next = {
+      ...ledger,
+      data: {
+        ...ledger.data,
+        photos: prior
+          ? [...ledger.data.photos]
+          : [...ledger.data.photos, upload],
+      },
+    };
+    validateLedger(next);
+    await store.save(next);
+    Object.assign(ledger, next);
+  });
+  journalWrites.set(ledger, pending);
+  try {
+    await pending;
+  } finally {
+    if (journalWrites.get(ledger) === pending) journalWrites.delete(ledger);
+  }
 }
 export async function findAttempt(store, ledger) {
   validateLedger(ledger);
@@ -172,21 +218,31 @@ export async function sweep(store, runId) {
       if (store.now() - ledger.data.cleanedAt >= 7 * 24 * HOUR)
         await store.deleteDoc(ledger);
     } catch (error) {
-      errors.push({
-        id: ledger.data?.id ?? "invalid",
-        error: error instanceof Error ? error.message : "Cleanup failed",
-        escalated: (ledger.data?.failures ?? 0) + 1 === 3,
-      });
+      let trusted = true;
       try {
         validateLedger(ledger);
+      } catch {
+        trusted = false;
+      }
+      const id = trusted
+        ? ledger.data.id
+        : (ledger.name ?? "unidentified-ledger");
+      errors.push({
+        id,
+        error: error instanceof Error ? error.message : "Cleanup failed",
+        escalated: !trusted || (ledger.data.failures ?? 0) + 1 === 3,
+      });
+      if (!trusted) continue;
+      try {
         ledger.data.failures = (ledger.data.failures ?? 0) + 1;
         if (ledger.data.failures >= 3)
           ledger.data.retryAfter = store.now() + 24 * HOUR;
         await store.save(ledger);
       } catch {
         errors.push({
-          id: ledger.data?.id ?? "invalid",
+          id,
           error: "Could not persist cleanup failure",
+          escalated: true,
         });
       }
     }

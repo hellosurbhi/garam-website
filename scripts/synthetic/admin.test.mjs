@@ -35,3 +35,30 @@ it("does not retry deletion after a generation mismatch", async () => {
   );
   expect(fetcher).toHaveBeenCalledTimes(1);
 });
+it("isolates malformed ledger JSON without losing valid cleanup evidence", async () => {
+  const fetcher = vi.fn().mockResolvedValue(
+    new Response(
+      JSON.stringify({
+        documents: [
+          { name: "bad", fields: { data: { stringValue: "{" } } },
+          {
+            name: "valid",
+            fields: {
+              data: { stringValue: '{"id":"good"}' },
+              createdAt: { timestampValue: "2026-11-11T00:00:00Z" },
+            },
+          },
+        ],
+      }),
+    ),
+  );
+  const rows = await createStore(
+    "demo",
+    "demo.appspot.com",
+    "fake",
+    fetcher,
+  ).ledgers();
+  expect(rows).toHaveLength(2);
+  expect(rows[0].data).toBeNull();
+  expect(rows[1].data.id).toBe("good");
+});

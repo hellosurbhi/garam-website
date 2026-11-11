@@ -308,6 +308,15 @@ describe("synthetic marker and private cleanup ledger", () => {
       }),
     );
   });
+  it("requires the marker for a reserved identity", async () => {
+    const db = testEnv.unauthenticatedContext().firestore();
+    await assertFails(
+      setDoc(doc(db, "leads", "missing-marker"), {
+        ...validLead,
+        email: "synthetic-monitor@garammasaladating.com",
+      }),
+    );
+  });
   it("denies browser access to cleanup evidence, including admin browsers", async () => {
     for (const context of [
       testEnv.unauthenticatedContext(),

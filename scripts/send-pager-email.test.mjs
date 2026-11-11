@@ -150,6 +150,25 @@ describe("sendPagerEmail", () => {
     expect(decodeSentMessage()).toContain(env.RUN_URL);
   });
 
+  it("preserves the custom recovery subject without allowing new headers", async () => {
+    const { subject } = await sendPagerEmail(
+      "page",
+      {
+        ...env,
+        MONITOR_SUBJECT:
+          "Website monitor: cleanup recovered\r\nBcc: fixture@example.com",
+      },
+      mockFetch,
+    );
+    expect(subject).toBe(
+      "Website monitor: cleanup recovered  Bcc: fixture@example.com",
+    );
+    expect(decodeSentMessage()).not.toMatch(/^Bcc:/m);
+    expect(decodeSentMessage()).toContain(
+      "Subject: Website monitor: cleanup recovered",
+    );
+  });
+
   it("test mode is unmistakably a drill", async () => {
     const { subject } = await sendPagerEmail("test", env, mockFetch);
     expect(subject).toContain("notification test");

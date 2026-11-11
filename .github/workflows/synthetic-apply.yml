@@ -23,17 +23,22 @@ jobs:
     concurrency:
       group: monitor-version-${{ github.event_name }}
       cancel-in-progress: true
+    outputs:
+      state: ${{ steps.gate.outputs.state }}
     steps:
       - uses: actions/checkout@v7
         with: { persist-credentials: false }
       - uses: actions/setup-node@v7
         with: { node-version: 24 }
-      - run: node scripts/synthetic/deployment.mjs
+      - id: gate
+        run: node scripts/synthetic/deployment.mjs
         env:
-          MONITOR_WAIT_FOR_DEPLOY: ${{ github.event_name == 'push' }}
+          MONITOR_WAIT_FOR_DEPLOY: "true"
+          GITHUB_TOKEN: ${{ github.token }}
   synthetic:
     permissions: { contents: read }
     needs: deployed
+    if: needs.deployed.outputs.state != 'superseded'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     concurrency:
@@ -55,11 +60,15 @@ jobs:
         id: setup
         run: npx playwright install chromium --with-deps
       - name: Recheck live version after queueing
+        id: preversion
         run: node scripts/synthetic/deployment.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       # WHY first: deployed rules drift is a release configuration failure,
       # not evidence that a customer submission failed.
       - name: Verify deployed rules
         id: rules
+        if: success() && steps.preversion.outputs.state == 'ready'
         run: node scripts/check-rules-drift.mjs
         env:
           FIREBASE_ADMIN_CLIENT_EMAIL: ${{ secrets.FIREBASE_ADMIN_CLIENT_EMAIL }}
@@ -69,6 +78,7 @@ jobs:
 
       - name: Test real application and Notify Me
         id: flow
+        if: success() && steps.rules.outcome == 'success' && steps.preversion.outputs.state == 'ready'
         run: npx playwright test --config playwright.synthetic.config.ts --grep-invert 'ticket redirects'
         env:
           FIREBASE_ADMIN_CLIENT_EMAIL: ${{ secrets.FIREBASE_ADMIN_CLIENT_EMAIL }}
@@ -96,13 +106,15 @@ jobs:
         id: version
         if: always() && steps.setup.outcome == 'success'
         run: node scripts/synthetic/deployment.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Record phase outcomes
         id: results
         if: always()
         env:
           PHASES: ${{ toJSON(steps) }}
         run: |
-          node --input-type=module -e 'import { appendFileSync, readFileSync, existsSync } from "node:fs"; const p=JSON.parse(process.env.PHASES); appendFileSync(process.env.GITHUB_OUTPUT, `outcomes=${JSON.stringify({...Object.fromEntries(["setup","rules","flow","redirects","cleanup","version"].map(k=>[k,p[k]?.outcome||"skipped"])), cleanupEscalated:existsSync("synthetic-cleanup.json") && JSON.parse(readFileSync("synthetic-cleanup.json","utf8")).errors.some(e=>e.escalated)})}`+"\n");'
+          node --input-type=module -e 'import { appendFileSync, readFileSync, existsSync } from "node:fs"; const p=JSON.parse(process.env.PHASES); appendFileSync(process.env.GITHUB_OUTPUT, `outcomes=${JSON.stringify({...Object.fromEntries(["setup","rules","flow","redirects","cleanup","version"].map(k=>[k,p[k]?.outcome||"skipped"])), preversionState:p.preversion?.outputs?.state, versionState:p.version?.outputs?.state, cleanupEscalated:existsSync("synthetic-cleanup.json") && JSON.parse(readFileSync("synthetic-cleanup.json","utf8")).errors.some(e=>e.escalated)})}`+"\n");'
       - uses: actions/upload-artifact@v7
         if: always()
         with:
@@ -128,6 +140,8 @@ jobs:
         id: report
         run: node scripts/synthetic/report.mjs
         env:
+          GATE_STATE: ${{ needs.deployed.outputs.state }}
+          CHECK_RESULT: ${{ needs.synthetic.result }}
           GATE_RESULT: ${{ needs.deployed.result }}
           CHECK_OUTCOMES: ${{ needs.synthetic.outputs.outcomes }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -151,6 +165,7 @@ jobs:
             const title = '[Monitor] reporting failure';
             const body = `Monitoring could not complete its reporting. Run: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const issues = await github.paginate(github.rest.issues.listForRepo, { ...context.repo, state: 'open', per_page: 100 });
+            if (issues.some(i => !i.pull_request && i.title === '[Monitor] notification')) return;
             const prior = issues.find(i => !i.pull_request && i.title === title);
             if (prior) await github.rest.issues.update({ ...context.repo, issue_number: prior.number, body });
             else await github.rest.issues.create({ ...context.repo, title, body, assignees: ['hellosurbhi'] });

@@ -45,8 +45,9 @@ export const test = base.extend<{
           if (upload) await recordUpload(store, ledger, upload);
           else if (
             request.method() === "POST" &&
-            !headers["x-goog-upload-command"]?.includes("upload") &&
-            headers["x-goog-upload-command"] !== "query"
+            !["upload", "upload, finalize", "finalize", "query"].includes(
+              headers["x-goog-upload-command"],
+            )
           )
             throw new Error("Unrecognized Firebase upload initiation");
           await route.continue();
@@ -56,6 +57,10 @@ export const test = base.extend<{
           await route.abort();
         }
       },
+    );
+    await context.route(`${PRODUCTION}/ingest/**`, (route) => route.abort());
+    await context.route(`${PRODUCTION}/_vercel/insights/**`, (route) =>
+      route.abort(),
     );
     // Synthetic visits must not inflate third-party marketing analytics.
     await context.route(

@@ -147,3 +147,59 @@ it("does not close a form incident when deployment gating skipped the form", asy
   await report(env, withIssue);
   expect(calls.some((c) => c.url.endsWith("issues/99"))).toBe(false);
 });
+it("does not page or ping for a superseded or canceled queued check", async () => {
+  for (const change of [
+    { CHECK_RESULT: "cancelled" },
+    { GATE_STATE: "superseded" },
+  ]) {
+    const { env, fetcher } = reportFixture();
+    await report({ ...env, ...change }, fetcher);
+    expect(fetcher).not.toHaveBeenCalled();
+  }
+});
+import { decideGate, desiredMain } from "./deployment.mjs";
+it("tests ready, building, timeout, superseded and non-main gate decisions", () => {
+  const input = {
+    sha: "new",
+    main: "new",
+    deployed: "new",
+    expired: false,
+    ref: "refs/heads/main",
+  };
+  expect(decideGate(input)).toBe("ready");
+  expect(decideGate({ ...input, deployed: "old" })).toBe("wait");
+  expect(decideGate({ ...input, deployed: "old", expired: true })).toBe(
+    "timeout",
+  );
+  expect(decideGate({ ...input, main: "newer" })).toBe("superseded");
+  expect(decideGate({ ...input, ref: "refs/heads/feature" })).toBe(
+    "invalid-ref",
+  );
+});
+it("validates the desired main revision response", async () => {
+  const env = { GITHUB_REPOSITORY: "owner/repo", GITHUB_TOKEN: "fixture" };
+  expect(
+    await desiredMain(
+      env,
+      async () => new Response(JSON.stringify({ sha: "a".repeat(40) })),
+    ),
+  ).toBe("a".repeat(40));
+  await expect(
+    desiredMain(env, async () => new Response("{}")),
+  ).rejects.toThrow("invalid");
+});
+it("does not hide cleanup failure when the deployed commit changes mid-run", () => {
+  expect(
+    categories("success", {
+      versionState: "superseded",
+      flow: "failure",
+      cleanup: "failure",
+    }),
+  ).toEqual(["cleanup"]);
+  expect(
+    categories("success", {
+      preversionState: "superseded",
+      cleanup: "success",
+    }),
+  ).toEqual([]);
+});

@@ -6,8 +6,9 @@ service cloud.firestore {
       return email is string && email.lower().matches('synthetic-monitor([+][0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})?@garammasaladating[.]com');
     }
     function validSyntheticMarker(d) {
-      return !('isSynthetic' in d.keys()) || (d.isSynthetic is bool
-        && (!d.isSynthetic || syntheticEmail(d.email)));
+      return ('email' in d.keys() && syntheticEmail(d.email))
+        ? ('isSynthetic' in d.keys() && d.isSynthetic == true)
+        : (!('isSynthetic' in d.keys()) || d.isSynthetic == false);
     }
     // Only the monitor service account can manage cleanup evidence.
     match /syntheticRuns/{id} { allow read, write: if false; }

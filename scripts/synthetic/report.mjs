@@ -5,6 +5,11 @@ export function categories(gate, checks) {
   if (gate === "cancelled") return [];
   if (gate !== "success") return ["deployment"];
   const result = [];
+  if (
+    checks.preversionState === "superseded" ||
+    checks.versionState === "superseded"
+  )
+    return checks.cleanup === "failure" ? ["cleanup"] : [];
   if (checks.cleanup === "failure") result.push("cleanup");
   if (checks.version === "failure") result.push("deployment");
   if (checks.setup !== "success") result.push("harness");
@@ -50,6 +55,8 @@ export async function siteAlert(category, message, env, fetchImpl = fetch) {
     throw new Error("Site alert was not freshly accepted");
 }
 const descriptions = {
+  "reporting failure":
+    "The final monitoring report could not complete. Customer impact is unknown.",
   deployment:
     "The live version or database rules do not match this check. Production testing could not confirm the release.",
   harness:
@@ -64,7 +71,12 @@ const descriptions = {
 export async function report(env = process.env, fetchImpl = fetch) {
   const checks = JSON.parse(env.CHECK_OUTCOMES || "{}");
   const active = categories(env.GATE_RESULT, checks);
-  if (env.GATE_RESULT === "cancelled") return;
+  if (
+    env.GATE_RESULT === "cancelled" ||
+    env.CHECK_RESULT === "cancelled" ||
+    env.GATE_STATE === "superseded"
+  )
+    return;
   let notificationFailed = false;
   const weekly =
     env.EVENT_NAME === "schedule" &&
@@ -179,11 +191,14 @@ export async function report(env = process.env, fetchImpl = fetch) {
       });
   }
   for (const category of Object.keys(descriptions).filter(
-    (key) => key !== "notification",
+    (key) => key !== "notification" && key !== "reporting failure",
   )) {
     try {
       const healthy =
         env.GATE_RESULT === "success" &&
+        (category === "cleanup" ||
+          (checks.preversionState !== "superseded" &&
+            checks.versionState !== "superseded")) &&
         (category === "cleanup"
           ? checks.cleanup === "success"
           : category === "harness"
@@ -249,6 +264,7 @@ export async function report(env = process.env, fetchImpl = fetch) {
   } catch {
     notificationFailed = true;
   }
+  if (!notificationFailed) await incident("reporting failure", false);
   if (notificationFailed)
     throw new Error(
       "Notification verification incomplete; inspect the incident and external watchdog",

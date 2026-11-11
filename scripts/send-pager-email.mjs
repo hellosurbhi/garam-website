@@ -68,9 +68,9 @@ export async function sendPagerEmail(mode, env, fetchImpl) {
 
   const subject =
     env.MONITOR_SUBJECT?.replace(/[\r\n]/g, " ").slice(0, 160) ||
-    mode === "page"
+    (mode === "page"
       ? "Website monitor needs attention"
-      : "Weekly monitoring notification test";
+      : "Weekly monitoring notification test");
   const text =
     mode === "page"
       ? [

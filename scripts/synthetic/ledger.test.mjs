@@ -167,3 +167,62 @@ describe("durable synthetic cleanup", () => {
     expect(store.deleteDoc).not.toHaveBeenCalled();
   });
 });
+it("serializes simultaneous uploads and commits memory only after persistence", async () => {
+  const { store, ledger } = fixture();
+  let active = 0;
+  store.save.mockImplementation(async (next) => {
+    expect(active++).toBe(0);
+    await new Promise((resolve) => setTimeout(resolve, 2));
+    next.updateTime = String(next.data.photos.length);
+    active--;
+    return next;
+  });
+  await Promise.all([
+    recordUpload(store, ledger, { path: "photos/a.jpg", owner: "uploader" }),
+    recordUpload(store, ledger, { path: "photos/b.jpg", owner: "uploader" }),
+  ]);
+  expect(ledger.data.photos).toHaveLength(3);
+  store.save.mockRejectedValue(new Error("journal unavailable"));
+  await expect(
+    recordUpload(store, ledger, {
+      path: "photos/failed.jpg",
+      owner: "uploader",
+    }),
+  ).rejects.toThrow();
+  expect(ledger.data.photos).toHaveLength(3);
+});
+it("journals small-photo multipart metadata before forwarding the image", () => {
+  const headers = {
+    "x-goog-upload-protocol": "multipart",
+    "content-type": "multipart/related; boundary=12345",
+  };
+  const body =
+    '--12345\r\nContent-Type: application/json; charset=utf-8\r\n\r\n{"name":"photos/test.jpg","metadata":{"owner":"uploader"}}\r\n--12345\r\nContent-Type: image/jpeg\r\n\r\nimage bytes\r\n--12345--';
+  expect(
+    parseUpload(
+      "https://firebasestorage.googleapis.com/v0/b/demo.appspot.com/o?name=photos%2Ftest.jpg",
+      "POST",
+      headers,
+      body,
+      "demo.appspot.com",
+    ),
+  ).toEqual({ path: "photos/test.jpg", owner: "uploader" });
+  expect(() =>
+    parseUpload(
+      "https://firebasestorage.googleapis.com/v0/b/demo.appspot.com/o?name=photos%2Fother.jpg",
+      "POST",
+      headers,
+      body,
+      "demo.appspot.com",
+    ),
+  ).toThrow("disagrees");
+  expect(() =>
+    parseUpload(
+      "https://firebasestorage.googleapis.com/v0/b/demo.appspot.com/o",
+      "POST",
+      headers,
+      "bad body",
+      "demo.appspot.com",
+    ),
+  ).toThrow("boundary");
+});

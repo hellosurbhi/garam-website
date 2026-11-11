@@ -1,5 +1,10 @@
 # Changelog
 
+## Monitoring review corrections (2026-11-11)
+
+- Preserve custom recovery subjects, serialize upload journal updates and isolate malformed cleanup evidence.
+- Wait for deployments on each trigger, ignore superseded checks and distinguish canceled jobs from failures. Block first-party analytics in synthetic browsers and identify ticket checks with an explicit monitor user agent.
+
 ## Production monitoring and test isolation (2026-11-11)
 
 - Add exact-attempt production signup checks with durable upload evidence, conditional cleanup, crash recovery and guarded retention. Exclude reserved test identities from customer views, marketing and counts.

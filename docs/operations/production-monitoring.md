@@ -6,7 +6,7 @@ Unit and Firebase emulator tests validate behavior before release. The local bro
 
 The production workflow checks the deployed commit and deployed rules before submitting one application and one Notify Me lead. Each retry has its own UUID email and private cleanup ledger. Test traffic is excluded from customer lists, marketing and reporting. These checks exercise real Firebase authentication, Storage and Firestore rules.
 
-Four scheduled runs execute daily. A main push also waits up to 28 minutes for its deployed version. Polling may be superseded; submission and cleanup jobs are serialized and never intentionally canceled by a newer run. GitHub schedules can start late, so this is not a guaranteed six-hour detection SLA.
+Four scheduled runs execute daily. Each trigger waits up to 28 minutes for its deployed version. A newer main commit supersedes an older waiting check without raising a customer-flow incident. Polling may be superseded; submission and cleanup jobs are serialized and never intentionally canceled by a newer run. GitHub schedules can start late, so this is not a guaranteed six-hour detection SLA.
 
 ## Cleanup safety
 

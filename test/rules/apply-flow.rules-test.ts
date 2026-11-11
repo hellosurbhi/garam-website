@@ -278,6 +278,24 @@ describe("firestore.rules: applications", () => {
     );
   });
 
+  it("requires a synthetic marker for reserved applications while allowing a customer false marker", async () => {
+    const synthetic = buildApplicationDocument(
+      minimalSyntheticForm,
+      PHOTO_PATHS,
+      false,
+      docTimestamps(),
+    );
+    const { isSynthetic, ...missingMarker } = synthetic;
+    void isSynthetic;
+    await assertFails(setDoc(appDoc(anonContext("anon-1")), missingMarker));
+    await assertSucceeds(
+      setDoc(
+        doc(anonContext("anon-2").firestore(), "applications", "customer"),
+        { ...validApplication, isSynthetic: false },
+      ),
+    );
+  });
+
   it("fully-filled self application is accepted", async () => {
     await assertSucceeds(
       setDoc(appDoc(anonContext("anon-1")), validApplication),

@@ -145,6 +145,23 @@ async function recordPhoto(
   };
 }
 
+/**
+ * Best-effort delete of a stored file the draft is not supposed to keep.
+ * WHY the re-read: a refused confirm can be retried and recorded after room is
+ * freed, and a write can commit while its response is lost; deleting without
+ * checking then leaves the draft listing a photo that no longer exists. Delete
+ * only when the draft provably does not hold the path. If the draft cannot be
+ * read the file stays (an orphan is recoverable, a lost photo is not).
+ */
+async function deleteUnlessKept(auth: DraftAuth, path: string): Promise<void> {
+  const draft = await fsGet(`${auth.collection}/${auth.draftId}`).catch(
+    () => null,
+  );
+  if (draft && !stringArray(draft.photoPaths).includes(path)) {
+    await deleteObject(path).catch(() => {});
+  }
+}
+
 /** The 409 the client already understands, for whichever cap was hit. */
 function quotaResponse(refusal: QuotaRefusal, kept: number): Response {
   return jsonResponse(
@@ -284,7 +301,7 @@ export const POST: APIRoute = async ({ request, url }) => {
         // A refusal means the path is not on the draft, so the stored file is
         // unreachable: remove it like the relay does, or refused uploads pile
         // up unmetered in the bucket.
-        await deleteObject(path as string).catch(() => {});
+        await deleteUnlessKept(auth, path as string);
         return quotaResponse(refusal, keptNow);
       }
       return jsonResponse({ ok: true, path, size: stored.size });
@@ -375,21 +392,11 @@ export const POST: APIRoute = async ({ request, url }) => {
       try {
         recorded = await recordPhoto(auth, name, bytes.byteLength, true);
       } catch (err) {
-        // WHY a re-read first: the write can fail on the response after it
-        // committed (a timeout), and deleting then would leave the draft
-        // listing a photo that no longer exists. Delete only when the draft
-        // provably does not hold the path; if that cannot be read, keep the
-        // object (an orphan is recoverable, a lost photo is not).
-        const after = await fsGet(`${auth.collection}/${auth.draftId}`).catch(
-          () => null,
-        );
-        if (after && !stringArray(after.photoPaths).includes(name)) {
-          await deleteObject(name).catch(() => {});
-        }
+        await deleteUnlessKept(auth, name);
         throw err;
       }
       if (recorded.refusal) {
-        await deleteObject(name).catch(() => {});
+        await deleteUnlessKept(auth, name);
         return quotaResponse(recorded.refusal, recorded.kept);
       }
       return jsonResponse({ ok: true, path: name, size: bytes.byteLength });

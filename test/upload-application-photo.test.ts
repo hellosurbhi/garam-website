@@ -580,6 +580,32 @@ describe("upload-application-photo: quotas hold under concurrent requests", () =
     expect(mocks.state.objects.has(path)).toBe(false);
   });
 
+  it("a refused confirm keeps the file when the draft holds the path by the time it cleans up", async () => {
+    const { id, token } = seedDraft({
+      photoPaths: Array.from({ length: 10 }, (_, i) => `photos/x/${i}.jpg`),
+    });
+    const path = `photos/${id}/1-gggg.jpg`;
+    mocks.state.objects.set(path, { size: MB, contentType: "image/jpeg" });
+    const { fsGet } = await import("@/lib/firestoreRest");
+    const real = vi.mocked(fsGet).getMockImplementation()!;
+    let reads = 0;
+    // Read 1 is the handler's pre-read; read 2 is the cleanup guard's, by which
+    // time a retried confirm has recorded this path.
+    vi.mocked(fsGet).mockImplementation(async (docPath: string) => {
+      const doc = await real(docPath);
+      return ++reads === 2 && doc
+        ? { ...doc, photoPaths: [...(doc.photoPaths as string[]), path] }
+        : doc;
+    });
+    try {
+      const res = await call(token, { action: "confirm", path });
+      expect(res.status).toBe(409);
+      expect(mocks.state.objects.has(path)).toBe(true);
+    } finally {
+      vi.mocked(fsGet).mockImplementation(real);
+    }
+  });
+
   it("remove gives back the size counted at confirm, not the bucket's current size", async () => {
     const { id, token } = seedDraft();
     const path = `photos/${id}/1-ffff.jpg`;

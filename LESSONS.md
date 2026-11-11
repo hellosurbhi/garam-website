@@ -6,6 +6,8 @@ A pushed draft and passing local tests are not a ready PR. Inspect review thread
 
 ## Stored city is not proof of entered location
 
+An edit flag alone is insufficient when asynchronous code can refill a cleared input. Bind entry evidence to the last value produced by an input event and test delayed programmatic updates.
+
 Trace each capture path before ranking its location field. Popup and Spice List inputs can contain programmatic IP prefills. Record explicit input evidence through the existing market field and exclude historical records whose origin cannot be established.
 
 ## Separate scheduled shows from market demand

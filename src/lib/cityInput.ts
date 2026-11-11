@@ -1,9 +1,11 @@
 /** Programmatic geolocation prefills do not dispatch input events. */
 export function trackEnteredCity(input: HTMLInputElement | null) {
-  let edited = false;
+  let enteredValue: string | undefined;
   input?.addEventListener("input", () => {
-    edited = true;
+    enteredValue = input.value;
   });
   return (): "entered" | undefined =>
-    edited && input?.value.trim() ? "entered" : undefined;
+    enteredValue?.trim() && input?.value === enteredValue
+      ? "entered"
+      : undefined;
 }

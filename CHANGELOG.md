@@ -2,6 +2,8 @@
 
 ## Waitlist review corrections (2026-11-11)
 
+- Bind entered-city evidence to the last input value so a delayed geo prefill after clearing the field cannot count as explicit demand.
+
 - Exclude ambiguous historical popup and Spice List city prefills from demand ranking. New edited city inputs record explicit market interest through the existing source city field without changing Firestore rules.
 - Refresh the corrected counts under the V3 cache. Retain identity-based synthetic exclusion and remove the unused synthetic flag projection.
 - Load event inventory inside the waitlist island to preserve cacheable GET requests. Keep the ticket and waitlist selection timestamps aligned.

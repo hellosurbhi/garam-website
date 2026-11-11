@@ -3,7 +3,7 @@ import { fsGet, fsPatch } from "./firestoreRest";
 import { getFirestoreAccessToken } from "./firestoreAdmin";
 import { rankWaitlistCities, type CityWaitlistCount } from "./waitlistRanking";
 
-const CACHE_PATH = "systemConfig/ticketWaitlistRankingV2";
+const CACHE_PATH = "systemConfig/ticketWaitlistRankingV3";
 const DAY_MS = 86_400_000;
 const cacheSchema = z.object({
   updatedAt: z.number(),
@@ -47,7 +47,6 @@ async function refresh(signal: AbortSignal): Promise<CityWaitlistCount[]> {
                     "city",
                     "sourceCitySlug",
                     "source",
-                    "isSynthetic",
                     "deletedAt",
                   ].map((fieldPath) => ({ fieldPath })),
                 },

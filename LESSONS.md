@@ -1,5 +1,13 @@
 # Lessons
 
+## Finish the review loop before claiming readiness
+
+A pushed draft and passing local tests are not a ready PR. Inspect review threads, address each with evidence, verify required checks on the latest commit and confirm draft status is cleared before reporting ready to merge. A completed CodeRabbit check does not mean its findings are resolved.
+
+## Stored city is not proof of entered location
+
+Trace each capture path before ranking its location field. Popup and Spice List inputs can contain programmatic IP prefills. Record explicit input evidence through the existing market field and exclude historical records whose origin cannot be established.
+
 ## Separate scheduled shows from market demand
 
 Removing a scheduled show does not remove its city from Notify Me eligibility. Confirm the ranking population from the underlying records: a cached waitlist-only count is not the number of unique emails across leads and applications. Normalize explicit metro aliases before deduplication and distinguish entered locations from inferred IP geography.

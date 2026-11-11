@@ -322,3 +322,50 @@ describe("production test lead isolation", () => {
     }
   });
 });
+
+describe("entered city provenance", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.stubEnv("PUBLIC_FIREBASE_PROJECT_ID", "test-project");
+  });
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllEnvs();
+  });
+  it.each([
+    ["popup", "entered", "Edison", undefined, "manhattan"],
+    ["spice-list-tickets", "entered", "Herndon", undefined, "washington-dc"],
+    ["popup", undefined, "Chicago", undefined, undefined],
+    ["popup", "prefilled", "Chicago", undefined, undefined],
+    ["popup", "entered", "Unknown city", undefined, undefined],
+    ["popup", "entered", "Chicago", "austin", "austin"],
+    ["other-source", "entered", "Chicago", undefined, undefined],
+  ])(
+    "handles %s / %s / %s without a Firestore schema change",
+    async (source, cityInputSource, city, sourceCitySlug, expected) => {
+      const fetchSpy = vi
+        .spyOn(globalThis, "fetch")
+        .mockImplementation(async () =>
+          Response.json({
+            name: "projects/test-project/databases/(default)/documents/leads/lead123",
+          }),
+        );
+      const response = await POST(
+        makeContext(
+          makeRequest({
+            email: "person@example.com",
+            source,
+            city,
+            cityInputSource,
+            sourceCitySlug,
+          }),
+        ),
+      );
+      expect(response.status).toBe(200);
+      const fields = firestoreBody(fetchSpy).fields;
+      expect(fields.sourceCitySlug?.stringValue).toBe(expected);
+      expect(fields.cityInputSource).toBeUndefined();
+      expect(fields.city.stringValue).toBe(city);
+    },
+  );
+});

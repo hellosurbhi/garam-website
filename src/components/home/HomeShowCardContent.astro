@@ -1,0 +1,32 @@
+---
+import type { EventEntry } from "@/data/events";
+import { parseMonth, parseDay } from "@/utils/eventDate";
+import { formatEventLocation } from "@/utils/eventCity";
+import styles from "./HomeShowCards.module.css";
+interface Props {
+  event: EventEntry;
+  tagline?: string;
+}
+const { event, tagline } = Astro.props;
+const isSoldOut = event.soldOut ?? false;
+const cityLabel = formatEventLocation(event);
+---
+
+<div class={styles["show-date-block"]}>
+  <div class={styles["month"]}>{parseMonth(event.date)}</div>
+  <div class={styles["day"]}>{parseDay(event.date)}</div>
+</div>
+<div class={styles["show-info"]}>
+  <h3>{cityLabel}</h3>
+  <span>
+    {isSoldOut ? (event.tagline ?? "Sold out") : (tagline ?? "On sale now")}
+  </span>
+</div>
+<span
+  class={[
+    styles["ticket-label"],
+    isSoldOut ? styles["ticket-label--soldout"] : "",
+  ].join(" ")}
+>
+  {isSoldOut ? "Sold Out" : "Grab My Spot"}
+</span>

@@ -1,20 +1,19 @@
 ---
 import { PAGES } from "@/data/copy";
-import type { EventEntry } from "@/data/events";
+import { allEvents } from "@/data/events";
+import { getListingInventory } from "@/utils/eventFilters";
 import HomeShowCards from "@/components/home/HomeShowCards.astro";
 import { getWaitlistRanking } from "@/lib/waitlistRanking.server";
 import { selectWaitlistCards } from "@/lib/waitlistRanking";
 import TicketCard from "./TicketCard.astro";
 
 interface Props {
-  upcoming: EventEntry[];
   todayISO: string;
   nowISO: string;
   scheduledCount: number;
   sourcePage?: "tickets" | "home";
 }
 const {
-  upcoming,
   todayISO,
   nowISO,
   scheduledCount,
@@ -22,9 +21,11 @@ const {
 } = Astro.props;
 let cards: ReturnType<typeof selectWaitlistCards> = [];
 try {
+  // WHY: match the static ticket list snapshot. Advancing only this island
+  // can add a waitlist beneath a still-rendered purchase card for the same market.
   cards = selectWaitlistCards(
     await getWaitlistRanking(),
-    upcoming,
+    getListingInventory(allEvents, sourcePage),
     todayISO,
     new Date(nowISO),
   );

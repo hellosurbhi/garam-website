@@ -12,6 +12,19 @@ fixed entries, [x] checkboxes or "Status: Fixed" records to this file. -->
 
 ## Open
 
+### [LOW] ESLint scans generated smoke build artifacts
+
+- Evidence: `eslint.config.js` excludes `dist` and `.astro` but not `.smoke-dist`. Running lint while `scripts/build-smoke-fixture.mjs` rebuilt that directory failed with ENOENT for a generated asset.
+- Overnight plan: exclude the dedicated smoke output directory from source lint without changing source-file coverage. Verify lint before and after a fixture build and run the existing lint configuration tests if present.
+- Current verification: moved the generated fixture output outside the worktree and reran source lint. No lint rule or hook was bypassed.
+
+### [MEDIUM] Coordinate ticket and waitlist expiry without a site rebuild
+
+- Evidence: `src/pages/tickets.astro` and `src/pages/index.astro` select ticket cards at build time. `src/components/tickets/WaitlistCities.astro` intentionally uses that same snapshot; changing only its clock could show a waitlist beneath a still-rendered ticket card for the same market.
+- Overnight plan: implement one request-time eligibility snapshot for both ticketed shows and ranked waitlists, preserve static purchase-link fallback, bound shared caching by the next event or on-sale transition and retain the existing five-market cap. No isolated clock change in the waitlist island.
+- Verify: advance the clock across an event date and an on-sale boundary without rebuilding. Confirm the displayed ticket cards and waitlists agree, no market appears in both sections, five eligible waitlists remain and cache failures preserve working links.
+- Review context: https://github.com/hellosurbhi/garam-website/pull/361. Deferred because coordinated static-list expiry is broader than correcting this PR's ranking and compact island props.
+
 ### [LOW] Review retention of anonymous Firebase Auth identities created by production monitoring
 
 - **Files:** `src/components/apply/useApplyForm.ts`, `scripts/synthetic/ledger.mjs`, `tests/synthetic/monitor-fixture.ts`.

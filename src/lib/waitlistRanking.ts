@@ -14,6 +14,14 @@ export interface CityWaitlistCount {
   count: number;
 }
 
+export function isPrefilledCitySource(source: string): boolean {
+  return (
+    source === "popup" ||
+    source === "spice-list" ||
+    source.startsWith("spice-list-")
+  );
+}
+
 /** Normalize city labels for matching, retaining malformed URL encoding literally. */
 function normalize(value: string): string {
   let decoded = value;
@@ -67,7 +75,7 @@ export function rankWaitlistCities(
   const emailsByCity = new Map<string, Set<string>>();
   for (const lead of leads) {
     const source =
-      typeof lead.source === "string" ? lead.source.toLowerCase() : "";
+      typeof lead.source === "string" ? lead.source.trim().toLowerCase() : "";
     if (
       lead.deletedAt ||
       ["claude-verification-test", "codex-production-check"].includes(source)
@@ -89,7 +97,12 @@ export function rankWaitlistCities(
       typeof lead.sourceCitySlug === "string"
         ? lead.sourceCitySlug.trim().toLowerCase()
         : "";
-    const rawCity = typeof lead.city === "string" ? lead.city : "";
+    // These legacy capture flows stored IP prefills as city without provenance.
+    // Only their explicit market slug is reliable enough to rank.
+    const rawCity =
+      !isPrefilledCitySource(source) && typeof lead.city === "string"
+        ? lead.city
+        : "";
     const citySlug = resolveWaitlistMarket(slug, rawCity);
     if (!citySlug) continue;
     const emails = emailsByCity.get(citySlug) ?? new Set<string>();

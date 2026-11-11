@@ -41,6 +41,6 @@ Permanent record of every show change: cancellations, date moves, time moves, ro
 - Cancel: set `status: "canceled"` on the entry, add a `note`, add a line here. Never delete the entry.
 - Move a date: update `isoDate` and `date`, set `previousDate` to the old date, add a `note`, add a line here.
 - Time or venue change: update the fields, add a line here.
-- Homepage notify-me roster change: edit `TBA_CITIES`, add a line here. The tickets page ranks its own ten undated cities from waitlist signups.
+- Notify Me roster: homepage and tickets share five markets ranked from unique explicit-location emails across leads and applications. Update metro aliases in `src/data/waitlistMarkets.ts` when needed and record intentional policy changes here.
 - Venue constants are permanent too: never delete one, even if no event references it anymore.
 - Deleting an event entry is never correct, no matter how the request is phrased.

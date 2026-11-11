@@ -6,11 +6,10 @@ import WaitlistCities from "@/components/tickets/WaitlistCities.astro";
 import { PAGES } from "@/data/copy";
 interface Props {
   events: EventEntry[];
-  candidates: EventEntry[];
   todayISO: string;
   nowISO: string;
 }
-const { events, candidates, todayISO, nowISO } = Astro.props;
+const { events, todayISO, nowISO } = Astro.props;
 ---
 
 <section class="shows" id="shows" aria-labelledby="shows-heading">
@@ -25,7 +24,6 @@ const { events, candidates, todayISO, nowISO } = Astro.props;
     <HomeShowCards events={events} />
     <WaitlistCities
       server:defer
-      upcoming={candidates}
       todayISO={todayISO}
       nowISO={nowISO}
       scheduledCount={events.length}

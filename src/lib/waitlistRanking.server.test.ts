@@ -63,7 +63,7 @@ describe("daily waitlist aggregate cache", () => {
     expect(b).toEqual(a);
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(mocks.patch).toHaveBeenCalledWith(
-      "systemConfig/ticketWaitlistRankingV2",
+      "systemConfig/ticketWaitlistRankingV3",
       { updatedAt: expect.any(Number), counts: a },
       expect.any(AbortSignal),
     );
@@ -78,7 +78,6 @@ describe("daily waitlist aggregate cache", () => {
       "city",
       "sourceCitySlug",
       "source",
-      "isSynthetic",
       "deletedAt",
     ]);
   });
@@ -276,7 +275,7 @@ it("reads both collections, deduplicates them and honors typed deletion and synt
     ),
   ).toEqual(["leads", "applications"]);
   expect(mocks.get).toHaveBeenCalledWith(
-    "systemConfig/ticketWaitlistRankingV2",
+    "systemConfig/ticketWaitlistRankingV3",
     expect.any(AbortSignal),
   );
 });

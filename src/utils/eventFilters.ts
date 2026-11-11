@@ -51,3 +51,15 @@ export function getTicketPageUpcoming(
     hasPurchasableTickets(event, now),
   );
 }
+
+/** Keep static ticket cards and deferred waitlists on the same page inventory. */
+export function getListingInventory(
+  events: EventEntry[],
+  page: "home" | "tickets",
+): EventEntry[] {
+  return page === "home"
+    ? events.filter(
+        (event) => !["Salt Lake City", "Denver"].includes(event.city),
+      )
+    : events;
+}

@@ -1,5 +1,12 @@
 # Changelog
 
+## Waitlist review corrections (2026-11-11)
+
+- Exclude ambiguous historical popup and Spice List city prefills from demand ranking. New edited city inputs record explicit market interest through the existing source city field without changing Firestore rules.
+- Refresh the corrected counts under the V3 cache. Retain identity-based synthetic exclusion and remove the unused synthetic flag projection.
+- Load event inventory inside the waitlist island to preserve cacheable GET requests. Keep the ticket and waitlist selection timestamps aligned.
+- Mark Notify Me bells decorative, extract homepage card styles into a CSS module and correct the roster maintenance instructions.
+
 ## Five market waitlists and ticket ordering (2026-11-11)
 
 - Withdraw the Chicago December 4 and San Diego December 24 scheduled shows while keeping their history and eligibility for Notify Me.

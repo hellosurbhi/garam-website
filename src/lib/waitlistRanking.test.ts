@@ -245,3 +245,29 @@ describe("five-market presentation", () => {
     ).toEqual(["chicago"]);
   });
 });
+
+describe("prefilled city provenance", () => {
+  it("ignores ambiguous popup and Spice List cities but retains explicit market selections", () => {
+    expect(
+      rankWaitlistCities([
+        lead("Chicago", "one@real.test", { source: "popup" }),
+        lead("Chicago", "two@real.test", { source: "spice-list-home" }),
+        lead("Chicago", "three@real.test", { source: "spice-list-tickets" }),
+        lead("Chicago", "four@real.test", { source: "spice-list" }),
+        lead("Chicago", "five@real.test", {
+          source: "popup",
+          sourceCitySlug: "unknown",
+        }),
+        lead("Chicago", "six@real.test", {
+          source: "popup",
+          sourceCitySlug: "chicago",
+        }),
+        lead("Chicago", "six@real.test", {
+          source: "spice-list-home",
+          sourceCitySlug: "chicago",
+        }),
+        lead("Chicago", "seven@real.test"),
+      ]),
+    ).toEqual([{ citySlug: "chicago", count: 2 }]);
+  });
+});

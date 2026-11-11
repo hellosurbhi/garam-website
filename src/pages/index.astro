@@ -18,13 +18,16 @@ import { PAGES } from "@/data/copy";
 import { buildOrganizationJsonLd } from "@/utils/organizationSchema";
 import { YOUTUBE_VIDEO_ID, VIDEO_METADATA } from "@/lib/constants";
 import { events, allEvents } from "@/data/events";
-import { getTicketPageUpcoming, getSchemaDated } from "@/utils/eventFilters";
+import {
+  getTicketPageUpcoming,
+  getSchemaDated,
+  getListingInventory,
+} from "@/utils/eventFilters";
 import { buildEventSchemas } from "@/utils/eventSchema";
 
-const HIDDEN_FROM_HOME = ["Salt Lake City", "Denver"];
 const now = new Date();
 const today = now.toISOString().slice(0, 10);
-const candidates = allEvents.filter((e) => !HIDDEN_FROM_HOME.includes(e.city));
+const candidates = getListingInventory(allEvents, "home");
 const upcomingEvents = getTicketPageUpcoming(candidates, today, now);
 const firstTicketUrl = "/tickets";
 const heroEvents = getTicketPageUpcoming(events, today, now).slice(0, 5);
@@ -133,7 +136,6 @@ const speakableJsonLd = JSON.stringify({
     <HomeExperience />
     <HomeShows
       events={upcomingEvents}
-      candidates={candidates}
       todayISO={today}
       nowISO={now.toISOString()}
     />
@@ -255,6 +257,7 @@ const speakableJsonLd = JSON.stringify({
 <script>
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
+  import { trackEnteredCity } from "@/lib/cityInput";
   import { buildLeadAttribution, getGeoCity } from "@/lib/leadAttribution";
   import { safeLocalStorage } from "@/lib/safeStorage";
   import {
@@ -372,6 +375,9 @@ const speakableJsonLd = JSON.stringify({
       if (e.target === popup) close();
     });
 
+    const cityInputSource = trackEnteredCity(
+      document.getElementById("popup-city") as HTMLInputElement | null,
+    );
     let savedEmail = "";
     let popupDocId: LeadCaptureResult | null = null;
 
@@ -398,7 +404,9 @@ const speakableJsonLd = JSON.stringify({
           const attribution = await buildLeadAttribution({ source: "popup" });
           const captured = await captureLead({
             email: savedEmail,
-            ...(popupCity ? { city: popupCity } : {}),
+            ...(popupCity
+              ? { city: popupCity, cityInputSource: cityInputSource() }
+              : {}),
             ...attribution,
           });
           popupDocId = captured.id ? captured : null;

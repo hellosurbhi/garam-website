@@ -3,6 +3,7 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import { waitUntil } from "@vercel/functions";
 import { getEventBySlug, type EventEntry } from "@/data/events";
+import { getLiveEvents } from "@/lib/publishedEvents.server";
 import { isEventDatePast } from "@/utils/eventDate";
 import { enforceRateLimit, RATE_LIMITS, getClientIp } from "@/lib/rateLimit";
 import { applyUtmsToUrl } from "@/utils/utmForwarding";
@@ -116,7 +117,11 @@ async function recordClickSignals(
  */
 export const GET: APIRoute = async ({ params, request }) => {
   const slug = params.slug;
-  const event = slug ? getEventBySlug(slug) : undefined;
+  // WHY the live published list instead of the build's: a canceled show or
+  // a changed checkout link must stop sending buyers to the old listing
+  // within seconds of publishing, not after the rebuild lands (plan R5).
+  const { allEvents } = await getLiveEvents();
+  const event = slug ? getEventBySlug(slug, allEvents) : undefined;
 
   if (!event || !event.url || event.url === "#") {
     return new Response("Not found", { status: 404 });

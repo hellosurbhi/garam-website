@@ -15,30 +15,35 @@ vi.mock("@/lib/firestoreRest", () => ({
   fsPatch: mocks.fsPatch,
 }));
 vi.mock("@/lib/zohoMailer", () => ({ sendMail: mocks.sendMail }));
-vi.mock("@/data/events", () => ({
-  events: [
-    {
-      city: "New York",
-      citySlug: "nyc",
-      isoDate: "2099-12-31",
-      date: "Dec 31",
-      startTime: "20:00",
-      timezone: "America/New_York",
-      venue: { name: "Top Secret", streetAddress: "44 Ave A" },
-      hidden: false,
-    },
-    {
-      city: "New York",
-      citySlug: "nyc",
-      isoDate: "2099-11-30",
-      date: "Nov 30",
-      startTime: "20:00",
-      timezone: "America/New_York",
-      venue: { name: "Top Secret", streetAddress: "44 Ave A" },
-      hidden: false,
-      status: "canceled",
-    },
-  ],
+// WHY getLiveEvents is mocked, not @/data/events: the route reads the live
+// published show list (issue 337), so these fixtures only resolve if it does.
+vi.mock("@/lib/publishedEvents.server", () => ({
+  getLiveEvents: async () => ({
+    allEvents: [],
+    events: [
+      {
+        city: "New York",
+        citySlug: "nyc",
+        isoDate: "2099-12-31",
+        date: "Dec 31",
+        startTime: "20:00",
+        timezone: "America/New_York",
+        venue: { name: "Top Secret", streetAddress: "44 Ave A" },
+        hidden: false,
+      },
+      {
+        city: "New York",
+        citySlug: "nyc",
+        isoDate: "2099-11-30",
+        date: "Nov 30",
+        startTime: "20:00",
+        timezone: "America/New_York",
+        venue: { name: "Top Secret", streetAddress: "44 Ave A" },
+        hidden: false,
+        status: "canceled",
+      },
+    ],
+  }),
 }));
 
 const { POST } = await import("@/pages/api/create-invite");

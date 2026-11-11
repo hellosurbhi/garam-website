@@ -279,3 +279,44 @@ describe("firestore.rules: applications invalid creates", () => {
     );
   });
 });
+
+describe("synthetic marker and private cleanup ledger", () => {
+  it.each([
+    "synthetic-monitor@garammasaladating.com",
+    "synthetic-monitor+01234567-89ab-4cde-8fab-0123456789ab@garammasaladating.com",
+  ])("allows reserved production monitoring identity %s", async (email) => {
+    const db = testEnv.unauthenticatedContext().firestore();
+    await assertSucceeds(
+      setDoc(doc(db, "leads", "synthetic"), {
+        ...validLead,
+        email,
+        isSynthetic: true,
+      }),
+    );
+  });
+  it.each([
+    "customer@example.com",
+    "synthetic-monitor+not-a-uuid@garammasaladating.com",
+    "synthetic-monitor@garammasaladating.com.evil",
+  ])("rejects a synthetic flag for %s", async (email) => {
+    const db = testEnv.unauthenticatedContext().firestore();
+    await assertFails(
+      setDoc(doc(db, "leads", "forged"), {
+        ...validLead,
+        email,
+        isSynthetic: true,
+      }),
+    );
+  });
+  it("denies browser access to cleanup evidence, including admin browsers", async () => {
+    for (const context of [
+      testEnv.unauthenticatedContext(),
+      anonContext("test-uploader"),
+      adminContext(),
+    ]) {
+      const ref = doc(context.firestore(), "syntheticRuns", "attempt");
+      await assertFails(setDoc(ref, { email: validLead.email }));
+      await assertFails(getDoc(ref));
+    }
+  });
+});

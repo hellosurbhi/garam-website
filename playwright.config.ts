@@ -11,10 +11,11 @@ export default defineConfig({
     ? {}
     : {
         webServer: {
-          command: "node tests/smoke/static-preview.mjs 4321 dist/client",
+          command:
+            "node scripts/build-smoke-fixture.mjs && node tests/smoke/static-preview.mjs 4321 .smoke-dist/client",
           port: 4321,
-          reuseExistingServer: true,
-          timeout: 30000,
+          reuseExistingServer: !process.env.CI,
+          timeout: 180000,
         },
       }),
   use: {

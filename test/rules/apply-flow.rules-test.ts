@@ -258,6 +258,26 @@ describe("firestore.rules: applications", () => {
     );
   });
 
+  it("accepts a unique synthetic attempt and rejects a forged customer marker", async () => {
+    const synthetic = buildApplicationDocument(
+      {
+        ...minimalSyntheticForm,
+        email:
+          "synthetic-monitor+01234567-89ab-4cde-8fab-0123456789ab@garammasaladating.com",
+      },
+      PHOTO_PATHS,
+      false,
+      docTimestamps(),
+    );
+    await assertSucceeds(setDoc(appDoc(anonContext("anon-1")), synthetic));
+    await assertFails(
+      setDoc(doc(anonContext("anon-2").firestore(), "applications", "forged"), {
+        ...validApplication,
+        isSynthetic: true,
+      }),
+    );
+  });
+
   it("fully-filled self application is accepted", async () => {
     await assertSucceeds(
       setDoc(appDoc(anonContext("anon-1")), validApplication),

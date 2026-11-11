@@ -1,5 +1,11 @@
 # Changelog
 
+## Production monitoring and test isolation (2026-11-11)
+
+- Add exact-attempt production signup checks with durable upload evidence, conditional cleanup, crash recovery and guarded retention. Exclude reserved test identities from customer views, marketing and counts.
+- Gate writes on deployed code and rules, classify monitoring failures and verify independent notification channels and external watchdog configuration.
+- Build isolated browser fixtures with nonfunctional Firebase identifiers and verify the real SDK upload metadata parser. Return an error when alert delivery fails.
+
 ## Stable ticket page city exclusions (2026-11-11)
 
 - Keep the live waitlist section aligned with the dated city cards rendered at build time so a show date passing does not add a duplicate city card before the next build.

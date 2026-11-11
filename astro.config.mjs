@@ -278,6 +278,12 @@ export default defineConfig({
     }),
   ],
   vite: {
+    define: {
+      "import.meta.env.BUILD_COMMIT_SHA": JSON.stringify(
+        process.env.VERCEL_GIT_COMMIT_SHA ||
+          execSync("git rev-parse HEAD", { encoding: "utf8" }).trim(),
+      ),
+    },
     plugins: [gitDatesPlugin()],
     resolve: {
       alias: {

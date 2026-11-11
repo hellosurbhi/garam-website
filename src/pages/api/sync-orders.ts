@@ -1,3 +1,4 @@
+import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
 export const prerender = false;
 
 import type { APIRoute } from "astro";
@@ -189,6 +190,7 @@ async function findLeadByEmail(
   accessToken: string,
   email: string,
 ): Promise<string | null> {
+  if (isSyntheticSubmission(email)) return null;
   const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents:runQuery`;
   const res = await fetch(url, {
     method: "POST",

@@ -1,3 +1,4 @@
+import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
 import { SMOKE_TEST_EMAIL } from "@/lib/smokeTestIdentity";
 import type { APIRoute } from "astro";
 import { validateEmail } from "@/utils/validateEmail";
@@ -36,7 +37,11 @@ interface LeadPayload {
   geoTimezone?: string;
 }
 
-type FirestoreValue = { stringValue?: string; doubleValue?: number };
+type FirestoreValue = {
+  stringValue?: string;
+  doubleValue?: number;
+  booleanValue?: boolean;
+};
 type FirestoreFields = Record<string, FirestoreValue>;
 
 function normalizedString(value: unknown, maxLength: number): string {
@@ -130,6 +135,9 @@ export const POST: APIRoute = async ({ request }) => {
     createdAt: { stringValue: now },
   };
 
+  const synthetic = isSyntheticSubmission(email);
+  if (synthetic) fields.isSynthetic = { booleanValue: true };
+
   // Add optional fields. Caps mirror firestore.rules validLead: phone 50 to
   // match the apply form's format-sized ceiling (a formatted international
   // number is longer than the old 20), name/instagram for the apply form's
@@ -203,48 +211,53 @@ export const POST: APIRoute = async ({ request }) => {
     // Extract document ID from the name field (projects/.../documents/leads/DOC_ID)
     const docId = doc.name?.split("/").pop() ?? "";
 
-    // Sync to Kit — fire-and-forget, never blocks the response
-    const kitTags: string[] = ["website-lead"];
-    if (body.city) kitTags.push(body.city.toLowerCase().replace(/\s+/g, "-"));
-    if (body.utmSource) kitTags.push(body.utmSource.toLowerCase());
-    const kitFields: KitSubscriberFields = {};
-    if (body.city) kitFields.city = body.city;
-    if (body.sourcePage) kitFields.source_page = body.sourcePage;
-    if (body.landingPage) kitFields.landing_page = body.landingPage;
-    if (body.utmSource) kitFields.utm_source = body.utmSource;
-    if (body.utmMedium) kitFields.utm_medium = body.utmMedium;
-    if (body.utmCampaign) kitFields.utm_campaign = body.utmCampaign;
-    addKitSubscriber(email, kitTags, kitFields).catch(() => {
-      // Kit errors are already logged inside addKitSubscriber
-    });
+    if (!synthetic) {
+      // Sync to Kit asynchronously without blocking the response.
+      const kitTags: string[] = ["website-lead"];
+      if (body.city) kitTags.push(body.city.toLowerCase().replace(/\s+/g, "-"));
+      if (body.utmSource) kitTags.push(body.utmSource.toLowerCase());
+      const kitFields: KitSubscriberFields = {};
+      if (body.city) kitFields.city = body.city;
+      if (body.sourcePage) kitFields.source_page = body.sourcePage;
+      if (body.landingPage) kitFields.landing_page = body.landingPage;
+      if (body.utmSource) kitFields.utm_source = body.utmSource;
+      if (body.utmMedium) kitFields.utm_medium = body.utmMedium;
+      if (body.utmCampaign) kitFields.utm_campaign = body.utmCampaign;
+      addKitSubscriber(email, kitTags, kitFields).catch(() => {
+        // Kit errors are already logged inside addKitSubscriber
+      });
 
-    // Notify the producer of the new signup. Awaited, not fire-and-forget:
-    // a detached promise can be dropped if the serverless function freezes
-    // right after the response is returned.
-    const notificationEmail = readTrimmedEnv(
-      import.meta.env.NOTIFICATION_EMAIL,
-    );
-    if (notificationEmail) {
-      const notifyCity = normalizedString(body.city, 100);
-      const notifyPhone = normalizedString(body.phone, 20);
-      const notifySource = normalizedString(body.source ?? "lead-capture", 50);
-      const notifySourcePage = normalizedString(body.sourcePage ?? "/", 200);
-      try {
-        const template = producerLeadNotification({
-          email,
-          city: notifyCity || undefined,
-          phone: notifyPhone || undefined,
-          source: notifySource || undefined,
-          sourcePage: notifySourcePage || undefined,
-        });
-        await sendMail({ to: notificationEmail, ...template });
-      } catch (err) {
-        await alertOps({
-          flow: "lead",
-          stage: "success_email",
-          errorMessage: err instanceof Error ? err.message : String(err),
-          context: { email, city: notifyCity },
-        });
+      // Notify the producer of the new signup. Awaited, not fire-and-forget:
+      // a detached promise can be dropped if the serverless function freezes
+      // right after the response is returned.
+      const notificationEmail = readTrimmedEnv(
+        import.meta.env.NOTIFICATION_EMAIL,
+      );
+      if (notificationEmail) {
+        const notifyCity = normalizedString(body.city, 100);
+        const notifyPhone = normalizedString(body.phone, 20);
+        const notifySource = normalizedString(
+          body.source ?? "lead-capture",
+          50,
+        );
+        const notifySourcePage = normalizedString(body.sourcePage ?? "/", 200);
+        try {
+          const template = producerLeadNotification({
+            email,
+            city: notifyCity || undefined,
+            phone: notifyPhone || undefined,
+            source: notifySource || undefined,
+            sourcePage: notifySourcePage || undefined,
+          });
+          await sendMail({ to: notificationEmail, ...template });
+        } catch (err) {
+          await alertOps({
+            flow: "lead",
+            stage: "success_email",
+            errorMessage: err instanceof Error ? err.message : String(err),
+            context: { email, city: notifyCity },
+          });
+        }
       }
     }
 

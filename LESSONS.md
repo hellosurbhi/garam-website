@@ -1,5 +1,13 @@
 # Lessons
 
+## Prove the exact test and its cleanup
+
+A recent record can belong to a previous run. Give each production attempt its own reserved identity and persist upload ownership before forwarding requests. Deletion acceptance is not absence verification. Keep cleanup evidence through crashes and refuse mismatched customer records.
+
+## Do not confuse notification acceptance with delivery
+
+A final failing workflow step cannot activate earlier failure steps. Report through a separate job, inspect HTTP results and verify inbox receipt during an authorized drill. Watch missing schedules from outside GitHub.
+
 ## Distinguish packaged fixtures from production connectivity
 
 Intentionally rejecting Redis calls in the packaged smoke test produced alarming fallback errors in successful builds. Use explicit local allow and deny fixtures for the package integration check, and label its limits. Verify the public ticket redirect and inspect production logs separately before reporting a rollout complete.

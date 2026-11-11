@@ -1,3 +1,4 @@
+import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   collection,
@@ -210,7 +211,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         const snap = await getDocs(q);
         const docs = snap.docs
           .map((d) => ({ id: d.id, ...d.data() }) as Application)
-          .filter((a) => !a.isSynthetic);
+          .filter((a) => !isSyntheticSubmission(a.email));
         setHasMore(snap.docs.length === PAGE_SIZE);
         setLastDoc(snap.docs[snap.docs.length - 1] ?? null);
         if (after) {
@@ -251,7 +252,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       const snap = await getDocs(q);
       const docs = snap.docs
         .map((d) => ({ id: d.id, ...d.data() }) as Application)
-        .filter((a) => !a.deletedAt && !a.isSynthetic);
+        .filter((a) => !a.deletedAt && !isSyntheticSubmission(a.email));
       setInboxApps(docs);
     } catch {
       setInboxError(true);

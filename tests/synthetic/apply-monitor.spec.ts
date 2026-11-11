@@ -8,14 +8,12 @@
  * admin dashboard hides it) and the cleanup script will only ever delete
  * documents carrying ALL of these markers.
  */
-import { test, expect } from "@playwright/test";
-import {
-  SYNTHETIC_MONITOR_EMAIL,
-  SYNTHETIC_MONITOR_NAME,
-} from "../../src/lib/syntheticMonitor";
+import { test, expect } from "./monitor-fixture";
+import { SYNTHETIC_MONITOR_NAME } from "../../src/lib/syntheticMonitor";
 
 test("synthetic applicant can submit end to end on the live stack", async ({
   page,
+  monitor,
 }) => {
   await page.goto("/apply", { waitUntil: "domcontentloaded" });
   await page.waitForSelector("[data-testid=apply-form]", {
@@ -28,7 +26,7 @@ test("synthetic applicant can submit end to end on the live stack", async ({
   await page.selectOption("#field-gender", "Woman");
   await page.selectOption("#field-orientation", "Straight");
   await page.fill("#geo-place", "New York");
-  await page.fill("#field-email", SYNTHETIC_MONITOR_EMAIL);
+  await page.fill("#field-email", monitor.email);
   await page.fill("#field-instagram", "garammasaladating");
   // WHY these long, formatted values: for a month the monitor filled only
   // short required fields while the rules' length caps silently rejected
@@ -63,4 +61,5 @@ test("synthetic applicant can submit end to end on the live stack", async ({
   await expect(page.locator("[data-testid=apply-success]")).toBeVisible({
     timeout: 45_000,
   });
+  await monitor.verify();
 });

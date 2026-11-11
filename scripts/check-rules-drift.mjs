@@ -59,6 +59,7 @@ async function getAccessToken() {
 
   const res = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST",
+    signal: AbortSignal.timeout(10_000),
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
       grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
@@ -72,6 +73,7 @@ async function getAccessToken() {
 async function fetchJson(token, url) {
   const res = await fetch(url, {
     headers: { Authorization: `Bearer ${token}` },
+    signal: AbortSignal.timeout(10_000),
   });
   if (!res.ok) throw new Error(`${url} failed: ${await res.text()}`);
   return res.json();
@@ -108,6 +110,7 @@ function normalize(rules) {
 async function pageDrift(driftedTargets) {
   await fetch("https://garammasaladating.com/api/alert-failure", {
     method: "POST",
+    signal: AbortSignal.timeout(10_000),
     headers: {
       "Content-Type": "application/json",
       Origin: "https://garammasaladating.com",
@@ -153,7 +156,7 @@ for (const target of targets) {
 }
 
 if (drifted.length > 0) {
-  await pageDrift(drifted);
+  if (process.env.MONITOR_REPORTING_JOB !== "true") await pageDrift(drifted);
   process.exit(1);
 }
 console.log("No rules drift.");

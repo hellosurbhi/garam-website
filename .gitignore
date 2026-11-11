@@ -81,3 +81,7 @@ link-results.json
 /reviews/
 # Legacy husky-generated shims (never commit; hooks are the checked-in .husky files)
 .husky/_/
+
+# Local browser fixture build and sanitized monitor result
+.smoke-dist/
+synthetic-cleanup.json

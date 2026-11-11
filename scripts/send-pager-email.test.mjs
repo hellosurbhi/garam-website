@@ -146,14 +146,14 @@ describe("sendPagerEmail", () => {
 
   it("page mode names the outage and links the run", async () => {
     const { subject } = await sendPagerEmail("page", env, mockFetch);
-    expect(subject).toContain("APPLY MONITOR FAILED");
+    expect(subject).toContain("Website monitor needs attention");
     expect(decodeSentMessage()).toContain(env.RUN_URL);
   });
 
   it("test mode is unmistakably a drill", async () => {
     const { subject } = await sendPagerEmail("test", env, mockFetch);
-    expect(subject).toContain("pager test");
-    expect(subject).toContain("No action needed");
+    expect(subject).toContain("notification test");
+    expect(subject).not.toContain("likely broken");
     expect(subject).not.toContain("FAILED");
   });
 

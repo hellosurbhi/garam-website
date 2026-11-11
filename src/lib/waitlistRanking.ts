@@ -1,3 +1,4 @@
+import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
 import { SMOKE_TEST_EMAIL } from "./smokeTestIdentity";
 import { cities } from "@/data/cities";
 import type { EventEntry } from "@/data/events";
@@ -64,7 +65,8 @@ export function rankWaitlistCities(
       continue;
     const email =
       typeof lead.email === "string" ? lead.email.trim().toLowerCase() : "";
-    if (!email || email === SMOKE_TEST_EMAIL) continue;
+    if (!email || email === SMOKE_TEST_EMAIL || isSyntheticSubmission(email))
+      continue;
     const slug =
       typeof lead.sourceCitySlug === "string"
         ? lead.sourceCitySlug.trim().toLowerCase()

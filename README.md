@@ -122,3 +122,7 @@ Browser critical-flow smoke tests mock lead capture and updates and block unmock
 Keep each show's `slug` unchanged when rescheduling. Set `previousDate` on the first move and retain additional former dates in `previousDates` on later moves. Never discard recorded dates. Update `isoDate` and the display date as usual. `src/utils/eventRedirects.ts` automatically generates permanent redirects for both event pages and ticket routes from current and historical date URLs to the canonical slug. No per-show redirect configuration is needed. Conflicting aliases fail the build instead of pointing at another show. Redirect aliases are excluded from the sitemap.
 
 After a production deployment containing the current build, run `npm run test:redirects`. It checks each generated event alias for HTTP 308, the expected canonical path and preserved `utm_source`, `utm_campaign` and `eid`. It does not follow ticket destinations or submit forms. All aliases are checked with at most four simultaneous requests before reporting failures together. A missing alias or stripped query fails the check.
+
+## Production monitoring
+
+The [monitoring runbook](docs/operations/production-monitoring.md) explains isolated pre-release tests, real production signup checks, guarded test cleanup and the release gates for deployed rules and external watchdogs. Local browser checks build their own nonsecret Firebase fixture and block unmocked writes.

@@ -10,6 +10,7 @@
  * Unmocked mutations are blocked, including when this suite targets production.
  */
 
+import { parseUpload } from "../../scripts/synthetic/ledger.mjs";
 import { test, expect, type Page } from "@playwright/test";
 
 // ---------------------------------------------------------------------------
@@ -38,17 +39,45 @@ async function mockFirebase(page: Page) {
       ),
     });
   });
-  // Storage upload (resumable and single-request)
-  await page.route("**/firebasestorage.googleapis.com/**", (route) =>
-    route.fulfill({
+  // Real SDK request shape, with offline responses. The parser is also used
+  // by the production monitor to persist upload evidence before forwarding.
+  await page.route("**/firebasestorage.googleapis.com/**", async (route) => {
+    const req = route.request();
+    const headers = await req.allHeaders();
+    if (headers["x-goog-upload-command"] === "start") {
+      const bucket = new URL(req.url()).pathname.split("/")[3];
+      const upload = parseUpload(
+        req.url(),
+        req.method(),
+        headers,
+        req.postData(),
+        bucket,
+      );
+      expect(upload?.owner).toBe("smoke-uid");
+      return route.fulfill({
+        status: 200,
+        headers: {
+          "X-Goog-Upload-URL": `https://firebasestorage.googleapis.com/v0/b/${bucket}/o?upload_id=fixture`,
+          "X-Goog-Upload-Status": "active",
+        },
+        body: "",
+      });
+    }
+    return route.fulfill({
       status: 200,
+      headers: { "X-Goog-Upload-Status": "final" },
       contentType: "application/json",
       body: JSON.stringify({
-        name: "applications/smoke.png",
+        name: "photos/smoke.jpeg",
+        bucket: "demo-garam-masala.appspot.com",
+        size: "100",
+        contentType: "image/jpeg",
+        generation: "1",
+        metageneration: "1",
         downloadTokens: "smoke-token",
       }),
-    }),
-  );
+    });
+  });
   // Firestore write
   await page.route("**/firestore.googleapis.com/**", (route) =>
     route.fulfill({

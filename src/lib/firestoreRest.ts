@@ -54,10 +54,50 @@ function fromFields(fields: FirestoreFields): Record<string, unknown> {
   );
 }
 
-function baseUrl(): string {
+/** The resource name prefix, `projects/{id}/databases/(default)/documents`. */
+function documentsRoot(): string {
   const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
   if (!projectId) throw new Error("PUBLIC_FIREBASE_PROJECT_ID is required");
-  return `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents`;
+  return `projects/${projectId}/databases/(default)/documents`;
+}
+
+function baseUrl(): string {
+  return `https://firestore.googleapis.com/v1/${documentsRoot()}`;
+}
+
+interface RawDocument {
+  fields?: FirestoreFields;
+  updateTime?: string;
+}
+
+/** GET one document; null on 404. `label` names the caller in errors. */
+async function getRawDocument(
+  label: string,
+  docPath: string,
+  headers: Record<string, string>,
+  signal?: AbortSignal,
+): Promise<RawDocument | null> {
+  signal?.throwIfAborted();
+  const res = await fetch(`${baseUrl()}/${docPath}`, { signal, headers });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`${label} ${docPath}: ${res.status}`);
+  return (await res.json()) as RawDocument;
+}
+
+/** A document's decoded fields plus its `updateTime`, the optimistic-lock token. */
+export interface FsDocument {
+  fields: Record<string, unknown>;
+  updateTime: string;
+}
+
+function toFsDocument(label: string, docPath: string, raw: RawDocument) {
+  if (!raw.updateTime) {
+    throw new Error(`${label} ${docPath}: response has no updateTime`);
+  }
+  return {
+    fields: raw.fields ? fromFields(raw.fields) : {},
+    updateTime: raw.updateTime,
+  } satisfies FsDocument;
 }
 
 /** Read a single document. Returns null if not found. */
@@ -66,15 +106,142 @@ export async function fsGet(
   signal?: AbortSignal,
 ): Promise<Record<string, unknown> | null> {
   const token = await getFirestoreAccessToken(signal);
-  signal?.throwIfAborted();
-  const res = await fetch(`${baseUrl()}/${docPath}`, {
+  const doc = await getRawDocument(
+    "fsGet",
+    docPath,
+    { Authorization: `Bearer ${token}` },
     signal,
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error(`fsGet ${docPath}: ${res.status}`);
-  const doc = (await res.json()) as { fields?: FirestoreFields };
+  );
+  if (!doc) return null;
   return doc.fields ? fromFields(doc.fields) : {};
+}
+
+/**
+ * Read a document with its `updateTime`, for a later `fsCommit` precondition
+ * (read, validate, then write only if nobody changed it in between).
+ */
+export async function fsGetDocument(
+  docPath: string,
+  signal?: AbortSignal,
+): Promise<FsDocument | null> {
+  const token = await getFirestoreAccessToken(signal);
+  const doc = await getRawDocument(
+    "fsGetDocument",
+    docPath,
+    { Authorization: `Bearer ${token}` },
+    signal,
+  );
+  return doc ? toFsDocument("fsGetDocument", docPath, doc) : null;
+}
+
+/**
+ * Read a publicly readable document with no credentials.
+ *
+ * WHY no service-account token: the runtime show list must keep working when
+ * the admin credentials are missing or the token exchange is down, and the
+ * rules already make `eventsPublished` public (plan section 3). Use it only
+ * for collections whose rules say `allow read: if true`; anything else gets
+ * a 403 here. The caller owns the deadline through `signal`.
+ */
+export async function fsGetPublic(
+  docPath: string,
+  signal?: AbortSignal,
+): Promise<FsDocument | null> {
+  const doc = await getRawDocument("fsGetPublic", docPath, {}, signal);
+  return doc ? toFsDocument("fsGetPublic", docPath, doc) : null;
+}
+
+/** Commit precondition: the document must (not) exist, or be unchanged since `updateTime`. */
+export type FsPrecondition = { exists: boolean } | { updateTime: string };
+
+export interface FsWrite {
+  docPath: string;
+  fields: Record<string, unknown>;
+  /** true: change only the given fields (PATCH). Omitted: replace the document. */
+  merge?: boolean;
+  precondition?: FsPrecondition;
+}
+
+/**
+ * A commit refused because a precondition no longer held: someone else wrote
+ * first. The caller should reload and retry, never overwrite.
+ */
+export class CommitConflictError extends Error {
+  constructor(
+    readonly status: string,
+    message: string,
+  ) {
+    super(message);
+    this.name = "CommitConflictError";
+  }
+}
+
+// WHY classify by the canonical `error.status` string, not the HTTP code:
+// Firestore reports a failed `exists:false` or `updateTime` precondition with
+// different HTTP codes depending on the case and the API surface (400, 409,
+// 412), while the canonical status is stable (plan R9). ABORTED is a
+// contention abort, the same "someone else wrote first" situation.
+const CONFLICT_STATUSES = new Set([
+  "FAILED_PRECONDITION",
+  "ALREADY_EXISTS",
+  "ABORTED",
+]);
+
+function canonicalStatus(body: string): string | undefined {
+  // WHY the try: a proxy or outage can answer with HTML instead of the JSON
+  // error envelope. That is not a conflict, so it falls through to the
+  // generic error below, which carries the raw body for diagnosis.
+  try {
+    const parsed: unknown = JSON.parse(body);
+    if (typeof parsed !== "object" || parsed === null) return undefined;
+    const error: unknown = (parsed as { error?: unknown }).error;
+    if (typeof error !== "object" || error === null) return undefined;
+    const status: unknown = (error as { status?: unknown }).status;
+    return typeof status === "string" ? status : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/** Map a failed commit response to a CommitConflictError or a plain Error. */
+export function commitFailure(httpStatus: number, body: string): Error {
+  const status = canonicalStatus(body);
+  const message = `fsCommit: ${httpStatus} ${body}`;
+  return status && CONFLICT_STATUSES.has(status)
+    ? new CommitConflictError(status, message)
+    : new Error(message);
+}
+
+/**
+ * Apply several writes atomically: all of them land or none do. Each write
+ * can carry a precondition, which is how a publish swaps the live pointer
+ * only if it is still the version that was read. Throws CommitConflictError
+ * when a precondition fails.
+ */
+export async function fsCommit(
+  writes: FsWrite[],
+  signal?: AbortSignal,
+): Promise<void> {
+  const token = await getFirestoreAccessToken(signal);
+  const root = documentsRoot();
+  const body = {
+    writes: writes.map((w) => ({
+      update: { name: `${root}/${w.docPath}`, fields: toFields(w.fields) },
+      ...(w.merge ? { updateMask: { fieldPaths: Object.keys(w.fields) } } : {}),
+      ...(w.precondition ? { currentDocument: w.precondition } : {}),
+    })),
+  };
+  signal?.throwIfAborted();
+  const res = await fetch(`${baseUrl()}:commit`, {
+    signal,
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw commitFailure(res.status, await res.text());
 }
 
 /** Update specific fields on an existing document. */

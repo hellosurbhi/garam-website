@@ -71,6 +71,9 @@
 - Rank five markets using unique emails across leads and applications, explicit location aliases and Edison grouped under New York. Exclude active ticket markets before selecting five.
 - Show purchasable events first, then selected dated waitlists, then undated waitlists on the homepage and tickets page. Keep the existing homepage card design through a shared card component.
 - Version the aggregate cache and fix the missing gap between ticket cards and waitlist cards. Stack purchase controls below titles on small screens to avoid cramped city names.
+## Restore Vercel pull request previews (2026-11-11)
+
+- Restore preview builds and let Vercel expire stale previews through deployment retention. Limit the hourly cleanup to confirmed production deployments so a newer release cannot remove a preview under review.
 
 ## Resolve monitoring and waitlist review findings (2026-11-11)
 

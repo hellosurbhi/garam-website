@@ -5,7 +5,7 @@ const PROJECT_ID = "prj_9ByFOoPnfaBp2DKY30DcWI8TDeJq";
 const TEAM_ID = "team_tn5J4k4lUV5PSlx7jxjjNu3r";
 const TERMINAL_STATES = new Set(["READY", "ERROR", "CANCELED"]);
 
-/** List or delete obsolete finished deployments while protecting production, custom domains and newer ready builds. Defaults to a dry run; unsafe API state throws. */
+/** Prune obsolete production deployments. Vercel retention owns preview expiry. */
 export async function pruneDeployments(
   api,
   { apply = false, log = console.log } = {},
@@ -64,6 +64,7 @@ export async function pruneDeployments(
   let removed = 0;
   for (const deployment of deployments) {
     if (
+      deployment.target !== "production" ||
       deployment.uid === current.id ||
       deployment.uid === rollback?.uid ||
       !TERMINAL_STATES.has(deployment.state) ||
@@ -77,6 +78,11 @@ export async function pruneDeployments(
       detail.projectId,
       PROJECT_ID,
       "Deployment belongs to another project",
+    );
+    assert.equal(
+      detail.target,
+      "production",
+      "Deployment is not confirmed as production; refusing cleanup",
     );
     assert.ok(
       Array.isArray(detail.alias),

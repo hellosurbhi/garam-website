@@ -31,15 +31,36 @@ function fixture({ ready = true, domain = true, changes = false } = {}) {
             created: 80,
             target: "production",
           },
-          { uid: "dpl_building", state: "BUILDING", created: 90 },
-          { uid: "dpl_newer", state: "READY", created: 110 },
-          { uid: "dpl_failed", state: "ERROR", created: 110 },
-          { uid: "dpl_custom", state: "READY", created: 50 },
+          {
+            uid: "dpl_building",
+            state: "BUILDING",
+            created: 90,
+            target: "production",
+          },
+          {
+            uid: "dpl_newer",
+            state: "READY",
+            created: 110,
+            target: "production",
+          },
+          {
+            uid: "dpl_failed",
+            state: "ERROR",
+            created: 110,
+            target: "production",
+          },
+          {
+            uid: "dpl_custom",
+            state: "READY",
+            created: 50,
+            target: "production",
+          },
         ],
         pagination: { next: null },
       };
     return {
       projectId,
+      target: "production",
       alias: path.endsWith("dpl_custom")
         ? ["special.example.com"]
         : ["old.vercel.app"],
@@ -49,7 +70,7 @@ function fixture({ ready = true, domain = true, changes = false } = {}) {
 }
 
 describe("deployment cleanup safeguards", () => {
-  it("deletes only older terminal deployments without custom domains", async () => {
+  it("deletes only obsolete terminal production deployments without custom domains", async () => {
     const api = fixture();
     expect(await pruneDeployments(api, { apply: true, log: vi.fn() })).toBe(2);
     expect(api.mock.calls.filter(([, method]) => method === "DELETE")).toEqual([
@@ -57,7 +78,7 @@ describe("deployment cleanup safeguards", () => {
       ["/v13/deployments/dpl_failed", "DELETE"],
     ]);
   });
-  it("protects only the newest older READY production build, not a newer preview", async () => {
+  it("keeps previews when a newer production deployment goes live", async () => {
     const base = fixture();
     const api = vi.fn(async (path, method) => {
       const result = await base(path, method);
@@ -67,6 +88,12 @@ describe("deployment cleanup safeguards", () => {
             uid: "dpl_preview",
             state: "READY",
             created: 95,
+            target: "preview",
+          },
+          {
+            uid: "dpl_preview_error",
+            state: "ERROR",
+            created: 99,
             target: "preview",
           },
           {
@@ -84,7 +111,8 @@ describe("deployment cleanup safeguards", () => {
       .map(([path]) => path);
     expect(deleted).not.toContain("/v13/deployments/dpl_rollback");
     expect(deleted).toContain("/v13/deployments/dpl_old");
-    expect(deleted).toContain("/v13/deployments/dpl_preview");
+    expect(deleted).not.toContain("/v13/deployments/dpl_preview");
+    expect(deleted).not.toContain("/v13/deployments/dpl_preview_error");
     expect(deleted).toContain("/v13/deployments/dpl_failedprod");
   });
   it("defaults to a dry run", async () => {
@@ -126,6 +154,23 @@ describe("deployment cleanup safeguards", () => {
       false,
     );
   });
+  it.each(["preview", null, undefined])(
+    "refuses a candidate whose details report target %s",
+    async (target) => {
+      const base = fixture();
+      const api = vi.fn(async (path, method) =>
+        path.startsWith("/v13/")
+          ? { projectId, target, alias: [] }
+          : base(path, method),
+      );
+      await expect(
+        pruneDeployments(api, { apply: true, log: vi.fn() }),
+      ).rejects.toThrow("Deployment is not confirmed as production");
+      expect(api.mock.calls.some(([, method]) => method === "DELETE")).toBe(
+        false,
+      );
+    },
+  );
   it("reads later pages before selecting old deployments", async () => {
     const base = fixture();
     const api = vi.fn(async (path, method) => {

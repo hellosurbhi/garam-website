@@ -153,6 +153,24 @@ export async function headObject(
   };
 }
 
+/** Delete an object. Already gone counts as deleted. */
+export async function deleteObject(objectName: string): Promise<void> {
+  const token = await getFirestoreAccessToken();
+  const res = await fetch(
+    `https://${HOST}/storage/v1/b/${bucketName()}/o/${encodeURIComponent(objectName)}`,
+    {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(10_000),
+    },
+  );
+  if (!res.ok && res.status !== 404) {
+    throw new Error(
+      `Storage delete ${objectName}: ${res.status} ${await res.text()}`,
+    );
+  }
+}
+
 /** Write an object from server memory (the small-file relay fallback). */
 export async function putObject(
   objectName: string,

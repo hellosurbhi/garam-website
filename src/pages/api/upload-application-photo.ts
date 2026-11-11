@@ -8,6 +8,7 @@ import { publicCause } from "@/lib/publicCause";
 import { alertOpsOnce } from "@/lib/alertDedupe";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import {
+  deleteObject,
   headObject,
   isPhotoPathForDraft,
   photoPrefix,
@@ -81,25 +82,38 @@ function objectName(
  * the count read the same `before`, and upsertDoc re-runs on a lost race.
  * `reservation` also takes a reservation slot (the relay has no reserve step).
  */
+type QuotaRefusal = "photos" | "bytes" | "reservations";
+
+/**
+ * WHY every cap is decided inside the conditional write, not from the draft
+ * read at the top of the request: requests for one draft run concurrently, so
+ * N of them all read "room left" and all passed (11+ photos, more than 100MB,
+ * more than 40 reservations). upsertDoc re-reads and re-runs the callback after
+ * a lost write race, so a check made on `before` here is the authority; the
+ * early checks in the handler are only a cheap exit. The canary reuses one
+ * document forever and is exempt.
+ */
 async function recordPhoto(
   auth: DraftAuth,
   path: string,
   size: number,
   reservation = false,
-): Promise<boolean> {
-  let refused = false;
+): Promise<QuotaRefusal | null> {
+  let refused: QuotaRefusal | null = null;
   await upsertDoc(auth.collection, auth.draftId, (before) => {
-    refused = false;
+    refused = null;
     const current = stringArray(before?.photoPaths);
     if (current.includes(path)) return {};
-    // WHY the cap is checked inside the write: reserve and confirm are
-    // separate requests, so a holder could reserve many before any confirm
-    // lands. Checking against the stored list here is race-safe because
-    // upsertDoc retries this callback after a lost write race. The canary
-    // reuses one document forever and is exempt.
-    if (!auth.canaryKey && current.length >= MAX_PHOTOS_PER_DRAFT) {
-      refused = true;
-      return {};
+    if (!auth.canaryKey) {
+      if (current.length >= MAX_PHOTOS_PER_DRAFT) refused = "photos";
+      else if ((Number(before?.photoBytes) || 0) + size > MAX_TOTAL_BYTES)
+        refused = "bytes";
+      else if (
+        reservation &&
+        (Number(before?.photoReservations) || 0) >= MAX_RESERVATIONS_PER_DRAFT
+      )
+        refused = "reservations";
+      if (refused) return {};
     }
     return {
       photoPaths: [...current, path],
@@ -110,7 +124,17 @@ async function recordPhoto(
       updatedAt: new Date(),
     };
   });
-  return !refused;
+  return refused;
+}
+
+/** The 409 the client already understands, for whichever cap was hit. */
+function quotaResponse(refusal: QuotaRefusal, kept: number): Response {
+  return jsonResponse(
+    refusal === "bytes"
+      ? { error: "photo_quota", reason: "bytes" }
+      : { error: "photo_quota", kept },
+    409,
+  );
 }
 
 export const POST: APIRoute = async ({ request, url }) => {
@@ -182,10 +206,34 @@ export const POST: APIRoute = async ({ request, url }) => {
       ) {
         return jsonResponse({ error: "photo_quota", kept: kept.length }, 409);
       }
-      const seq = reservations + 1;
-      await upsertDoc(auth.collection, auth.draftId, (before) => ({
-        photoReservations: (Number(before?.photoReservations) || 0) + 1,
-      }));
+      // The caps above are only an early exit; this write is the authority
+      // (see recordPhoto). The sequence number comes from the same write so
+      // racing reserves never share an object name.
+      let seq = 0;
+      let refusal: QuotaRefusal | null = null;
+      const claimed = await upsertDoc(
+        auth.collection,
+        auth.draftId,
+        (before) => {
+          refusal = null;
+          const taken = Number(before?.photoReservations) || 0;
+          if (!auth.canaryKey) {
+            if (stringArray(before?.photoPaths).length >= MAX_PHOTOS_PER_DRAFT)
+              refusal = "photos";
+            else if (taken >= MAX_RESERVATIONS_PER_DRAFT)
+              refusal = "reservations";
+            if (refusal) return {};
+          }
+          seq = taken + 1;
+          return { photoReservations: seq };
+        },
+      );
+      if (refusal) {
+        return quotaResponse(
+          refusal,
+          stringArray(claimed.after.photoPaths).length,
+        );
+      }
       const contentType = safeContentType(body.contentType);
       const name = objectName(auth, seq, body.filename, body.index);
       const signed = signUploadUrl(name, contentType);
@@ -215,9 +263,8 @@ export const POST: APIRoute = async ({ request, url }) => {
       ) {
         return jsonResponse({ error: "photo_quota", reason: "bytes" }, 409);
       }
-      if (!(await recordPhoto(auth, path as string, stored.size))) {
-        return jsonResponse({ error: "photo_quota", kept: kept.length }, 409);
-      }
+      const refusal = await recordPhoto(auth, path as string, stored.size);
+      if (refusal) return quotaResponse(refusal, kept.length);
       return jsonResponse({ ok: true, path, size: stored.size });
     }
 
@@ -286,8 +333,12 @@ export const POST: APIRoute = async ({ request, url }) => {
         bytes,
         safeContentType(request.headers.get("content-type")),
       );
-      if (!(await recordPhoto(auth, name, bytes.byteLength, true))) {
-        return jsonResponse({ error: "photo_quota", kept: kept.length }, 409);
+      const refusal = await recordPhoto(auth, name, bytes.byteLength, true);
+      if (refusal) {
+        // The object was stored before the authoritative check ran. Remove it
+        // so a refused relay never leaves an unmetered file in the bucket.
+        await deleteObject(name).catch(() => {});
+        return quotaResponse(refusal, kept.length);
       }
       return jsonResponse({ ok: true, path: name, size: bytes.byteLength });
     }

@@ -40,10 +40,17 @@ vi.mock("@/lib/firestoreRest", async (importOriginal) => {
         });
       },
     ),
+    // Enforces the updateTime precondition like Firestore does, so concurrent
+    // requests lose races and re-run their callbacks instead of overwriting.
     fsPatchIfUnchanged: vi.fn(
-      async (path: string, patch: Record<string, unknown>) => {
-        const d = state.docs.get(path)!;
+      async (
+        path: string,
+        patch: Record<string, unknown>,
+        updateTime: string,
+      ) => {
         const { applyPatch } = await import("@/lib/draftStore");
+        const d = state.docs.get(path)!;
+        if (String(d.t) !== updateTime) throw new actual.FsConflictError(path);
         state.docs.set(path, {
           fields: applyPatch(d.fields, patch),
           t: ++state.clock,
@@ -63,6 +70,9 @@ vi.mock("@/lib/storageAdmin", async (importOriginal) => {
       expiresInSeconds: 900,
     })),
     headObject: vi.fn(async (path: string) => state.objects.get(path) ?? null),
+    deleteObject: vi.fn(async (path: string) => {
+      state.objects.delete(path);
+    }),
     putObject: vi.fn(
       async (path: string, bytes: ArrayBuffer, contentType: string) => {
         if (state.failPut) throw state.failPut;
@@ -426,6 +436,82 @@ describe("upload-application-photo: quotas fail closed", () => {
       error: "photo_quota",
       reason: "bytes",
     });
+  });
+});
+
+describe("upload-application-photo: quotas hold under concurrent requests", () => {
+  const MB = 1024 * 1024;
+
+  it("5 racing confirms with 8 photos kept keep exactly 10", async () => {
+    const { id, token } = seedDraft({
+      photoPaths: Array.from({ length: 8 }, (_, i) => `photos/x/${i}.jpg`),
+    });
+    const paths = Array.from(
+      { length: 5 },
+      (_, i) => `photos/${id}/${i}-aaaa.jpg`,
+    );
+    for (const p of paths) {
+      mocks.state.objects.set(p, { size: 1000, contentType: "image/jpeg" });
+    }
+    const results = await Promise.all(
+      paths.map((path) => call(token, { action: "confirm", path })),
+    );
+    expect(results.filter((r) => r.status === 200)).toHaveLength(2);
+    expect(results.filter((r) => r.status === 409)).toHaveLength(3);
+    expect(photoPaths(id)).toHaveLength(10);
+  });
+
+  it("racing reserves at 39 reservations yield exactly one success", async () => {
+    const { id, token } = seedDraft({ photoReservations: 39 });
+    const results = await Promise.all(
+      Array.from({ length: 6 }, () =>
+        call(token, { action: "reserve", filename: "p.jpg" }),
+      ),
+    );
+    expect(results.filter((r) => r.status === 200)).toHaveLength(1);
+    expect(
+      mocks.state.docs.get(`applications/${id}`)?.fields.photoReservations,
+    ).toBe(40);
+  });
+
+  it("racing confirms near 100MB never exceed the byte budget", async () => {
+    const { id, token } = seedDraft({ photoBytes: 90 * MB });
+    const paths = Array.from(
+      { length: 5 },
+      (_, i) => `photos/${id}/${i}-bbbb.jpg`,
+    );
+    for (const p of paths) {
+      mocks.state.objects.set(p, { size: 4 * MB, contentType: "image/jpeg" });
+    }
+    const results = await Promise.all(
+      paths.map((path) => call(token, { action: "confirm", path })),
+    );
+    expect(results.filter((r) => r.status === 200)).toHaveLength(2);
+    const bytes = mocks.state.docs.get(`applications/${id}`)?.fields
+      .photoBytes as number;
+    expect(bytes).toBeLessThanOrEqual(100 * MB);
+  });
+
+  it("a refused relay removes the object it had already stored", async () => {
+    const { id, token } = seedDraft({
+      photoPaths: Array.from({ length: 9 }, (_, i) => `photos/x/${i}.jpg`),
+    });
+    const results = await Promise.all(
+      Array.from({ length: 3 }, () =>
+        call(token, null, {
+          relay: true,
+          raw: new Uint8Array(500),
+          headers: {
+            "Content-Type": "image/jpeg",
+            "x-photo-filename": "a.jpg",
+          },
+        }),
+      ),
+    );
+    expect(results.filter((r) => r.status === 200)).toHaveLength(1);
+    expect(photoPaths(id)).toHaveLength(10);
+    // Only the kept relay object remains in the bucket.
+    expect(mocks.state.objects.size).toBe(1);
   });
 });
 

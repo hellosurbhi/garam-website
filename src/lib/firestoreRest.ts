@@ -1,3 +1,4 @@
+import { readTrimmedEnv } from "./env";
 import { getFirestoreAccessToken } from "./firestoreAdmin";
 
 type FirestoreValue =
@@ -54,9 +55,18 @@ function fromFields(fields: FirestoreFields): Record<string, unknown> {
   );
 }
 
+/**
+ * The Firebase project every REST call addresses, or undefined when this
+ * build has none (CI and local builds without env). Callers that can run
+ * unconfigured check this first instead of catching the throw below.
+ */
+export function firestoreProjectId(): string | undefined {
+  return readTrimmedEnv(import.meta.env.PUBLIC_FIREBASE_PROJECT_ID);
+}
+
 /** The resource name prefix, `projects/{id}/databases/(default)/documents`. */
 function documentsRoot(): string {
-  const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
+  const projectId = firestoreProjectId();
   if (!projectId) throw new Error("PUBLIC_FIREBASE_PROJECT_ID is required");
   return `projects/${projectId}/databases/(default)/documents`;
 }

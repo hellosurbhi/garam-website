@@ -21,6 +21,7 @@ import {
 } from "@/data/events";
 import { withTimeout } from "@/utils/withTimeout";
 import { readPublishedEventsPublic } from "./eventsStore.server";
+import { firestoreProjectId } from "./firestoreRest";
 import { alertOps } from "./opsAlert";
 
 /** How old the cached list may get before a request refreshes it. */
@@ -87,7 +88,15 @@ async function refresh(): Promise<void> {
  * is failing. Concurrent callers share one read (single flight).
  */
 export async function getLiveEvents(): Promise<LiveEvents> {
-  if (checkedAt === undefined || Date.now() - checkedAt >= LIVE_EVENTS_TTL_MS) {
+  // WHY skip quietly with no project id: Astro inlines it at build time, and
+  // CI and local builds run without it. The read could only throw "project id
+  // is required", which used to log a failure and page ops on every packaged
+  // runtime check. That is a known configuration, not an outage: the baked
+  // list is the right answer there. Vercel builds always carry the id, so a
+  // real Firestore failure in production still logs and alerts below.
+  const stale =
+    checkedAt === undefined || Date.now() - checkedAt >= LIVE_EVENTS_TTL_MS;
+  if (stale && firestoreProjectId()) {
     pending ??= refresh().finally(() => {
       pending = undefined;
     });

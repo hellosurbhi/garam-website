@@ -103,6 +103,22 @@ describe("getLiveEvents", () => {
     expect(mocks.alertOps).not.toHaveBeenCalled();
   });
 
+  it.each(["", "   "])(
+    "skips the read quietly when the build has no project id (%j)",
+    async (projectId) => {
+      vi.stubEnv("PUBLIC_FIREBASE_PROJECT_ID", projectId);
+      const live = await loader.getLiveEvents();
+      expect(fetchMock).not.toHaveBeenCalled();
+      expect(live.events).toEqual(publishedSnapshot.events);
+      expect(live.allEvents).toEqual(
+        buildAllEvents(publishedSnapshot, today()),
+      );
+      expect(console.error).not.toHaveBeenCalled();
+      expect(mocks.alertOps).not.toHaveBeenCalled();
+      expect(mocks.waitUntil).not.toHaveBeenCalled();
+    },
+  );
+
   it("falls back to the baked list and pages once when the read fails", async () => {
     fetchMock.mockResolvedValue(new Response("down", { status: 503 }));
     const live = await loader.getLiveEvents();

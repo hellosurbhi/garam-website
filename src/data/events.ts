@@ -142,7 +142,13 @@ export function getEventDisplayStatus(event: EventEntry): string | undefined {
  * cities) must resolve here. Callers that redirect to a real checkout
  * (src/pages/api/go/[slug].ts) must separately verify `event.url` is a
  * usable destination: TBA/coming-soon entries deliberately carry `url: ""`.
+ *
+ * `list` defaults to this build's list; runtime routes pass the live
+ * published list from src/lib/publishedEvents.server.ts instead.
  */
-export function getEventBySlug(slug: string): EventEntry | undefined {
-  return allEvents.find((e) => e.slug === slug);
+export function getEventBySlug(
+  slug: string,
+  list: EventEntry[] = allEvents,
+): EventEntry | undefined {
+  return list.find((e) => e.slug === slug);
 }

@@ -1,5 +1,10 @@
 # Changelog
 
+## California December tickets (2026-11-11)
+
+- Enable Los Angeles December 27 ticket purchases through the venue’s Eventbrite and publish its confirmed venue and Pacific show times.
+- Correct San Francisco December 26 to 6 PM to 8 PM Pacific while retaining its existing ticket link, attribution and permanent URLs.
+
 ## Monitor fixture URL checks (2026-11-11)
 
 - Match mocked GitHub and Gmail requests by exact hostname so the test harness rejects lookalike hosts.

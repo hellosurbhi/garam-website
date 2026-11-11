@@ -6,6 +6,8 @@ import {
   events,
   isDisplayable,
 } from "./events";
+import { buildEventSchemas } from "@/utils/eventSchema";
+import { buildEventRedirects } from "@/utils/eventRedirects";
 import { formatEventLocation } from "@/utils/eventCity";
 
 describe("event location data", () => {
@@ -38,7 +40,7 @@ describe("event location data", () => {
 });
 
 describe("dated email-capture placeholders", () => {
-  const placeholders = ["2026-12-24", "2026-12-27"];
+  const placeholders = ["2026-12-24"];
 
   it("shows each placeholder with its date and no ticket link", () => {
     for (const isoDate of placeholders) {
@@ -60,11 +62,11 @@ describe("dated email-capture placeholders", () => {
     }
   });
 
-  it("lists the San Francisco Dec 26 show as a live 5 PM Eventbrite sale", () => {
+  it("lists the San Francisco Dec 26 show as a live 6 PM Eventbrite sale", () => {
     const sf = events.find((e) => e.isoDate === "2026-12-26");
     expect(sf?.url).toContain("eventbrite.com");
-    expect(sf?.startTime).toBe("17:00");
-    expect(sf?.endTime).toBe("19:00");
+    expect(sf?.startTime).toBe("18:00");
+    expect(sf?.endTime).toBe("20:00");
   });
 });
 
@@ -80,4 +82,59 @@ describe("withdrawn Texas placeholders", () => {
     expect(event.status).toBe("canceled");
     expect(isDisplayable(event)).toBe(false);
   });
+});
+
+describe("December California ticket sales", () => {
+  it.each([
+    [
+      "los-angeles",
+      "2026-12-27",
+      "2026-11-13",
+      "19:30",
+      "21:30",
+      "their-eventbrite",
+      "2004696892370",
+    ],
+    [
+      "san-francisco",
+      "2026-12-26",
+      "2026-11-14",
+      "18:00",
+      "20:00",
+      "our-eventbrite",
+      "2003672498380",
+    ],
+  ])(
+    "keeps %s tickets, Pacific times and historical URLs consistent",
+    (city, date, originalDate, start, end, source, id) => {
+      const event = events.find(
+        (e) => e.citySlug === city && e.isoDate === date,
+      )!;
+      expect(event.ticketSource).toBe(source);
+      expect(event.eventbriteId).toBe(id);
+      expect(new URL(event.url!).pathname).toMatch(
+        new RegExp(`tickets-${id}$`),
+      );
+      expect(event.slug).toBe(`${city}-${originalDate}`);
+      expect(event.previousDate).toBe(originalDate);
+      expect(event.timezone).toBe("America/Los_Angeles");
+      expect(event.onSaleAt).toBeUndefined();
+      expect(event.tagline).toBeUndefined();
+      const schema = JSON.parse(buildEventSchemas([event])[0]);
+      expect(schema.startDate).toBe(`${date}T${start}:00-08:00`);
+      expect(schema.endDate).toBe(`${date}T${end}:00-08:00`);
+      expect(schema.offers.availability).toBe("https://schema.org/InStock");
+      const redirects = buildEventRedirects([event]);
+      for (const prefix of ["/events/", "/api/go/"]) {
+        expect(redirects[`${prefix}${city}-${date}`]).toEqual({
+          destination: `${prefix}${event.slug}`,
+          status: 308,
+        });
+      }
+      const merged = computeAllEvents(events, comingSoonEvents, "2026-11-11");
+      expect(
+        merged.filter((e) => e.citySlug === city && e.date === "TBA"),
+      ).toHaveLength(0);
+    },
+  );
 });

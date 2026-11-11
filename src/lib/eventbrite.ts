@@ -73,6 +73,9 @@ function mapEBOrderToOrder(
     // is never unrecoverable on arrival, only sync-orders.ts's retry pass
     // can determine that (when the order's source event no longer exists).
     purchaseCapiUnrecoverable: false,
+    // No delivery attempts made yet; sync-orders.ts increments this on each
+    // failed try. See purchaseCapiAttempts's doc comment in analytics.ts.
+    purchaseCapiAttempts: 0,
   };
 }
 

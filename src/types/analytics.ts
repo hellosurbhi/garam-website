@@ -41,6 +41,15 @@ export interface Order {
    * limit. See findPendingPurchaseOrders in sync-orders.ts.
    */
   purchaseCapiUnrecoverable: boolean;
+  /**
+   * Number of Purchase CAPI delivery attempts made for this order (initial
+   * try + retry pass). Once this crosses MAX_CAPI_ATTEMPTS in sync-orders.ts,
+   * the order is marked purchaseCapiUnrecoverable so a persistently failing
+   * order (bad token, malformed payload, not just a missing source event)
+   * eventually drops out of findPendingPurchaseOrders's 100-row query
+   * instead of occupying a slot on every future run forever.
+   */
+  purchaseCapiAttempts: number;
 }
 
 /** Firestore document in syncMeta/eventbrite. */

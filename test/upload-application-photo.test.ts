@@ -492,6 +492,55 @@ describe("upload-application-photo: quotas hold under concurrent requests", () =
     expect(bytes).toBeLessThanOrEqual(100 * MB);
   });
 
+  it("a retried confirm racing its original near the byte cap succeeds twice", async () => {
+    const { id, token } = seedDraft({ photoBytes: 98 * MB });
+    const path = `photos/${id}/1-cccc.jpg`;
+    mocks.state.objects.set(path, {
+      size: 1.5 * MB,
+      contentType: "image/jpeg",
+    });
+    const results = await Promise.all([
+      call(token, { action: "confirm", path }),
+      call(token, { action: "confirm", path }),
+    ]);
+    expect(results.map((r) => r.status)).toEqual([200, 200]);
+    expect(mocks.state.docs.get(`applications/${id}`)?.fields.photoBytes).toBe(
+      98 * MB + 1.5 * MB,
+    );
+  });
+
+  it("a confirm racing a remove of the same path never drifts the byte count", async () => {
+    const { id, token } = seedDraft({ photoBytes: 5 * MB });
+    const path = `photos/${id}/1-dddd.jpg`;
+    mocks.state.objects.set(path, { size: 2 * MB, contentType: "image/jpeg" });
+    await Promise.all([
+      call(token, { action: "confirm", path }),
+      call(token, { action: "remove", path }),
+    ]);
+    const fields = mocks.state.docs.get(`applications/${id}`)?.fields;
+    const kept = (fields?.photoPaths as string[]).includes(path);
+    expect(fields?.photoBytes).toBe(kept ? 7 * MB : 5 * MB);
+  });
+
+  it("racing relays at 39 reservations store exactly one object", async () => {
+    const { id, token } = seedDraft({ photoReservations: 39 });
+    const results = await Promise.all(
+      Array.from({ length: 3 }, () =>
+        call(token, null, {
+          relay: true,
+          raw: new Uint8Array(500),
+          headers: {
+            "Content-Type": "image/jpeg",
+            "x-photo-filename": "a.jpg",
+          },
+        }),
+      ),
+    );
+    expect(results.filter((r) => r.status === 200)).toHaveLength(1);
+    expect(photoPaths(id)).toHaveLength(1);
+    expect(mocks.state.objects.size).toBe(1);
+  });
+
   it("a refused relay removes the object it had already stored", async () => {
     const { id, token } = seedDraft({
       photoPaths: Array.from({ length: 9 }, (_, i) => `photos/x/${i}.jpg`),

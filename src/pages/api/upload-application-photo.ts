@@ -98,9 +98,9 @@ async function recordPhoto(
   path: string,
   size: number,
   reservation = false,
-): Promise<QuotaRefusal | null> {
+): Promise<{ refusal: QuotaRefusal | null; kept: number }> {
   let refused: QuotaRefusal | null = null;
-  await upsertDoc(auth.collection, auth.draftId, (before) => {
+  const outcome = await upsertDoc(auth.collection, auth.draftId, (before) => {
     refused = null;
     const current = stringArray(before?.photoPaths);
     if (current.includes(path)) return {};
@@ -124,7 +124,12 @@ async function recordPhoto(
       updatedAt: new Date(),
     };
   });
-  return refused;
+  // `kept` is counted from the document the decision was made on, not from the
+  // top-of-request read.
+  return {
+    refusal: refused,
+    kept: stringArray(outcome.after.photoPaths).length,
+  };
 }
 
 /** The 409 the client already understands, for whichever cap was hit. */
@@ -254,17 +259,15 @@ export const POST: APIRoute = async ({ request, url }) => {
       if (!stored) {
         return jsonResponse({ error: "object_missing", path }, 409);
       }
-      const total = Number(draft.photoBytes) || 0;
-      // A retried confirm of a photo already kept is a no-op, never a refusal.
-      if (
-        !kept.includes(path as string) &&
-        total + stored.size > MAX_TOTAL_BYTES &&
-        !auth.canaryKey
-      ) {
-        return jsonResponse({ error: "photo_quota", reason: "bytes" }, 409);
-      }
-      const refusal = await recordPhoto(auth, path as string, stored.size);
-      if (refusal) return quotaResponse(refusal, kept.length);
+      // No early byte check: recordPhoto is the only authority. A pre-read
+      // check refused a retried confirm whose original had just committed, and
+      // the client then burned a reservation re-uploading a kept photo.
+      const { refusal, kept: keptNow } = await recordPhoto(
+        auth,
+        path as string,
+        stored.size,
+      );
+      if (refusal) return quotaResponse(refusal, keptNow);
       return jsonResponse({ ok: true, path, size: stored.size });
     }
 
@@ -273,10 +276,13 @@ export const POST: APIRoute = async ({ request, url }) => {
       stage = "remove";
       // WHY the bytes come back off: the byte quota counts kept photos, so an
       // applicant swapping large photos must not run into it with removed ones.
-      const removedSize =
-        typeof path === "string" && kept.includes(path)
-          ? ((await headObject(path))?.size ?? 0)
-          : 0;
+      // Sized unconditionally, not only when the pre-read lists the path: a
+      // confirm of this path racing the remove commits between the two reads,
+      // and a skipped size left its bytes counted forever. The callback below
+      // still subtracts only if the path really was kept.
+      const removedSize = isPhotoPathForDraft(path, auth.draftId)
+        ? ((await headObject(path as string))?.size ?? 0)
+        : 0;
       await upsertDoc(auth.collection, auth.draftId, (before) => {
         const current = stringArray(before?.photoPaths);
         const had = current.includes(path as string);
@@ -313,14 +319,19 @@ export const POST: APIRoute = async ({ request, url }) => {
       }
       // The relay obeys the same caps as reserve and confirm, or it would be
       // an unmetered way to fill the bucket.
-      if (
-        !auth.canaryKey &&
-        (kept.length >= MAX_PHOTOS_PER_DRAFT ||
-          (Number(draft.photoReservations) || 0) >=
-            MAX_RESERVATIONS_PER_DRAFT ||
-          (Number(draft.photoBytes) || 0) + bytes.byteLength > MAX_TOTAL_BYTES)
-      ) {
-        return jsonResponse({ error: "photo_quota", kept: kept.length }, 409);
+      if (!auth.canaryKey) {
+        if (
+          (Number(draft.photoBytes) || 0) + bytes.byteLength >
+          MAX_TOTAL_BYTES
+        ) {
+          return quotaResponse("bytes", kept.length);
+        }
+        if (
+          kept.length >= MAX_PHOTOS_PER_DRAFT ||
+          (Number(draft.photoReservations) || 0) >= MAX_RESERVATIONS_PER_DRAFT
+        ) {
+          return quotaResponse("photos", kept.length);
+        }
       }
       const name = objectName(
         auth,
@@ -333,12 +344,19 @@ export const POST: APIRoute = async ({ request, url }) => {
         bytes,
         safeContentType(request.headers.get("content-type")),
       );
-      const refusal = await recordPhoto(auth, name, bytes.byteLength, true);
-      if (refusal) {
-        // The object was stored before the authoritative check ran. Remove it
-        // so a refused relay never leaves an unmetered file in the bucket.
+      // The object was stored before the authoritative check ran. Remove it on
+      // a refusal or a failed write so the relay never leaves an unmetered file
+      // in the bucket.
+      let recorded: Awaited<ReturnType<typeof recordPhoto>>;
+      try {
+        recorded = await recordPhoto(auth, name, bytes.byteLength, true);
+      } catch (err) {
         await deleteObject(name).catch(() => {});
-        return quotaResponse(refusal, kept.length);
+        throw err;
+      }
+      if (recorded.refusal) {
+        await deleteObject(name).catch(() => {});
+        return quotaResponse(recorded.refusal, recorded.kept);
       }
       return jsonResponse({ ok: true, path: name, size: bytes.byteLength });
     }

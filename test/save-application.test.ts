@@ -398,6 +398,23 @@ describe("save-application: finalize", () => {
     );
   });
 
+  it("the plain save the client sends first also resends, and still answers finalized", async () => {
+    const first = await json(
+      await post({ rev: 1, fields: { name: "P", email: "p@example.com" } }),
+    );
+    await post({ token: first.token, rev: 2, fields: {}, finalize: true });
+    const doc = stored(first.draftId as string)!;
+    delete doc.welcomeDeliveredAt;
+    doc.welcomeSentAt = new Date(Date.now() - 10 * 60_000);
+    const res = await post({ token: first.token, rev: 3, fields: {} });
+    expect(res.status).toBe(409);
+    expect(await json(res)).toMatchObject({ error: "finalized" });
+    expect(mocks.sendMail).toHaveBeenCalledTimes(2);
+    expect(stored(first.draftId as string)?.welcomeDeliveredAt).toBeInstanceOf(
+      Date,
+    );
+  });
+
   it("a retried finalize right after the claim does not resend while the first send may still run", async () => {
     const first = await json(
       await post({ rev: 1, fields: { name: "P", email: "p@example.com" } }),

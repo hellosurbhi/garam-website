@@ -126,6 +126,8 @@ export const POST: APIRoute = async ({ request }) => {
   const now = new Date();
   let capped = false;
   let sendWelcome = false;
+  // A plain save that only triggered a welcome resend still answers "finalized".
+  let refuseAfterWelcome = false;
   let stale: string[] = [];
   let storedMaxRev = 0;
 
@@ -137,6 +139,7 @@ export const POST: APIRoute = async ({ request }) => {
       // from the losing attempt (a claimed welcome email, stale keys) must not
       // leak into an attempt that returns early, or the email sends twice.
       sendWelcome = false;
+      refuseAfterWelcome = false;
       capped = false;
       stale = [];
       // WHY: finalize() wipes the applicant's token, so no real client writes
@@ -145,24 +148,27 @@ export const POST: APIRoute = async ({ request }) => {
       // response makes the client retry it, so it succeeds without writing.
       // The canary reuses one doc every run and is exempt.
       if (!canary && existing.finalizedAt) {
-        if (!finalize) throw new DraftFinalizedError();
         // WHY: the welcome email is claimed in the finalizing write and sent
-        // after it. If the function died between the two, the retried finalize
-        // lands here; resend when the claim is old enough that the first send
-        // cannot still be running and delivery was never recorded. A rare
-        // duplicate beats an applicant who never gets a receipt.
+        // after it. If the function died between the two, the applicant's next
+        // Submit reaches here: the client first sends a plain save, gets the
+        // finalized refusal and shows success without ever sending a second
+        // finalize. So BOTH paths resend when the claim is old enough that the
+        // first send cannot still be running and delivery was never recorded.
+        // A rare duplicate beats an applicant who never gets a receipt.
         // Timestamps come back from Firestore as ISO strings.
         const claimedAt = Date.parse(String(existing.welcomeSentAt ?? ""));
         const email = typeof existing.email === "string" ? existing.email : "";
-        if (
-          email &&
+        const resend =
+          email !== "" &&
           !existing.welcomeDeliveredAt &&
           (Number.isNaN(claimedAt) ||
-            now.getTime() - claimedAt > WELCOME_RESEND_AFTER_MS)
-        ) {
+            now.getTime() - claimedAt > WELCOME_RESEND_AFTER_MS);
+        if (resend) {
           sendWelcome = true;
+          refuseAfterWelcome = !finalize;
           return { welcomeSentAt: now, updatedAt: now };
         }
+        if (!finalize) throw new DraftFinalizedError();
         return { updatedAt: now };
       }
       const merged = mergeDraft(existing, incoming, rev);
@@ -241,9 +247,11 @@ export const POST: APIRoute = async ({ request }) => {
       const city = typeof after.city === "string" ? after.city : "";
       try {
         await sendMail({ to: email, ...applicationReceived(name, city) });
+        // The mail is out; failing to stamp it is not a mail failure. Worst
+        // case a later retry resends it.
         await upsertDoc(collection, draftId, () => ({
           welcomeDeliveredAt: new Date(),
-        }));
+        })).catch(() => {});
       } catch (err) {
         // The application IS saved; only the applicant's confirmation failed.
         await alertOps({
@@ -254,6 +262,8 @@ export const POST: APIRoute = async ({ request }) => {
         });
       }
     }
+
+    if (refuseAfterWelcome) throw new DraftFinalizedError();
 
     const status =
       typeof outcome.after.status === "string" ? outcome.after.status : "Draft";

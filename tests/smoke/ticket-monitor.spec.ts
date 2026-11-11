@@ -269,19 +269,17 @@ for (const [name, html] of [
   });
 }
 
-for (const [name, href, passes] of [
-  [
-    "its own listing with tracking params",
-    `${nyc.url}?aff=garamsitetickets&utm_medium=mobile`,
-    true,
-  ],
-  ["another show's listing", chicago.url, false],
-  ["an http listing", nyc.url.replace("https:", "http:"), false],
+const ownListing = `${nyc.url}?aff=garamsitetickets&utm_medium=mobile`;
+for (const [name, href, show, passes] of [
+  ["linking to its own listing with tracking params", ownListing, {}, true],
+  ["linking to another show's listing", chicago.url, {}, false],
+  ["linking to an http listing", nyc.url.replace("https:", "http:"), {}, false],
+  ["for a canceled show", ownListing, { status: "canceled" }, false],
+  ["for a hidden show", ownListing, { hidden: true }, false],
+  // Prerendered until the daily rebuild; see soldOutProblem.
+  ["for a past show", ownListing, { isoDate: "2026-11-10" }, true],
 ] as const) {
-  test(`ticket monitor: sold-out card linking to ${name}`, async ({
-    page,
-    request,
-  }) => {
+  test(`ticket monitor: sold-out card ${name}`, async ({ page, request }) => {
     test.setTimeout(10000);
     await showTicketPage(
       page,
@@ -290,7 +288,7 @@ for (const [name, href, passes] of [
     const check = checkTicketListings(
       page,
       request,
-      [chicago, { ...nyc, soldOut: true }],
+      [chicago, { ...nyc, soldOut: true, ...show }],
       now,
       { followRedirects: false },
     );
@@ -347,6 +345,30 @@ for (const [name, status, startDate, location, passes] of [
     200,
     "2026-12-04T19:30:00-06:00",
     { address: { addressLocality: "Chicagoland Heights" } },
+    false,
+  ],
+  [
+    "listing at our venue name in another city",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    { name: venue.name, address: { addressLocality: "Detroit, MI" } },
+    false,
+  ],
+  [
+    "listing in a room whose name contains our venue",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    {
+      name: `${venue.name} Annex`,
+      address: { addressLocality: "Chicago, IL" },
+    },
+    false,
+  ],
+  [
+    "listing whose venue name is only punctuation",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    { name: "--", address: { addressLocality: "Detroit" } },
     false,
   ],
   [

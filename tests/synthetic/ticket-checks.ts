@@ -1,5 +1,5 @@
 import { expect, type Page, type APIRequestContext } from "@playwright/test";
-import type { EventEntry } from "../../src/data/events";
+import { isDisplayable, type EventEntry } from "../../src/data/events";
 import { getTicketPageUpcoming } from "../../src/utils/eventFilters";
 import { goRedirectDestination } from "../../src/utils/utmForwarding";
 
@@ -71,20 +71,23 @@ const comparable = (value: string) =>
     .trim();
 
 // WHY: a start time alone doesn't prove the listing is this show; an
-// unrelated event at the same hour (another act at the venue's sister room,
-// or our show in another city) passed the first version of this check. The
-// listing must also name our venue, or when it names none, our city. Vendors
-// append a region ("New York, NY"), so the city is a prefix match on words.
+// unrelated event at the same hour passed the first version of this check.
+// Every place the listing names must agree with ours: its venue must be our
+// venue exactly (ignoring case and punctuation; a substring match let "The
+// Loft Annex" pass for "The Loft"), and its city must be our city. Vendors
+// append a region ("New York, NY"), so the city is a prefix match on whole
+// words. A listing that names no usable place can't be confirmed and fails.
 export function isSameShow(listed: ListedEvent, event: EventEntry): boolean {
-  const venue = event.venue?.name;
-  if (listed.venue && venue) {
-    const a = comparable(listed.venue);
-    const b = comparable(venue);
-    return a.includes(b) || b.includes(a);
+  const theirVenue = comparable(listed.venue ?? "");
+  const ourVenue = comparable(event.venue?.name ?? "");
+  const theirCity = comparable(listed.locality ?? "");
+  const ourCity = comparable(event.venue?.addressLocality ?? event.city);
+  const checks: boolean[] = [];
+  if (theirVenue && ourVenue) checks.push(theirVenue === ourVenue);
+  if (theirCity) {
+    checks.push(theirCity === ourCity || theirCity.startsWith(`${ourCity} `));
   }
-  const city = comparable(event.venue?.addressLocality ?? event.city);
-  const locality = listed.locality ? comparable(listed.locality) : "";
-  return locality === city || locality.startsWith(`${city} `);
+  return checks.length > 0 && checks.every(Boolean);
 }
 
 /** "YYYY-MM-DD HH:MM" of an instant in the show's own timezone. */
@@ -217,15 +220,24 @@ async function renderedCheckouts(page: Page): Promise<RenderedCheckout[]> {
 // WHY: a sold-out card links straight to the vendor (TicketCard.astro uses
 // buildTicketUrl, which only adds aff and UTM query params, and BaseLayout
 // rewrites utm_medium on mobile), so it is compared on origin and path, not
-// the full URL. It must belong to a show that really is sold out: a sold-out
-// card for an on-sale show would hide the checkout.
+// the full URL. It must belong to a displayable show that really is sold
+// out: a sold-out card for an on-sale show would hide the checkout, and one
+// for a canceled or hidden show should not be on the page at all. A past
+// sold-out show's card is tolerated, unlike a past /api/go card that must
+// redirect to /tickets: the page is prerendered, so yesterday's card stays
+// until the 6:00 UTC daily rebuild (.github/workflows/daily-rebuild.yml),
+// and a sold-out listing sells nothing, so there is no expired checkout to
+// protect buyers from. Failing it would page every night for expected lag.
 function soldOutProblem(
   link: RenderedCheckout,
   events: EventEntry[],
 ): string | null {
   const label = `${link.slug ?? "sold-out card without data-event-slug"} -> ${link.href ?? "no href"}`;
   const event = events.find((e) => e.slug === link.slug);
-  if (!event?.soldOut || !event.url) {
+  if (!event || !isDisplayable(event) || !event.isoDate) {
+    return `${label} (sold-out card for a show that isn't listed)`;
+  }
+  if (!event.soldOut || !event.url) {
     return `${label} (sold-out card for a show that isn't sold out)`;
   }
   try {

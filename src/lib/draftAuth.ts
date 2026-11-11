@@ -1,6 +1,7 @@
 import { timingSafeEqual } from "crypto";
 import { getSecret, verifyDraftToken } from "@/lib/draftToken";
 import {
+  CANARY_SIGNATURE_WINDOW_SECONDS,
   canaryDraftId,
   canarySignature,
   isCanaryKey,
@@ -35,10 +36,20 @@ export type DraftAuthResult =
 function canaryFromHeaders(request: Request): CanaryKey | "invalid" | null {
   const key = request.headers.get("x-canary-key");
   const sig = request.headers.get("x-canary-sig");
-  if (!key && !sig) return null;
-  if (!key || !sig || !isCanaryKey(key)) return "invalid";
+  const ts = request.headers.get("x-canary-ts");
+  if (!key && !sig && !ts) return null;
+  if (!key || !sig || !ts || !isCanaryKey(key)) return "invalid";
+  if (!/^\d{1,12}$/.test(ts)) return "invalid";
+  const timestamp = Number(ts);
+  const now = Math.floor(Date.now() / 1000);
+  if (Math.abs(now - timestamp) > CANARY_SIGNATURE_WINDOW_SECONDS) {
+    return "invalid";
+  }
   try {
-    const expected = Buffer.from(canarySignature(getSecret(), key), "hex");
+    const expected = Buffer.from(
+      canarySignature(getSecret(), key, timestamp),
+      "hex",
+    );
     const given = Buffer.from(sig, "hex");
     if (expected.length !== given.length) return "invalid";
     return timingSafeEqual(expected, given) ? key : "invalid";

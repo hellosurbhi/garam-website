@@ -47,6 +47,8 @@ interface Persisted {
   draftId: string | null;
   rev: number;
   pending: FieldMap;
+  /** Every field value ever set, so a 401 after a reload can rebuild the draft. */
+  latest: FieldMap;
 }
 
 // WHY try/catch around every storage touch: Safari private mode and several
@@ -64,6 +66,10 @@ function readStore(): Persisted | null {
       pending:
         parsed.pending && typeof parsed.pending === "object"
           ? (parsed.pending as FieldMap)
+          : {},
+      latest:
+        parsed.latest && typeof parsed.latest === "object"
+          ? (parsed.latest as FieldMap)
           : {},
     };
   } catch {
@@ -128,7 +134,10 @@ export class AutosaveController {
       this.draftId = saved.draftId;
       this.rev = saved.rev;
       this.pending = saved.pending;
-      this.latest = { ...saved.pending };
+      // WHY latest is persisted: restoring it from `pending` alone dropped every
+      // already-acknowledged answer, so a 401 after a reload rebuilt the draft
+      // with only the unsent fields.
+      this.latest = { ...saved.latest, ...saved.pending };
       if (Object.keys(this.pending).length > 0) this.schedule(0);
     }
   }
@@ -158,6 +167,7 @@ export class AutosaveController {
       draftId: this.draftId,
       rev: this.rev,
       pending: this.pending,
+      latest: this.latest,
     });
   }
 

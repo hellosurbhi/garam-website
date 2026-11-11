@@ -67,6 +67,7 @@ export async function fsGet(
   const token = await getFirestoreAccessToken();
   const res = await fetch(`${baseUrl()}/${docPath}`, {
     headers: { Authorization: `Bearer ${token}` },
+    signal: AbortSignal.timeout(10_000),
   });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`fsGet ${docPath}: ${res.status}`);
@@ -213,6 +214,7 @@ export async function fsPatch(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ fields: toFields(fields) }),
+    signal: AbortSignal.timeout(10_000),
   });
   if (!res.ok) {
     const body = await res.text();
@@ -233,6 +235,7 @@ export async function fsAdd(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ fields: toFields(fields) }),
+    signal: AbortSignal.timeout(10_000),
   });
   if (!res.ok) {
     const body = await res.text();
@@ -283,6 +286,7 @@ export async function fsQuery(
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
+    signal: AbortSignal.timeout(10_000),
   });
   if (!res.ok) {
     const text = await res.text();
@@ -367,6 +371,7 @@ export async function fsDeleteFields(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ fields: {} }),
+    signal: AbortSignal.timeout(10_000),
   });
   if (!res.ok) {
     const body = await res.text();

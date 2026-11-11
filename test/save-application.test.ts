@@ -83,6 +83,18 @@ const { issueDraftToken, newDraftId } = await import("@/lib/draftToken");
 
 const ORIGIN = "https://garammasaladating.com";
 
+function canaryHeaders(
+  key: "iphone-safari" | "android-chrome" | "instagram-webview",
+  ageSeconds = 0,
+): Record<string, string> {
+  const ts = Math.floor(Date.now() / 1000) - ageSeconds;
+  return {
+    "x-canary-key": key,
+    "x-canary-ts": String(ts),
+    "x-canary-sig": canarySignature("handler-test-secret", key, ts),
+  };
+}
+
 function post(
   body: unknown,
   headers: Record<string, string> = {},
@@ -435,14 +447,13 @@ describe("save-application: budget and failure reporting", () => {
 describe("save-application: production canary", () => {
   it("a valid canary signature writes the fixed _canary doc, not applications, and sends no email", async () => {
     const key = "iphone-safari" as const;
-    const sig = canarySignature("handler-test-secret", key);
     const res = await post(
       {
         rev: 1,
         fields: { name: "CANARY", email: "c@example.com" },
         finalize: true,
       },
-      { "x-canary-key": key, "x-canary-sig": sig },
+      canaryHeaders(key),
     );
     expect(res.status).toBe(200);
     const id = canaryDraftId(key);
@@ -455,12 +466,8 @@ describe("save-application: production canary", () => {
 
   it("repeated canary runs overwrite one document instead of growing", async () => {
     const key = "android-chrome" as const;
-    const headers = {
-      "x-canary-key": key,
-      "x-canary-sig": canarySignature("handler-test-secret", key),
-    };
     for (let rev = 1; rev <= 4; rev++) {
-      await post({ rev, fields: { name: `run${rev}` } }, headers);
+      await post({ rev, fields: { name: `run${rev}` } }, canaryHeaders(key));
     }
     expect(mocks.state.docs.size).toBe(1);
     expect(
@@ -471,9 +478,45 @@ describe("save-application: production canary", () => {
   it("a wrong canary signature is refused: it never reaches _canary and never files a real applicant", async () => {
     const res = await post(
       { rev: 1, fields: { name: "x" } },
-      { "x-canary-key": "iphone-safari", "x-canary-sig": "00".repeat(32) },
+      {
+        ...canaryHeaders("iphone-safari"),
+        "x-canary-sig": "00".repeat(32),
+      },
     );
     expect(res.status).toBe(401);
     expect(mocks.state.docs.size).toBe(0);
+  });
+
+  it("a replayed canary signature older than the window is refused", async () => {
+    const res = await post(
+      { rev: 1, fields: { name: "x" } },
+      canaryHeaders("iphone-safari", 301),
+    );
+    expect(res.status).toBe(401);
+    expect(mocks.state.docs.size).toBe(0);
+  });
+
+  it("a canary signature dated in the future beyond the window is refused", async () => {
+    const res = await post(
+      { rev: 1, fields: { name: "x" } },
+      canaryHeaders("iphone-safari", -301),
+    );
+    expect(res.status).toBe(401);
+  });
+
+  it("a canary request with no timestamp is refused", async () => {
+    const noTs = canaryHeaders("iphone-safari");
+    delete noTs["x-canary-ts"];
+    const res = await post({ rev: 1, fields: { name: "x" } }, noTs);
+    expect(res.status).toBe(401);
+    expect(mocks.state.docs.size).toBe(0);
+  });
+
+  it("a canary request with a non-numeric timestamp is refused", async () => {
+    const res = await post(
+      { rev: 1, fields: { name: "x" } },
+      { ...canaryHeaders("iphone-safari"), "x-canary-ts": "abc" },
+    );
+    expect(res.status).toBe(401);
   });
 });

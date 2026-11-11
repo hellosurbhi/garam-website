@@ -386,9 +386,11 @@ describe("upload-application-photo: canary never grows the bucket", () => {
       fields: { photoPaths: [] },
       t: ++mocks.state.clock,
     });
+    const ts = Math.floor(Date.now() / 1000);
     const headers = {
       "x-canary-key": key,
-      "x-canary-sig": canarySignature("photo-test-secret", key),
+      "x-canary-ts": String(ts),
+      "x-canary-sig": canarySignature("photo-test-secret", key, ts),
     };
     const names = new Set<string>();
     for (let i = 0; i < 3; i++) {
@@ -400,5 +402,36 @@ describe("upload-application-photo: canary never grows the bucket", () => {
       names.add((await json(res)).path as string);
     }
     expect([...names]).toEqual([`photos/${id}/canary-0.jpg`]);
+  });
+
+  it("a canary draft past both photo caps still reserves, a normal draft in the same state does not", async () => {
+    const { canarySignature, canaryDraftId } =
+      await import("@/lib/draftSecret");
+    const key = "android-chrome" as const;
+    const full = {
+      photoReservations: 500,
+      photoPaths: Array.from({ length: 10 }, (_, i) => `photos/x/${i}.jpg`),
+    };
+    mocks.state.docs.set(`_canary/${canaryDraftId(key)}`, {
+      fields: { status: "Draft", ...full },
+      t: ++mocks.state.clock,
+    });
+    const ts = Math.floor(Date.now() / 1000);
+    const canary = await call(
+      null,
+      { action: "reserve", filename: "p.jpg", index: 0 },
+      {
+        headers: {
+          "x-canary-key": key,
+          "x-canary-ts": String(ts),
+          "x-canary-sig": canarySignature("photo-test-secret", key, ts),
+        },
+      },
+    );
+    expect(canary.status).toBe(200);
+
+    const { token } = seedDraft(full);
+    const normal = await call(token, { action: "reserve", filename: "p.jpg" });
+    expect(normal.status).toBe(409);
   });
 });

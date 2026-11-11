@@ -41,6 +41,22 @@ export function canaryDraftId(key: CanaryKey): string {
     .slice(0, 32);
 }
 
-export function canarySignature(secret: string, key: CanaryKey): string {
-  return createHmac("sha256", secret).update(`canary:${key}`).digest("hex");
+/** How far a canary timestamp may drift from the server clock. */
+export const CANARY_SIGNATURE_WINDOW_SECONDS = 300;
+
+/**
+ * WHY the timestamp is signed: the first version signed only the profile name,
+ * so one leaked header value (a CI log, an artifact) worked forever. Binding
+ * the signature to a unix-seconds timestamp the server only accepts inside a
+ * short window makes a leaked value useless after minutes. Dropping the
+ * timestamp makes the canary credential permanent again.
+ */
+export function canarySignature(
+  secret: string,
+  key: CanaryKey,
+  timestampSeconds: number,
+): string {
+  return createHmac("sha256", secret)
+    .update(`canary:${key}:${timestampSeconds}`)
+    .digest("hex");
 }

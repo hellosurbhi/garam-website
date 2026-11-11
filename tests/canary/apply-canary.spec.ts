@@ -29,9 +29,11 @@ function canaryHeaders(key: string): Record<string, string> {
     // the server reads the key the same way (see firestoreAdmin.ts).
     process.env.FIREBASE_ADMIN_PRIVATE_KEY,
   );
+  const timestamp = Math.floor(Date.now() / 1000);
   return {
     "x-canary-key": key,
-    "x-canary-sig": canarySignature(secret, key),
+    "x-canary-ts": String(timestamp),
+    "x-canary-sig": canarySignature(secret, key, timestamp),
   };
 }
 
@@ -39,12 +41,16 @@ test("a phone applicant can file an application with photos on the live stack", 
   page,
 }, testInfo) => {
   const profile = testInfo.project.name;
-  const headers = canaryHeaders(profile);
+  // Fail on a bad profile or missing secret before the browser opens.
+  canaryHeaders(profile);
 
   await page.route(
     /\/api\/(save-application|upload-application-photo)/,
     (route) =>
-      route.continue({ headers: { ...route.request().headers(), ...headers } }),
+      // Signed per request: the server only accepts a fresh timestamp.
+      route.continue({
+        headers: { ...route.request().headers(), ...canaryHeaders(profile) },
+      }),
   );
 
   await page.goto("/apply", { waitUntil: "domcontentloaded" });

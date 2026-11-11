@@ -230,6 +230,33 @@ describe("AutosaveController: failures never lose data", () => {
 });
 
 describe("AutosaveController: reload and storage", () => {
+  it("after a reload, a dead token still re-sends fields that were already acknowledged", async () => {
+    const first = harness();
+    const c1 = new AutosaveController({ fetchImpl: first.fetchImpl });
+    c1.setField("name", "Acked");
+    c1.setField("city", "NYC");
+    await vi.advanceTimersByTimeAsync(900); // both acknowledged, pending empty
+
+    const second = harness((call) =>
+      call.body.token === "tok-1"
+        ? new Response(
+            JSON.stringify({ error: "invalid_token", reason: "expired" }),
+            { status: 401 },
+          )
+        : ok({ token: "tok-2" }),
+    );
+    const c2 = new AutosaveController({ fetchImpl: second.fetchImpl });
+    c2.setField("email", "a@b.co");
+    await vi.advanceTimersByTimeAsync(900);
+    const last = second.calls[second.calls.length - 1];
+    expect(last.body.token).toBeUndefined();
+    expect(last.body.fields).toEqual({
+      name: "Acked",
+      city: "NYC",
+      email: "a@b.co",
+    });
+  });
+
   it("resumes the same draft after a reload and flushes what was unacknowledged", async () => {
     const first = harness(
       () => new Response(JSON.stringify({ error: "down" }), { status: 500 }),

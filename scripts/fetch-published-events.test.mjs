@@ -96,15 +96,49 @@ describe("fetch-published-events prebuild", () => {
     expect(t.write).not.toHaveBeenCalled();
   });
 
-  it("keeps the baseline, even in production, when nothing is published yet", async () => {
-    const fetch = vi.fn(async () => new Response("{}", { status: 404 }));
+  it("fails a production build and pages ops when nothing is published", async () => {
+    const fetch = vi.fn(async (url) =>
+      String(url).endsWith("/alert-failure")
+        ? new Response("{}")
+        : new Response("{}", { status: 404 }),
+    );
     const t = setup({ env: VERCEL_PROD, fetch });
+    expect(await t.go()).toBe(1);
+    expect(t.write).not.toHaveBeenCalled();
+    const alerts = alertCalls(fetch);
+    expect(alerts).toHaveLength(1);
+    expect(JSON.parse(alerts[0][1].body).errorMessage).toContain(
+      "eventsPublished/current is missing",
+    );
+  });
+
+  it("keeps the baseline on a preview build when nothing is published", async () => {
+    const fetch = vi.fn(async () => new Response("{}", { status: 404 }));
+    const t = setup({
+      env: { ...VERCEL_PROD, VERCEL_ENV: "preview" },
+      fetch,
+    });
     expect(await t.go()).toBe(0);
     expect(t.write).not.toHaveBeenCalled();
     expect(alertCalls(fetch)).toHaveLength(0);
     expect(t.log).toHaveBeenCalledWith(
-      expect.stringContaining("No published version"),
+      expect.stringContaining("eventsPublished/current is missing"),
     );
+  });
+
+  it("retries when the body fails mid-read", async () => {
+    const broken = new Response("{}");
+    broken.text = async () => {
+      throw new TypeError("terminated");
+    };
+    const fetch = vi
+      .fn()
+      .mockResolvedValueOnce(broken)
+      .mockResolvedValueOnce(publishedDoc());
+    const t = setup({ env: VERCEL_PROD, fetch });
+    expect(await t.go()).toBe(0);
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(t.write).toHaveBeenCalledTimes(1);
   });
 
   it("fails a production build and pages ops when the read keeps failing", async () => {

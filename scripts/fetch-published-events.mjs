@@ -75,8 +75,9 @@ export function toEnvelope(doc) {
 }
 
 /**
- * Read the published envelope, or null when nothing is published yet (404).
- * Retries timeouts, network errors, 429 and 5xx; any other answer (403 when
+ * Read the published envelope, or null when nothing is published (404).
+ * Retries timeouts, network errors (including while reading the body), 429
+ * and 5xx; any other answer (403 when
  * the rules are not deployed, a malformed body) fails at once.
  */
 export async function fetchPublishedEnvelope(
@@ -101,7 +102,20 @@ export async function fetchPublishedEnvelope(
           retry: res.status === 429 || res.status >= 500,
         });
       }
-      return toEnvelope(await res.json());
+      // WHY read the body inside the retry: a connection reset or timeout
+      // while the body streams is as transient as one before the headers.
+      let body;
+      try {
+        body = await res.text();
+      } catch (error) {
+        throw new FetchFailure(
+          `reading the response failed: ${errorText(error)}`,
+          {
+            retry: true,
+          },
+        );
+      }
+      return toEnvelope(JSON.parse(body));
     } catch (error) {
       lastError = error;
       if (!(error instanceof FetchFailure) || !error.retry) break;
@@ -197,10 +211,16 @@ export async function run({
   }
 
   if (!envelope) {
-    // WHY even production keeps the baseline here: before the one-time seed
-    // there is no published document, and the committed baseline IS the
-    // current list. Failing would block every deploy until the seed runs.
-    keepBaseline("No published version in Firestore yet");
+    // WHY production fails on a missing document: the rollout order (plan
+    // section 7, step 4) seeds eventsPublished/current BEFORE this merges, so
+    // a production build never legitimately finds it missing. Missing means
+    // it was deleted or the project id points at an unseeded database, and
+    // building from the committed baseline would bring back canceled shows
+    // and old checkout links without anyone noticing.
+    const message =
+      "No published show list in Firestore (eventsPublished/current is missing)";
+    if (production || pull) return fail(message);
+    keepBaseline(message);
     return 0;
   }
 

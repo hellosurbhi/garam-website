@@ -45,6 +45,10 @@ jobs:
     env:
       CANARY_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
     steps:
+      - name: Record the run start
+        # The canary reuses one document and fixed photo slots, so the
+        # read-back needs a start time to tell this run's writes from the last.
+        run: echo "CANARY_STARTED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
       - uses: actions/checkout@v7
         with:
           persist-credentials: false

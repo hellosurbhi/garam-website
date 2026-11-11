@@ -1,5 +1,14 @@
 # Changelog
 
+## fix(apply): close the review findings on the new apply form (2026-11-11)
+
+- Revisions and drafts: the autosave revision is persisted before each request, the server's highest revision is adopted and stale fields are resent, so a reload mid-request can no longer lose a newer answer. A draft the server refuses over the text budget keeps that text queued and says so, and the server no longer marks dropped text as stored or finalizes over it.
+- Expired tokens: a 401 now replaces the draft and re-files every answer and every photo under the new one. Finalize re-settles photos and loops until the draft it finalizes is the one the photos belong to.
+- Photos: one reservation is reused across retries (retries used to exhaust the 40 reservation cap); a finalized draft refuses further photo and save calls (the canary is exempt); rate limits raised for show nights.
+- Email: server-side failure alerts are deduplicated per flow, stage and error class for an hour (`src/lib/alertDedupe.ts`), releasing the claim when no channel delivered, so one database blip no longer floods the inbox.
+- Firestore REST: a failed precondition reported as HTTP 400 is treated as a write conflict and retried; every call has a 10 second timeout.
+- Canary: requires direct bucket uploads (no relay), restamps `finalizedAt` each run and verifies `finalizedAt` and every photo were written after the run started, so a stale document can no longer read green.
+
 ## fix(apply): the form no longer depends on database rules, saves as people type and never rejects a photo (2026-11-10)
 
 - Root cause of the recurring "Missing or insufficient permissions": the browser wrote straight to Firestore and Storage, so two rule books, hand deploys and anonymous phone login all sat between an applicant and a successful submit. All three are removed from the applicant path.

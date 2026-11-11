@@ -314,22 +314,21 @@ export function useApplyForm() {
     }
 
     try {
-      const settled = await photos.settleForSubmit();
+      let settled: PhotoItem[] = [];
+      // finalize() runs this again whenever the draft was replaced, so photos
+      // are re-filed under the new draft before the application is finished.
+      await autosave.finalize(async () => {
+        settled = await photos.settleForSubmit();
+        const anyFailed = settled.some((p) => p.status === "failed");
+        // Send every value, not just unacknowledged ones, so the finished
+        // document never depends on an earlier autosave having landed.
+        for (const [key, value] of Object.entries(
+          toDraftFields(form, termsAgreed, nominationConsent, anyFailed),
+        )) {
+          autosave.setField(key, value);
+        }
+      });
       const failedPhotos = settled.filter((p) => p.status === "failed");
-
-      // Send every value, not just unacknowledged ones, so the finished
-      // document never depends on an earlier autosave having landed.
-      for (const [key, value] of Object.entries(
-        toDraftFields(
-          form,
-          termsAgreed,
-          nominationConsent,
-          failedPhotos.length > 0,
-        ),
-      )) {
-        autosave.setField(key, value);
-      }
-      await autosave.finalize();
 
       if (failedPhotos.length > 0) {
         reportFailure({

@@ -185,7 +185,7 @@ export interface MergeResult {
 }
 
 /** Which document fields a client key controls (a key may own several). */
-function docFieldsFor(key: FormFieldKey): string[] {
+export function docFieldsFor(key: FormFieldKey): string[] {
   switch (key) {
     case "age":
       return ["age", "ageUnder18"];

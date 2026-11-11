@@ -20,6 +20,8 @@ export interface PhotoItem {
   preview: string;
   status: PhotoStatus;
   path?: string;
+  /** Draft generation the file was filed under; older than the controller's means stranded. */
+  epoch?: number;
   error?: Error;
 }
 
@@ -36,6 +38,7 @@ export function usePhotoUploads(
   const [items, setItems] = useState<PhotoItem[]>([]);
   const nextId = useRef(1);
   const inFlight = useRef(new Set<Promise<void>>());
+  const running = useRef(new Set<number>());
   const itemsRef = useRef<PhotoItem[]>([]);
   useEffect(() => {
     itemsRef.current = items;
@@ -49,10 +52,18 @@ export function usePhotoUploads(
 
   const upload = useCallback(
     (item: PhotoItem) => {
+      // WHY: the reset listener and settleForSubmit can both refile the same
+      // photo before React re-renders its status; one upload per photo at once.
+      if (running.current.has(item.id)) return;
+      running.current.add(item.id);
       patch(item.id, { status: "uploading", error: undefined });
       const run = uploadApplicationPhoto(controller, item.file, item.id)
         .then((result) =>
-          patch(item.id, { status: "saved", path: result.path }),
+          patch(item.id, {
+            status: "saved",
+            path: result.path,
+            epoch: result.epoch,
+          }),
         )
         .catch((err: unknown) => {
           const error = err instanceof Error ? err : new Error(String(err));
@@ -60,12 +71,24 @@ export function usePhotoUploads(
           onUploadFailed(error, item);
         })
         .finally(() => {
+          running.current.delete(item.id);
           inFlight.current.delete(run);
         });
       inFlight.current.add(run);
     },
     [controller, onUploadFailed, patch],
   );
+
+  // WHY: when the draft is replaced (token expired or rotated) the photos
+  // already filed belong to the old draft and the new one starts empty. The
+  // files are still in memory, so file them again under the new draft.
+  const refile = useCallback(() => {
+    itemsRef.current
+      .filter((p) => p.status === "saved" && p.epoch !== controller.epoch)
+      .forEach(upload);
+  }, [controller, upload]);
+
+  useEffect(() => controller.onDraftReset(refile), [controller, refile]);
 
   function addPhotos(e: ChangeEvent<HTMLInputElement>) {
     const incoming = Array.from(e.target.files ?? []);
@@ -98,7 +121,10 @@ export function usePhotoUploads(
   /** Wait for uploads in flight, then retry every failed one once. */
   async function settleForSubmit(): Promise<PhotoItem[]> {
     await Promise.allSettled([...inFlight.current]);
+    // Re-read after a tick so a status that just landed is seen before refiling.
+    await new Promise((r) => setTimeout(r, 0));
     itemsRef.current.filter((p) => p.status === "failed").forEach(upload);
+    refile();
     await Promise.allSettled([...inFlight.current]);
     // State updates from the retry land after this tick; read the live list.
     await new Promise((r) => setTimeout(r, 0));

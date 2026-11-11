@@ -96,10 +96,28 @@ export interface AutosaveOptions {
   fetchImpl?: typeof fetch;
 }
 
+/**
+ * The draft this controller was filing to was replaced (token rejected). Not
+ * an applicant-facing failure: finalize re-settles photos and tries again.
+ */
+export class DraftResetError extends Error {
+  constructor() {
+    super("the draft was reset while finalizing");
+  }
+}
+
+const MAX_FINALIZE_ROUNDS = 4;
+
 interface SaveResponse {
   ok?: boolean;
   draftId?: string;
   token?: string;
+  /** Highest revision the server holds for this draft. */
+  maxRev?: number;
+  /** Fields the server refused because it holds a newer revision. */
+  stale?: string[];
+  /** The server dropped text because the draft hit its size budget. */
+  capped?: boolean;
   status?: string;
   error?: string;
   reason?: string;
@@ -122,6 +140,9 @@ export class AutosaveController {
   private failures = 0;
   private reportedFailure = false;
   private finalized = false;
+  /** Bumps every time the draft is replaced; photos filed under an older one are stranded. */
+  private draftEpoch = 0;
+  private resetListeners = new Set<() => void>();
   private readonly fetchImpl: typeof fetch;
   private onPersistentFailure: AutosaveOptions["onPersistentFailure"];
 
@@ -149,6 +170,37 @@ export class AutosaveController {
   /** Current capability token, for the photo uploader. */
   get draftToken(): string | null {
     return this.token;
+  }
+
+  get epoch(): number {
+    return this.draftEpoch;
+  }
+
+  /** Called after a replacement draft exists, so photos can be re-filed to it. */
+  onDraftReset(listener: () => void): () => void {
+    this.resetListeners.add(listener);
+    return () => this.resetListeners.delete(listener);
+  }
+
+  /**
+   * The server rejected `rejectedToken` (expired, or the signing secret
+   * rotated). Start over on a fresh draft with every field resent. A no-op if
+   * another request already replaced that token, so several photos failing at
+   * once create one replacement draft, not several.
+   */
+  resetDraft(rejectedToken: string): void {
+    if (this.token !== rejectedToken) return;
+    this.token = null;
+    this.draftId = null;
+    this.pending = { ...this.latest };
+    this.draftEpoch += 1;
+    this.persist();
+    this.schedule(0);
+    this.emitReset();
+  }
+
+  private emitReset(): void {
+    this.resetListeners.forEach((listener) => listener());
   }
 
   /** Record a field change; it is filed shortly after the person pauses. */
@@ -227,12 +279,15 @@ export class AutosaveController {
   private sendOnce(
     finalize: boolean,
     keepalive = false,
+    epochGuard?: number,
   ): Promise<SaveResponse> {
     // WHY a queue: every request must see the token the previous one returned.
     // Concurrent tokenless sends (several photos picked at once, or a typed
     // field racing a photo) each minted their own draft and left empty
     // orphan drafts in the admin list.
-    const run = this.queue.then(() => this.sendUnqueued(finalize, keepalive));
+    const run = this.queue.then(() =>
+      this.sendUnqueued(finalize, keepalive, epochGuard),
+    );
     this.queue = run.catch(() => undefined);
     return run;
   }
@@ -240,10 +295,25 @@ export class AutosaveController {
   private async sendUnqueued(
     finalize: boolean,
     keepalive: boolean,
+    epochGuard?: number,
   ): Promise<SaveResponse> {
+    // WHY: a finalize must never land on a draft that was replaced after the
+    // photos were settled; it would file the application without them.
+    if (
+      finalize &&
+      epochGuard !== undefined &&
+      epochGuard !== this.draftEpoch
+    ) {
+      throw new DraftResetError();
+    }
     const snapshot = { ...this.pending };
+    const sentToken = this.token;
     this.rev += 1;
     const rev = this.rev;
+    // WHY persisted before the send: a lost response or a reload mid-request
+    // otherwise restarts the counter below what the server already stored, and
+    // the server then refuses every field as stale.
+    this.persist();
     const body = JSON.stringify({
       token: this.token ?? undefined,
       rev,
@@ -280,11 +350,19 @@ export class AutosaveController {
     if (res.status === 401 && data.error === "invalid_token") {
       // Token expired or the signing secret rotated: start a fresh draft and
       // re-send every field so nothing the person typed is lost.
-      this.token = null;
-      this.draftId = null;
-      this.pending = { ...this.latest };
-      this.persist();
-      return this.sendUnqueued(finalize, keepalive);
+      if (this.token === sentToken) {
+        this.token = null;
+        this.draftId = null;
+        this.pending = { ...this.latest };
+        this.draftEpoch += 1;
+        this.persist();
+      }
+      // A finalize cannot simply resend: the replacement draft has no photos
+      // yet. finalize() re-settles photos against the new draft and retries.
+      if (finalize) throw new DraftResetError();
+      const replacement = await this.sendUnqueued(finalize, keepalive);
+      this.emitReset();
+      return replacement;
     }
 
     if (!res.ok || data.ok !== true) {
@@ -297,8 +375,29 @@ export class AutosaveController {
 
     if (data.token) this.token = data.token;
     if (data.draftId) this.draftId = data.draftId;
+    // A second tab or cleared storage can leave this counter below what the
+    // server holds; adopt the server's so the next send is never stale.
+    if (typeof data.maxRev === "number" && data.maxRev > this.rev) {
+      this.rev = data.maxRev;
+    }
+
+    if (data.capped) {
+      // Text was dropped for size: nothing is acknowledged, so it stays queued
+      // and the controller reports the exact cause instead of looking saved.
+      this.persist();
+      throw new ApplyRequestError(
+        finalize ? "finalize" : "save_draft",
+        res.status,
+        "the draft is over its text size limit, so some text was not stored",
+      );
+    }
+
+    const stale = new Set(data.stale ?? []);
     for (const [key, sent] of Object.entries(snapshot)) {
-      if (this.pending[key] === sent) delete this.pending[key];
+      // A stale field was refused for an older revision; it stays queued and
+      // is resent with a higher one.
+      if (!stale.has(key) && this.pending[key] === sent)
+        delete this.pending[key];
     }
     this.persist();
     return data;
@@ -333,13 +432,18 @@ export class AutosaveController {
   }
 
   /** A few quick retries for calls the person is actively waiting on. */
-  private async sendWithRetry(finalize: boolean): Promise<SaveResponse> {
+  private async sendWithRetry(
+    finalize: boolean,
+    epochGuard?: number,
+  ): Promise<SaveResponse> {
     if (this.inFlight) await this.inFlight;
     let lastError: unknown;
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
-        return await this.sendOnce(finalize);
+        return await this.sendOnce(finalize, false, epochGuard);
       } catch (err) {
+        // Retrying cannot help: the draft changed, finalize must re-settle.
+        if (err instanceof DraftResetError) throw err;
         lastError = err;
         if (attempt < 2) {
           await new Promise((r) => setTimeout(r, 1_000 * 2 ** attempt));
@@ -349,18 +453,48 @@ export class AutosaveController {
     throw lastError;
   }
 
-  /** Save everything now and mark the application finished. */
-  async finalize(): Promise<SaveResponse> {
+  /**
+   * Save everything now and mark the application finished.
+   *
+   * `settle` brings photos and fields up to date (the form hook uploads
+   * stragglers and queues the final field values). It runs again whenever the
+   * draft was replaced mid-way, because a replacement draft starts with no
+   * photos and finalizing it as-is would file the application without them.
+   */
+  async finalize(
+    settle: () => Promise<void> = async () => {},
+  ): Promise<SaveResponse> {
     if (this.timer) clearTimeout(this.timer);
     this.timer = null;
-    const data = await this.sendWithRetry(true);
-    this.finalized = true;
-    this.pending = {};
-    this.latest = {};
-    this.token = null;
-    this.draftId = null;
-    writeStore(null);
-    return data;
+    for (let round = 0; round < MAX_FINALIZE_ROUNDS; round++) {
+      const epoch = this.draftEpoch;
+      await settle();
+      // Files everything queued and proves the token is alive while photos
+      // can still be re-filed; a dead token here replaces the draft.
+      await this.sendWithRetry(false);
+      if (this.draftEpoch !== epoch) continue;
+      let data: SaveResponse;
+      try {
+        data = await this.sendWithRetry(true, epoch);
+      } catch (err) {
+        if (err instanceof DraftResetError) continue;
+        throw err;
+      }
+      // A field refused as stale was queued again with a higher revision.
+      if (data.stale && data.stale.length > 0) continue;
+      this.finalized = true;
+      this.pending = {};
+      this.latest = {};
+      this.token = null;
+      this.draftId = null;
+      writeStore(null);
+      return data;
+    }
+    throw new ApplyRequestError(
+      "finalize",
+      null,
+      "the draft kept being replaced while finalizing",
+    );
   }
 
   /**

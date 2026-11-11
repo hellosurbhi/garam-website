@@ -14,6 +14,7 @@ const mocks = vi.hoisted(() => {
     clock: 0,
     failNextWrite: null as Error | null,
     conflictsToInject: 0,
+    inflate: false,
   };
   return {
     FsConflictError,
@@ -68,6 +69,26 @@ vi.mock("@/lib/firestoreRest", async (importOriginal) => {
         });
       },
     ),
+  };
+});
+// WHY: sanitizeFields clips every field, so the largest draft the real form
+// can build is about 130k characters, under the 200k budget. The budget is a
+// guard for future fields, so the only way to reach it is to inflate values
+// after sanitizing. Off by default; tests in the budget block switch it on.
+vi.mock("@/lib/applicationDraft", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@/lib/applicationDraft")>();
+  return {
+    ...actual,
+    sanitizeFields: (raw: unknown) => {
+      const out = actual.sanitizeFields(raw);
+      if (mocks.state.inflate) {
+        for (const [k, v] of Object.entries(out.values)) {
+          if (typeof v === "string") out.values[k] = v.padEnd(150_000, "x");
+        }
+      }
+      return out;
+    },
   };
 });
 vi.mock("@/lib/zohoMailer", () => ({ sendMail: mocks.sendMail }));
@@ -128,6 +149,7 @@ beforeEach(() => {
   mocks.state.clock = 0;
   mocks.state.failNextWrite = null;
   mocks.state.conflictsToInject = 0;
+  mocks.state.inflate = false;
   mocks.sendMail.mockReset().mockResolvedValue({ id: "m" });
   mocks.alertOps.mockReset();
   import.meta.env.DRAFT_TOKEN_SECRET = "handler-test-secret";
@@ -349,14 +371,57 @@ describe("save-application: finalize", () => {
     expect(mocks.sendMail).toHaveBeenCalledTimes(1);
   });
 
-  it("a later autosave never downgrades a finalized application back to Draft", async () => {
+  it("a finished application is closed to a later write with the same token", async () => {
     const first = await json(await post({ rev: 1, fields: { name: "P" } }));
     await post({ token: first.token, rev: 2, fields: {}, finalize: true });
-    const res = await json(
-      await post({ token: first.token, rev: 3, fields: { city: "LA" } }),
+    const res = await post({
+      token: first.token,
+      rev: 3,
+      fields: { city: "LA", name: "Hijacked" },
+    });
+    expect(res.status).toBe(409);
+    expect((await json(res)).error).toBe("finalized");
+    const doc = stored(first.draftId as string);
+    expect(doc?.status).toBe("New");
+    expect(doc?.name).toBe("P");
+    expect(doc?.city).toBeUndefined();
+  });
+
+  it("a repeated finalize (lost response) succeeds without rewriting anything", async () => {
+    const first = await json(await post({ rev: 1, fields: { name: "P" } }));
+    await post({ token: first.token, rev: 2, fields: {}, finalize: true });
+    const again = await post({
+      token: first.token,
+      rev: 3,
+      fields: { name: "Hijacked" },
+      finalize: true,
+    });
+    expect(again.status).toBe(200);
+    expect(stored(first.draftId as string)?.name).toBe("P");
+  });
+
+  it("returns the highest stored revision so a lagging client can catch up", async () => {
+    const first = await json(await post({ rev: 9, fields: { name: "P" } }));
+    const behind = await json(
+      await post({ token: first.token, rev: 2, fields: { name: "Old" } }),
     );
-    expect(res.status).toBe("New");
-    expect(stored(first.draftId as string)?.status).toBe("New");
+    expect(behind.stale).toEqual(["name"]);
+    expect(behind.maxRev).toBe(9);
+    expect(stored(first.draftId as string)?.name).toBe("P");
+  });
+
+  it("does not finalize while a field is refused as stale", async () => {
+    const first = await json(await post({ rev: 9, fields: { name: "P" } }));
+    const res = await json(
+      await post({
+        token: first.token,
+        rev: 2,
+        fields: { name: "Old" },
+        finalize: true,
+      }),
+    );
+    expect(res.stale).toEqual(["name"]);
+    expect(stored(first.draftId as string)?.status).toBe("Draft");
   });
 
   it("a failed welcome email still files the application and alerts with the raw error", async () => {
@@ -393,24 +458,36 @@ describe("save-application: finalize", () => {
 
 describe("save-application: budget and failure reporting", () => {
   it("caps a flooded draft instead of rejecting: text is dropped, response says capped", async () => {
-    const first = await json(
-      await post({ rev: 1, fields: { pitch: "p".repeat(100_000) } }),
+    mocks.state.inflate = true;
+    const first = await json(await post({ rev: 1, fields: { pitch: "p" } }));
+    expect(first.capped).toBe(false);
+    const over = await json(
+      await post({ token: first.token, rev: 2, fields: { name: "n" } }),
     );
-    // Fill the remaining budget with many fields, then one more write.
-    await post({
-      token: first.token,
-      rev: 2,
-      fields: { pitch: "p".repeat(100_000), name: "n".repeat(5_000) },
-    });
+    expect(over.ok).toBe(true);
+    expect(over.capped).toBe(true);
+    // The dropped text must not count as stored: no value and no revision, so
+    // the client can resend it as a newer write.
+    const doc = stored(first.draftId as string) as Record<string, unknown>;
+    expect(doc.name).toBeUndefined();
+    expect((doc.fieldRevs as Record<string, number>).name).toBeUndefined();
+    expect((doc.fieldRevs as Record<string, number>).pitch).toBe(1);
+  });
+
+  it("does not finalize a draft whose text was dropped over the size budget", async () => {
+    mocks.state.inflate = true;
+    const first = await json(await post({ rev: 1, fields: { pitch: "p" } }));
     const over = await json(
       await post({
         token: first.token,
-        rev: 3,
-        fields: { howHeard: "h".repeat(200), city: "c".repeat(5_000) },
+        rev: 2,
+        fields: { name: "n" },
+        finalize: true,
       }),
     );
-    expect(over.ok).toBe(true);
-    expect(typeof over.capped).toBe("boolean");
+    expect(over.capped).toBe(true);
+    const doc = stored(first.draftId as string) as Record<string, unknown>;
+    expect(doc.finalizedAt).toBeUndefined();
   });
 
   it("a database failure returns 500 with the stage and raw detail, and alerts with exact context", async () => {
@@ -462,6 +539,27 @@ describe("save-application: production canary", () => {
       [...mocks.state.docs.keys()].some((k) => k.startsWith("applications/")),
     ).toBe(false);
     expect(mocks.sendMail).not.toHaveBeenCalled();
+  });
+
+  it("every canary finalize restamps finalizedAt, so the read-back can tell this run from the last", async () => {
+    const key = "iphone-safari" as const;
+    const id = canaryDraftId(key);
+    await post(
+      { rev: 1, fields: { name: "run1" }, finalize: true },
+      canaryHeaders(key),
+    );
+    const first = mocks.state.docs.get(`_canary/${id}`)?.fields
+      .finalizedAt as Date;
+    await new Promise((r) => setTimeout(r, 5));
+    await post(
+      { rev: 2, fields: { name: "run2" }, finalize: true },
+      canaryHeaders(key),
+    );
+    const second = mocks.state.docs.get(`_canary/${id}`)?.fields
+      .finalizedAt as Date;
+    expect(new Date(second).getTime()).toBeGreaterThan(
+      new Date(first).getTime(),
+    );
   });
 
   it("repeated canary runs overwrite one document instead of growing", async () => {

@@ -4,7 +4,7 @@ import { isAllowedApplyOrigin } from "@/lib/allowedOrigin";
 import { resolveDraftAuth, type DraftAuth } from "@/lib/draftAuth";
 import { upsertDoc } from "@/lib/draftStore";
 import { jsonResponse } from "@/lib/http";
-import { alertOps } from "@/lib/opsAlert";
+import { alertOpsOnce } from "@/lib/alertDedupe";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import {
   headObject,
@@ -116,6 +116,15 @@ export const POST: APIRoute = async ({ request, url }) => {
       // Photos can only attach to a saved draft; the client saves first.
       return jsonResponse({ error: "draft_not_found" }, 404);
     }
+    // WHY: a finished application is closed to a leaked token; the real
+    // client settles every photo before it finalizes. The canary reuses one
+    // document every run and is exempt.
+    if (!auth.canaryKey && draft.finalizedAt) {
+      return jsonResponse(
+        { error: "finalized", reason: "already_submitted" },
+        409,
+      );
+    }
     const kept = stringArray(draft.photoPaths);
 
     if (action === "reserve") {
@@ -216,7 +225,7 @@ export const POST: APIRoute = async ({ request, url }) => {
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    await alertOps({
+    await alertOpsOnce({
       flow: "apply",
       stage: `photo_${stage}`,
       errorMessage: message,

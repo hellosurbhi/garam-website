@@ -53,6 +53,33 @@ test("a phone applicant can file an application with photos on the live stack", 
       }),
   );
 
+  // WHY: the relay fallback lets a photo succeed even when the direct upload
+  // to the bucket is blocked (CSP, bucket CORS), so a green run proved nothing
+  // about the path real phones use. Record both and assert below.
+  const storagePuts: { url: string; status: number }[] = [];
+  const relayCalls: string[] = [];
+  page.on("response", (res) => {
+    const req = res.request();
+    if (
+      req.method() === "PUT" &&
+      res.url().includes("storage.googleapis.com")
+    ) {
+      storagePuts.push({ url: res.url(), status: res.status() });
+    }
+    if (res.url().includes("/api/upload-application-photo?relay=1")) {
+      relayCalls.push(res.url());
+    }
+  });
+  const failedPuts: string[] = [];
+  page.on("requestfailed", (req) => {
+    if (
+      req.method() === "PUT" &&
+      req.url().includes("storage.googleapis.com")
+    ) {
+      failedPuts.push(`${req.url()} ${req.failure()?.errorText ?? ""}`);
+    }
+  });
+
   await page.goto("/apply", { waitUntil: "domcontentloaded" });
   await page.waitForSelector("[data-testid=apply-form]", {
     state: "visible",
@@ -115,4 +142,14 @@ test("a phone applicant can file an application with photos on the live stack", 
   await expect(page.locator("[data-testid=apply-success]")).toBeVisible({
     timeout: 90_000,
   });
+
+  // Both photos went straight to the bucket from the browser: this is also the
+  // live CORS and CSP check, since the browser blocks a PUT the bucket or the
+  // site's policy does not allow.
+  expect(failedPuts, "direct upload to the bucket was blocked").toEqual([]);
+  expect(relayCalls, "a photo fell back to the server relay").toEqual([]);
+  expect(storagePuts.length).toBeGreaterThanOrEqual(2);
+  expect(storagePuts.every((p) => p.status >= 200 && p.status < 300)).toBe(
+    true,
+  );
 });

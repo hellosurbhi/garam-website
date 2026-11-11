@@ -7,8 +7,11 @@ vi.mock("@/utils/compressImage", () => ({ compressImage: compress }));
 const { uploadApplicationPhoto, removeApplicationPhoto } =
   await import("@/lib/applyPhotos");
 
+const resetDraft = vi.fn();
 const controller = {
   ensureDraft: vi.fn(async () => "tok-1"),
+  epoch: 0,
+  resetDraft,
 } as unknown as AutosaveController;
 
 const MB = 1024 * 1024;
@@ -82,6 +85,7 @@ async function run(original: File) {
 beforeEach(() => {
   vi.useFakeTimers();
   compress.mockReset();
+  resetDraft.mockReset();
 });
 
 afterEach(() => {
@@ -99,6 +103,7 @@ describe("uploadApplicationPhoto: happy path", () => {
       path: "photos/d/1-abcd.jpg",
       size: 100,
       relayed: false,
+      epoch: 0,
     });
     expect(calls.map((c) => c.method)).toEqual(["POST", "PUT", "POST"]);
     expect(JSON.parse(String(calls[2].body))).toMatchObject({
@@ -178,6 +183,7 @@ describe("uploadApplicationPhoto: a photo is never rejected", () => {
       path: "photos/d/relay-0.jpg",
       size: 1 * MB,
       relayed: true,
+      epoch: 0,
     });
     expect(calls.filter((c) => c.method === "PUT")).toHaveLength(3);
     expect(calls.at(-1)?.url).toContain("relay=1");
@@ -250,6 +256,77 @@ describe("uploadApplicationPhoto: a photo is never rejected", () => {
     expect(String((error as Error).message)).toContain(
       "network error: TypeError: Load failed",
     );
+  });
+});
+
+function reserveCalls(calls: Call[]) {
+  return calls.filter(
+    (c) =>
+      c.method === "POST" &&
+      !String(c.url).includes("relay=1") &&
+      JSON.parse(String(c.body)).action === "reserve",
+  );
+}
+
+describe("uploadApplicationPhoto: reservations and draft replacement", () => {
+  it("reuses one reservation when the connection drops mid-PUT", async () => {
+    const original = file("a.jpg", "image/jpeg", 100);
+    compress.mockResolvedValue(original);
+    let puts = 0;
+    const calls = network({
+      put: () => {
+        if (++puts < 3) throw new TypeError("Failed to fetch");
+        return new Response(null, { status: 200 });
+      },
+    });
+    const { value } = await run(original);
+    expect(value?.relayed).toBe(false);
+    expect(reserveCalls(calls)).toHaveLength(1);
+  });
+
+  it("reserves again when the storage host rejected the signed URL", async () => {
+    const original = file("a.jpg", "image/jpeg", 100);
+    compress.mockResolvedValue(original);
+    let puts = 0;
+    const calls = network({
+      put: () =>
+        ++puts < 2
+          ? new Response("expired", { status: 403 })
+          : new Response(null, { status: 200 }),
+    });
+    await run(original);
+    expect(reserveCalls(calls)).toHaveLength(2);
+  });
+
+  it("replaces the draft when the server rejects the token, then files under the new one", async () => {
+    const original = file("a.jpg", "image/jpeg", 100);
+    compress.mockResolvedValue(original);
+    let reserves = 0;
+    network({
+      reserve: () =>
+        ++reserves === 1
+          ? jsonRes(401, { error: "invalid_token", reason: "expired" })
+          : jsonRes(200, {
+              ok: true,
+              path: "photos/d2/1-abcd.jpg",
+              uploadUrl: "https://storage.example.com/photos/d2/1-abcd.jpg",
+              contentType: "image/jpeg",
+            }),
+    });
+    const { value } = await run(original);
+    expect(resetDraft).toHaveBeenCalledWith("tok-1");
+    expect(value?.path).toBe("photos/d2/1-abcd.jpg");
+  });
+
+  it("reports the draft generation the file was filed under", async () => {
+    const original = file("a.jpg", "image/jpeg", 100);
+    compress.mockResolvedValue(original);
+    const mutable = controller as unknown as { epoch: number };
+    mutable.epoch = 7;
+    network({});
+    const { value } = await run(original);
+    mutable.epoch = 0;
+    expect(value?.epoch).toBe(7);
   });
 });
 

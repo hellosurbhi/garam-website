@@ -306,8 +306,11 @@ describe("AutosaveController: finalize", () => {
     const done = c.finalize();
     await vi.advanceTimersByTimeAsync(10);
     await done;
-    expect(calls[0].body.finalize).toBe(true);
+    // The sync request files the fields and proves the token is alive; the
+    // finalize request then closes the application.
+    expect(calls[0].body.finalize).toBeUndefined();
     expect(calls[0].body.fields).toEqual({ name: "A" });
+    expect(calls[1].body.finalize).toBe(true);
     expect(window.localStorage.getItem("apply-draft-v2")).toBeNull();
     expect(c.hasDraft).toBe(false);
   });
@@ -326,7 +329,7 @@ describe("AutosaveController: finalize", () => {
     const err = (await result) as ApplyRequestError;
     expect(calls).toHaveLength(3);
     expect(err).toBeInstanceOf(ApplyRequestError);
-    expect(err.message).toBe("finalize: HTTP 500: Database unavailable");
+    expect(err.message).toBe("save_draft: HTTP 500: Database unavailable");
   });
 
   it("a failed finalize leaves the fields queued so nothing is lost", async () => {
@@ -353,7 +356,7 @@ describe("AutosaveController: finalize", () => {
     await done;
     c.setField("name", "late");
     await vi.advanceTimersByTimeAsync(2_000);
-    expect(calls).toHaveLength(1);
+    expect(calls).toHaveLength(2);
   });
 });
 
@@ -422,5 +425,117 @@ describe("AutosaveController.ensureDraft", () => {
     await vi.advanceTimersByTimeAsync(1_000);
     await photo;
     expect(calls.filter((x) => x.body.token === undefined)).toHaveLength(1);
+  });
+});
+
+function unauthorized(): Response {
+  return new Response(JSON.stringify({ error: "invalid_token" }), {
+    status: 401,
+  });
+}
+
+describe("AutosaveController: revisions never fall behind the server", () => {
+  it("persists the revision before the request leaves, so a reload mid-request cannot reuse it", async () => {
+    let release: (r: Response) => void = () => {};
+    const { fetchImpl } = harness(
+      () => new Promise<Response>((resolve) => (release = resolve)),
+    );
+    const c = new AutosaveController({ fetchImpl });
+    c.setField("name", "A");
+    await vi.advanceTimersByTimeAsync(900);
+    const persisted = JSON.parse(
+      window.localStorage.getItem("apply-draft-v2") ?? "{}",
+    );
+    expect(persisted.rev).toBe(1);
+    release(ok());
+  });
+
+  it("adopts the server's highest revision and resends a field it refused as stale", async () => {
+    const { calls, fetchImpl } = harness((call, n) =>
+      n === 1
+        ? ok({ stale: ["name"], maxRev: 40 })
+        : ok({ maxRev: call.body.rev }),
+    );
+    const c = new AutosaveController({ fetchImpl });
+    c.setField("name", "Mine");
+    await vi.advanceTimersByTimeAsync(900);
+    await vi.advanceTimersByTimeAsync(10);
+    expect(calls).toHaveLength(2);
+    expect(calls[1].body.fields).toEqual({ name: "Mine" });
+    expect(calls[1].body.rev).toBeGreaterThan(40);
+  });
+
+  it("keeps text the server dropped for size queued and reports the cause", async () => {
+    const onPersistentFailure = vi.fn();
+    const { fetchImpl } = harness(() => ok({ capped: true }));
+    const c = new AutosaveController({ fetchImpl, onPersistentFailure });
+    c.setField("pitch", "long");
+    await vi.advanceTimersByTimeAsync(900);
+    await vi.advanceTimersByTimeAsync(60_000);
+    const persisted = JSON.parse(
+      window.localStorage.getItem("apply-draft-v2") ?? "{}",
+    );
+    expect(persisted.pending).toEqual({ pitch: "long" });
+    expect(onPersistentFailure).toHaveBeenCalledTimes(1);
+    expect(onPersistentFailure.mock.calls[0][0].detail).toMatch(/size limit/);
+  });
+});
+
+describe("AutosaveController: a rejected token replaces the draft", () => {
+  it("resetDraft is a no-op for a token that was already replaced", async () => {
+    const { calls, fetchImpl } = harness();
+    const c = new AutosaveController({ fetchImpl });
+    c.setField("name", "A");
+    await vi.advanceTimersByTimeAsync(900);
+    const before = c.epoch;
+    c.resetDraft("some-other-token");
+    expect(c.epoch).toBe(before);
+    c.resetDraft("tok-1");
+    c.resetDraft("tok-1");
+    expect(c.epoch).toBe(before + 1);
+    await vi.advanceTimersByTimeAsync(10);
+    // One replacement draft, carrying every answer.
+    const fresh = calls.filter((x) => x.body.token === undefined);
+    expect(fresh).toHaveLength(2);
+    expect(fresh[1].body.fields).toEqual({ name: "A" });
+  });
+
+  it("tells listeners after a 401 recovery so photos can be filed again", async () => {
+    const { fetchImpl } = harness((call, n) =>
+      call.body.token === "tok-1"
+        ? unauthorized()
+        : ok({ token: n === 1 ? "tok-1" : "tok-2" }),
+    );
+    const c = new AutosaveController({ fetchImpl });
+    c.setField("name", "A");
+    await vi.advanceTimersByTimeAsync(900);
+    const onReset = vi.fn();
+    c.onDraftReset(onReset);
+    c.setField("name", "B");
+    await vi.advanceTimersByTimeAsync(900);
+    expect(onReset).toHaveBeenCalledTimes(1);
+    expect(c.draftToken).toBe("tok-2");
+    expect(c.epoch).toBe(1);
+  });
+
+  it("finalize re-settles photos when the draft is replaced mid-way, then finalizes the new draft", async () => {
+    let expired = false;
+    const { calls, fetchImpl } = harness((call, n) => {
+      if (call.body.token === "tok-1" && expired) return unauthorized();
+      return call.body.token === undefined
+        ? ok({ token: n === 1 ? "tok-1" : "tok-2" })
+        : ok({ token: call.body.token });
+    });
+    const c = new AutosaveController({ fetchImpl });
+    await c.ensureDraft();
+    expired = true;
+    const settle = vi.fn(async () => {});
+    const done = c.finalize(settle);
+    await vi.advanceTimersByTimeAsync(10);
+    await done;
+    // Once before the token proved dead, once after photos were re-filed.
+    expect(settle).toHaveBeenCalledTimes(2);
+    const finalizeCall = calls.find((x) => x.body.finalize === true);
+    expect(finalizeCall?.body.token).toBe("tok-2");
   });
 });

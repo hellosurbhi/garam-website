@@ -36,7 +36,7 @@ export const RATE_LIMITS = {
   // minute. Sized well above any human; the limiter also fails open.
   saveApplication: {
     prefix: "ratelimit:save-application",
-    limit: 120,
+    limit: 600,
     windowSeconds: 60,
   },
   // Creating a NEW draft (no token yet) is the only unauthenticated write, so
@@ -44,12 +44,12 @@ export const RATE_LIMITS = {
   // Sized for a shared carrier or venue wifi IP; the limiter fails open.
   newApplicationDraft: {
     prefix: "ratelimit:new-application-draft",
-    limit: 30,
+    limit: 300,
     windowSeconds: 3600,
   },
   uploadApplicationPhoto: {
     prefix: "ratelimit:upload-application-photo",
-    limit: 60,
+    limit: 300,
     windowSeconds: 60,
   },
   notifyApplication: {

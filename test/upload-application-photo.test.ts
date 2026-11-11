@@ -289,6 +289,54 @@ describe("upload-application-photo: any file, direct to the bucket", () => {
   });
 });
 
+describe("upload-application-photo: a finished application is closed", () => {
+  it("refuses reserve, confirm, remove and relay on a finalized draft", async () => {
+    const { id, token } = seedDraft({ finalizedAt: new Date() });
+    const path = `photos/${id}/1-aaaa.jpg`;
+    mocks.state.objects.set(path, { size: 10, contentType: "image/jpeg" });
+    const bodies = [
+      { action: "reserve", filename: "a.jpg" },
+      { action: "confirm", path },
+      { action: "remove", path },
+    ];
+    for (const body of bodies) {
+      const res = await call(token, body);
+      expect(res.status).toBe(409);
+      expect(await json(res)).toMatchObject({ error: "finalized" });
+    }
+    const relay = await call(token, null, {
+      relay: true,
+      raw: new Uint8Array([1, 2, 3]),
+    });
+    expect(relay.status).toBe(409);
+    const stored = mocks.state.docs.get(`applications/${id}`)!.fields;
+    expect(stored.photoPaths).toEqual([]);
+  });
+
+  it("the canary document is reused every run, so finalizedAt never blocks it", async () => {
+    const { canarySignature, canaryDraftId } =
+      await import("@/lib/draftSecret");
+    const key = "android-chrome" as const;
+    mocks.state.docs.set(`_canary/${canaryDraftId(key)}`, {
+      fields: { status: "Draft", finalizedAt: new Date() },
+      t: ++mocks.state.clock,
+    });
+    const ts = Math.floor(Date.now() / 1000);
+    const res = await call(
+      null,
+      { action: "reserve", filename: "p.jpg", index: 0 },
+      {
+        headers: {
+          "x-canary-key": key,
+          "x-canary-ts": String(ts),
+          "x-canary-sig": canarySignature("photo-test-secret", key, ts),
+        },
+      },
+    );
+    expect(res.status).toBe(200);
+  });
+});
+
 describe("upload-application-photo: quotas fail closed", () => {
   it("stops reserving once 10 photos are kept, with a clear photo_quota reply", async () => {
     const paths = Array.from({ length: 10 }, (_, i) => `photos/x/${i}.jpg`);

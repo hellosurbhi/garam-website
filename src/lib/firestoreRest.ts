@@ -192,6 +192,13 @@ export async function fsPatchIfUnchanged(
   }
   if (!res.ok) {
     const body = await res.text();
+    // WHY the body check: the Firestore REST API reports a failed
+    // currentDocument.updateTime precondition as FAILED_PRECONDITION, which
+    // travels as HTTP 400, not 409 or 412. Mapping only those two turned every
+    // lost race into a 500 and an alert email instead of a silent re-read.
+    if (res.status === 400 && /FAILED_PRECONDITION/.test(body)) {
+      throw new FsConflictError(docPath);
+    }
     throw new Error(`fsPatchIfUnchanged ${docPath}: ${res.status} ${body}`);
   }
 }

@@ -1,12 +1,10 @@
 import { createHash } from "node:crypto";
 import type { APIRoute } from "astro";
 import { z } from "zod";
-import { Redis } from "@upstash/redis";
 import { alertOps, type OpsAlertReport } from "@/lib/opsAlert";
+import { claimAlertKey } from "@/lib/alertDedupe";
 import { isAllowedOrigin } from "@/lib/allowedOrigin";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
-import { readTrimmedEnv } from "@/lib/env";
-import { withTimeout } from "@/utils/withTimeout";
 
 export const prerender = false;
 
@@ -45,14 +43,9 @@ const FailureSchema = z.object({
     .optional(),
 });
 
-// One failure incident = one email. A user who retries a broken form five
-// times (Dua, Aug 27 2026: four duplicate pages for one outage) produces one
-// alert per hour per (flow, stage, identity). SET NX EX is atomic: the first
-// reporter wins the key and sends; everyone else inside the window is
-// suppressed. Redis down or unconfigured = fail OPEN and send: an alert
-// channel must never fail closed.
-const ALERT_DEDUPE_SECONDS = 3600;
-
+// A user who retries a broken form five times (Dua, Aug 27 2026: four
+// duplicate pages for one outage) produces one alert per hour per
+// (flow, stage, reason, identity); the claim itself lives in alertDedupe.
 function alertKey(report: z.infer<typeof FailureSchema>): string {
   const identity = report.contact?.email || report.pageUrl || "unknown";
   // WHY a digest, not the raw identity: the identity is applicant PII (email
@@ -69,51 +62,6 @@ function alertKey(report: z.infer<typeof FailureSchema>): string {
     .digest("hex")
     .slice(0, 12);
   return `alert:${report.flow}:${report.stage}:${reason}:${digest}`;
-}
-
-interface DedupeClaim {
-  duplicate: boolean;
-  /** Frees the claim when delivery failed on every channel; no-op otherwise. */
-  release: () => Promise<void>;
-}
-
-const NO_RELEASE = async () => {};
-
-async function claimAlert(
-  report: z.infer<typeof FailureSchema>,
-): Promise<DedupeClaim> {
-  try {
-    const url = readTrimmedEnv(import.meta.env.UPSTASH_REDIS_REST_URL);
-    const token = readTrimmedEnv(import.meta.env.UPSTASH_REDIS_REST_TOKEN);
-    if (!url || !token) return { duplicate: false, release: NO_RELEASE };
-
-    const key = alertKey(report);
-    const redis = new Redis({ url, token });
-    const result = await withTimeout(
-      redis.set(key, "1", { nx: true, ex: ALERT_DEDUPE_SECONDS }),
-      1500,
-      "Upstash alert dedupe",
-    );
-    // Upstash returns "OK" when the key was set (first alert) and null when
-    // it already existed (duplicate inside the window).
-    if (result === null) return { duplicate: true, release: NO_RELEASE };
-    return {
-      duplicate: false,
-      release: async () => {
-        // Every channel failed to deliver: give the claim back so the next
-        // report of this incident pages instead of being suppressed for an
-        // hour behind an alert that never went out.
-        try {
-          await withTimeout(redis.del(key), 1500, "Upstash alert release");
-        } catch (error) {
-          console.error("[alert-failure] claim release failed:", error);
-        }
-      },
-    };
-  } catch (error) {
-    console.error("[alert-failure] dedupe check failed, sending:", error);
-    return { duplicate: false, release: NO_RELEASE };
-  }
 }
 
 export const POST: APIRoute = async ({ request }) => {
@@ -145,7 +93,7 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  const claim = await claimAlert(report);
+  const claim = await claimAlertKey(alertKey(report));
   if (claim.duplicate) {
     // Logged, never mailed: the first alert of the incident already paged.
     console.log(

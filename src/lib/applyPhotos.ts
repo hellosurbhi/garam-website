@@ -25,6 +25,8 @@ export interface PhotoUploadResult {
   size: number;
   /** True when the server relay was used instead of the direct PUT. */
   relayed: boolean;
+  /** The draft generation this file was filed under (AutosaveController.epoch). */
+  epoch: number;
 }
 
 interface ServerReply {
@@ -65,6 +67,12 @@ async function callPhotoApi(
     data = (await res.json()) as ServerReply;
   } catch {
     // Non-JSON error body; status below carries the cause.
+  }
+  if (res.status === 401 && data.error === "invalid_token") {
+    // WHY: photo calls used to keep sending a rejected token forever, so every
+    // photo after a token expiry failed. Replace the draft; the attempt loop
+    // then reserves again under the new one.
+    controller.resetDraft(token);
   }
   if (!res.ok || data.ok !== true) {
     throw new ApplyRequestError(
@@ -133,6 +141,9 @@ async function relay(
     signal: AbortSignal.timeout(60_000),
   });
   const data = (await res.json().catch(() => ({}))) as ServerReply;
+  if (res.status === 401 && data.error === "invalid_token") {
+    controller.resetDraft(token);
+  }
   if (!res.ok || data.ok !== true || !data.path) {
     throw new ApplyRequestError(
       "photo_relay",
@@ -159,33 +170,65 @@ export async function uploadApplicationPhoto(
   const copy = await optimizedCopy(original);
   let lastError: unknown;
 
+  // WHY the reservation is kept across attempts: every reserve counts against
+  // the draft's reservation cap, and a flaky connection used one per attempt,
+  // so a few retried photos exhausted the cap and later photos were refused.
+  // It is reused until the draft is replaced (its path belongs to the old
+  // draft) or the storage host or server rejects the URL or the object.
+  let reserved: ServerReply | null = null;
+  let reservedEpoch = 0;
+  let putDone = false;
+
   for (let attempt = 0; attempt < ATTEMPTS; attempt++) {
     try {
-      const reserved = await callPhotoApi(controller, "photo_reserve", {
-        action: "reserve",
-        filename: copy.name,
-        contentType: copy.type || "application/octet-stream",
-        index,
-      });
+      if (!reserved || reservedEpoch !== controller.epoch) {
+        await controller.ensureDraft();
+        reservedEpoch = controller.epoch;
+        reserved = await callPhotoApi(controller, "photo_reserve", {
+          action: "reserve",
+          filename: copy.name,
+          contentType: copy.type || "application/octet-stream",
+          index,
+        });
+        putDone = false;
+      }
       if (!reserved.uploadUrl || !reserved.path) {
+        reserved = null;
         throw new ApplyRequestError(
           "photo_reserve",
           null,
           "server returned no upload URL",
         );
       }
-      await putToStorage(
-        reserved.uploadUrl,
-        reserved.contentType ?? (copy.type || "application/octet-stream"),
-        copy,
-      );
+      if (!putDone) {
+        await putToStorage(
+          reserved.uploadUrl,
+          reserved.contentType ?? (copy.type || "application/octet-stream"),
+          copy,
+        );
+        putDone = true;
+      }
       await callPhotoApi(controller, "photo_confirm", {
         action: "confirm",
         path: reserved.path,
       });
-      return { path: reserved.path, size: copy.size, relayed: false };
+      return {
+        path: reserved.path,
+        size: copy.size,
+        relayed: false,
+        epoch: reservedEpoch,
+      };
     } catch (err) {
       lastError = err;
+      // An HTTP answer from the storage host or a missing object means this
+      // reservation is spent; a dropped connection does not.
+      if (
+        err instanceof ApplyRequestError &&
+        ((err.stage === "photo_put" && err.status !== null) ||
+          (err.stage === "photo_confirm" && err.status === 409))
+      ) {
+        reserved = null;
+      }
       await new Promise((r) => setTimeout(r, 1_000 * 2 ** attempt));
     }
   }
@@ -195,8 +238,10 @@ export async function uploadApplicationPhoto(
   const relayable = [copy, original].find((f) => f.size <= RELAY_MAX_BYTES);
   if (relayable) {
     try {
+      await controller.ensureDraft();
+      const epoch = controller.epoch;
       const path = await relay(controller, relayable, index);
-      return { path, size: relayable.size, relayed: true };
+      return { path, size: relayable.size, relayed: true, epoch };
     } catch (err) {
       lastError = err;
     }

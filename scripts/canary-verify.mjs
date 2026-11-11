@@ -5,8 +5,10 @@
  * .github/workflows/apply-canary.yml. For each browser profile it reads the one
  * fixed `_canary/<id>` document with the service account and requires:
  *   - the document name contains THIS run's CANARY_RUN_ID (not a stale write)
- *   - status is "New" (the finalize step ran)
- *   - at least one photoPath, each of which exists in the Storage bucket
+ *   - status is "New" and finalizedAt is newer than this run's start
+ *   - at least one photoPath, each of which exists in the Storage bucket and
+ *     was stored after this run's start
+ * CANARY_STARTED_AT is the ISO time the workflow job began.
  * Nothing is created or deleted here: the canary overwrites the same document
  * and photo slots every run, so there is no growth and no cleanup to get wrong.
  *
@@ -36,14 +38,23 @@ function canaryDraftId(key) {
 }
 
 const runId = process.env.CANARY_RUN_ID;
+const startedAtIso = process.env.CANARY_STARTED_AT;
+const startedAt = Date.parse(startedAtIso ?? "");
 const projectId = readTrimmedEnv(process.env.FIREBASE_PROJECT_ID);
 const bucket = readTrimmedEnv(process.env.FIREBASE_STORAGE_BUCKET);
 const clientEmail = readTrimmedEnv(process.env.FIREBASE_ADMIN_CLIENT_EMAIL);
 const rawKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY;
 
-if (!runId || !projectId || !bucket || !clientEmail || !rawKey) {
+if (
+  !runId ||
+  Number.isNaN(startedAt) ||
+  !projectId ||
+  !bucket ||
+  !clientEmail ||
+  !rawKey
+) {
   console.error(
-    "Missing env: CANARY_RUN_ID, FIREBASE_PROJECT_ID, FIREBASE_STORAGE_BUCKET, FIREBASE_ADMIN_CLIENT_EMAIL and FIREBASE_ADMIN_PRIVATE_KEY are all required.",
+    "Missing env: CANARY_RUN_ID, CANARY_STARTED_AT (ISO time), FIREBASE_PROJECT_ID, FIREBASE_STORAGE_BUCKET, FIREBASE_ADMIN_CLIENT_EMAIL and FIREBASE_ADMIN_PRIVATE_KEY are all required.",
   );
   process.exit(1);
 }
@@ -87,12 +98,13 @@ async function readDoc(token, id) {
   return (await res.json()).fields ?? {};
 }
 
-async function objectExists(token, path) {
+/** The object's metadata, or null when it is missing from the bucket. */
+async function objectMeta(token, path) {
   const res = await fetch(
     `https://storage.googleapis.com/storage/v1/b/${bucket}/o/${encodeURIComponent(path)}`,
     { headers: { Authorization: `Bearer ${token}` } },
   );
-  return res.ok;
+  return res.ok ? await res.json() : null;
 }
 
 const token = await getAccessToken();
@@ -119,6 +131,15 @@ for (const profile of PROFILES) {
       `${profile}: saved but status is "${status}", expected "New". The final submit step did not finish.`,
     );
   }
+  // WHY the time checks: the canary reuses one document and fixed photo
+  // slots, so status "New" and the recorded photo paths survive from the
+  // previous run. Only timestamps written by THIS run prove this run finished.
+  const finalizedAt = Date.parse(fields.finalizedAt?.timestampValue ?? "");
+  if (!(finalizedAt >= startedAt)) {
+    failures.push(
+      `${profile}: the final submit step did not run in this run (finalizedAt ${fields.finalizedAt?.timestampValue ?? "(missing)"} is older than the run start ${startedAtIso}).`,
+    );
+  }
   const paths = (fields.photoPaths?.arrayValue?.values ?? []).map(
     (v) => v.stringValue,
   );
@@ -129,9 +150,14 @@ for (const profile of PROFILES) {
     continue;
   }
   for (const path of paths) {
-    if (!(await objectExists(token, path))) {
+    const meta = await objectMeta(token, path);
+    if (!meta) {
       failures.push(
         `${profile}: photo ${path} is recorded on the application but the file is missing from Storage.`,
+      );
+    } else if (!(Date.parse(meta.updated) >= startedAt)) {
+      failures.push(
+        `${profile}: photo ${path} was not uploaded in this run (stored ${meta.updated}, run started ${startedAtIso}).`,
       );
     }
   }

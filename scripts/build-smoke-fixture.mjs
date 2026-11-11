@@ -1,12 +1,14 @@
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, rmSync, realpathSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 export function fixtureEnvironment(source) {
   const env = {};
-  // Only OS process essentials may cross into the offline build.
+  // WHY: executable, system and temporary paths are OS essentials. HOME can
+  // expose user configuration; NODE_OPTIONS can preload code. Neither belongs
+  // in this credential-free child.
   for (const key of ["PATH", "SYSTEMROOT", "WINDIR", "TEMP", "TMP", "TMPDIR"])
     if (typeof source[key] === "string") env[key] = source[key];
   return {
@@ -55,14 +57,21 @@ export async function buildFixture(build, loadConfig = loadFixtureConfig) {
   }
 }
 
-if (
-  process.argv[1] &&
-  resolve(process.argv[1]) === fileURLToPath(import.meta.url)
-) {
+export function isFixtureEntrypoint(entry) {
+  return (
+    Boolean(entry) && realpathSync(entry) === fileURLToPath(import.meta.url)
+  );
+}
+
+// WHY: importing helpers in tests must not build the site. realpath also handles
+// macOS /tmp aliases and other symlinked entry paths without silently skipping.
+if (isFixtureEntrypoint(process.argv[1])) {
   if (process.argv[2] === "--worker") {
     const { build } = await import("astro");
     await buildFixture(build);
   } else {
+    // WHY: config and Vite read environment during startup. A separate child
+    // excludes credentials before imports, preventing them reaching artifacts.
     const result = spawnSync(
       process.execPath,
       [fileURLToPath(import.meta.url), "--worker"],

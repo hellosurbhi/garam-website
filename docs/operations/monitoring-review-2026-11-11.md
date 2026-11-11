@@ -38,3 +38,15 @@ The final concerns were checked against the implementation:
 - Manual runs must target main. A feature-branch dispatch is reported as a deployment configuration failure.
 
 Main's order-sync change was integrated without replacing either side's safeguards. src/pages/api/sync-orders.ts retains synthetic lead exclusion alongside bounded concurrency, retry classification and the start-of-run cursor. The combined branch passed 1,592 unit tests, lint, Astro check and production build with packaged runtime. Monitoring-specific verification passed 84 emulator rule tests and 28 isolated browser checks. Local Redis was unconfigured and its real PING was skipped; this is not claimed as live Redis verification.
+
+## Six CodeRabbit findings resolved
+
+The six findings previously deferred during the California ticket update are now implemented. Synthetic checks and reports retain the supported maximum pending queue, superseded revisions skip redirect checks, smoke builds exclude inherited credentials and root environment files, city matching retains qualifiers and ticket checks accept valid waitlist-only states. The related BUGS.md entries were removed after implementation.
+
+Independent Codex review approved the final fixes. Claude's second source review found "No concrete blockers in the helper, the tests or the isolation." Its additional symlink-entry issue was fixed with realpath comparison and a regression test. Worker isolation and import guards now explain their purpose in WHY comments.
+
+Verification includes a real configuration-loading probe with zero environment-file access attempts and a full smoke build guarded against environment-file reads outside the empty fixture directory. The guarded full build passed with zero forbidden accesses. Dummy inherited secrets were absent from the fixture artifacts. No actual environment files or production credentials were read for these probes.
+
+Claude's remaining questions were checked against source: deployment.mjs emits the ready/superseded state consumed by the workflow; GitHub documents queue: max with cancel-in-progress false; installed Vite is version 8; both the ticket page and runtime past-event guard use UTC calendar dates. Presale links reveal in the browser and sold-out cards use vendor URLs directly. The monitor independently checks these rendered outcomes instead of refactoring the customer UI to share its expectations.
+
+Browser regressions cover missing live links, blank waitlist pages, unknown links, wrong status and destination, the city-request fallback and stale static cards safely returning to /tickets. Original form smoke flows remain verified in Chromium and WebKit. This resolves source findings; production activation still follows the authorized post-merge process.

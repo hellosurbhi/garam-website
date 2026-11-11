@@ -1,9 +1,18 @@
 // @vitest-environment node
 import { expect, it } from "vitest";
-import { existsSync, readdirSync } from "node:fs";
+import {
+  existsSync,
+  readdirSync,
+  mkdtempSync,
+  symlinkSync,
+  rmSync,
+} from "node:fs";
 import { loadEnv } from "vite";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
-import { buildFixture, fixtureEnvironment } from "./build-smoke-fixture.mjs";
+import { buildFixture, fixtureEnvironment, isFixtureEntrypoint } from "./build-smoke-fixture.mjs";
 
 it("drops inherited credentials and preload hooks while preserving process essentials", () => {
   const env = fixtureEnvironment({
@@ -87,3 +96,19 @@ it("loads the real config without attempting environment-file access during boot
   expect(result.status, result.stderr).toBe(0);
   expect(result.stdout).toContain("GMD_ENV_PROBE:0");
 }, 25000);
+
+it("recognizes a symlinked entry path without building during helper imports", () => {
+  const directory = mkdtempSync(join(tmpdir(), "gmd-entry-probe-"));
+  try {
+    const alias = join(directory, "fixture.mjs");
+    symlinkSync(
+      fileURLToPath(new URL("./build-smoke-fixture.mjs", import.meta.url)),
+      alias,
+    );
+    expect(isFixtureEntrypoint(alias)).toBe(true);
+    expect(isFixtureEntrypoint(fileURLToPath(import.meta.url))).toBe(false);
+    expect(isFixtureEntrypoint(undefined)).toBe(false);
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});

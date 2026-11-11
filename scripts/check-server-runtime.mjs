@@ -17,9 +17,13 @@ const script = fileURLToPath(import.meta.url);
 
 if (process.argv[2] === "--worker") {
   const artifact = process.argv[3];
-  const { routes, ticketLinks, requireRedisHealth } = JSON.parse(
-    readFileSync(0, "utf8"),
-  );
+  const {
+    routes,
+    ticketLinks,
+    requireRedisHealth,
+    liveEvents,
+    requireLiveEventsRead,
+  } = JSON.parse(readFileSync(0, "utf8"));
   const config = JSON.parse(
     readFileSync(join(artifact, ".vc-config.json"), "utf8"),
   );
@@ -34,6 +38,11 @@ if (process.argv[2] === "--worker") {
   let redisCalls = 0;
   let redisFixtureError;
   let denyRedisRequests = false;
+  // The published show list (issue 337): "missing" answers like a project
+  // that has never published, "serve" returns the fixture document.
+  let publishedEventsMode = "missing";
+  let publishedEventsReads = 0;
+  let publishedEventsFixtureError;
   globalThis.fetch = async (input, init) => {
     const url = new URL(input instanceof Request ? input.url : input);
     // The adapter fetches the static error page from Vercel after a 404.
@@ -78,6 +87,29 @@ if (process.argv[2] === "--worker") {
         return Response.json([{ result: [0, 1] }]);
       }
     }
+    // WHY a local Firestore fixture: the loader in
+    // src/lib/publishedEvents.server.ts must be proven to read the live
+    // document from the packaged bundle (plan R11), without touching the
+    // production database. A 404, not a 500, models the fallback case: a
+    // failed read pages the owner through alertOps, and that would fire on
+    // every build where the alert channel is configured.
+    if (
+      url.hostname === "firestore.googleapis.com" &&
+      url.pathname.endsWith("/documents/eventsPublished/current")
+    ) {
+      publishedEventsReads++;
+      const headers = new Headers(
+        init?.headers ?? (input instanceof Request ? input.headers : undefined),
+      );
+      if (headers.has("authorization")) {
+        publishedEventsFixtureError ??= new Error(
+          "The published events read must be public, with no credentials",
+        );
+      }
+      return publishedEventsMode === "serve"
+        ? Response.json(liveEvents.document)
+        : Response.json({ error: { code: 404 } }, { status: 404 });
+    }
     networkAttempts.push(`${url.origin}${url.pathname}`);
     throw new Error("Runtime smoke checks must not call external services");
   };
@@ -93,6 +125,7 @@ if (process.argv[2] === "--worker") {
       new Request(`https://garammasaladating.com${path}`, { ...init, headers }),
     );
     if (redisFixtureError) throw redisFixtureError;
+    if (publishedEventsFixtureError) throw publishedEventsFixtureError;
     return response;
   };
 
@@ -124,6 +157,15 @@ if (process.argv[2] === "--worker") {
 
   const unknown = await request("/api/go/runtime-smoke-missing-event");
   assert.equal(unknown.status, 404);
+  // Nothing published yet: the redirect serves the build's own list, so the
+  // show that exists only in the live document is unknown.
+  const livePath = `/api/go/${liveEvents.slug}`;
+  const beforePublish = await request(livePath);
+  assert.equal(
+    beforePublish.status,
+    404,
+    "Before a publish, /api/go must serve the build's show list",
+  );
   for (const href of ticketLinks) {
     const response = await request(`${href}?utm_source=runtime-smoke`);
     assert.equal(response.status, 302, `Ticket redirect failed: ${href}`);
@@ -131,6 +173,41 @@ if (process.argv[2] === "--worker") {
     assert.equal(destination.protocol, "https:");
     assert.notEqual(destination.hostname, "garammasaladating.com");
     assert.equal(destination.searchParams.get("utm_source"), "runtime-smoke");
+  }
+
+  // Publish the fixture and let the loader's cache expire.
+  publishedEventsMode = "serve";
+  const realNow = Date.now;
+  // WHY move the clock instead of waiting: the cache lives LIVE_EVENTS_TTL_MS
+  // (30s) and the check must not sleep through it.
+  Date.now = () => realNow() + 30_000;
+  const afterPublish = await request(livePath);
+  Date.now = realNow;
+  if (publishedEventsReads > 0) {
+    assert.equal(
+      afterPublish.status,
+      302,
+      "After a publish, /api/go must redirect to the live show's ticket link",
+    );
+    const destination = new URL(afterPublish.headers.get("location"));
+    assert.equal(
+      `${destination.origin}${destination.pathname}`,
+      liveEvents.url,
+    );
+    assert.equal(destination.searchParams.get("utm_content"), liveEvents.slug);
+    assert.equal(publishedEventsReads, 2, "Expected one read per cache period");
+  } else {
+    // WHY not a failure on its own: Astro inlines PUBLIC_FIREBASE_PROJECT_ID
+    // at build time, and builds without it (CI) cannot read Firestore at all.
+    // Vercel builds always carry it, so there the live read is required.
+    assert.ok(
+      !requireLiveEventsRead,
+      "The packaged server never read the published show list",
+    );
+    assert.equal(afterPublish.status, 404);
+    console.log(
+      "Published events live read skipped: this build has no Firebase project id.",
+    );
   }
 
   const lead = await request("/api/capture-lead", {
@@ -178,9 +255,53 @@ if (process.argv[2] === "--worker") {
     required: requireRedisHealth,
   });
   console.log(
-    `Packaged server passed: ${routes.length} API modules, ${ticketLinks.length} ticket redirects, geo and form guards.`,
+    `Packaged server passed: ${routes.length} API modules, ${ticketLinks.length} ticket redirects, published events (${publishedEventsReads} live reads), geo and form guards.`,
   );
 } else {
+  /**
+   * The committed snapshot plus one show that exists only in this fixture,
+   * as the Firestore REST API returns `eventsPublished/current`.
+   */
+  function publishedEventsFixture() {
+    const baked = JSON.parse(
+      readFileSync("src/data/events.published.json", "utf8"),
+    );
+    const show = {
+      date: "Dec 31",
+      city: "Runtime Smoke",
+      state: "New York",
+      stateAbbr: "NY",
+      citySlug: "runtime-smoke-live",
+      slug: "runtime-smoke-live-2099-12-31",
+      description: "Packaged runtime check fixture.",
+      lineup: [],
+      ticketSource: "their-eventbrite",
+      url: "https://www.eventbrite.com/e/runtime-smoke-live-read",
+      isoDate: "2099-12-31",
+    };
+    assert.ok(
+      !baked.snapshot.events.some((event) => event.slug === show.slug),
+      "The runtime fixture show must not exist in the committed snapshot",
+    );
+    const snapshot = {
+      ...baked.snapshot,
+      events: [...baked.snapshot.events, show],
+    };
+    return {
+      slug: show.slug,
+      url: show.url,
+      document: {
+        fields: {
+          version: { integerValue: String(baked.version + 1) },
+          snapshotJson: { stringValue: JSON.stringify(snapshot) },
+          publishedAt: { stringValue: new Date().toISOString() },
+          rebuild: { nullValue: null },
+        },
+        updateTime: new Date().toISOString(),
+      },
+    };
+  }
+
   const artifact = resolve(
     process.argv[2] ?? ".vercel/output/functions/_render.func",
   );
@@ -233,6 +354,8 @@ if (process.argv[2] === "--worker") {
         routes,
         ticketLinks,
         requireRedisHealth: process.env.VERCEL_ENV === "production",
+        liveEvents: publishedEventsFixture(),
+        requireLiveEventsRead: process.env.VERCEL === "1",
       }),
       encoding: "utf8",
       timeout: 30_000,

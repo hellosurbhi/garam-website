@@ -790,10 +790,8 @@ export const events: EventEntry[] = [
   },
 ];
 
-// Only show TBA entries for cities with active tour planning (not all 200+ expansion pages).
-// These slugs appear as notify-me TBA cards on the tickets page and home shows section.
-// Standing roster per owner instruction 2026-08-14: LA, SF and New York, always.
-// Chicago and Houston removed the same day (see EVENTS-HISTORY.md).
+// Legacy expansion inventory also supplies the footer city roster.
+// Homepage and tickets Notify Me cards use the ranked five-market selection.
 const TBA_CITIES = [
   {
     city: "Los Angeles",

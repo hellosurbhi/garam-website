@@ -7,6 +7,7 @@ import { getStoredUtms } from "@/lib/leadAttribution";
 // module to one instance, so a plain boolean here still only registers the
 // pageshow listener once per page, not once per caller.
 let pageshowListenerWired = false;
+let ticketObserverWired = false;
 
 /**
  * Restores a same-tab CTA's label if the visitor lands back on this page via
@@ -34,7 +35,7 @@ function wireBfcacheRestore(): void {
 }
 
 /**
- * Wires every `[data-go-ticket]` anchor currently in the DOM: stamps a
+ * Wires `[data-go-ticket]` anchors now and when server islands insert them: stamps a
  * stable event_id, forwards UTMs onto the `/api/go/[slug]` href, and on
  * click fires `checkout_opened` (-> InitiateCheckout) before navigating to
  * checkout.
@@ -55,6 +56,22 @@ function wireBfcacheRestore(): void {
  */
 export function wireTicketCtaTracking(): void {
   wireBfcacheRestore();
+  if (!ticketObserverWired) {
+    ticketObserverWired = true;
+    new MutationObserver((records) => {
+      if (
+        records.some((record) =>
+          Array.from(record.addedNodes).some(
+            (node) =>
+              node instanceof Element &&
+              (node.matches("[data-go-ticket]") ||
+                node.querySelector("[data-go-ticket]")),
+          ),
+        )
+      )
+        wireTicketCtaTracking();
+    }).observe(document, { childList: true, subtree: true });
+  }
 
   document
     .querySelectorAll<HTMLAnchorElement>(

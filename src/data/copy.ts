@@ -209,6 +209,8 @@ export const EVENTS = {
   soldOutCta: "Sold Out",
   soldOutTagline: "Sold out",
   onSaleTagline: "On sale now",
+  waitlistDatedTagline: "Tickets coming soon",
+  waitlistUndatedTagline: "Dates to be announced",
   stickyCta: "Get Tickets",
   doorsLabel: "Doors",
   getTicketsCta: "Get tickets",

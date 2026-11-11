@@ -2,6 +2,8 @@
 
 ## Review the complete feedback before declaring merge readiness
 
+Use the actual overnight queue format with file paths when deferring work; a prose heading is not a runnable queue entry.
+
 CI and resolved inline threads do not establish independent review approval. Audit full review bodies and general comments, record each disposition and obtain the requested Claude and Codex verdicts on the final code. When markup moves into server islands, verify that scripts also initialize asynchronously inserted content.
 
 ## Finish the review loop before claiming readiness

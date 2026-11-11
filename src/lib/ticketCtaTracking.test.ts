@@ -35,6 +35,32 @@ describe("wireTicketCtaTracking", () => {
     document.body.innerHTML = "";
   });
 
+  it("wires deferred island checkout links once with attribution", async () => {
+    vi.mocked(getStoredUtms).mockReturnValue({ utmSource: "instagram" });
+    wireTicketCtaTracking();
+    const island = document.createElement("section");
+    island.innerHTML =
+      '<a data-go-ticket target="_blank" href="/api/go/test-show" data-event-slug="test-show">Get Tickets</a>';
+    document.body.append(island);
+    await Promise.resolve();
+    const anchor = island.querySelector<HTMLAnchorElement>("a")!;
+    const eventId = anchor.dataset.eventId;
+    expect(eventId).toBeTruthy();
+    expect(new URL(anchor.href).searchParams.get("eid")).toBe(eventId);
+    expect(new URL(anchor.href).searchParams.get("utm_source")).toBe(
+      "instagram",
+    );
+    wireTicketCtaTracking();
+    expect(anchor.dataset.eventId).toBe(eventId);
+    click(anchor);
+    expect(capture).toHaveBeenCalledTimes(1);
+    expect(capture).toHaveBeenCalledWith(
+      "checkout_opened",
+      expect.objectContaining({ event_slug: "test-show" }),
+      expect.objectContaining({ eventId }),
+    );
+  });
+
   it("stamps a stable event id and marks the anchor wired", () => {
     const anchor = buildAnchor();
     wireTicketCtaTracking();

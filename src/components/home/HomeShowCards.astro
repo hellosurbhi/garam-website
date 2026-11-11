@@ -1,4 +1,5 @@
 ---
+import { EVENTS } from "@/data/copy";
 import HomeShowCardContent from "./HomeShowCardContent.astro";
 import styles from "./HomeShowCards.module.css";
 import type { EventEntry } from "@/data/events";
@@ -21,6 +22,9 @@ const taglineMap = buildTaglineMap(events);
     Boolean(event.onSaleAt) && new Date(event.onSaleAt!) > new Date();
   const isLive = Boolean(event.url) && event.url !== "#";
   const isSoldOut = event.soldOut ?? false;
+  const waitlistTagline = event.isoDate
+    ? EVENTS.waitlistDatedTagline
+    : EVENTS.waitlistUndatedTagline;
   const cityLabel = formatEventLocation(event);
   const onSaleLabel = event.onSaleAt ? formatOnSaleDate(event.onSaleAt) : "";
   // The tracked redirect (fires server + browser InitiateCheckout, then
@@ -131,7 +135,7 @@ const taglineMap = buildTaglineMap(events);
       </div>
       <div class={styles["show-info"]}>
         <h3>{cityLabel}</h3>
-        <span>Dates to be announced</span>
+        <span>{waitlistTagline}</span>
       </div>
       <span
         class={[styles["ticket-label"], styles["ticket-label--notify"]].join(

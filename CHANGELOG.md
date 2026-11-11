@@ -2,6 +2,8 @@
 
 ## Waitlist review corrections (2026-11-11)
 
+- Initialize tracking for deferred checkout links, show accurate dated-waitlist copy and limit homepage event schemas to displayed ticket cards. Make the deferred follow-up plans discoverable by the overnight queue.
+
 - Reveal ticket links when deferred presale markup arrives after sales open and correct the documented V3 cache fallback.
 
 - Snapshot city and input evidence together before asynchronous attribution and centralize homepage card fallback copy.

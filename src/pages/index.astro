@@ -20,7 +20,6 @@ import { YOUTUBE_VIDEO_ID, VIDEO_METADATA } from "@/lib/constants";
 import { events, allEvents } from "@/data/events";
 import {
   getTicketPageUpcoming,
-  getSchemaDated,
   getListingInventory,
 } from "@/utils/eventFilters";
 import { buildEventSchemas } from "@/utils/eventSchema";
@@ -44,7 +43,7 @@ const websiteJsonLd = JSON.stringify({
 });
 
 // Individual Event JSON-LD blocks (one per upcoming show with a real date+url)
-const eventSchemas = buildEventSchemas(getSchemaDated(events, today));
+const eventSchemas = buildEventSchemas(upcomingEvents);
 
 // VideoObject JSON-LD
 const videoJsonLd = JSON.stringify({

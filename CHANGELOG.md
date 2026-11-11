@@ -20,6 +20,20 @@
 - Admin: partial drafts show as `Draft` and every field render is guarded for missing data.
 - Tests rewritten from scratch: the save endpoint, draft merge fuzzing, the autosave queue, the photo pipeline, the upload endpoint, storage signing, the digest and its cron route, the form-to-server contract, the alert path, the rules tests and the apply smoke tests.
 
+## fix(sync): bounded order sync, stuck-order cap, safe cursor, completed-show window (2026-10-21)
+
+Recovered from the old sessions 65918 and 8546 after confirming main lacked each piece.
+
+- **Completed shows drop out of sync.** `orderSyncableEvents` skips shows more than 3 days past their date (in the show's own timezone), so one stale show can no longer hold the shared `changed_since` cursor back and stall Purchase tracking for every current show.
+- **Bounded runtime.** Purchase CAPI sends run through `mapWithConcurrency` (10 at a time) and use `AbortSignal.timeout`, so a hung Meta endpoint cancels instead of piling up. Previously up to 100 retries ran one by one at 3 seconds each.
+- **Stuck orders give up.** `purchaseCapiAttempts` counts failed deliveries, at most one per order per run; after 5 (or at once when Meta rejects the payload with Graph API code 100, which a retry cannot fix) the order is marked unrecoverable so it stops crowding out new orders in the 100-row retry query. The count and the give-up flag are carried forward when Eventbrite re-reports an order, so the budget never restarts. Timeouts, 5xx and 429 keep the full budget.
+- **Credential and transient faults never spend the budget.** An expired Meta token (HTTP 400 code 190, 401, 403), a code 100 subcode 33 (pixel not accessible to the token) and any `is_transient` fault leave an order's attempt count alone and stay retryable, so replacing the token or waiting out an outage recovers every pending purchase. Every CAPI failure, including a first-pass rejection, appears in the returned errors. A failed sent-flag write after a successful Meta delivery is reported as `sent-flag:` and no longer counts as a failed delivery.
+- **Stored CAPI state survives a missing token or failed read.** The state is read for every order; a failed read skips that order's upsert (and holds the cursor) instead of resetting a delivered or exhausted order to zero.
+- **Cursor safety.** The next `changed_since` is the time the run started, not the time it ended, so an order changed mid-run is not skipped.
+
+Closes the BUGS.md entries UNBOUNDED-SYNC-RUNTIME (both) and PERMANENT-RETRY-STARVATION (both).
+
+**Files:** `src/pages/api/sync-orders.ts`, `src/utils/concurrency.ts`, `src/lib/capi.ts`, `src/lib/capiRetryState.ts`, `src/lib/eventbrite.ts`, `src/types/analytics.ts`, plus tests
 ## chore(ci): remove the weekly mutation audit workflow (2026-11-05)
 
 - Deleted `.github/workflows/mutation-audit.yml`, `scripts/mutation-audit-summary.mjs` and `MUTATION-AUDIT.md`. The workflow opened a draft PR (#326) every Monday to carry a report that could never be merged and was never read. The owner closed #326 and disabled the workflow; this removes the files so it cannot return.

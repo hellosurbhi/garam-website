@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { cities } from "../src/data/cities";
 import { publishedSnapshot } from "../src/data/events";
+import publishedJson from "../src/data/events.published.json";
 import {
   buildEventSlug,
   buildRollbackSnapshot,
@@ -9,6 +10,7 @@ import {
   eventEntryWriteSchema,
   isValidTimeZone,
   parseEventsSnapshot,
+  publishedEnvelopeSchema,
   shortDateFromIso,
   validateSnapshotAgainstLive,
   type EventEntry,
@@ -77,6 +79,10 @@ describe("helpers", () => {
 });
 
 describe("shape tier", () => {
+  it("accepts the committed published envelope", () => {
+    expect(() => publishedEnvelopeSchema.parse(publishedJson)).not.toThrow();
+  });
+
   it("accepts every record in the published snapshot", () => {
     expect(() => parseEventsSnapshot(live)).not.toThrow();
   });

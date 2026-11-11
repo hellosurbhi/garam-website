@@ -21,6 +21,7 @@ import { httpsUrlSchema } from "../lib/schemas";
 import { buildEventRedirects, eventAliasDates } from "../utils/eventRedirects";
 import { offsetForZone } from "../utils/timezone";
 import { isSchemaEligible } from "./eventPredicates";
+import { buildEventSlug } from "./eventSlug";
 import { PERFORMER_IDS } from "./lineup";
 
 const SLUG_PATTERN = /^[a-z0-9-]+$/;
@@ -42,17 +43,14 @@ export const TICKET_URL_HOSTS = {
   ownSite: "garammasaladating.com",
 } as const;
 
+export { buildEventSlug };
+
 let timeZones: ReadonlySet<string> | undefined;
 
 /** True for a canonical IANA zone id, e.g. "America/New_York". */
 export function isValidTimeZone(timeZone: string): boolean {
   timeZones ??= new Set(Intl.supportedValuesOf("timeZone"));
   return timeZones.has(timeZone);
-}
-
-/** Default per-event slug: stable, unique, and human-readable in a URL. */
-export function buildEventSlug(citySlug: string, isoDate?: string): string {
-  return isoDate ? `${citySlug}-${isoDate}` : `${citySlug}-tba`;
 }
 
 const shortDateFormat = new Intl.DateTimeFormat("en-US", {

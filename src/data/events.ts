@@ -9,17 +9,17 @@
 // this restriction no longer applies. test/events-config-safe.test.ts locks it in.
 //
 // The show records themselves live in events.published.json (issue 337): the
-// admin Shows tab publishes new versions of that snapshot, and every reader
-// validates it with the schemas in ./eventsSnapshot. Never delete a record
+// admin Shows tab publishes new versions of that snapshot, and the build
+// validates it with the schemas in ./eventsSnapshot (see below). Never delete a record
 // from it (src/data/CLAUDE.md); cancel or hide instead.
 import { DEFAULT_LINEUP } from "./lineup";
 import publishedJson from "./events.published.json";
-import {
-  buildEventSlug,
-  publishedEnvelopeSchema,
-  type EventEntry,
-  type EventsSnapshot,
-  type TbaCity,
+import { buildEventSlug } from "./eventSlug";
+import type {
+  EventEntry,
+  EventsSnapshot,
+  PublishedEnvelope,
+  TbaCity,
 } from "./eventsSnapshot";
 
 export type {
@@ -33,10 +33,15 @@ export { isDisplayable } from "./eventPredicates";
 
 const TODAY_ISO = new Date().toISOString().slice(0, 10);
 
-// WHY parse instead of a type cast: this file is the build's only source of
-// show data, so a malformed snapshot must fail the build loudly here rather
-// than render broken cards and JSON-LD.
-const published = publishedEnvelopeSchema.parse(publishedJson);
+// WHY a type assertion instead of publishedEnvelopeSchema.parse here: this
+// module is bundled into client islands (the apply success panel and the
+// admin casting pickers). Parsing here shipped zod and every snapshot schema
+// to the public apply page (a 117 KB events chunk). The snapshot is validated
+// before it can reach a build instead: astro.config.mjs parses it on every
+// build and fails it loudly, and test/eventsSnapshot.test.ts parses the
+// committed file in CI. Removing the astro.config.mjs parse makes this
+// assertion unchecked.
+const published = publishedJson as PublishedEnvelope;
 
 /** The published snapshot this build renders. */
 export const publishedSnapshot: EventsSnapshot = published.snapshot;

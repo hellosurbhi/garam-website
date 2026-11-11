@@ -7,11 +7,19 @@ import { readFileSync, readdirSync } from "fs";
 import { journalPostsPublished } from "./src/data/journal/index.ts";
 import { cities } from "./src/data/cities/index.ts";
 import { events, allEvents } from "./src/data/events.ts";
+import publishedEvents from "./src/data/events.published.json" with { type: "json" };
+import { publishedEnvelopeSchema } from "./src/data/eventsSnapshot.ts";
 
 import {
   buildEventRedirects,
   isEventRedirectUrl,
 } from "./src/utils/eventRedirects.ts";
+
+// WHY the snapshot is validated here: src/data/events.ts only asserts its
+// type, because it reaches browser bundles and must not carry zod. Every
+// build loads this config, so a malformed snapshot fails the build before a
+// single page renders.
+publishedEnvelopeSchema.parse(publishedEvents);
 
 const eventRedirects = buildEventRedirects(allEvents);
 

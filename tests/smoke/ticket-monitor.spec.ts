@@ -40,6 +40,17 @@ function card(slug: string, href = `/api/go/${slug}`): string {
 }
 const notifyMe = '<button data-notify-city="Chicago">Notify Me</button>';
 
+/** A live card's link without the data-go-ticket marker. */
+function unmarkedCard(href: string, slug?: string): string {
+  const identity = slug ? ` data-event-slug="${slug}"` : "";
+  return `<div class="ticket-card ticket-card--live"><a class="ticket-card__inner"${identity} href="${href}">Grab My Spot</a></div>`;
+}
+
+/** A sold-out card as TicketCard.astro renders it: straight to the vendor. */
+function soldOutCard(slug: string, href: string): string {
+  return `<div class="ticket-card ticket-card--live ticket-card--soldout"><a class="ticket-card__inner" data-event-slug="${slug}" href="${href}">Sold Out</a></div>`;
+}
+
 /**
  * Serves `html` as /tickets on `origin`. WHY: the checker validates each href
  * against the page's own origin, so fixtures need a real http origin instead
@@ -226,6 +237,21 @@ for (const [name, html] of [
     card(chicago.slug) + card(nyc.slug) + card("broken-show"),
   ],
   [
+    "an unmarked ticket card linking off-site",
+    card(chicago.slug) +
+      card(nyc.slug) +
+      unmarkedCard("https://evil.example/tickets", chicago.slug),
+  ],
+  [
+    "an unmarked ticket card with a javascript: link",
+    card(chicago.slug) + card(nyc.slug) + unmarkedCard("javascript:void(0)"),
+  ],
+  [
+    "a sold-out card for a show that is still on sale",
+    card(chicago.slug) +
+      soldOutCard(nyc.slug, `${nyc.url}?aff=garamsitetickets`),
+  ],
+  [
     "a checkout link with no card identity",
     card(chicago.slug) +
       card(nyc.slug) +
@@ -243,19 +269,100 @@ for (const [name, html] of [
   });
 }
 
+for (const [name, href, passes] of [
+  [
+    "its own listing with tracking params",
+    `${nyc.url}?aff=garamsitetickets&utm_medium=mobile`,
+    true,
+  ],
+  ["another show's listing", chicago.url, false],
+  ["an http listing", nyc.url.replace("https:", "http:"), false],
+] as const) {
+  test(`ticket monitor: sold-out card linking to ${name}`, async ({
+    page,
+    request,
+  }) => {
+    test.setTimeout(10000);
+    await showTicketPage(
+      page,
+      card(chicago.slug) + soldOutCard(nyc.slug, href),
+    );
+    const check = checkTicketListings(
+      page,
+      request,
+      [chicago, { ...nyc, soldOut: true }],
+      now,
+      { followRedirects: false },
+    );
+    if (passes) await check;
+    else await expect(check).rejects.toThrow();
+  });
+}
+
 // The vendor's own listing is the independent oracle: a wrong url typed into
 // events.ts redirects "correctly" because the redirect reads the same data.
-for (const [name, status, startDate, passes] of [
+const venue = {
+  name: "Top Secret Comedy Club",
+  addressLocality: "Chicago",
+  addressRegion: "IL",
+  addressCountry: "US",
+};
+const atVenue = {
+  name: venue.name,
+  address: { addressLocality: "Chicago, IL" },
+};
+for (const [name, status, startDate, location, passes] of [
   [
     "listing published in the show's timezone",
     200,
     "2026-12-04T19:30:00-06:00",
+    atVenue,
     true,
   ],
-  ["listing published in UTC", 200, "2026-12-05T01:30:00.000Z", true],
-  ["listing for another date", 200, "2026-12-05T19:30:00-06:00", false],
-  ["listing at another time", 200, "2026-12-04T21:00:00-06:00", false],
-  ["listing the vendor won't serve", 403, "2026-12-04T19:30:00-06:00", false],
+  ["listing published in UTC", 200, "2026-12-05T01:30:00.000Z", atVenue, true],
+  [
+    "listing that names only the city",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    { address: { addressLocality: "Chicago, IL" } },
+    true,
+  ],
+  [
+    "listing for another date",
+    200,
+    "2026-12-05T19:30:00-06:00",
+    atVenue,
+    false,
+  ],
+  ["listing at another time", 200, "2026-12-04T21:00:00-06:00", atVenue, false],
+  [
+    "listing for another venue at the same time",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    { name: "Laugh Factory", address: { addressLocality: "Chicago, IL" } },
+    false,
+  ],
+  [
+    "listing in another city at the same time",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    { address: { addressLocality: "Chicagoland Heights" } },
+    false,
+  ],
+  [
+    "listing that names no place",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    undefined,
+    false,
+  ],
+  [
+    "listing the vendor won't serve",
+    403,
+    "2026-12-04T19:30:00-06:00",
+    atVenue,
+    false,
+  ],
 ] as const) {
   test(`ticket monitor: ${name}`, async ({ page }) => {
     test.setTimeout(10000);
@@ -263,13 +370,14 @@ for (const [name, status, startDate, passes] of [
       ...event,
       startTime: "19:30",
       timezone: "America/Chicago",
+      venue,
     };
     await withSite(
       (req, res) => {
         if (req.url?.startsWith("/api/go/")) return goRoute([show])(req, res);
         res.writeHead(status, { "content-type": "text/html" });
         res.end(
-          `<script type="application/ld+json">${JSON.stringify({ "@type": "Event", startDate })}</script>`,
+          `<script type="application/ld+json">${JSON.stringify({ "@type": "Event", startDate, location })}</script>`,
         );
       },
       async (origin, client) => {

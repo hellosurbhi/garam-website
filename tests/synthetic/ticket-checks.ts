@@ -21,9 +21,17 @@ export interface TicketCheckOptions {
   verifyListings?: boolean;
 }
 
-/** Every schema.org *Event startDate in a page's JSON-LD blocks. */
-export function extractEventStartDates(html: string): string[] {
-  const found: string[] = [];
+/** One schema.org *Event a vendor page publishes about itself. */
+export interface ListedEvent {
+  startDate: string;
+  venue: string | null;
+  locality: string | null;
+}
+
+/** Every schema.org *Event with a startDate in a page's JSON-LD blocks. */
+export function extractListedEvents(html: string): ListedEvent[] {
+  const found: ListedEvent[] = [];
+  const text = (value: unknown) => (typeof value === "string" ? value : null);
   const visit = (node: unknown): void => {
     if (Array.isArray(node)) return node.forEach(visit);
     if (!node || typeof node !== "object") return;
@@ -33,7 +41,14 @@ export function extractEventStartDates(html: string): string[] {
       types.some((t) => typeof t === "string" && t.endsWith("Event")) &&
       typeof obj.startDate === "string"
     ) {
-      found.push(obj.startDate);
+      const place = [obj.location].flat()[0] as
+        Record<string, unknown> | undefined;
+      const address = place?.address as Record<string, unknown> | undefined;
+      found.push({
+        startDate: obj.startDate,
+        venue: text(place?.name),
+        locality: text(address?.addressLocality),
+      });
     }
     Object.values(obj).forEach(visit);
   };
@@ -47,6 +62,29 @@ export function extractEventStartDates(html: string): string[] {
     }
   }
   return found;
+}
+
+const comparable = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+
+// WHY: a start time alone doesn't prove the listing is this show; an
+// unrelated event at the same hour (another act at the venue's sister room,
+// or our show in another city) passed the first version of this check. The
+// listing must also name our venue, or when it names none, our city. Vendors
+// append a region ("New York, NY"), so the city is a prefix match on words.
+export function isSameShow(listed: ListedEvent, event: EventEntry): boolean {
+  const venue = event.venue?.name;
+  if (listed.venue && venue) {
+    const a = comparable(listed.venue);
+    const b = comparable(venue);
+    return a.includes(b) || b.includes(a);
+  }
+  const city = comparable(event.venue?.addressLocality ?? event.city);
+  const locality = listed.locality ? comparable(listed.locality) : "";
+  return locality === city || locality.startsWith(`${city} `);
 }
 
 /** "YYYY-MM-DD HH:MM" of an instant in the show's own timezone. */
@@ -82,25 +120,39 @@ async function expectListingStart(
     response.ok(),
     `${event.slug}: ${url} returned ${response.status()}`,
   ).toBe(true);
-  const starts = extractEventStartDates(await response.text())
-    .map((iso) => localStart(iso, event.timezone ?? "America/New_York"))
-    .filter((start): start is string => !!start);
-  const matches = starts.some((start) =>
-    event.startTime
-      ? start === `${event.isoDate} ${event.startTime}`
-      : start.startsWith(`${event.isoDate} `),
-  );
+  const listed = extractListedEvents(await response.text());
+  const expectedStart = event.startTime
+    ? `${event.isoDate} ${event.startTime}`
+    : `${event.isoDate} `;
+  const matches = listed.some((candidate) => {
+    const start = localStart(
+      candidate.startDate,
+      event.timezone ?? "America/New_York",
+    );
+    return (
+      !!start &&
+      (event.startTime
+        ? start === expectedStart
+        : start.startsWith(expectedStart)) &&
+      isSameShow(candidate, event)
+    );
+  });
+  const seen = listed
+    .map((c) => `${c.startDate} at ${c.venue ?? c.locality ?? "no place"}`)
+    .join(", ");
   expect(
     matches,
-    `${event.slug}: ${url} lists ${starts.join(", ") || "no start"}, show is ${event.isoDate} ${event.startTime ?? ""}`,
+    `${event.slug}: ${url} lists ${seen || "no event"}, show is ${expectedStart.trim()} at ${event.venue?.name ?? event.city}`,
   ).toBe(true);
 }
 
-/** One visible checkout link as the page renders it. */
+/** One visible ticket link as the page renders it. */
 export interface RenderedCheckout {
   /** The card's own identity (`data-event-slug`), independent of its href. */
   slug: string | null;
   href: string | null;
+  /** Inside a sold-out card, which links straight to the vendor listing. */
+  soldOut?: boolean;
 }
 
 export type CheckoutVerdict =
@@ -137,22 +189,63 @@ export function checkoutVerdict(
   return { ok: true, slug: link.slug, target: url.pathname + url.search };
 }
 
+// WHY: links are found by every way a ticket link can be recognized, not
+// only by the data-go-ticket marker or an /api/go/ href. The first version
+// selected on those two alone, so a broken card that lost its marker and
+// pointed off-site (or at javascript:) was never inspected at all. Sold-out
+// cards drop data-go-ticket by design and are judged separately below.
+const TICKET_LINKS = [
+  "a[data-go-ticket]",
+  'a[href*="/api/go/"]',
+  "a[data-event-slug]",
+  "a.ticket-card",
+  ".ticket-card a",
+]
+  .map((selector) => `${selector}:visible`)
+  .join(", ");
+
 async function renderedCheckouts(page: Page): Promise<RenderedCheckout[]> {
-  return page
-    .locator('a[data-go-ticket]:visible, a[href*="/api/go/"]:visible')
-    .evaluateAll((links) =>
-      links.map((link) => ({
-        slug: link.getAttribute("data-event-slug"),
-        href: link.getAttribute("href"),
-      })),
-    );
+  return page.locator(TICKET_LINKS).evaluateAll((links) =>
+    links.map((link) => ({
+      slug: link.getAttribute("data-event-slug"),
+      href: link.getAttribute("href"),
+      soldOut: link.closest(".ticket-card--soldout") !== null,
+    })),
+  );
+}
+
+// WHY: a sold-out card links straight to the vendor (TicketCard.astro uses
+// buildTicketUrl, which only adds aff and UTM query params, and BaseLayout
+// rewrites utm_medium on mobile), so it is compared on origin and path, not
+// the full URL. It must belong to a show that really is sold out: a sold-out
+// card for an on-sale show would hide the checkout.
+function soldOutProblem(
+  link: RenderedCheckout,
+  events: EventEntry[],
+): string | null {
+  const label = `${link.slug ?? "sold-out card without data-event-slug"} -> ${link.href ?? "no href"}`;
+  const event = events.find((e) => e.slug === link.slug);
+  if (!event?.soldOut || !event.url) {
+    return `${label} (sold-out card for a show that isn't sold out)`;
+  }
+  try {
+    const shown = new URL(link.href ?? "");
+    const listing = new URL(event.url);
+    if (shown.protocol !== "https:") return `${label} (not an https link)`;
+    if (shown.origin !== listing.origin || shown.pathname !== listing.pathname)
+      return `${label} (not the show's listing)`;
+  } catch {
+    return `${label} (unparseable)`;
+  }
+  return null;
 }
 
 /**
- * Checks the visible checkout links on a ticket page against the show list.
+ * Checks the visible ticket links on a ticket page against the show list.
  *
  * Every on-sale show must have a card whose own href is a same-origin
  * `/api/go/<its slug>` link, and that link must 302 to the show's checkout.
+ * A sold-out card must belong to a sold-out show and link to its listing.
  * Stale-card policy: the page is prerendered at deploy time, so a card for a
  * show whose date has passed may still be on it; it is allowed only if its
  * redirect returns buyers to /tickets. Any other card (unknown show,
@@ -189,10 +282,15 @@ export async function checkTicketListings(
   await expect
     .poll(
       async () => {
-        verdicts = (await renderedCheckouts(page)).map((link) =>
-          checkoutVerdict(link, pageOrigin),
-        );
-        const problems = verdicts.flatMap((v) => (v.ok ? [] : [v.problem]));
+        const links = await renderedCheckouts(page);
+        const problems = links.flatMap((link) => {
+          const problem = link.soldOut ? soldOutProblem(link, events) : null;
+          return problem ? [problem] : [];
+        });
+        verdicts = links
+          .filter((link) => !link.soldOut)
+          .map((link) => checkoutVerdict(link, pageOrigin));
+        problems.push(...verdicts.flatMap((v) => (v.ok ? [] : [v.problem])));
         const shown = new Set(verdicts.flatMap((v) => (v.ok ? [v.slug] : [])));
         for (const slug of expected.keys()) {
           if (!shown.has(slug)) problems.push(`${slug}: no checkout link`);

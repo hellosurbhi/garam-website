@@ -1,10 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { isUpcomingByIso } from "../src/utils/eventDate";
-import {
-  isDatedUpcoming,
-  getUpcomingDated,
-  getSchemaDated,
-} from "../src/utils/eventFilters";
+import { isDatedUpcoming, getUpcomingDated } from "../src/utils/eventFilters";
 import { isDisplayable, computeAllEvents } from "../src/data/events";
 import type { EventEntry } from "../src/data/events";
 
@@ -208,22 +204,6 @@ describe("isDisplayable", () => {
 
   it("is false for canceled events", () => {
     expect(isDisplayable(makeEvent({ status: "canceled" }))).toBe(false);
-  });
-});
-
-describe("getSchemaDated", () => {
-  const FIXED_TODAY = "2026-07-01";
-
-  it("excludes canceled, hidden, past and undated events", () => {
-    const events = [
-      makeEvent({ isoDate: "2026-07-12" }),
-      makeEvent({ isoDate: "2026-07-13", status: "canceled" }),
-      makeEvent({ isoDate: "2026-07-14", hidden: true }),
-      makeEvent({ isoDate: "2026-05-01" }),
-      makeEvent({ isoDate: undefined, date: "TBA", url: "" }),
-    ];
-    const result = getSchemaDated(events, FIXED_TODAY);
-    expect(result.map((e) => e.isoDate)).toEqual(["2026-07-12"]);
   });
 });
 

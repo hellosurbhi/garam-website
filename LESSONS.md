@@ -493,3 +493,5 @@ Vercel's recovery window is not a continued billing window. Its Deployment Stora
 **Why:** Assumed a PR is a good way to put findings in front of a human. A PR means "merge me"; for a solo owner who never opens GitHub Actions it is just clutter.
 
 **Rule:** Automation that only reports must not open PRs. Either it alerts (email) only when something is wrong, or it does not exist. A scheduled job nobody acts on gets deleted, not routed to a PR.
+
+- 2026-11-11: A later ticket update does not revoke an earlier explicit instruction to resolve review findings in the same PR. Finish those authorized fixes rather than deferring them based on the latest message alone.

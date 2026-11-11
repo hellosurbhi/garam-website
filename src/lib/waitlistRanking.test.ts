@@ -11,6 +11,23 @@ const lead = (city: string, email = "person@real.test", extra = {}) => ({
 });
 
 describe("waitlist ranking", () => {
+  it("never assigns an unknown qualified place to a different city", () => {
+    expect(
+      rankWaitlistCities([
+        lead("Paris, TX", "texas@real.test"),
+        lead("Paris%2C%20TX", "encoded@real.test"),
+        lead("Paris", "france@real.test"),
+        lead("Houston, Texas", "houston@real.test"),
+        lead("Chicago, IL", "chicago@real.test"),
+        lead("Paris, TX", "explicit@real.test", { sourceCitySlug: "dallas" }),
+      ]),
+    ).toEqual([
+      { citySlug: "chicago", count: 1 },
+      { citySlug: "dallas", count: 1 },
+      { citySlug: "houston", count: 1 },
+      { citySlug: "paris", count: 1 },
+    ]);
+  });
   it("excludes withdrawn placeholders without hiding a newly announced Texas show", () => {
     const houston = events.find(
       (event) => event.slug === "houston-2026-11-20",

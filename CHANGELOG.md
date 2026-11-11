@@ -1,5 +1,12 @@
 # Changelog
 
+## Resolve monitoring and waitlist review findings (2026-11-11)
+
+- Retain pending synthetic checks and incident reports with GitHub’s bounded maximum queue. Skip redirect checks for superseded revisions while retaining cleanup.
+- Isolate offline smoke builds with an allowlisted child environment and empty environment-file directory.
+- Keep qualified city requests intact instead of assigning unknown qualifiers to another city.
+- Verify valid Notify Me-only pages when no tickets are available, while requiring visible checkout links and exact destinations for available shows.
+
 ## California December tickets (2026-11-11)
 
 - Enable Los Angeles December 27 ticket purchases through the venue’s Eventbrite and publish its confirmed venue and Pacific show times. Remove contradictory venue-TBD and presale copy from the LA city page.

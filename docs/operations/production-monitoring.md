@@ -2,11 +2,11 @@
 
 ## What runs
 
-Unit and Firebase emulator tests validate behavior before release. The local browser fixture builds with public nonfunctional Firebase identifiers and blocks unmocked writes. Its Apply check reaches the actual SDK upload request shape without claiming a mocked Firestore acknowledgment is a real saved application.
+Unit and Firebase emulator tests validate behavior before release. The local browser fixture builds with public nonfunctional Firebase identifiers and blocks unmocked writes. Its build child receives only allowlisted process essentials and fake public Firebase identifiers, with an empty temporary directory used for environment-file loading. Its Apply check reaches the actual SDK upload request shape without claiming a mocked Firestore acknowledgment is a real saved application.
 
 The production workflow checks the deployed commit and deployed rules before submitting one application and one Notify Me lead. Each retry has its own UUID email and private cleanup ledger. Test traffic is excluded from customer lists, marketing and reporting. These checks exercise real Firebase authentication, Storage and Firestore rules.
 
-Four scheduled runs execute daily. Each trigger waits up to 28 minutes for its deployed version. A newer main commit supersedes an older waiting check without raising a customer-flow incident. Polling may be superseded; submission and cleanup jobs are serialized and never intentionally canceled by a newer run. GitHub schedules can start late, so this is not a guaranteed six-hour detection SLA.
+Four scheduled runs execute daily. Each trigger waits up to 28 minutes for its deployed version. A newer main commit supersedes an older waiting check without raising a customer-flow incident. Polling may be superseded; submission and cleanup jobs are serialized and never intentionally canceled by a newer run. Check and report groups retain up to 100 pending jobs using GitHub’s maximum queue; excess arrivals can still be canceled by the platform. GitHub schedules can start late, so this is not a guaranteed six-hour detection SLA.
 
 ## Cleanup safety
 

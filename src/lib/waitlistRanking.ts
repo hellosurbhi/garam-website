@@ -74,8 +74,7 @@ export function rankWaitlistCities(
     const rawCity = typeof lead.city === "string" ? lead.city : "";
     const citySlug = Object.hasOwn(cities, slug)
       ? slug
-      : aliases.get(normalize(rawCity)) ||
-        aliases.get(normalize(rawCity.split(",")[0]));
+      : aliases.get(normalize(rawCity));
     if (!citySlug) continue;
     const emails = emailsByCity.get(citySlug) ?? new Set<string>();
     emails.add(email);

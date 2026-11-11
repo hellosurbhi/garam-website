@@ -44,6 +44,7 @@ jobs:
     concurrency:
       group: synthetic-apply
       cancel-in-progress: false
+      queue: max
     env:
       MONITOR_REPORTING_JOB: "true"
       MONITOR_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
@@ -88,7 +89,7 @@ jobs:
           PLAYWRIGHT_BASE_URL: https://garammasaladating.com
       - name: Verify live ticket redirects
         id: redirects
-        if: success() || failure()
+        if: (success() || failure()) && steps.preversion.outputs.state == 'ready'
         run: npx playwright test --config playwright.synthetic.config.ts --grep 'ticket redirects'
         env:
           PLAYWRIGHT_BASE_URL: https://garammasaladating.com
@@ -130,6 +131,7 @@ jobs:
     concurrency:
       group: synthetic-report
       cancel-in-progress: false
+      queue: max
     steps:
       - uses: actions/checkout@v7
         id: checkout

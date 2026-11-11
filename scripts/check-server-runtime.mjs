@@ -23,6 +23,7 @@ if (process.argv[2] === "--worker") {
     requireRedisHealth,
     liveEvents,
     requireLiveEventsRead,
+    eventsVersion,
   } = JSON.parse(readFileSync(0, "utf8"));
   const config = JSON.parse(
     readFileSync(join(artifact, ".vc-config.json"), "utf8"),
@@ -134,6 +135,16 @@ if (process.argv[2] === "--worker") {
     const response = await request(route, { method: "OPTIONS" });
     assert.equal(response.status, 404, `API module failed to load: ${route}`);
   }
+
+  // The admin and the synthetic monitor compare this with the published
+  // version to tell a finished rebuild from one still in flight (plan R10).
+  const version = await request("/api/version");
+  assert.equal(version.status, 200);
+  assert.equal(
+    (await version.json()).eventsVersion,
+    eventsVersion,
+    "/api/version must report the show list version this build rendered",
+  );
 
   for (const [header, expected] of [
     ["Chicago", "Chicago"],
@@ -356,6 +367,9 @@ if (process.argv[2] === "--worker") {
         requireRedisHealth: process.env.VERCEL_ENV === "production",
         liveEvents: publishedEventsFixture(),
         requireLiveEventsRead: process.env.VERCEL === "1",
+        eventsVersion: JSON.parse(
+          readFileSync("src/data/events.published.json", "utf8"),
+        ).version,
       }),
       encoding: "utf8",
       timeout: 30_000,

@@ -1,6 +1,11 @@
 /// <reference types="astro/client" />
 /// <reference types="@testing-library/jest-dom/vitest" />
 
+interface ImportMetaEnv {
+  /** Published show list version this build rendered (astro.config.mjs). */
+  readonly BUILD_EVENTS_VERSION: number;
+}
+
 declare module "virtual:git-dates" {
   export const gitDates: Record<string, string>;
 }

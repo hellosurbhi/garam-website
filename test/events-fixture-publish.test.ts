@@ -26,6 +26,7 @@ const FIXTURE_SHOW: EventEntry = vi.hoisted(() => ({
   endTime: "21:30",
   timezone: "America/New_York",
   price: "35",
+  updatedAt: "2099-01-15T10:00:00.000Z",
   venue: {
     name: "Fixture Published Venue",
     streetAddress: "1 Fixture St",
@@ -49,7 +50,13 @@ vi.mock("@/data/events.published.json", async (importOriginal) => {
   return { default: envelope };
 });
 
-const { allEvents, events, getEventBySlug } = await import("@/data/events");
+const {
+  allEvents,
+  events,
+  getEventBySlug,
+  eventLastmodDates,
+  comingSoonEvents,
+} = await import("@/data/events");
 const { getTicketPageUpcoming, getSchemaDated } =
   await import("@/utils/eventFilters");
 const { isUpcomingByIso } = await import("@/utils/eventDate");
@@ -109,6 +116,24 @@ describe("build-time consumers read the published snapshot", () => {
   it("redirects the show's new date to its permanent page", () => {
     expect(buildEventRedirects(allEvents)).toHaveProperty(
       "/events/manhattan-2099-12-30",
+    );
+  });
+
+  it("dates the show's sitemap entry by its own edit, TBA cards by the publish", () => {
+    const publishedAt = "2099-02-01T08:00:00.000Z";
+    const lastmod = eventLastmodDates(allEvents, publishedAt);
+    expect(lastmod[FIXTURE_SHOW.slug]).toBe("2099-01-15");
+    // A TBA notify card never carries updatedAt; it falls back to the
+    // publish. (Cities with an upcoming show hide their card from allEvents,
+    // so take the card straight from the snapshot.)
+    const [tba] = comingSoonEvents;
+    expect(tba.updatedAt).toBeUndefined();
+    expect(eventLastmodDates([tba], publishedAt)).toEqual({
+      [tba.slug]: "2099-02-01",
+    });
+    // Every page astro builds gets a date (no sitemap warning branch).
+    expect(Object.keys(lastmod).sort()).toEqual(
+      allEvents.map((e) => e.slug).sort(),
     );
   });
 });

@@ -125,6 +125,21 @@ export const allEvents: EventEntry[] = buildAllEvents(
 );
 
 /**
+ * Sitemap lastmod (YYYY-MM-DD) per show page slug: the entry's own
+ * `updatedAt`, which the Shows tab sets on every edit, else the snapshot's
+ * `publishedAt` (TBA cards and records never edited since the migration).
+ * Pass `allEvents`, not `events`: every slug that gets a page needs a date.
+ */
+export function eventLastmodDates(
+  list: EventEntry[],
+  publishedAt: string,
+): Record<string, string> {
+  return Object.fromEntries(
+    list.map((e) => [e.slug, (e.updatedAt ?? publishedAt).slice(0, 10)]),
+  );
+}
+
+/**
  * Returns the canonical display status for an event.
  * Prefers the machine-readable soldOut flag over the tagline so that
  * sold-out shows with no tagline are still surfaced correctly.

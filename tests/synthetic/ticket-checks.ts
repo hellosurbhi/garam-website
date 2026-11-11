@@ -25,6 +25,9 @@ export interface TicketCheckOptions {
 export interface ListedPlace {
   venue: string | null;
   locality: string | null;
+  region: string | null;
+  /** A location given as bare text instead of a Place object. */
+  text: string | null;
 }
 
 /** One schema.org *Event a vendor page publishes about itself. */
@@ -47,19 +50,21 @@ export function extractListedEvents(html: string): ListedEvent[] {
       types.some((t) => typeof t === "string" && t.endsWith("Event")) &&
       typeof obj.startDate === "string"
     ) {
-      const places = [obj.location]
-        .flat()
-        .filter(
-          (place): place is Record<string, unknown> =>
-            !!place && typeof place === "object",
-        )
-        .map((place) => {
-          const address = place.address as Record<string, unknown> | undefined;
-          return {
-            venue: text(place.name),
+      const places = [obj.location].flat().flatMap((place): ListedPlace[] => {
+        if (typeof place === "string")
+          return [{ venue: null, locality: null, region: null, text: place }];
+        if (!place || typeof place !== "object") return [];
+        const fields = place as Record<string, unknown>;
+        const address = fields.address as Record<string, unknown> | undefined;
+        return [
+          {
+            venue: text(fields.name),
             locality: text(address?.addressLocality),
-          };
-        });
+            region: text(address?.addressRegion),
+            text: null,
+          },
+        ];
+      });
       found.push({ startDate: obj.startDate, places });
     }
     Object.values(obj).forEach(visit);
@@ -89,7 +94,10 @@ const comparable = (value: string) =>
 // match let "The Loft Annex" pass for "The Loft"). Its city must be our city
 // exactly. Vendors may append a region ("New York, NY"); the part before the
 // comma is the city (a prefix match let "New York Mills" pass), and a region
-// after it must be our state. A listing with no usable place fails.
+// after it must be our state, as must a separate addressRegion. A location
+// given only as free text can't be checked field by field, so it fails rather
+// than being skipped (skipping let "Laugh Factory, Detroit, MI" pass beside our
+// venue). A listing with no usable place fails.
 export function isSameShow(listed: ListedEvent, event: EventEntry): boolean {
   const ourVenue = comparable(event.venue?.name ?? "");
   const ourCity = comparable(event.venue?.addressLocality ?? event.city);
@@ -99,6 +107,7 @@ export function isSameShow(listed: ListedEvent, event: EventEntry): boolean {
     event.state,
   ].flatMap((region) => (region ? [comparable(region)] : []));
   const checks = listed.places.flatMap((place) => {
+    if (place.text !== null) return [false];
     const placeChecks: boolean[] = [];
     const theirVenue = comparable(place.venue ?? "");
     if (theirVenue && ourVenue) placeChecks.push(theirVenue === ourVenue);
@@ -107,6 +116,18 @@ export function isSameShow(listed: ListedEvent, event: EventEntry): boolean {
     const theirRegion = comparable(rest.join(" "));
     if (theirCity) placeChecks.push(theirCity === ourCity);
     if (theirRegion) placeChecks.push(ourRegions.includes(theirRegion));
+    // City Winery fills addressRegion with "New York, NY", so each comma part
+    // of the region field must name our city or our state.
+    const statedRegion = (place.region ?? "")
+      .split(",")
+      .map(comparable)
+      .filter(Boolean);
+    if (statedRegion.length)
+      placeChecks.push(
+        statedRegion.every(
+          (part) => part === ourCity || ourRegions.includes(part),
+        ),
+      );
     return placeChecks;
   });
   return checks.length > 0 && checks.every(Boolean);
@@ -168,7 +189,9 @@ async function expectListingStart(
         `${c.startDate} at ${
           c.places
             .map((place) =>
-              [place.venue, place.locality].filter(Boolean).join(", "),
+              [place.text, place.venue, place.locality, place.region]
+                .filter(Boolean)
+                .join(", "),
             )
             .join(" / ") || "no place"
         }`,

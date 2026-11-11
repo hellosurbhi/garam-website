@@ -386,6 +386,53 @@ for (const [name, status, startDate, location, passes] of [
     false,
   ],
   [
+    "listing in our city with another state field",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    {
+      name: venue.name,
+      address: { addressLocality: "Chicago", addressRegion: "OH" },
+    },
+    false,
+  ],
+  [
+    "listing with our city and state fields",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    {
+      name: venue.name,
+      address: { addressLocality: "Chicago", addressRegion: "IL" },
+    },
+    true,
+  ],
+  [
+    "listing whose state field repeats the city",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    {
+      name: venue.name,
+      address: { addressLocality: "Chicago, IL", addressRegion: "Chicago, IL" },
+    },
+    true,
+  ],
+  [
+    "listing whose state field names our city in another state",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    {
+      name: venue.name,
+      address: { addressLocality: "Chicago", addressRegion: "Chicago, OH" },
+    },
+    false,
+  ],
+  [
+    "listing whose second location is plain text",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    [atVenue, "Laugh Factory, Detroit, MI"],
+    false,
+  ],
+  [
     "listing whose second location is another venue",
     200,
     "2026-12-04T19:30:00-06:00",

@@ -8,6 +8,13 @@ import { journalPostsPublished } from "./src/data/journal/index.ts";
 import { cities } from "./src/data/cities/index.ts";
 import { events, allEvents } from "./src/data/events.ts";
 
+import {
+  buildEventRedirects,
+  isEventRedirectUrl,
+} from "./src/utils/eventRedirects.ts";
+
+const eventRedirects = buildEventRedirects(allEvents);
+
 const SITE = "https://garammasaladating.com";
 const TODAY_STR = new Date().toISOString().slice(0, 10);
 const DEFAULT_LASTMOD = new Date(TODAY_STR);
@@ -207,6 +214,7 @@ export default defineConfig({
   },
   adapter: vercel(),
   redirects: {
+    ...eventRedirects,
     "/south-asian-dating-tips": "/journal",
     "/south-asian-dating-tips/how-to-find-love-as-a-desi-in-new-york":
       "/journal/how-to-find-love-as-a-desi-in-new-york",
@@ -220,6 +228,7 @@ export default defineConfig({
     sitemap({
       filter: (page) => {
         if (page.includes("?")) return false;
+        if (isEventRedirectUrl(page, eventRedirects)) return false;
         if (
           page.includes("/admin") ||
           page.includes("/contestant-prep") ||
@@ -269,6 +278,12 @@ export default defineConfig({
     }),
   ],
   vite: {
+    define: {
+      "import.meta.env.BUILD_COMMIT_SHA": JSON.stringify(
+        process.env.VERCEL_GIT_COMMIT_SHA ||
+          execSync("git rev-parse HEAD", { encoding: "utf8" }).trim(),
+      ),
+    },
     plugins: [gitDatesPlugin()],
     resolve: {
       alias: {

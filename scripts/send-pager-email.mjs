@@ -67,20 +67,22 @@ export async function sendPagerEmail(mode, env, fetchImpl) {
   const runUrl = env.RUN_URL?.trim() ?? "";
 
   const subject =
-    mode === "page"
-      ? "APPLY MONITOR FAILED: production form likely broken"
-      : "Weekly pager test: the Gmail alert channel works. No action needed.";
+    env.MONITOR_SUBJECT?.replace(/[\r\n]/g, " ").slice(0, 160) ||
+    (mode === "page"
+      ? "Website monitor needs attention"
+      : "Weekly monitoring notification test");
   const text =
     mode === "page"
       ? [
-          "The synthetic apply monitor FAILED. The production apply form is likely rejecting real applicants right now.",
+          env.MONITOR_MESSAGE ||
+            "The production monitor did not complete. Customer impact needs investigation.",
           "",
           `Workflow run with the diagnosis: ${runUrl || "(run URL unavailable)"}`,
           "",
           "The verify and rules-drift step outputs in that run show the cause and the applicant impact.",
         ].join("\n")
       : [
-          "This is the scheduled proof that the Gmail pager channel still works end to end.",
+          "This is a labelled notification test. Receiving it confirms delivery to this inbox.",
           "",
           runUrl
             ? `Sent by workflow run: ${runUrl}`

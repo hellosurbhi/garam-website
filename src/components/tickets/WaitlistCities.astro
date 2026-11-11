@@ -1,0 +1,40 @@
+---
+import { PAGES } from "@/data/copy";
+import { allEvents } from "@/data/events";
+import { getWaitlistRanking } from "@/lib/waitlistRanking.server";
+import { selectWaitlistCards } from "@/lib/waitlistRanking";
+import TicketCard from "./TicketCard.astro";
+
+interface Props {
+  scheduledCitySlugs: string[];
+  scheduledCount: number;
+}
+const { scheduledCitySlugs, scheduledCount } = Astro.props;
+const upcoming = allEvents.filter(
+  (event) =>
+    event.citySlug !== undefined && scheduledCitySlugs.includes(event.citySlug),
+);
+let cards: ReturnType<typeof selectWaitlistCards> = [];
+try {
+  cards = selectWaitlistCards(await getWaitlistRanking(), upcoming);
+  Astro.response.headers.set(
+    "Cache-Control",
+    "public, max-age=0, s-maxage=3600",
+  );
+} catch (error) {
+  console.error(
+    "[waitlist-ranking] Unable to load city list",
+    error instanceof Error ? error.message : "Unknown error",
+  );
+  Astro.response.headers.set("Cache-Control", "no-store");
+}
+---
+
+{cards.map((event, index) => (
+  <TicketCard
+    event={event}
+    index={index + scheduledCount}
+    sourcePage="tickets"
+  />
+))}
+{cards.length === 0 && <p>{PAGES.tickets.waitlistEmpty}</p>}

@@ -278,15 +278,15 @@ export const activeCities: Record<string, CityData> = {
     displayName: "Los Angeles",
     titleTag: "LA South Asian Dating Show",
     metaDescription:
-      "The live desi dating show from NYC is heading to LA. 500,000 South Asians, zero live dating events. Join the waitlist for presale tickets.",
+      "Garam Masala Dating brings live desi comedy and blind dates to Lyric Hyperion Theater & Cafe in Los Angeles. Find upcoming shows and ticket links.",
     h1: "New York Built It. LA Is Next.",
     status: "active",
     badgeLabel: "Upcoming Show",
     bodyParagraphs: [
       "New York has been doing this for over a year. LA is next.",
       "The Los Angeles South Asian community runs from Artesia to Koreatown to Woodland Hills. Half a million people, dozens of zip codes, and a dating scene that still bottoms out at Dil Mil and temple events. There is a real gap here.",
-      "Garam Masala Dating is bringing its live format to LA. We are scheduling dates now. The waitlist tells us demand. The more signups, the faster we confirm a venue.",
-      "Get on the list to be notified first. If you want to be a contestant when we come to your city, apply below.",
+      "Garam Masala Dating is bringing its live format to Lyric Hyperion Theater & Cafe. See the upcoming show below for tickets.",
+      "If you want to be a contestant at the LA show, apply below.",
     ],
     ctas: [
       { label: "Join the LA Waitlist", href: "#waitlist" },
@@ -316,11 +316,11 @@ export const activeCities: Record<string, CityData> = {
     faqItems: [
       {
         q: "When is Garam Masala Dating coming to Los Angeles?",
-        a: "We are actively planning our first LA date. No venue is confirmed yet. Join the waitlist and you will get presale access and casting priority before tickets go public.",
+        a: "See the upcoming show listings on this page for current dates, times and ticket availability.",
       },
       {
         q: "Where will the LA show be held?",
-        a: "Venue is TBD. We are looking at spaces serving the Koreatown, Hollywood, and Culver City areas. Waitlist members will be the first to know.",
+        a: "The show is at Lyric Hyperion Theater & Cafe, 2106 Hyperion Avenue in Los Angeles.",
       },
       {
         q: "Can I apply to be on the show?",

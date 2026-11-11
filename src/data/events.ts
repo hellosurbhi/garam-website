@@ -69,6 +69,7 @@ export interface EventEntry {
   timezone?: string; // IANA timezone identifier, e.g. "America/New_York" (default: "America/New_York")
   status?: "canceled"; // Canceled shows stay in this file forever; every surface hides them
   previousDate?: string; // YYYY-MM-DD the show was originally scheduled for, set on reschedule
+  previousDates?: string[]; // Additional former dates, retained across repeated reschedules
   note?: string; // Human log note, e.g. "Canceled", "Moved from Aug 2"; see EVENTS-HISTORY.md
 }
 
@@ -622,6 +623,7 @@ export const events: EventEntry[] = [
     stateAbbr: "TX",
     citySlug: "austin",
     slug: buildEventSlug("austin", "2026-11-19"),
+    status: "canceled",
     description:
       "Garam Masala Dating is coming to Austin. Tickets are not on sale yet, join the list to be first to know when they drop.",
     lineup: DEFAULT_LINEUP,
@@ -630,7 +632,7 @@ export const events: EventEntry[] = [
     isoDate: "2026-11-19",
     tagline: "Tickets coming soon",
     timezone: "America/Chicago",
-    note: "Placeholder date, email capture only until tickets exist",
+    note: "Placeholder withdrawn November 5, 2026. No ticket link was published",
   },
   {
     date: "Nov 20",
@@ -639,6 +641,7 @@ export const events: EventEntry[] = [
     stateAbbr: "TX",
     citySlug: "houston",
     slug: buildEventSlug("houston", "2026-11-20"),
+    status: "canceled",
     description:
       "Garam Masala Dating is coming to Houston. Tickets are not on sale yet, join the list to be first to know when they drop.",
     lineup: DEFAULT_LINEUP,
@@ -647,7 +650,7 @@ export const events: EventEntry[] = [
     isoDate: "2026-11-20",
     tagline: "Tickets coming soon",
     timezone: "America/Chicago",
-    note: "Placeholder date, email capture only until tickets exist",
+    note: "Placeholder withdrawn November 5, 2026. No ticket link was published",
   },
   {
     date: "Nov 21",
@@ -656,6 +659,7 @@ export const events: EventEntry[] = [
     stateAbbr: "TX",
     citySlug: "san-antonio",
     slug: buildEventSlug("san-antonio", "2026-11-21"),
+    status: "canceled",
     description:
       "Garam Masala Dating is coming to San Antonio. Tickets are not on sale yet, join the list to be first to know when they drop.",
     lineup: DEFAULT_LINEUP,
@@ -664,7 +668,7 @@ export const events: EventEntry[] = [
     isoDate: "2026-11-21",
     tagline: "Tickets coming soon",
     timezone: "America/Chicago",
-    note: "Placeholder date, email capture only until tickets exist",
+    note: "Placeholder withdrawn November 5, 2026. No ticket link was published",
   },
   {
     date: "Nov 22",
@@ -673,6 +677,7 @@ export const events: EventEntry[] = [
     stateAbbr: "TX",
     citySlug: "dallas",
     slug: buildEventSlug("dallas", "2026-11-22"),
+    status: "canceled",
     description:
       "Garam Masala Dating is coming to Dallas. Tickets are not on sale yet, join the list to be first to know when they drop.",
     lineup: DEFAULT_LINEUP,
@@ -681,7 +686,22 @@ export const events: EventEntry[] = [
     isoDate: "2026-11-22",
     tagline: "Tickets coming soon",
     timezone: "America/Chicago",
-    note: "Placeholder date, email capture only until tickets exist",
+    note: "Placeholder withdrawn November 5, 2026. No ticket link was published",
+  },
+  {
+    date: "Dec 4",
+    city: "Chicago",
+    state: "Illinois",
+    stateAbbr: "IL",
+    citySlug: "chicago",
+    slug: buildEventSlug("chicago", "2026-12-04"),
+    description: "Chicago, December 4. Join the list for tickets.",
+    lineup: DEFAULT_LINEUP,
+    ticketSource: "none",
+    url: "",
+    isoDate: "2026-12-04",
+    tagline: "Tickets coming soon",
+    timezone: "America/Chicago",
   },
   {
     date: "Dec 6",
@@ -734,8 +754,8 @@ export const events: EventEntry[] = [
     ticketSource: "our-eventbrite",
     url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-cuffing-season-coming-to-sf-tickets-2003672498380?aff=oddtdtcreator",
     isoDate: "2026-12-26",
-    startTime: "17:00",
-    endTime: "19:00",
+    startTime: "18:00",
+    endTime: "20:00",
     venue: VENUE_FAIGHT_COLLECTIVE,
     price: "15",
     eventbriteId: "2003672498380",
@@ -751,15 +771,19 @@ export const events: EventEntry[] = [
     citySlug: "los-angeles",
     // WHY: slug keeps the original date so /events/los-angeles-2026-11-13 still resolves after the reschedule (same pattern as Philadelphia Oct 4)
     slug: buildEventSlug("los-angeles", "2026-11-13"),
-    description:
-      "Garam Masala Dating is coming back to Los Angeles. Tickets are not on sale yet, join the list to be first to know when they drop.",
+    description: "Garam Masala Dating is coming back to Los Angeles.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "none",
-    url: "",
+    ticketSource: "their-eventbrite",
+    url: "https://www.eventbrite.com/e/garam-masala-dating-la-tickets-2004696892370",
     isoDate: "2026-12-27",
-    tagline: "Tickets coming soon",
+    startTime: "19:30",
+    endTime: "21:30",
+    venue: VENUE_LYRIC_HYPERION,
+    price: "23.38",
+    eventbriteId: "2004696892370",
+    timezone: "America/Los_Angeles",
     previousDate: "2026-11-13",
-    note: "Moved from Nov 13. Placeholder date, email capture only until tickets exist",
+    note: "Moved from Nov 13",
   },
 ];
 

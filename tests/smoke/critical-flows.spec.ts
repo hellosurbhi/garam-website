@@ -6,10 +6,11 @@
  * Group C: Ticket / watch link integrity
  * Group D: Primary CTA sanity
  *
- * Firebase SDK calls go directly to googleapis.com; page.route() intercepts
- * them at the Playwright network layer so no real Firebase account is needed.
+ * Form writes are intercepted before they reach either the site API or Firebase.
+ * Unmocked mutations are blocked, including when this suite targets production.
  */
 
+import { parseUpload } from "../../scripts/synthetic/ledger.mjs";
 import { test, expect, type Page } from "@playwright/test";
 
 // ---------------------------------------------------------------------------
@@ -18,6 +19,7 @@ import { test, expect, type Page } from "@playwright/test";
 
 /** Intercept every Firebase googleapis.com call so the form submits offline. */
 async function mockFirebase(page: Page) {
+  const uploadOwners: string[] = [];
   // Anonymous auth
   // signInAnonymously POSTs accounts:signUp, then the SDK POSTs accounts:lookup
   // and reads `users.length` from the reply, so lookup needs its own shape.
@@ -38,17 +40,46 @@ async function mockFirebase(page: Page) {
       ),
     });
   });
-  // Storage upload (resumable and single-request)
-  await page.route("**/firebasestorage.googleapis.com/**", (route) =>
-    route.fulfill({
+  // Real SDK request shape, with offline responses. The parser is also used
+  // by the production monitor to persist upload evidence before forwarding.
+  await page.route("**/firebasestorage.googleapis.com/**", async (route) => {
+    const req = route.request();
+    const headers = await req.allHeaders();
+    const bucket = new URL(req.url()).pathname.split("/")[3];
+    // WebKit's intercepted Blob request can omit postData. This is an
+    // offline UI fixture only. The production Chromium monitor fails closed
+    // if upload metadata is unavailable; Chromium below proves its parser.
+    const body = req.postData();
+    const upload =
+      body === null
+        ? null
+        : parseUpload(req.url(), req.method(), headers, body, bucket);
+    if (upload) uploadOwners.push(upload.owner);
+    if (headers["x-goog-upload-command"] === "start") {
+      return route.fulfill({
+        status: 200,
+        headers: {
+          "X-Goog-Upload-URL": `https://firebasestorage.googleapis.com/v0/b/${bucket}/o?upload_id=fixture`,
+          "X-Goog-Upload-Status": "active",
+        },
+        body: "",
+      });
+    }
+    return route.fulfill({
       status: 200,
+      headers: { "X-Goog-Upload-Status": "final" },
       contentType: "application/json",
       body: JSON.stringify({
-        name: "applications/smoke.png",
+        name: "photos/smoke.jpeg",
+        bucket: "demo-garam-masala.appspot.com",
+        size: "100",
+        contentType: "image/jpeg",
+        generation: "1",
+        metageneration: "1",
         downloadTokens: "smoke-token",
       }),
-    }),
-  );
+    });
+  });
   // Firestore write
   await page.route("**/firestore.googleapis.com/**", (route) =>
     route.fulfill({
@@ -59,7 +90,60 @@ async function mockFirebase(page: Page) {
       }),
     }),
   );
+  return uploadOwners;
 }
+
+// These tests exercise form behavior. Server persistence is covered separately.
+// A context-level backstop blocks mutations that a future form adds without a mock.
+test.beforeEach(async ({ context, page }) => {
+  await context.route("**/*", (route) =>
+    ["GET", "HEAD", "OPTIONS"].includes(route.request().method())
+      ? route.continue()
+      : route.abort("blockedbyclient"),
+  );
+  await mockFirebase(page);
+  await page.route("**/api/capture-lead", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        ok: true,
+        id: "smoke-lead-local",
+        updateToken: "smoke-update-local",
+      }),
+    }),
+  );
+  await page.route("**/api/update-lead", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ ok: true }),
+    }),
+  );
+});
+
+test("form isolation: lead writes are mocked and unmocked writes are blocked", async ({
+  page,
+}) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  const capture = await page.evaluate(async () => {
+    const response = await fetch("/api/capture-lead", {
+      method: "POST",
+      body: JSON.stringify({ email: "smoketest@example.com" }),
+    });
+    return response.json();
+  });
+  expect(capture.id).toBe("smoke-lead-local");
+  const blocked = await page.evaluate(async () => {
+    try {
+      await fetch("/api/unmocked-smoke-write", { method: "POST" });
+      return false;
+    } catch {
+      return true;
+    }
+  });
+  expect(blocked).toBe(true);
+});
 
 /** Fill every required apply form field so isValid becomes true. */
 async function fillApplyForm(page: Page) {
@@ -100,9 +184,10 @@ test.describe("Apply form", () => {
   // stage in order: anonymous auth, photo upload, Firestore write.
   test("happy path: fills, submits, reaches auth, upload and the Firestore write", async ({
     page,
+    browserName,
   }) => {
     test.setTimeout(60_000);
-    await mockFirebase(page);
+    const uploadOwners = await mockFirebase(page);
     await page.goto("/apply", { waitUntil: "domcontentloaded" });
     await page.waitForSelector("[data-testid=apply-form]", {
       state: "visible",
@@ -128,6 +213,10 @@ test.describe("Apply form", () => {
     ];
     await submit.click();
     await Promise.all(stages);
+    if (browserName === "chromium")
+      expect(uploadOwners.length).toBeGreaterThan(0);
+    else expect(browserName).toBe("webkit");
+    expect(uploadOwners.every((owner) => owner === "smoke-uid")).toBe(true);
   });
 
   test("timeout regression: spinner always stops when Firebase hangs", async ({
@@ -461,4 +550,42 @@ test.describe("Primary CTAs", () => {
     const applyCta = page.locator("a.btn.btn-outline[href='/apply']").first();
     await expect(applyCta).toBeVisible();
   });
+});
+
+test("Notify Me supports native keyboard activation on existing and late cards", async ({
+  page,
+}) => {
+  await page.goto("/tickets", { waitUntil: "domcontentloaded" });
+  // A fixed native trigger keeps this regression useful even when all shows sell tickets.
+  if ((await page.locator("button[data-notify-city]").count()) === 0) {
+    await page.evaluate(() => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.dataset.notifyCity = "Chicago";
+      button.textContent = "Notify Me keyboard fixture";
+      document.body.append(button);
+    });
+  }
+  const button = page.locator("button[data-notify-city]").first();
+  await expect(button).toBeVisible();
+  const dialog = page.locator("dialog#notify-modal");
+  for (const key of ["Enter", "Space"]) {
+    await button.focus();
+    await page.keyboard.press(key);
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(dialog).not.toBeVisible();
+    await expect(button).toBeFocused();
+  }
+  await button.evaluate((element) => {
+    const clone = element.cloneNode(true) as HTMLElement;
+    clone.id = "late-notify-test";
+    element.after(clone);
+  });
+  const late = page.locator("#late-notify-test");
+  await late.focus();
+  await page.keyboard.press("Enter");
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(late).toBeFocused();
 });

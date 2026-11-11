@@ -1,3 +1,4 @@
+import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
 export const prerender = false;
 
 import type { APIRoute } from "astro";
@@ -460,20 +461,25 @@ export const GET: APIRoute = async ({ request, url }) => {
       matchedLeadId: string; // the doc ID itself (used to check if this lead bought)
     }
 
-    const allLeads: ParsedLead[] = leadDocs.map((doc) => {
-      const f = doc.fields ?? {};
-      const id = doc.name.split("/").pop() ?? "";
-      return {
-        id,
-        email: getStringField(f, "email"),
-        source: getStringField(f, "source"),
-        city: getStringField(f, "city") || getStringField(f, "geoCity"),
-        sourceCitySlug: getStringField(f, "sourceCitySlug"),
-        utmSource: getStringField(f, "utmSource"),
-        createdAt: getStringField(f, "createdAt"),
-        matchedLeadId: id,
-      };
-    });
+    const allLeads: ParsedLead[] = leadDocs
+      .filter(
+        (doc) =>
+          !isSyntheticSubmission(getStringField(doc.fields ?? {}, "email")),
+      )
+      .map((doc) => {
+        const f = doc.fields ?? {};
+        const id = doc.name.split("/").pop() ?? "";
+        return {
+          id,
+          email: getStringField(f, "email"),
+          source: getStringField(f, "source"),
+          city: getStringField(f, "city") || getStringField(f, "geoCity"),
+          sourceCitySlug: getStringField(f, "sourceCitySlug"),
+          utmSource: getStringField(f, "utmSource"),
+          createdAt: getStringField(f, "createdAt"),
+          matchedLeadId: id,
+        };
+      });
 
     // Filter leads by period
     const filteredLeads = allLeads.filter((l) => {
@@ -585,7 +591,11 @@ export const GET: APIRoute = async ({ request, url }) => {
     const byStatus: Record<string, number> = {};
     const byCity: Record<string, number> = {};
 
-    for (const doc of applicationDocs) {
+    const customerApplications = applicationDocs.filter(
+      (doc) =>
+        !isSyntheticSubmission(getStringField(doc.fields ?? {}, "email")),
+    );
+    for (const doc of customerApplications) {
       const f = doc.fields ?? {};
       const status = getStringField(f, "status") || "unknown";
       const city = getStringField(f, "city") || "unknown";
@@ -594,7 +604,7 @@ export const GET: APIRoute = async ({ request, url }) => {
     }
 
     const applications: ApplicationMetrics = {
-      total: applicationDocs.length,
+      total: customerApplications.length,
       byStatus,
       byCity,
     };

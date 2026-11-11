@@ -12,12 +12,13 @@ if (!process.env.PLAYWRIGHT_BASE_URL) {
 
 export default defineConfig({
   testDir: "./tests/synthetic",
-  timeout: 90_000,
+  timeout: 120_000,
+  workers: 1,
   retries: 1,
   use: {
     baseURL: process.env.PLAYWRIGHT_BASE_URL,
     screenshot: "only-on-failure",
-    trace: "on-first-retry",
+    trace: "off",
   },
   reporter: [["html", { open: "never" }], ["list"]],
   projects: [

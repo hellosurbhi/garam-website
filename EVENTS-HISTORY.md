@@ -4,6 +4,12 @@ Permanent record of every show change: cancellations, date moves, time moves, ro
 
 ## Log
 
+- 2026-11-11: Open December 27 Los Angeles ticket sales through Lyric Hyperion Eventbrite, 7:30 PM to 9:30 PM Pacific at Lyric Hyperion Theater & Cafe. Correct December 26 San Francisco from 5 PM to 7 PM to 6 PM to 8 PM Pacific at The Faight Collective. Preserve both original slugs and date history.
+
+- 2026-11-05: Mark Austin November 19, Houston November 20, San Antonio November 21 and Dallas November 22 placeholders canceled using the shared event status. Keep their historical entries and allow the cities to appear as undated waitlists according to demand.
+
+- 2026-11-05: Add Chicago December 4, 2026 with Notify Me and no ticket link. On the tickets page, replace the fixed undated roster with the top ten unique city waitlists excluding cities with upcoming listed shows. Texas placeholder dates remain excluded from this page.
+
 - 2026-11-03: Added the City Winery ticket link for the November 13 Manhattan show, with a 7:30 PM start, 9:30 PM end and $36 listed price. Removed the ticket placeholder status.
 
 - 2026-10-24: Tour reshuffle. Manhattan placeholder moved from Dec 12 to Nov 13, San Diego from Nov 15 to Dec 24, San Francisco from Nov 14 to Dec 26 (same Eventbrite link and 5 PM to 7 PM time), Los Angeles from Nov 13 to Dec 27. Placeholders added with email capture only, no tickets yet: Austin Nov 19, Houston Nov 20, San Antonio Nov 21, Dallas Nov 22.
@@ -33,6 +39,6 @@ Permanent record of every show change: cancellations, date moves, time moves, ro
 - Cancel: set `status: "canceled"` on the entry, add a `note`, add a line here. Never delete the entry.
 - Move a date: update `isoDate` and `date`, set `previousDate` to the old date, add a `note`, add a line here.
 - Time or venue change: update the fields, add a line here.
-- Notify-me roster change: edit `TBA_CITIES`, add a line here.
+- Homepage notify-me roster change: edit `TBA_CITIES`, add a line here. The tickets page ranks its own ten undated cities from waitlist signups.
 - Venue constants are permanent too: never delete one, even if no event references it anymore.
 - Deleting an event entry is never correct, no matter how the request is phrased.

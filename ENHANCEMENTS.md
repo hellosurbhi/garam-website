@@ -1638,3 +1638,19 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - [ ] LOW: [PRERELEASE-PIN] package-lock.json:947, the Babel 8 toolchain pulled in via @stryker-mutator/instrumenter now hard-pins the pre-release @jridgewell/gen-mapping@0.4.0-beta.0 (which itself wants sourcemap-codec ^1.6.0-beta.0); an unstable sourcemap component in the mutation-testing path could produce wrong source locations or crash the weekly mutation audit (`mutation:ratchet`) on its next run. | Files: package-lock.json | PR: #328 | Head: 5e4d9b64a4dd75ed8ed50b1fd0a6afaacaac8b2c
 
 <!-- fable-routed PR #328 head 5e4d9b64a4dd75ed8ed50b1fd0a6afaacaac8b2c -->
+
+## Claude follow-up suggestions implemented (2026-11-10)
+
+The owner approved both suggestions for https://github.com/hellosurbhi/garam-website/pull/331.
+
+- Redis retry pacing: implemented a 250 ms pause before the single transient retry, preserving the two-attempt maximum and immediate authentication failure. Regression tests cover network errors, body transport errors and HTTP 429/503.
+- Redirect-check reporting: implemented complete failure aggregation with at most four concurrent read-only requests. Tests cover multiple failures, transport errors and successful aliases in the same run.
+
+## Claude cache follow-up awaiting owner decision (2026-11-10)
+
+These are proposals awaiting the owner, not authorized overnight tasks.
+
+- Implemented after owner approval: abort and release the matching waitlist refresh at its 15-second deadline. Later requests can retry, and regression tests verify late settlement cannot clear a newer lock or start a query or cache write.
+- Claude suggests returning freshly computed rankings when aggregate persistence fails, instead of retaining the last persisted ranking. This predates the timeout fix. If approved, retain validated computed counts in memory separately from persisted freshness, avoid stamping failed writes as fresh and test cold-cache and stale-cache PATCH failures.
+
+- Optional future cooldown after repeated ranking deadlines: Claude approved the requested retry behavior but noted visitors could repeatedly wait 15 seconds during a persistent outage. If the owner later requests it, add a short per-instance cooldown that immediately returns stale counts, without delaying cold-cache recovery indefinitely; verify time-based retry eligibility and that normal successful refreshes reset the cooldown. This is not authorized for implementation.

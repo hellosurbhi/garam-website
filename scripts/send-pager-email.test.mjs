@@ -146,14 +146,33 @@ describe("sendPagerEmail", () => {
 
   it("page mode names the outage and links the run", async () => {
     const { subject } = await sendPagerEmail("page", env, mockFetch);
-    expect(subject).toContain("APPLY MONITOR FAILED");
+    expect(subject).toContain("Website monitor needs attention");
     expect(decodeSentMessage()).toContain(env.RUN_URL);
+  });
+
+  it("preserves the custom recovery subject without allowing new headers", async () => {
+    const { subject } = await sendPagerEmail(
+      "page",
+      {
+        ...env,
+        MONITOR_SUBJECT:
+          "Website monitor: cleanup recovered\r\nBcc: fixture@example.com",
+      },
+      mockFetch,
+    );
+    expect(subject).toBe(
+      "Website monitor: cleanup recovered  Bcc: fixture@example.com",
+    );
+    expect(decodeSentMessage()).not.toMatch(/^Bcc:/m);
+    expect(decodeSentMessage()).toContain(
+      "Subject: Website monitor: cleanup recovered",
+    );
   });
 
   it("test mode is unmistakably a drill", async () => {
     const { subject } = await sendPagerEmail("test", env, mockFetch);
-    expect(subject).toContain("pager test");
-    expect(subject).toContain("No action needed");
+    expect(subject).toContain("notification test");
+    expect(subject).not.toContain("likely broken");
     expect(subject).not.toContain("FAILED");
   });
 

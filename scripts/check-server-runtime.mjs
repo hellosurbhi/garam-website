@@ -11,42 +11,72 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
+import { checkRedisHealth } from "./check-redis-health.mjs";
+
 const script = fileURLToPath(import.meta.url);
 
 if (process.argv[2] === "--worker") {
   const artifact = process.argv[3];
-  const { routes, ticketLinks } = JSON.parse(readFileSync(0, "utf8"));
+  const { routes, ticketLinks, requireRedisHealth } = JSON.parse(
+    readFileSync(0, "utf8"),
+  );
   const config = JSON.parse(
     readFileSync(join(artifact, ".vc-config.json"), "utf8"),
   );
 
-  // WHY: exercise the real packaged handler without contacting vendors,
-  // analytics or customer services. Astro can inline build-time configuration,
+  // WHY: exercise the real packaged handler without submitting data to vendors,
+  // analytics or customer services. Only the explicit Redis PING may use the network.
+  // Astro can inline build-time configuration,
   // so clearing the child environment alone does not prevent external calls.
   const networkAttempts = [];
-  globalThis.fetch = async (input) => {
+  const realFetch = globalThis.fetch.bind(globalThis);
+  let redisConnection;
+  let redisCalls = 0;
+  let redisFixtureError;
+  let denyRedisRequests = false;
+  globalThis.fetch = async (input, init) => {
     const url = new URL(input instanceof Request ? input.url : input);
     // The adapter fetches the static error page from Vercel after a 404.
     // Supply that asset locally rather than starting a second HTTP server.
     if (url.href === "https://localhost/404.html") {
       return new Response("Not found", { status: 404 });
     }
-    // Exercise the existing rate-limit fail-open path when a Vercel build
-    // contains Redis configuration. No request or credential leaves the test.
-    // WHY a 503 response, not a thrown error: the first version threw here, but
-    // @upstash/redis retries any thrown fetch error 5 times with exponential
-    // backoff (about 4s total), which outlasts the 1500ms ceiling in
-    // src/lib/rateLimit.ts. The smoke run then logged "Timeout: Upstash rate
-    // limit check" instead of failing open instantly. A non-ok response is not
-    // retried: the client throws UpstashError at once and enforceRateLimit
-    // fails open. Reverting to a throw brings the timeout spam back.
+    // WHY return a local response instead of throwing: thrown fetch errors
+    // trigger Redis retries and misleading timeout logs. The allow/deny fixtures
+    // preserve the no-network intent of PR #332 while checking HTTP 429 as well.
+    // Model the sliding-window Redis response locally. The package check must
+    // verify allow/deny handling without contacting the production database.
     if (url.hostname.endsWith(".upstash.io") && url.pathname === "/pipeline") {
-      return new Response(
-        JSON.stringify({
-          error: "Redis intentionally offline during runtime smoke check",
-        }),
-        { status: 503, headers: { "content-type": "application/json" } },
-      );
+      redisCalls++;
+      redisConnection ??= {
+        url: url.origin,
+        authorization: new Headers(
+          init?.headers ??
+            (input instanceof Request ? input.headers : undefined),
+        ).get("authorization"),
+      };
+      try {
+        const commands =
+          input instanceof Request ? await input.json() : JSON.parse(init.body);
+        assert.ok(Array.isArray(commands) && commands.length > 0);
+        const results = commands.map((command) => {
+          assert.ok(Array.isArray(command) && command.length >= 4);
+          assert.ok(
+            ["evalsha", "eval"].includes(String(command[0]).toLowerCase()),
+            "Unexpected Redis command in runtime smoke check",
+          );
+          const limit = Number(command[3 + Number(command[2])]);
+          assert.ok(Number.isFinite(limit) && limit > 0);
+          return { result: [denyRedisRequests ? -1 : limit - 1, limit] };
+        });
+        return Response.json(results);
+      } catch {
+        // Keep errors outside the SDK fetch retry loop and never print request bodies.
+        redisFixtureError ??= new Error(
+          "Unexpected Redis command or malformed body in runtime smoke check",
+        );
+        return Response.json([{ result: [0, 1] }]);
+      }
     }
     networkAttempts.push(`${url.origin}${url.pathname}`);
     throw new Error("Runtime smoke checks must not call external services");
@@ -55,13 +85,15 @@ if (process.argv[2] === "--worker") {
     pathToFileURL(join(artifact, config.handler)).href
   );
   assert.equal(typeof handler.fetch, "function");
-  const request = (path, init = {}) => {
+  const request = async (path, init = {}) => {
     const headers = new Headers(init.headers);
     // Use the existing bot exclusion so smoke clicks do not count as sales intent.
     headers.set("user-agent", "Googlebot (packaged runtime smoke test)");
-    return handler.fetch(
+    const response = await handler.fetch(
       new Request(`https://garammasaladating.com${path}`, { ...init, headers }),
     );
+    if (redisFixtureError) throw redisFixtureError;
+    return response;
   };
 
   // OPTIONS loads each API module without executing a submission or cron.
@@ -120,7 +152,31 @@ if (process.argv[2] === "--worker") {
     assert.equal(response.status, 403, `Origin guard failed: ${path}`);
     assert.equal((await response.json()).error, "Forbidden");
   }
+  if (redisCalls > 0) {
+    denyRedisRequests = true;
+    const limited = await request("/api/capture-lead", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-real-ip": "192.0.2.123",
+      },
+      body: "{}",
+    });
+    assert.equal(
+      limited.status,
+      429,
+      "Configured Redis denial must enforce rate limits",
+    );
+    console.log(
+      "Rate-limit integration passed with local Redis fixtures (allow and deny). Connectivity is verified by the separate read-only PING below.",
+    );
+  }
+  if (redisFixtureError) throw redisFixtureError;
   assert.deepEqual(networkAttempts, []);
+  await checkRedisHealth(redisConnection, {
+    fetch: realFetch,
+    required: requireRedisHealth,
+  });
   console.log(
     `Packaged server passed: ${routes.length} API modules, ${ticketLinks.length} ticket redirects, geo and form guards.`,
   );
@@ -173,7 +229,11 @@ if (process.argv[2] === "--worker") {
     const child = spawnSync(process.execPath, [script, "--worker", isolated], {
       cwd: isolated,
       env: { NODE_ENV: "production" },
-      input: JSON.stringify({ routes, ticketLinks }),
+      input: JSON.stringify({
+        routes,
+        ticketLinks,
+        requireRedisHealth: process.env.VERCEL_ENV === "production",
+      }),
       encoding: "utf8",
       timeout: 30_000,
       maxBuffer: 2 * 1024 * 1024,

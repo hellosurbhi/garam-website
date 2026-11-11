@@ -160,8 +160,8 @@ export const POST: APIRoute = async ({ request }) => {
     );
     await claim.release();
   }
-  return new Response(JSON.stringify({ ok: true }), {
-    status: 200,
+  return new Response(JSON.stringify({ ok: delivered }), {
+    status: delivered ? 200 : 503,
     headers: { "Content-Type": "application/json" },
   });
 };

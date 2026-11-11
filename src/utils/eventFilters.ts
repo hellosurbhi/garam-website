@@ -27,3 +27,11 @@ export function getSchemaDated(
     (e) => isDisplayable(e) && !!e.isoDate && e.isoDate >= todayISO,
   );
 }
+
+/** Return ticket-page shows through the shared cancellation-aware filter. */
+export function getTicketPageUpcoming(
+  events: EventEntry[],
+  todayISO: string,
+): EventEntry[] {
+  return getUpcomingDated(events, todayISO);
+}

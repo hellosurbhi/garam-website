@@ -1,3 +1,4 @@
+import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
 export const prerender = false;
 
 import type { APIRoute } from "astro";
@@ -119,7 +120,7 @@ export const POST: APIRoute = async ({ request }) => {
       docs.map(async (doc) => {
         const f = doc.fields;
         const email = str(f, "email");
-        if (!email) return;
+        if (!email || isSyntheticSubmission(email)) return;
 
         const city = str(f, "city");
         const sourcePage = str(f, "sourcePage");

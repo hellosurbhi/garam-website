@@ -26,16 +26,20 @@ const { source = "notify-modal" } = Astro.props;
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
-        ><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg
       >
+        <path d="M18 6 6 18"></path>
+        <path d="m6 6 12 12"></path>
+      </svg>
     </button>
     <!-- min-height prevents CLS when switching between steps -->
     <div class="notify-steps-wrapper">
       <div id="notify-form-view">
-        <h2 id="notify-modal-title" class="modal-title">Get Notified</h2>
+        <h2 id="notify-modal-title" class="modal-title">
+          Get Notified
+        </h2>
         <p id="notify-subtitle-default" class="modal-subtitle">
-          We'll email you when tickets drop for <strong id="notify-city-name"
-          ></strong>.
+          We'll email you when tickets drop for{" "}
+          <strong id="notify-city-name"></strong>.
         </p>
         <p id="notify-subtitle-presale" class="modal-subtitle" hidden>
           Tickets go on sale <strong id="notify-on-sale-date"></strong>. We'll
@@ -59,11 +63,19 @@ const { source = "notify-modal" } = Astro.props;
           />
           <input type="hidden" id="notify-city" />
           <input type="hidden" id="notify-city-slug" />
-          <p id="notify-error" class="modal-error" hidden aria-live="assertive">
-          </p>
-          <button type="submit" class="modal-submit" data-testid="notify-submit"
-            >Notify Me</button
+          <p
+            id="notify-error"
+            class="modal-error"
+            hidden
+            aria-live="assertive"
+          ></p>
+          <button
+            type="submit"
+            class="modal-submit"
+            data-testid="notify-submit"
           >
+            Notify Me
+          </button>
         </form>
       </div>
       <div id="notify-phone-view" hidden>
@@ -90,13 +102,14 @@ const { source = "notify-modal" } = Astro.props;
             class="modal-error"
             hidden
             aria-live="assertive"
-          >
-          </p>
-          <button type="submit" class="modal-submit">Send Me Drops</button>
+          ></p>
+          <button type="submit" class="modal-submit">
+            Send Me Drops
+          </button>
         </form>
-        <button type="button" id="notify-skip" class="modal-skip"
-          >Maybe later</button
-        >
+        <button type="button" id="notify-skip" class="modal-skip">
+          Maybe later
+        </button>
       </div>
       <div
         id="notify-success"
@@ -117,6 +130,7 @@ const { source = "notify-modal" } = Astro.props;
 
 <script>
   import { cleanPhone } from "@/lib/phone";
+  import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
   import { identifyLead, trackLeadEvent, trackError } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
   import { reportFailure } from "@/lib/failureAlert";
@@ -160,86 +174,76 @@ const { source = "notify-modal" } = Astro.props;
       openerEl = null;
     });
 
-    // Wire up any [data-notify-city] trigger elements on the page
-    document
-      .querySelectorAll<HTMLElement>("[data-notify-city]")
-      .forEach((el) => {
-        const open = () => {
-          const city = el.dataset.notifyCity ?? "";
-          // Prefer the slug the trigger button carries (from EventEntry.citySlug
-          // in src/data/events.ts); fall back to slugifying the display name
-          // so the source is never flat even if a future event forgets citySlug.
-          const rawSlug = el.dataset.notifyCitySlug?.trim();
-          const citySlug = rawSlug ? toCitySlug(rawSlug) : toCitySlug(city);
-          const nameEl = document.getElementById("notify-city-name");
-          const cityInput = document.getElementById(
-            "notify-city",
-          ) as HTMLInputElement;
-          const citySlugInput = document.getElementById(
-            "notify-city-slug",
-          ) as HTMLInputElement;
-          if (nameEl) nameEl.textContent = city;
-          if (cityInput) cityInput.value = city;
-          if (citySlugInput) citySlugInput.value = citySlug;
-          // Toggle presale vs default subtitle
-          const onSaleAt = el.dataset.notifyOnSaleAt ?? "";
-          const subtitleDefault = document.getElementById(
-            "notify-subtitle-default",
-          );
-          const subtitlePresale = document.getElementById(
-            "notify-subtitle-presale",
-          );
-          const onSaleDateEl = document.getElementById("notify-on-sale-date");
-          if (onSaleAt) {
-            const formatted = new Date(onSaleAt).toLocaleString(
-              "en-US",
-              ON_SALE_DATE_FORMAT,
-            );
-            if (onSaleDateEl) onSaleDateEl.textContent = formatted;
-            subtitleDefault?.setAttribute("hidden", "");
-            subtitlePresale?.removeAttribute("hidden");
-          } else {
-            subtitleDefault?.removeAttribute("hidden");
-            subtitlePresale?.setAttribute("hidden", "");
-          }
-          // Reset to form state
-          document
-            .getElementById("notify-form-view")
-            ?.removeAttribute("hidden");
-          document
-            .getElementById("notify-phone-view")
-            ?.setAttribute("hidden", "");
-          document.getElementById("notify-success")?.setAttribute("hidden", "");
-          const errorEl = document.getElementById("notify-error");
-          if (errorEl) {
-            errorEl.textContent = "";
-            errorEl.setAttribute("hidden", "");
-          }
-          notifyDocId = null;
-          openerEl = document.activeElement as HTMLElement;
-          trackLeadEvent("notify_modal_opened", {
-            source: composeSource(citySlug),
-            sourceCitySlug: citySlug || undefined,
-            sourcePage: window.location.pathname,
-            city,
-          });
-          trackLeadEvent("waitlist_modal_opened", {
-            source: composeSource(citySlug),
-            sourceCitySlug: citySlug || undefined,
-            sourcePage: window.location.pathname,
-            city,
-          });
-          dialog.showModal();
-          dialog.focus();
-        };
-        el.addEventListener("click", open);
-        el.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            open();
-          }
-        });
+    // Delegation also handles the daily ranked cards loaded after the page.
+    document.addEventListener("click", (event) => {
+      const el =
+        event.target instanceof Element
+          ? event.target.closest<HTMLElement>("[data-notify-city]")
+          : null;
+      if (!el) return;
+      const city = el.dataset.notifyCity ?? "";
+      // Prefer the slug the trigger button carries (from EventEntry.citySlug
+      // in src/data/events.ts); fall back to slugifying the display name
+      // so the source is never flat even if a future event forgets citySlug.
+      const rawSlug = el.dataset.notifyCitySlug?.trim();
+      const citySlug = rawSlug ? toCitySlug(rawSlug) : toCitySlug(city);
+      const nameEl = document.getElementById("notify-city-name");
+      const cityInput = document.getElementById(
+        "notify-city",
+      ) as HTMLInputElement;
+      const citySlugInput = document.getElementById(
+        "notify-city-slug",
+      ) as HTMLInputElement;
+      if (nameEl) nameEl.textContent = city;
+      if (cityInput) cityInput.value = city;
+      if (citySlugInput) citySlugInput.value = citySlug;
+      // Toggle presale vs default subtitle
+      const onSaleAt = el.dataset.notifyOnSaleAt ?? "";
+      const subtitleDefault = document.getElementById(
+        "notify-subtitle-default",
+      );
+      const subtitlePresale = document.getElementById(
+        "notify-subtitle-presale",
+      );
+      const onSaleDateEl = document.getElementById("notify-on-sale-date");
+      if (onSaleAt) {
+        const formatted = new Date(onSaleAt).toLocaleString(
+          "en-US",
+          ON_SALE_DATE_FORMAT,
+        );
+        if (onSaleDateEl) onSaleDateEl.textContent = formatted;
+        subtitleDefault?.setAttribute("hidden", "");
+        subtitlePresale?.removeAttribute("hidden");
+      } else {
+        subtitleDefault?.removeAttribute("hidden");
+        subtitlePresale?.setAttribute("hidden", "");
+      }
+      // Reset to form state
+      document.getElementById("notify-form-view")?.removeAttribute("hidden");
+      document.getElementById("notify-phone-view")?.setAttribute("hidden", "");
+      document.getElementById("notify-success")?.setAttribute("hidden", "");
+      const errorEl = document.getElementById("notify-error");
+      if (errorEl) {
+        errorEl.textContent = "";
+        errorEl.setAttribute("hidden", "");
+      }
+      notifyDocId = null;
+      openerEl = document.activeElement as HTMLElement;
+      trackLeadEvent("notify_modal_opened", {
+        source: composeSource(citySlug),
+        sourceCitySlug: citySlug || undefined,
+        sourcePage: window.location.pathname,
+        city,
       });
+      trackLeadEvent("waitlist_modal_opened", {
+        source: composeSource(citySlug),
+        sourceCitySlug: citySlug || undefined,
+        sourcePage: window.location.pathname,
+        city,
+      });
+      dialog.showModal();
+      dialog.focus();
+    });
 
     // Close on button or backdrop click
     dialog
@@ -285,10 +289,12 @@ const { source = "notify-modal" } = Astro.props;
           };
           const captured = await captureLead(data);
           notifyDocId = captured.id ? captured : null;
-          identifyLead(notifyEmail, { ...attribution, city });
-          trackLeadEvent("lead_email_submitted", { ...attribution, city });
-          trackLeadEvent("email_signup", { ...attribution, city });
-          trackLeadEvent("waitlist_submit", { ...attribution, city });
+          if (!isSyntheticSubmission(notifyEmail)) {
+            identifyLead(notifyEmail, { ...attribution, city });
+            trackLeadEvent("lead_email_submitted", { ...attribution, city });
+            trackLeadEvent("email_signup", { ...attribution, city });
+            trackLeadEvent("waitlist_submit", { ...attribution, city });
+          }
           if (errorEl) {
             errorEl.textContent = "";
             errorEl.setAttribute("hidden", "");

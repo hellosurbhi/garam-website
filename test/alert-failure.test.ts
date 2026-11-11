@@ -138,10 +138,11 @@ describe("alert-failure handler", () => {
     expect(html).toContain("&lt;script&gt;");
   });
 
-  it("still returns 200 when the mail send fails (client fires and forgets)", async () => {
+  it("returns 503 when no notification channel accepts the alert", async () => {
     mockSend.mockRejectedValue(new Error("SMTP down"));
     const res = await POST(makeContext(makeRequest(validReport)));
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(503);
+    expect(await res.json()).toEqual({ ok: false });
   });
 
   describe("one failure incident = one email (Upstash dedupe)", () => {
@@ -183,7 +184,7 @@ describe("alert-failure handler", () => {
       mockRedisDel.mockResolvedValue(1);
       mockSend.mockRejectedValue(new Error("SMTP down"));
       const res = await POST(makeContext(makeRequest(validReport)));
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(503);
       // The claim is freed so the NEXT report of this incident can page,
       // instead of an hour of suppression behind an alert that never sent.
       expect(mockRedisDel).toHaveBeenCalledTimes(1);

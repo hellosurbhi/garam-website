@@ -1,5 +1,25 @@
 # Lessons
 
+## Test real SDK protocol selection
+
+Calling uploadBytesResumable does not guarantee a resumable HTTP request for a small file. Firebase uses multipart uploads below its threshold. Observe both formats and assert upload evidence in the test body so an unused route assertion cannot create false confidence.
+
+## Prove the exact test and its cleanup
+
+A recent record can belong to a previous run. Give each production attempt its own reserved identity and persist upload ownership before forwarding requests. Deletion acceptance is not absence verification. Keep cleanup evidence through crashes and refuse mismatched customer records.
+
+## Do not confuse notification acceptance with delivery
+
+A final failing workflow step cannot activate earlier failure steps. Report through a separate job, inspect HTTP results and verify inbox receipt during an authorized drill. Watch missing schedules from outside GitHub.
+
+## Distinguish packaged fixtures from production connectivity
+
+Intentionally rejecting Redis calls in the packaged smoke test produced alarming fallback errors in successful builds. Use explicit local allow and deny fixtures for the package integration check, and label its limits. Verify the public ticket redirect and inspect production logs separately before reporting a rollout complete.
+
+## Preserve usable cache data during format migrations
+
+The first city fix deleted valid cached data before a network refresh. Decode the completed legacy cache synchronously instead, then use one version-aware reader for form prefill and lead attribution. Verify offline sessions and partial responses.
+
 ## Check city prefill before the geo cache refresh completes
 
 The first local browser check found that the newsletter script could read an old encoded city before attribution bootstrap cleared it. Guard geo-city reads with the cache version, then verify both forms with a seeded old session and a manually entered city. API tests alone did not catch the script-order race.
@@ -458,6 +478,14 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 
 **Rule:** Retention bounds age, not volume. Keep `git.deploymentEnabled` in `vercel.json` configured to enable `main` and disable feature-branch deployments. The limit is in bytes, so when the usage email returns check the Usage page, not just the `vercel ls` count. Before deleting old deployments, resolve which one the production alias points to and keep it. Before turning Previews off, grep `package.json` for scripts that need a Preview URL (like `test:smoke:preview`).
 
+## 2026-11-05: Smoke tests must intercept the actual persistence boundary
+
+Browser interception of Firestore does not intercept server-side Firestore writes behind `/api/capture-lead`. The weekly critical-flow tests submitted the reserved smoke identity into production. Mock the same-origin lead API, block unmocked mutations and verify the returned fixture ID. Count unique emails per selected city and exclude the confirmed fixture when reporting historical demand.
+
+## 2026-11-05: Verify storage accounting separately from recovery retention
+
+Vercel's recovery window is not a continued billing window. Its Deployment Storage documentation says a deleted deployment stops contributing immediately, although reported daily peaks can remain. The authenticated Hobby dashboard showed 2.37 GB / 10 GB on November 5. Verify the actual Usage screen when billing APIs return costs_not_found; do not infer storage usage from deployment counts or treat separate storage allowances as one interchangeable pool.
+
 ## A report is not a PR
 
 **What went wrong:** The weekly mutation audit opened a draft PR (#326) every Monday just to carry a report file. It could never be merged, nobody read it, and it sat in the PR list as noise.
@@ -465,3 +493,5 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 **Why:** Assumed a PR is a good way to put findings in front of a human. A PR means "merge me"; for a solo owner who never opens GitHub Actions it is just clutter.
 
 **Rule:** Automation that only reports must not open PRs. Either it alerts (email) only when something is wrong, or it does not exist. A scheduled job nobody acts on gets deleted, not routed to a PR.
+
+- 2026-11-11: A later ticket update does not revoke an earlier explicit instruction to resolve review findings in the same PR. Finish those authorized fixes rather than deferring them based on the latest message alone.

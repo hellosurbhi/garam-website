@@ -2,6 +2,8 @@
 
 ## Waitlist review corrections (2026-11-11)
 
+- Snapshot city and input evidence together before asynchronous attribution and centralize homepage card fallback copy.
+
 - Bind entered-city evidence to the last input value so a delayed geo prefill after clearing the field cannot count as explicit demand.
 
 - Exclude ambiguous historical popup and Spice List city prefills from demand ranking. New edited city inputs record explicit market interest through the existing source city field without changing Firestore rules.

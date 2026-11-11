@@ -206,6 +206,9 @@ export const COOKIE_CONSENT = {
 export const EVENTS = {
   showName: "Garam Masala Comedy Dating Show",
   ticketCta: "Grab My Spot",
+  soldOutCta: "Sold Out",
+  soldOutTagline: "Sold out",
+  onSaleTagline: "On sale now",
   stickyCta: "Get Tickets",
   doorsLabel: "Doors",
   getTicketsCta: "Get tickets",

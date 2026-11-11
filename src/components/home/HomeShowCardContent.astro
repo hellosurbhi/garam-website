@@ -1,4 +1,5 @@
 ---
+import { EVENTS } from "@/data/copy";
 import type { EventEntry } from "@/data/events";
 import { parseMonth, parseDay } from "@/utils/eventDate";
 import { formatEventLocation } from "@/utils/eventCity";
@@ -19,7 +20,9 @@ const cityLabel = formatEventLocation(event);
 <div class={styles["show-info"]}>
   <h3>{cityLabel}</h3>
   <span>
-    {isSoldOut ? (event.tagline ?? "Sold out") : (tagline ?? "On sale now")}
+    {isSoldOut
+      ? (event.tagline ?? EVENTS.soldOutTagline)
+      : (tagline ?? EVENTS.onSaleTagline)}
   </span>
 </div>
 <span
@@ -28,5 +31,5 @@ const cityLabel = formatEventLocation(event);
     isSoldOut ? styles["ticket-label--soldout"] : "",
   ].join(" ")}
 >
-  {isSoldOut ? "Sold Out" : "Grab My Spot"}
+  {isSoldOut ? EVENTS.soldOutCta : EVENTS.ticketCta}
 </span>

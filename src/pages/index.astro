@@ -391,6 +391,7 @@ const speakableJsonLd = JSON.stringify({
         const popupCity = (
           document.getElementById("popup-city") as HTMLInputElement | null
         )?.value.trim();
+        const submittedCitySource = cityInputSource();
         const errorEl = document.getElementById("popup-email-error");
         const submitBtn = (
           e.target as HTMLFormElement
@@ -405,7 +406,7 @@ const speakableJsonLd = JSON.stringify({
           const captured = await captureLead({
             email: savedEmail,
             ...(popupCity
-              ? { city: popupCity, cityInputSource: cityInputSource() }
+              ? { city: popupCity, cityInputSource: submittedCitySource }
               : {}),
             ...attribution,
           });

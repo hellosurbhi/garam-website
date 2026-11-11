@@ -65,6 +65,11 @@ function isFinished(row: Row): boolean {
   return str(row.status) !== "Draft";
 }
 
+/** When an application was filed; rows from before finalizedAt existed fall back to when they started. */
+function finishedAt(row: Row): unknown {
+  return row.finalizedAt ?? row.submittedAt;
+}
+
 export function buildDailyDigest(input: DigestInput): DigestResult {
   const from = input.since.getTime();
   const to = input.now.getTime();
@@ -72,11 +77,17 @@ export function buildDailyDigest(input: DigestInput): DigestResult {
   const leads = input.leads.filter(
     (r) => isLive(r) && inWindow(r.createdAt, from, to),
   );
-  const apps = input.applications.filter(
-    (r) => isLive(r) && inWindow(r.submittedAt, from, to),
+  const live = input.applications.filter(isLive);
+  // WHY finished is picked by when it was finished, not started: someone who
+  // starts at 11pm and finishes at 8am must show up as finished in the digest
+  // covering 8am, or the producer never hears about the application.
+  const finished = live.filter(
+    (r) => isFinished(r) && inWindow(finishedAt(r), from, to),
   );
-  const unfinished = apps.filter((r) => !isFinished(r));
-  const finished = apps.filter(isFinished);
+  const unfinished = live.filter(
+    (r) => !isFinished(r) && inWindow(r.submittedAt, from, to),
+  );
+  const apps = [...finished, ...unfinished];
   const problems = input.incidents.filter((r) =>
     inWindow(r.createdAt, from, to),
   );
@@ -97,7 +108,9 @@ export function buildDailyDigest(input: DigestInput): DigestResult {
   );
   const weekDays = Math.max(1, (from - weekFrom) / DAY_MS);
   const dailyDrafts = weekApps.length / weekDays;
-  const dailyFinished = weekApps.filter(isFinished).length / weekDays;
+  const dailyFinished =
+    live.filter((r) => isFinished(r) && inWindow(finishedAt(r), weekFrom, from))
+      .length / weekDays;
   const windowDays = Math.max(0.25, (to - from) / DAY_MS);
 
   // WHY the 4 and 3 a day floors: at 1 to 2 a day a quiet day is ordinary luck

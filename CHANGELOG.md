@@ -7,6 +7,8 @@
 - Photos: one reservation is reused across retries (retries used to exhaust the 40 reservation cap); a finalized draft refuses further photo and save calls (the canary is exempt); rate limits raised for show nights.
 - Email: server-side failure alerts are deduplicated per flow, stage and error class for an hour (`src/lib/alertDedupe.ts`), releasing the claim when no channel delivered, so one database blip no longer floods the inbox.
 - Firestore REST: a failed precondition reported as HTTP 400 is treated as a write conflict and retried; every call has a 10 second timeout.
+- Submit and photos: a photo removed while uploading is detached before submit finalizes; no new draft is minted after the application is filed; an age too large to store is dropped instead of failing every save; the 10 photo cap is checked inside the confirm write and removed photos give their bytes back.
+- Email: a welcome email whose first send never finished is resent on the retried finalize; the daily digest lists an application on the day it was finished, not the day it was started.
 - Canary: requires direct bucket uploads (no relay), restamps `finalizedAt` each run and verifies `finalizedAt` and every photo were written after the run started, so a stale document can no longer read green.
 
 ## fix(apply): the form no longer depends on database rules, saves as people type and never rejects a photo (2026-11-10)
@@ -34,6 +36,7 @@ Recovered from the old sessions 65918 and 8546 after confirming main lacked each
 Closes the BUGS.md entries UNBOUNDED-SYNC-RUNTIME (both) and PERMANENT-RETRY-STARVATION (both).
 
 **Files:** `src/pages/api/sync-orders.ts`, `src/utils/concurrency.ts`, `src/lib/capi.ts`, `src/lib/capiRetryState.ts`, `src/lib/eventbrite.ts`, `src/types/analytics.ts`, plus tests
+
 ## chore(ci): remove the weekly mutation audit workflow (2026-11-05)
 
 - Deleted `.github/workflows/mutation-audit.yml`, `scripts/mutation-audit-summary.mjs` and `MUTATION-AUDIT.md`. The workflow opened a draft PR (#326) every Monday to carry a report that could never be merged and was never read. The owner closed #326 and disabled the workflow; this removes the files so it cannot return.

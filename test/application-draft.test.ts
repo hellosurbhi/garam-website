@@ -115,6 +115,15 @@ describe("sanitizeFields: nothing a person types is ever rejected", () => {
     expect(Object.keys(out.values)).toEqual(["name"]);
   });
 
+  it("drops an age too large to store exactly instead of poisoning the draft", () => {
+    for (const age of ["99999999999999999999999", 1e23, "9".repeat(40)]) {
+      expect(sanitizeFields({ age }).values).toMatchObject({
+        age: null,
+        ageUnder18: false,
+      });
+    }
+  });
+
   it("keeps every age, with no upper bound, and flags only under 18", () => {
     expect(sanitizeFields({ age: 200 }).values).toMatchObject({
       age: 200,

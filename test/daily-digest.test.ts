@@ -131,6 +131,41 @@ describe("daily digest: quiet day", () => {
   });
 });
 
+describe("daily digest: finished applications", () => {
+  it("lists an application finished today even though it was started before the window", () => {
+    const d = build({
+      applications: [
+        {
+          name: "Late Finisher",
+          status: "New",
+          submittedAt: at(3 * DAY),
+          finalizedAt: at(DAY / 4),
+          photoPaths: ["p"],
+          clientVersion: 2,
+        },
+      ],
+    });
+    expect(d.subject).toContain("1 application");
+    expect(d.text).toContain("Late Finisher");
+  });
+
+  it("does not list it again the day after it was finished", () => {
+    const d = build({
+      applications: [
+        {
+          name: "Yesterday Finisher",
+          status: "New",
+          submittedAt: at(3 * DAY),
+          finalizedAt: at(2 * DAY),
+          photoPaths: ["p"],
+          clientVersion: 2,
+        },
+      ],
+    });
+    expect(d.text).not.toContain("Yesterday Finisher");
+  });
+});
+
 describe("daily digest: tripwires", () => {
   it("warns when applications started collapse versus the trailing week", () => {
     const d = build({ applications: weekOfApps(8) });

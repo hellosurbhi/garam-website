@@ -382,6 +382,32 @@ describe("save-application: finalize", () => {
     expect(mocks.sendMail).toHaveBeenCalledTimes(1);
   });
 
+  it("a retried finalize resends the welcome email when the first send never finished", async () => {
+    const first = await json(
+      await post({ rev: 1, fields: { name: "P", email: "p@example.com" } }),
+    );
+    await post({ token: first.token, rev: 2, fields: {}, finalize: true });
+    const doc = stored(first.draftId as string)!;
+    // The function died after the claim: no delivery stamp, claim is old.
+    delete doc.welcomeDeliveredAt;
+    doc.welcomeSentAt = new Date(Date.now() - 10 * 60_000);
+    await post({ token: first.token, rev: 3, fields: {}, finalize: true });
+    expect(mocks.sendMail).toHaveBeenCalledTimes(2);
+    expect(stored(first.draftId as string)?.welcomeDeliveredAt).toBeInstanceOf(
+      Date,
+    );
+  });
+
+  it("a retried finalize right after the claim does not resend while the first send may still run", async () => {
+    const first = await json(
+      await post({ rev: 1, fields: { name: "P", email: "p@example.com" } }),
+    );
+    await post({ token: first.token, rev: 2, fields: {}, finalize: true });
+    delete stored(first.draftId as string)!.welcomeDeliveredAt;
+    await post({ token: first.token, rev: 3, fields: {}, finalize: true });
+    expect(mocks.sendMail).toHaveBeenCalledTimes(1);
+  });
+
   it("a finalize that loses a race to another finalize sends no welcome email of its own", async () => {
     const first = await json(
       await post({ rev: 1, fields: { name: "P", email: "p@example.com" } }),

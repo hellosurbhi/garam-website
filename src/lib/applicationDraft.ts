@@ -76,10 +76,16 @@ function clip(value: string, max: number): string {
   return value.length > max ? value.slice(0, max) : value;
 }
 
-/** Age as the person typed it: any parseable integer is kept, no upper bound. */
+/**
+ * Age as the person typed it: any integer is kept, no upper bound. Only a
+ * value too large to store exactly is dropped (null).
+ * WHY: a pasted 23-digit number became 1e+23, which Firestore refuses as an
+ * integerValue, failing every later save of the whole draft over one field.
+ */
 function parseAge(value: unknown): number | null {
   const n = typeof value === "number" ? value : parseInt(str(value), 10);
-  return Number.isFinite(n) ? Math.trunc(n) : null;
+  const whole = Math.trunc(n);
+  return Number.isSafeInteger(whole) ? whole : null;
 }
 
 export interface SanitizedFields {

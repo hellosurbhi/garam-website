@@ -35,6 +35,8 @@ export const prerender = false;
  * response says `capped`.
  */
 const DRAFT_TEXT_BUDGET = 200_000;
+// Longer than the 10s Firestore and mail timeouts plus a function's own limit.
+const WELCOME_RESEND_AFTER_MS = 2 * 60_000;
 
 function textSize(doc: Record<string, unknown>): number {
   let total = 0;
@@ -144,6 +146,23 @@ export const POST: APIRoute = async ({ request }) => {
       // The canary reuses one doc every run and is exempt.
       if (!canary && existing.finalizedAt) {
         if (!finalize) throw new DraftFinalizedError();
+        // WHY: the welcome email is claimed in the finalizing write and sent
+        // after it. If the function died between the two, the retried finalize
+        // lands here; resend when the claim is old enough that the first send
+        // cannot still be running and delivery was never recorded. A rare
+        // duplicate beats an applicant who never gets a receipt.
+        // Timestamps come back from Firestore as ISO strings.
+        const claimedAt = Date.parse(String(existing.welcomeSentAt ?? ""));
+        const email = typeof existing.email === "string" ? existing.email : "";
+        if (
+          email &&
+          !existing.welcomeDeliveredAt &&
+          (Number.isNaN(claimedAt) ||
+            now.getTime() - claimedAt > WELCOME_RESEND_AFTER_MS)
+        ) {
+          sendWelcome = true;
+          return { welcomeSentAt: now, updatedAt: now };
+        }
         return { updatedAt: now };
       }
       const merged = mergeDraft(existing, incoming, rev);
@@ -222,6 +241,9 @@ export const POST: APIRoute = async ({ request }) => {
       const city = typeof after.city === "string" ? after.city : "";
       try {
         await sendMail({ to: email, ...applicationReceived(name, city) });
+        await upsertDoc(collection, draftId, () => ({
+          welcomeDeliveredAt: new Date(),
+        }));
       } catch (err) {
         // The application IS saved; only the applicant's confirmation failed.
         await alertOps({

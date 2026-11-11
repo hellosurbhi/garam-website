@@ -367,6 +367,39 @@ describe("upload-application-photo: quotas fail closed", () => {
     expect(res.status).toBe(409);
   });
 
+  it("refuses to confirm an 11th photo even if it was reserved earlier", async () => {
+    const paths = Array.from({ length: 10 }, (_, i) => `photos/x/${i}.jpg`);
+    const { id, token } = seedDraft({ photoPaths: paths });
+    const path = `photos/${id}/11-aaaa.jpg`;
+    mocks.state.objects.set(path, { size: 10, contentType: "image/jpeg" });
+    const res = await call(token, { action: "confirm", path });
+    expect(res.status).toBe(409);
+    expect(await json(res)).toMatchObject({ error: "photo_quota" });
+    expect(photoPaths(id)).toHaveLength(10);
+  });
+
+  it("removing a photo gives its bytes back so swapping photos never hits the byte quota", async () => {
+    const { id, token } = seedDraft();
+    const path = `photos/${id}/1-aaaa.jpg`;
+    mocks.state.objects.set(path, {
+      size: 60 * 1024 * 1024,
+      contentType: "image/jpeg",
+    });
+    await call(token, { action: "confirm", path });
+    await call(token, { action: "remove", path });
+    expect(mocks.state.docs.get(`applications/${id}`)?.fields.photoBytes).toBe(
+      0,
+    );
+    const next = `photos/${id}/2-bbbb.jpg`;
+    mocks.state.objects.set(next, {
+      size: 60 * 1024 * 1024,
+      contentType: "image/jpeg",
+    });
+    expect((await call(token, { action: "confirm", path: next })).status).toBe(
+      200,
+    );
+  });
+
   it("refuses to confirm past the 100MB byte budget", async () => {
     const { id, token } = seedDraft({ photoBytes: 99 * 1024 * 1024 });
     const path = `photos/${id}/1-aaaa.jpg`;

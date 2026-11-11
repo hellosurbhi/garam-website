@@ -86,10 +86,21 @@ async function recordPhoto(
   path: string,
   size: number,
   reservation = false,
-) {
-  return upsertDoc(auth.collection, auth.draftId, (before) => {
+): Promise<boolean> {
+  let refused = false;
+  await upsertDoc(auth.collection, auth.draftId, (before) => {
+    refused = false;
     const current = stringArray(before?.photoPaths);
     if (current.includes(path)) return {};
+    // WHY the cap is checked inside the write: reserve and confirm are
+    // separate requests, so a holder could reserve many before any confirm
+    // lands. Checking against the stored list here is race-safe because
+    // upsertDoc retries this callback after a lost write race. The canary
+    // reuses one document forever and is exempt.
+    if (!auth.canaryKey && current.length >= MAX_PHOTOS_PER_DRAFT) {
+      refused = true;
+      return {};
+    }
     return {
       photoPaths: [...current, path],
       photoBytes: (Number(before?.photoBytes) || 0) + size,
@@ -99,6 +110,7 @@ async function recordPhoto(
       updatedAt: new Date(),
     };
   });
+  return !refused;
 }
 
 export const POST: APIRoute = async ({ request, url }) => {
@@ -198,17 +210,37 @@ export const POST: APIRoute = async ({ request, url }) => {
       if (total + stored.size > MAX_TOTAL_BYTES && !auth.canaryKey) {
         return jsonResponse({ error: "photo_quota", reason: "bytes" }, 409);
       }
-      await recordPhoto(auth, path as string, stored.size);
+      if (!(await recordPhoto(auth, path as string, stored.size))) {
+        return jsonResponse({ error: "photo_quota", kept: kept.length }, 409);
+      }
       return jsonResponse({ ok: true, path, size: stored.size });
     }
 
     if (action === "remove") {
       const path = body.path;
       stage = "remove";
-      await upsertDoc(auth.collection, auth.draftId, (before) => ({
-        photoPaths: stringArray(before?.photoPaths).filter((p) => p !== path),
-        updatedAt: new Date(),
-      }));
+      // WHY the bytes come back off: the byte quota counts kept photos, so an
+      // applicant swapping large photos must not run into it with removed ones.
+      const removedSize =
+        typeof path === "string" && kept.includes(path)
+          ? ((await headObject(path))?.size ?? 0)
+          : 0;
+      await upsertDoc(auth.collection, auth.draftId, (before) => {
+        const current = stringArray(before?.photoPaths);
+        const had = current.includes(path as string);
+        return {
+          photoPaths: current.filter((p) => p !== path),
+          ...(had
+            ? {
+                photoBytes: Math.max(
+                  0,
+                  (Number(before?.photoBytes) || 0) - removedSize,
+                ),
+              }
+            : {}),
+          updatedAt: new Date(),
+        };
+      });
       return jsonResponse({ ok: true });
     }
 
@@ -249,7 +281,9 @@ export const POST: APIRoute = async ({ request, url }) => {
         bytes,
         safeContentType(request.headers.get("content-type")),
       );
-      await recordPhoto(auth, name, bytes.byteLength, true);
+      if (!(await recordPhoto(auth, name, bytes.byteLength, true))) {
+        return jsonResponse({ error: "photo_quota", kept: kept.length }, 409);
+      }
       return jsonResponse({ ok: true, path: name, size: bytes.byteLength });
     }
 

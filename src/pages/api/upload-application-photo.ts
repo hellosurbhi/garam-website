@@ -207,7 +207,12 @@ export const POST: APIRoute = async ({ request, url }) => {
         return jsonResponse({ error: "object_missing", path }, 409);
       }
       const total = Number(draft.photoBytes) || 0;
-      if (total + stored.size > MAX_TOTAL_BYTES && !auth.canaryKey) {
+      // A retried confirm of a photo already kept is a no-op, never a refusal.
+      if (
+        !kept.includes(path as string) &&
+        total + stored.size > MAX_TOTAL_BYTES &&
+        !auth.canaryKey
+      ) {
         return jsonResponse({ error: "photo_quota", reason: "bytes" }, 409);
       }
       if (!(await recordPhoto(auth, path as string, stored.size))) {

@@ -400,6 +400,19 @@ describe("upload-application-photo: quotas fail closed", () => {
     );
   });
 
+  it("a retried confirm of an already kept photo succeeds even at the byte cap", async () => {
+    const { id, token } = seedDraft();
+    const path = `photos/${id}/1-aaaa.jpg`;
+    mocks.state.objects.set(path, {
+      size: 60 * 1024 * 1024,
+      contentType: "image/jpeg",
+    });
+    await call(token, { action: "confirm", path });
+    const again = await call(token, { action: "confirm", path });
+    expect(again.status).toBe(200);
+    expect(photoPaths(id)).toEqual([path]);
+  });
+
   it("refuses to confirm past the 100MB byte budget", async () => {
     const { id, token } = seedDraft({ photoBytes: 99 * 1024 * 1024 });
     const path = `photos/${id}/1-aaaa.jpg`;

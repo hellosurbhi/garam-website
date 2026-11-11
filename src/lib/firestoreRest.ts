@@ -244,6 +244,44 @@ export async function fsCommit(
   if (!res.ok) throw commitFailure(res.status, await res.text());
 }
 
+/**
+ * POSTs one structured query to :runQuery and returns each matched
+ * document's id and raw fields (undefined when Firestore sent none).
+ * Shared by fsQuery and fsQueryOrdered so auth, errors and parsing live in
+ * one place.
+ */
+async function runQuery(
+  structuredQuery: Record<string, unknown>,
+  label: string,
+  signal?: AbortSignal,
+): Promise<Array<{ id: string; fields?: FirestoreFields }>> {
+  const token = await getFirestoreAccessToken(signal);
+  signal?.throwIfAborted();
+  const res = await fetch(`${baseUrl()}:runQuery`, {
+    signal,
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ structuredQuery }),
+  });
+  if (!res.ok) throw new Error(`${label}: ${res.status} ${await res.text()}`);
+  const rows = (await res.json()) as Array<{
+    document?: { name?: string; fields?: FirestoreFields };
+  }>;
+  return rows.flatMap(({ document }) =>
+    document
+      ? [
+          {
+            id: document.name?.split("/").at(-1) ?? "",
+            fields: document.fields,
+          },
+        ]
+      : [],
+  );
+}
+
 export interface FsOrderedQuery {
   collectionId: string;
   orderBy: string;
@@ -262,45 +300,28 @@ export async function fsQueryOrdered(
   query: FsOrderedQuery,
   signal?: AbortSignal,
 ): Promise<Array<{ id: string; fields: Record<string, unknown> }>> {
-  const token = await getFirestoreAccessToken(signal);
-  const structuredQuery = {
-    from: [{ collectionId: query.collectionId }],
-    orderBy: [
-      { field: { fieldPath: query.orderBy }, direction: query.direction },
-    ],
-    limit: query.limit,
-    ...(query.select
-      ? { select: { fields: query.select.map((fieldPath) => ({ fieldPath })) } }
-      : {}),
-  };
-  signal?.throwIfAborted();
-  const res = await fetch(`${baseUrl()}:runQuery`, {
-    signal,
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
+  const rows = await runQuery(
+    {
+      from: [{ collectionId: query.collectionId }],
+      orderBy: [
+        { field: { fieldPath: query.orderBy }, direction: query.direction },
+      ],
+      limit: query.limit,
+      ...(query.select
+        ? {
+            select: {
+              fields: query.select.map((fieldPath) => ({ fieldPath })),
+            },
+          }
+        : {}),
     },
-    body: JSON.stringify({ structuredQuery }),
-  });
-  if (!res.ok) {
-    throw new Error(
-      `fsQueryOrdered ${query.collectionId}: ${res.status} ${await res.text()}`,
-    );
-  }
-  const rows = (await res.json()) as Array<{
-    document?: { name?: string; fields?: FirestoreFields };
-  }>;
-  return rows.flatMap((r) =>
-    r.document
-      ? [
-          {
-            id: r.document.name?.split("/").at(-1) ?? "",
-            fields: fromFields(r.document.fields ?? {}),
-          },
-        ]
-      : [],
+    `fsQueryOrdered ${query.collectionId}`,
+    signal,
   );
+  return rows.map(({ id, fields }) => ({
+    id,
+    fields: fromFields(fields ?? {}),
+  }));
 }
 
 /** Update specific fields on an existing document. */
@@ -364,12 +385,8 @@ export async function fsQuery(
   filterValue: unknown,
   orderField = "submittedAt",
 ): Promise<Array<Record<string, unknown>>> {
-  const token = await getFirestoreAccessToken();
-  const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
-  const queryUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents:runQuery`;
-
-  const body = {
-    structuredQuery: {
+  const rows = await runQuery(
+    {
       from: [{ collectionId }],
       where: {
         fieldFilter: {
@@ -385,31 +402,11 @@ export async function fsQuery(
         },
       ],
     },
-  };
-
-  const res = await fetch(queryUrl, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`fsQuery ${collectionId}: ${res.status} ${text}`);
-  }
-
-  const results = (await res.json()) as Array<{
-    document?: { name?: string; fields?: FirestoreFields };
-  }>;
-  return results
-    .filter((r) => r.document?.fields)
-    .map((r) => {
-      const docName = r.document!.name ?? "";
-      const id = docName.split("/").at(-1) ?? "";
-      return { id, ...fromFields(r.document!.fields!) };
-    });
+    `fsQuery ${collectionId}`,
+  );
+  return rows.flatMap(({ id, fields }) =>
+    fields ? [{ id, ...fromFields(fields) }] : [],
+  );
 }
 
 /**

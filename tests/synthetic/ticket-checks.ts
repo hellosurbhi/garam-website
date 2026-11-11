@@ -1,7 +1,7 @@
 import { expect, type Page, type APIRequestContext } from "@playwright/test";
 import type { EventEntry } from "../../src/data/events";
 import { getTicketPageUpcoming } from "../../src/utils/eventFilters";
-import { applyUtmsToUrl } from "../../src/utils/utmForwarding";
+import { goRedirectDestination } from "../../src/utils/utmForwarding";
 
 const MONITOR_HEADERS = { "User-Agent": "GaramMasalaMonitor/1.0" };
 
@@ -96,22 +96,68 @@ async function expectListingStart(
   ).toBe(true);
 }
 
-// WHY: wireTicketCtaTracking (src/lib/ticketCtaTracking.ts) rewrites every
-// checkout href after load into an absolute URL carrying ?eid= and forwarded
-// UTMs, so matching the raw href attribute finds nothing on a live page (the
-// monitor failed this way from 2026-11-11). Only the path names the show.
-async function visibleCheckoutPaths(page: Page): Promise<string[]> {
+/** One visible checkout link as the page renders it. */
+export interface RenderedCheckout {
+  /** The card's own identity (`data-event-slug`), independent of its href. */
+  slug: string | null;
+  href: string | null;
+}
+
+export type CheckoutVerdict =
+  { ok: true; slug: string; target: string } | { ok: false; problem: string };
+
+// WHY: the link is judged by its actual rendered href, never by a path
+// rebuilt from the slug. wireTicketCtaTracking (src/lib/ticketCtaTracking.ts)
+// rewrites each href after load into an absolute URL carrying ?eid= and
+// UTMs, so comparing only the pathname (the first version of this checker)
+// let a right-slug link on a foreign host or a javascript: link pass. Pairing
+// the card's data-event-slug with its own href is what catches two cards
+// whose links were swapped.
+export function checkoutVerdict(
+  link: RenderedCheckout,
+  pageOrigin: string,
+): CheckoutVerdict {
+  const label = `${link.slug ?? "card without data-event-slug"} -> ${link.href ?? "no href"}`;
+  if (!link.slug || !link.href) return { ok: false, problem: label };
+  let url: URL;
+  try {
+    url = new URL(link.href, pageOrigin);
+  } catch {
+    return { ok: false, problem: `${label} (unparseable)` };
+  }
+  if (url.protocol !== "https:" && url.protocol !== "http:") {
+    return { ok: false, problem: `${label} (not an http link)` };
+  }
+  if (url.origin !== pageOrigin) {
+    return { ok: false, problem: `${label} (leaves ${pageOrigin})` };
+  }
+  if (url.pathname !== `/api/go/${link.slug}`) {
+    return { ok: false, problem: `${label} (points at another show)` };
+  }
+  return { ok: true, slug: link.slug, target: url.pathname + url.search };
+}
+
+async function renderedCheckouts(page: Page): Promise<RenderedCheckout[]> {
   return page
-    .locator('a[href*="/api/go/"]:visible')
+    .locator('a[data-go-ticket]:visible, a[href*="/api/go/"]:visible')
     .evaluateAll((links) =>
-      links.map(
-        (link) =>
-          new URL(link.getAttribute("href") ?? "", "https://monitor.invalid")
-            .pathname,
-      ),
+      links.map((link) => ({
+        slug: link.getAttribute("data-event-slug"),
+        href: link.getAttribute("href"),
+      })),
     );
 }
 
+/**
+ * Checks the visible checkout links on a ticket page against the show list.
+ *
+ * Every on-sale show must have a card whose own href is a same-origin
+ * `/api/go/<its slug>` link, and that link must 302 to the show's checkout.
+ * Stale-card policy: the page is prerendered at deploy time, so a card for a
+ * show whose date has passed may still be on it; it is allowed only if its
+ * redirect returns buyers to /tickets. Any other card (unknown show,
+ * canceled, ticketless, not yet on sale) fails the check.
+ */
 export async function checkTicketListings(
   page: Page,
   request: APIRequestContext,
@@ -119,38 +165,50 @@ export async function checkTicketListings(
   now = new Date(),
   { followRedirects = true, verifyListings = false }: TicketCheckOptions = {},
 ) {
-  const available = getTicketPageUpcoming(
-    events,
-    now.toISOString().slice(0, 10),
-  ).filter(
+  const today = now.toISOString().slice(0, 10);
+  const available = getTicketPageUpcoming(events, today).filter(
     (event) =>
       event.url &&
       event.url !== "#" &&
       !event.soldOut &&
       (!event.onSaleAt || Date.parse(event.onSaleAt) <= now.getTime()),
   );
-  const past = events.filter(
-    (event) => event.isoDate && event.isoDate < now.toISOString().slice(0, 10),
+  const expected = new Map(available.map((event) => [event.slug, event]));
+  const stale = new Set(
+    events
+      .filter((event) => event.isoDate && event.isoDate < today)
+      .map((event) => event.slug),
   );
+  const pageOrigin = new URL(page.url()).origin;
+  expect(pageOrigin, "ticket page must be served over http").toMatch(
+    /^https?:\/\//,
+  );
+
+  let verdicts: CheckoutVerdict[] = [];
+  // Polled: cards hydrate and presale cards reveal themselves after load.
+  await expect
+    .poll(
+      async () => {
+        verdicts = (await renderedCheckouts(page)).map((link) =>
+          checkoutVerdict(link, pageOrigin),
+        );
+        const problems = verdicts.flatMap((v) => (v.ok ? [] : [v.problem]));
+        const shown = new Set(verdicts.flatMap((v) => (v.ok ? [v.slug] : [])));
+        for (const slug of expected.keys()) {
+          if (!shown.has(slug)) problems.push(`${slug}: no checkout link`);
+        }
+        for (const slug of shown) {
+          if (!expected.has(slug) && !stale.has(slug)) {
+            problems.push(`${slug}: checkout link for a show not on sale`);
+          }
+        }
+        return problems;
+      },
+      { message: "ticket page checkout links" },
+    )
+    .toEqual([]);
+
   if (!available.length) {
-    const hrefs = await visibleCheckoutPaths(page);
-    // Static cards can outlive their show between deployments. Their runtime
-    // redirects must return to /tickets, never to an expired vendor checkout.
-    for (const href of hrefs) {
-      const event = past.find((item) => href === `/api/go/${item.slug}`);
-      expect(
-        event,
-        `Unexpected checkout in waitlist-only state: ${href}`,
-      ).toBeDefined();
-      if (!followRedirects) continue;
-      const response = await request.get(href, {
-        maxRedirects: 0,
-        timeout: 10_000,
-        headers: MONITOR_HEADERS,
-      });
-      expect(response.status()).toBe(302);
-      expect(response.headers().location).toBe("/tickets");
-    }
     await expect(
       page
         .locator(
@@ -158,30 +216,29 @@ export async function checkTicketListings(
         )
         .first(),
     ).toBeVisible();
-    return;
   }
-  for (const event of available) {
-    await expect
-      .poll(() => visibleCheckoutPaths(page), { message: event.slug })
-      .toContain(`/api/go/${event.slug}`);
-    if (!followRedirects) continue;
-    const response = await request.get(`/api/go/${event.slug}`, {
+  if (!followRedirects) return;
+
+  for (const verdict of verdicts) {
+    if (!verdict.ok) continue;
+    const response = await request.get(verdict.target, {
       maxRedirects: 0,
       timeout: 10_000,
       headers: MONITOR_HEADERS,
     });
-    expect(response.status(), event.slug).toBe(302);
+    expect(response.status(), verdict.target).toBe(302);
     const location = response.headers().location;
-    expect(location, event.slug).toBe(
-      applyUtmsToUrl(
+    const event = expected.get(verdict.slug);
+    if (!event) {
+      // A stale card: it must never lead to an expired checkout.
+      expect(location, verdict.target).toBe("/tickets");
+      continue;
+    }
+    expect(location, verdict.target).toBe(
+      goRedirectDestination(
         event.url!,
-        {},
-        {
-          utmSource: "garamsite",
-          utmMedium: "web",
-          utmCampaign: event.citySlug ?? "event",
-          utmContent: event.slug,
-        },
+        event,
+        new URL(verdict.target, pageOrigin).searchParams,
       ),
     );
     if (verifyListings) await expectListingStart(request, location, event);

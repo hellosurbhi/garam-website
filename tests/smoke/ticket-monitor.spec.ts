@@ -1,7 +1,14 @@
-import { test, expect } from "@playwright/test";
+import {
+  test,
+  expect,
+  request as api,
+  type APIRequestContext,
+  type Page,
+} from "@playwright/test";
+import { createServer, type RequestListener } from "node:http";
 import { checkTicketListings } from "../synthetic/ticket-checks";
 import type { EventEntry } from "../../src/data/events";
-import { applyUtmsToUrl } from "../../src/utils/utmForwarding";
+import { goRedirectDestination } from "../../src/utils/utmForwarding";
 
 const event: EventEntry = {
   slug: "fixture-show",
@@ -17,6 +24,76 @@ const event: EventEntry = {
   ticketSource: "their-eventbrite",
 };
 const now = new Date("2026-11-11T12:00:00Z");
+const SITE = "https://garammasaladating.com";
+const chicago = event;
+const nyc: EventEntry = {
+  ...event,
+  slug: "nyc-fixture-show",
+  city: "New York",
+  citySlug: "nyc",
+  url: "https://example.com/nyc-tickets",
+};
+
+/** A checkout card as TicketCard.astro renders it. */
+function card(slug: string, href = `/api/go/${slug}`): string {
+  return `<a data-go-ticket data-event-slug="${slug}" href="${href}">Buy Tickets</a>`;
+}
+const notifyMe = '<button data-notify-city="Chicago">Notify Me</button>';
+
+/**
+ * Serves `html` as /tickets on `origin`. WHY: the checker validates each href
+ * against the page's own origin, so fixtures need a real http origin instead
+ * of setContent's about:blank.
+ */
+async function showTicketPage(page: Page, html: string, origin = SITE) {
+  await page.route(`${origin}/tickets`, (route) =>
+    route.fulfill({ contentType: "text/html", body: html }),
+  );
+  await page.goto(`${origin}/tickets`);
+}
+
+/** A local HTTP server standing in for the deployed site's API routes. */
+async function withSite(
+  handler: RequestListener,
+  run: (origin: string, client: APIRequestContext) => Promise<void>,
+) {
+  const server = createServer(handler);
+  await new Promise<void>((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", resolve);
+  });
+  const address = server.address();
+  if (!address || typeof address === "string")
+    throw new Error("Missing fixture server port");
+  const origin = `http://127.0.0.1:${address.port}`;
+  const client = await api.newContext({ baseURL: origin });
+  try {
+    await run(origin, client);
+  } finally {
+    await client.dispose();
+    await new Promise<void>((resolve, reject) =>
+      server.close((e) => (e ? reject(e) : resolve())),
+    );
+  }
+}
+
+/** Answers /api/go/<slug> the way the real route does. */
+function goRoute(shows: EventEntry[]): RequestListener {
+  return (req, res) => {
+    const url = new URL(req.url ?? "/", "http://fixture.invalid");
+    const show = shows.find((s) => url.pathname === `/api/go/${s.slug}`);
+    if (!show?.url) {
+      res.writeHead(404);
+      res.end();
+      return;
+    }
+    res.writeHead(302, {
+      location: goRedirectDestination(show.url, show, url.searchParams),
+    });
+    res.end();
+  };
+}
+
 for (const [name, entry] of [
   ["past", { ...event, isoDate: "2026-10-01" }],
   ["canceled", { ...event, status: "canceled" }],
@@ -27,9 +104,7 @@ for (const [name, entry] of [
     page,
     request,
   }) => {
-    await page.setContent(
-      '<button data-notify-city="Chicago">Notify Me</button>',
-    );
+    await showTicketPage(page, notifyMe);
     await checkTicketListings(page, request, [entry], now);
   });
 }
@@ -38,9 +113,7 @@ test("ticket monitor rejects a missing checkout link for a purchasable show", as
   request,
 }) => {
   test.setTimeout(10000);
-  await page.setContent(
-    '<button data-notify-city="Chicago">Notify Me</button>',
-  );
+  await showTicketPage(page, notifyMe);
   await expect(
     checkTicketListings(page, request, [event], now),
   ).rejects.toThrow();
@@ -50,52 +123,24 @@ test("ticket monitor rejects a blank page when only waitlists are expected", asy
   request,
 }) => {
   test.setTimeout(10000);
-  await page.setContent("<h1>Upcoming Shows</h1>");
+  await showTicketPage(page, "<h1>Upcoming Shows</h1>");
   await expect(checkTicketListings(page, request, [], now)).rejects.toThrow();
 });
 test("ticket monitor checks the exact checkout destination", async ({
   page,
 }) => {
-  await page.setContent('<a href="/api/go/fixture-show">Buy Tickets</a>');
-  const destination = applyUtmsToUrl(
-    event.url!,
-    {},
-    {
-      utmSource: "garamsite",
-      utmMedium: "web",
-      utmCampaign: "chicago",
-      utmContent: event.slug,
-    },
-  );
-  // A local server supplies HTTP responses to the real API request client.
-  const { createServer } = await import("node:http");
-  const { request: api } = await import("@playwright/test");
-  const server = createServer((_req, res) => {
-    res.writeHead(302, { location: destination });
-    res.end();
-  });
-  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
-  const address = server.address();
-  if (!address || typeof address === "string")
-    throw new Error("Missing fixture server port");
-  const client = await api.newContext({
-    baseURL: `http://127.0.0.1:${address.port}`,
-  });
-  try {
+  await withSite(goRoute([event]), async (origin, client) => {
+    await showTicketPage(page, card(event.slug), origin);
     await checkTicketListings(page, client, [event], now);
-  } finally {
-    await client.dispose();
-    await new Promise<void>((resolve, reject) =>
-      server.close((e) => (e ? reject(e) : resolve())),
-    );
-  }
+  });
 });
 
 test("ticket monitor accepts the city-request fallback when no ranked cities exist", async ({
   page,
   request,
 }) => {
-  await page.setContent(
+  await showTicketPage(
+    page,
     '<button data-open-modal="tickets-city-modal">Request your city</button>',
   );
   await checkTicketListings(page, request, [], now);
@@ -104,9 +149,8 @@ test("ticket monitor rejects an unexpected checkout link in a waitlist-only stat
   page,
   request,
 }) => {
-  await page.setContent(
-    '<a href="/api/go/unknown">Buy Tickets</a><button data-notify-city="Chicago">Notify Me</button>',
-  );
+  test.setTimeout(10000);
+  await showTicketPage(page, card("unknown") + notifyMe);
   await expect(checkTicketListings(page, request, [], now)).rejects.toThrow();
 });
 for (const [name, status, destination, past, passes] of [
@@ -122,40 +166,24 @@ for (const [name, status, destination, past, passes] of [
   ],
 ] as const) {
   test(`ticket monitor: ${name}`, async ({ page }) => {
-    await page.setContent(
-      '<a href="/api/go/fixture-show">Buy Tickets</a><button data-notify-city="Chicago">Notify Me</button>',
+    test.setTimeout(10000);
+    await withSite(
+      (_req, res) => {
+        res.writeHead(status, { location: destination });
+        res.end();
+      },
+      async (origin, client) => {
+        await showTicketPage(page, card(event.slug) + notifyMe, origin);
+        const check = checkTicketListings(
+          page,
+          client,
+          [{ ...event, ...(past ? { isoDate: "2026-10-01" } : {}) }],
+          now,
+        );
+        if (passes) await check;
+        else await expect(check).rejects.toThrow();
+      },
     );
-    const { createServer } = await import("node:http");
-    const { request: api } = await import("@playwright/test");
-    const server = createServer((_req, res) => {
-      res.writeHead(status, { location: destination });
-      res.end();
-    });
-    await new Promise<void>((resolve, reject) => {
-      server.once("error", reject);
-      server.listen(0, "127.0.0.1", resolve);
-    });
-    const address = server.address();
-    if (!address || typeof address === "string")
-      throw new Error("Missing fixture server port");
-    const client = await api.newContext({
-      baseURL: `http://127.0.0.1:${address.port}`,
-    });
-    try {
-      const check = checkTicketListings(
-        page,
-        client,
-        [{ ...event, ...(past ? { isoDate: "2026-10-01" } : {}) }],
-        now,
-      );
-      if (passes) await check;
-      else await expect(check).rejects.toThrow();
-    } finally {
-      await client.dispose();
-      await new Promise<void>((resolve, reject) =>
-        server.close((e) => (e ? reject(e) : resolve())),
-      );
-    }
   });
 }
 
@@ -163,18 +191,57 @@ test("ticket monitor checks only links when redirects can't be followed", async 
   page,
   request,
 }) => {
+  test.setTimeout(10000);
   // The static preview has no /api/go route; following it would 404.
-  await page.setContent('<a href="/api/go/fixture-show">Buy Tickets</a>');
+  await showTicketPage(page, card(event.slug));
   await checkTicketListings(page, request, [event], now, {
     followRedirects: false,
   });
-  await page.setContent('<a href="/api/go/other-show">Buy Tickets</a>');
+  await showTicketPage(page, card(event.slug, "/api/go/other-show"));
   await expect(
     checkTicketListings(page, request, [event], now, {
       followRedirects: false,
     }),
   ).rejects.toThrow();
 });
+
+// Each case is a page that the first version of this checker passed.
+for (const [name, html] of [
+  [
+    "a right-slug link on another host",
+    card(chicago.slug, `https://evil.example/api/go/${chicago.slug}`) +
+      card(nyc.slug),
+  ],
+  [
+    "a javascript: checkout link",
+    card(chicago.slug, "javascript:void(0)") + card(nyc.slug),
+  ],
+  [
+    "two cards with swapped links",
+    card(chicago.slug, `/api/go/${nyc.slug}`) +
+      card(nyc.slug, `/api/go/${chicago.slug}`),
+  ],
+  [
+    "an extra broken checkout beside the expected cards",
+    card(chicago.slug) + card(nyc.slug) + card("broken-show"),
+  ],
+  [
+    "a checkout link with no card identity",
+    card(chicago.slug) +
+      card(nyc.slug) +
+      `<a href="/api/go/${nyc.slug}">Buy Tickets</a>`,
+  ],
+] as const) {
+  test(`ticket monitor rejects ${name}`, async ({ page, request }) => {
+    test.setTimeout(10000);
+    await showTicketPage(page, html);
+    await expect(
+      checkTicketListings(page, request, [chicago, nyc], now, {
+        followRedirects: false,
+      }),
+    ).rejects.toThrow();
+  });
+}
 
 // The vendor's own listing is the independent oracle: a wrong url typed into
 // events.ts redirects "correctly" because the redirect reads the same data.
@@ -191,76 +258,48 @@ for (const [name, status, startDate, passes] of [
   ["listing the vendor won't serve", 403, "2026-12-04T19:30:00-06:00", false],
 ] as const) {
   test(`ticket monitor: ${name}`, async ({ page }) => {
-    await page.setContent('<a href="/api/go/fixture-show">Buy Tickets</a>');
-    const { createServer } = await import("node:http");
-    const { request: api } = await import("@playwright/test");
-    let listingUrl = "";
-    const show: EventEntry = {
+    test.setTimeout(10000);
+    let show: EventEntry = {
       ...event,
       startTime: "19:30",
       timezone: "America/Chicago",
     };
-    const server = createServer((req, res) => {
-      if (req.url?.startsWith("/api/go/")) {
-        res.writeHead(302, {
-          location: applyUtmsToUrl(
-            listingUrl,
-            {},
-            {
-              utmSource: "garamsite",
-              utmMedium: "web",
-              utmCampaign: "chicago",
-              utmContent: show.slug,
-            },
-          ),
+    await withSite(
+      (req, res) => {
+        if (req.url?.startsWith("/api/go/")) return goRoute([show])(req, res);
+        res.writeHead(status, { "content-type": "text/html" });
+        res.end(
+          `<script type="application/ld+json">${JSON.stringify({ "@type": "Event", startDate })}</script>`,
+        );
+      },
+      async (origin, client) => {
+        show = { ...show, url: `${origin}/listing` };
+        await showTicketPage(page, card(show.slug), origin);
+        const check = checkTicketListings(page, client, [show], now, {
+          verifyListings: true,
         });
-        res.end();
-        return;
-      }
-      res.writeHead(status, { "content-type": "text/html" });
-      res.end(
-        `<script type="application/ld+json">${JSON.stringify({ "@type": "Event", startDate })}</script>`,
-      );
-    });
-    await new Promise<void>((resolve, reject) => {
-      server.once("error", reject);
-      server.listen(0, "127.0.0.1", resolve);
-    });
-    const address = server.address();
-    if (!address || typeof address === "string")
-      throw new Error("Missing fixture server port");
-    listingUrl = `http://127.0.0.1:${address.port}/listing`;
-    const client = await api.newContext({
-      baseURL: `http://127.0.0.1:${address.port}`,
-    });
-    try {
-      const check = checkTicketListings(
-        page,
-        client,
-        [{ ...show, url: listingUrl }],
-        now,
-        { verifyListings: true },
-      );
-      if (passes) await check;
-      else await expect(check).rejects.toThrow();
-    } finally {
-      await client.dispose();
-      await new Promise<void>((resolve, reject) =>
-        server.close((e) => (e ? reject(e) : resolve())),
-      );
-    }
+        if (passes) await check;
+        else await expect(check).rejects.toThrow();
+      },
+    );
   });
 }
 
-test("ticket monitor recognises checkout links after tracking rewrites them", async ({
+test("ticket monitor follows the rendered link with its tracking parameters", async ({
   page,
-  request,
 }) => {
-  // Live pages carry the shape wireTicketCtaTracking leaves behind.
-  await page.setContent(
-    '<a href="https://garammasaladating.com/api/go/fixture-show?eid=abc&utm_source=ig">Buy Tickets</a>',
-  );
-  await checkTicketListings(page, request, [event], now, {
-    followRedirects: false,
+  // Live pages carry the shape wireTicketCtaTracking leaves behind: an
+  // absolute same-origin href with ?eid= and forwarded UTMs. The route
+  // forwards those UTMs, and the checker must expect exactly that.
+  await withSite(goRoute([event]), async (origin, client) => {
+    await showTicketPage(
+      page,
+      card(
+        event.slug,
+        `${origin}/api/go/${event.slug}?eid=abc&utm_source=ig&utm_campaign=story`,
+      ),
+      origin,
+    );
+    await checkTicketListings(page, client, [event], now);
   });
 });

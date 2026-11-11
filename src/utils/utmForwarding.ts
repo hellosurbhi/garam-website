@@ -36,6 +36,35 @@ export function applyUtmsToUrl(
   }
 }
 
+/**
+ * Where `/api/go/[slug]` sends a buyer: the show's checkout URL with the
+ * request's own UTMs forwarded, else the site defaults. The route and the
+ * ticket monitor (tests/synthetic/ticket-checks.ts) both call this, so the
+ * monitor's expected destination can never drift from what the route does.
+ */
+export function goRedirectDestination(
+  checkoutUrl: string,
+  event: { slug: string; citySlug?: string },
+  params: URLSearchParams,
+): string {
+  return applyUtmsToUrl(
+    checkoutUrl,
+    {
+      utmSource: params.get("utm_source") ?? undefined,
+      utmMedium: params.get("utm_medium") ?? undefined,
+      utmCampaign: params.get("utm_campaign") ?? undefined,
+      utmContent: params.get("utm_content") ?? undefined,
+      utmTerm: params.get("utm_term") ?? undefined,
+    },
+    {
+      utmSource: "garamsite",
+      utmMedium: "web",
+      utmCampaign: event.citySlug ?? "event",
+      utmContent: event.slug,
+    },
+  );
+}
+
 function hasStoredUtms(stored: StoredUtms): boolean {
   return Boolean(
     stored.utmSource ||

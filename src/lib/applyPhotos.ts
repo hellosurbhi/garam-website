@@ -223,6 +223,13 @@ export async function uploadApplicationPhoto(
       };
     } catch (err) {
       lastError = err;
+      // WHY terminal: the server refused the photo for a hard per-draft cap
+      // (count, reservations or total bytes). Retrying re-reserves and
+      // re-uploads the whole file, burns reservations and the relay would be
+      // refused too, so fail now with the real cause.
+      if (err instanceof ApplyRequestError && err.detail === "photo_quota") {
+        throw err;
+      }
       // An HTTP answer from the storage host or a missing object means this
       // reservation is spent; a dropped connection does not.
       if (

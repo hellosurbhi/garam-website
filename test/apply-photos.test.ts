@@ -243,13 +243,26 @@ describe("uploadApplicationPhoto: a photo is never rejected", () => {
   it("surfaces the server's own reason when reserve is refused", async () => {
     const original = file("a.jpg", "image/jpeg", 100);
     compress.mockResolvedValue(original);
-    network({
+    const calls = network({
       reserve: () => jsonRes(409, { error: "photo_quota" }),
       relay: () => jsonRes(409, { error: "photo_quota" }),
     });
     const { error } = await run(original);
-    expect(error).toMatchObject({ stage: "photo_relay", status: 409 });
+    // A hard cap is terminal: no retries and no relay fallback.
+    expect(error).toMatchObject({ stage: "photo_reserve", status: 409 });
     expect(String((error as Error).message)).toContain("photo_quota");
+    expect(reserveCalls(calls)).toHaveLength(1);
+  });
+
+  it("stops at once when confirm is refused for a quota, without re-reserving", async () => {
+    const original = file("a.jpg", "image/jpeg", 100);
+    compress.mockResolvedValue(original);
+    const calls = network({
+      confirm: () => jsonRes(409, { error: "photo_quota", reason: "bytes" }),
+    });
+    const { error } = await run(original);
+    expect(error).toMatchObject({ stage: "photo_confirm", status: 409 });
+    expect(reserveCalls(calls)).toHaveLength(1);
   });
 
   it("treats a confirm that says the object is missing as a failed attempt, not a success", async () => {

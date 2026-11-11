@@ -12,6 +12,8 @@ const mocks = vi.hoisted(() => {
     clock: 0,
     objects: new Map<string, { size: number; contentType: string }>(),
     failPut: null as Error | null,
+    // "before": the write is lost; "after": it commits but the response is lost.
+    failPatch: null as "before" | "after" | null,
   };
   return { state, alertOps: vi.fn() };
 });
@@ -51,10 +53,12 @@ vi.mock("@/lib/firestoreRest", async (importOriginal) => {
         const { applyPatch } = await import("@/lib/draftStore");
         const d = state.docs.get(path)!;
         if (String(d.t) !== updateTime) throw new actual.FsConflictError(path);
+        if (state.failPatch === "before") throw new Error("firestore down");
         state.docs.set(path, {
           fields: applyPatch(d.fields, patch),
           t: ++state.clock,
         });
+        if (state.failPatch === "after") throw new Error("response lost");
       },
     ),
   };
@@ -140,6 +144,7 @@ beforeEach(() => {
   mocks.state.objects.clear();
   mocks.state.clock = 0;
   mocks.state.failPut = null;
+  mocks.state.failPatch = null;
   mocks.alertOps.mockReset();
   import.meta.env.DRAFT_TOKEN_SECRET = "photo-test-secret";
 });
@@ -539,6 +544,53 @@ describe("upload-application-photo: quotas hold under concurrent requests", () =
     expect(results.filter((r) => r.status === 200)).toHaveLength(1);
     expect(photoPaths(id)).toHaveLength(1);
     expect(mocks.state.objects.size).toBe(1);
+  });
+
+  it("a relay whose write was lost removes its object", async () => {
+    const { token } = seedDraft();
+    mocks.state.failPatch = "before";
+    const res = await call(token, null, {
+      relay: true,
+      raw: new Uint8Array(500),
+      headers: { "Content-Type": "image/jpeg", "x-photo-filename": "a.jpg" },
+    });
+    expect(res.status).toBe(500);
+    expect(mocks.state.objects.size).toBe(0);
+  });
+
+  it("a relay whose write committed but whose response was lost keeps its object", async () => {
+    const { id, token } = seedDraft();
+    mocks.state.failPatch = "after";
+    const res = await call(token, null, {
+      relay: true,
+      raw: new Uint8Array(500),
+      headers: { "Content-Type": "image/jpeg", "x-photo-filename": "a.jpg" },
+    });
+    expect(res.status).toBe(500);
+    expect(photoPaths(id)).toHaveLength(1);
+    expect(mocks.state.objects.size).toBe(1);
+  });
+
+  it("a refused confirm removes the stored file", async () => {
+    const { id, token } = seedDraft({ photoBytes: 99 * MB });
+    const path = `photos/${id}/1-eeee.jpg`;
+    mocks.state.objects.set(path, { size: 5 * MB, contentType: "image/jpeg" });
+    const res = await call(token, { action: "confirm", path });
+    expect(res.status).toBe(409);
+    expect(mocks.state.objects.has(path)).toBe(false);
+  });
+
+  it("remove gives back the size counted at confirm, not the bucket's current size", async () => {
+    const { id, token } = seedDraft();
+    const path = `photos/${id}/1-ffff.jpg`;
+    mocks.state.objects.set(path, { size: 3 * MB, contentType: "image/jpeg" });
+    await call(token, { action: "confirm", path });
+    // The object is overwritten after confirm; remove must still free 3MB.
+    mocks.state.objects.set(path, { size: 9 * MB, contentType: "image/jpeg" });
+    await call(token, { action: "remove", path });
+    const fields = mocks.state.docs.get(`applications/${id}`)?.fields;
+    expect(fields?.photoBytes).toBe(0);
+    expect(fields?.photoPaths).toEqual([]);
   });
 
   it("a refused relay removes the object it had already stored", async () => {

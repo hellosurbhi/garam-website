@@ -48,6 +48,18 @@ function stringArray(value: unknown): string[] {
     : [];
 }
 
+/**
+ * Byte size of each kept photo, aligned with `photoPaths`. WHY: remove used to
+ * subtract a size measured from the bucket at remove time, which differs from
+ * what confirm counted if the object changed in between or is gone. 0 means
+ * unknown (a draft from before sizes were recorded); remove then falls back to
+ * the bucket measurement.
+ */
+function alignedSizes(before: Record<string, unknown> | null, count: number) {
+  const raw = Array.isArray(before?.photoSizes) ? before.photoSizes : [];
+  return Array.from({ length: count }, (_, i) => Number(raw[i]) || 0);
+}
+
 /** The relay sends the filename percent-encoded; a malformed value is ignored. */
 function decodeFilenameHeader(value: string | null): string | null {
   if (value === null) return null;
@@ -117,6 +129,7 @@ async function recordPhoto(
     }
     return {
       photoPaths: [...current, path],
+      photoSizes: [...alignedSizes(before, current.length), size],
       photoBytes: (Number(before?.photoBytes) || 0) + size,
       ...(reservation
         ? { photoReservations: (Number(before?.photoReservations) || 0) + 1 }
@@ -267,7 +280,13 @@ export const POST: APIRoute = async ({ request, url }) => {
         path as string,
         stored.size,
       );
-      if (refusal) return quotaResponse(refusal, keptNow);
+      if (refusal) {
+        // A refusal means the path is not on the draft, so the stored file is
+        // unreachable: remove it like the relay does, or refused uploads pile
+        // up unmetered in the bucket.
+        await deleteObject(path as string).catch(() => {});
+        return quotaResponse(refusal, keptNow);
+      }
       return jsonResponse({ ok: true, path, size: stored.size });
     }
 
@@ -285,14 +304,19 @@ export const POST: APIRoute = async ({ request, url }) => {
         : 0;
       await upsertDoc(auth.collection, auth.draftId, (before) => {
         const current = stringArray(before?.photoPaths);
-        const had = current.includes(path as string);
+        const at = current.indexOf(path as string);
+        const sizes = alignedSizes(before, current.length);
+        // The size recorded at confirm is the one that was counted; the bucket
+        // measurement only covers drafts that predate recorded sizes.
+        const freed = at >= 0 ? sizes[at] || removedSize : 0;
         return {
-          photoPaths: current.filter((p) => p !== path),
-          ...(had
+          photoPaths: current.filter((_, i) => i !== at),
+          photoSizes: sizes.filter((_, i) => i !== at),
+          ...(at >= 0
             ? {
                 photoBytes: Math.max(
                   0,
-                  (Number(before?.photoBytes) || 0) - removedSize,
+                  (Number(before?.photoBytes) || 0) - freed,
                 ),
               }
             : {}),
@@ -351,7 +375,17 @@ export const POST: APIRoute = async ({ request, url }) => {
       try {
         recorded = await recordPhoto(auth, name, bytes.byteLength, true);
       } catch (err) {
-        await deleteObject(name).catch(() => {});
+        // WHY a re-read first: the write can fail on the response after it
+        // committed (a timeout), and deleting then would leave the draft
+        // listing a photo that no longer exists. Delete only when the draft
+        // provably does not hold the path; if that cannot be read, keep the
+        // object (an orphan is recoverable, a lost photo is not).
+        const after = await fsGet(`${auth.collection}/${auth.draftId}`).catch(
+          () => null,
+        );
+        if (after && !stringArray(after.photoPaths).includes(name)) {
+          await deleteObject(name).catch(() => {});
+        }
         throw err;
       }
       if (recorded.refusal) {

@@ -228,5 +228,26 @@ service cloud.firestore {
     match /systemConfig/{docId} {
       allow read, write: if isAdmin();
     }
+
+    // Shows data (issue 337). Every write goes through the admin API routes
+    // with the service account, which validate with the shared zod schema
+    // and commit atomically; client writes stay closed so that validator is
+    // the only way in. eventVersions are the immutable publish history.
+    // WHY public read on eventsPublished: it is exactly the show list the
+    // public site already renders, and the build step and the synthetic
+    // monitor fetch it with no credentials. Author emails live only in
+    // eventVersions, which stay admin-only.
+    match /eventsPublished/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /eventVersions/{docId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+    match /eventsDraft/{docId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
   }
 }

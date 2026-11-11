@@ -19,6 +19,15 @@ import {
   isCanaryKey,
 } from "../../src/lib/draftSecret";
 
+/** True for the Storage upload host itself, judged by parsed hostname. */
+function isStorageHost(url: string): boolean {
+  const host = new URL(url).hostname;
+  return (
+    host === "storage.googleapis.com" ||
+    host.endsWith(".storage.googleapis.com")
+  );
+}
+
 const RUN_ID = process.env.CANARY_RUN_ID ?? "local";
 
 function canaryHeaders(key: string): Record<string, string> {
@@ -60,10 +69,7 @@ test("a phone applicant can file an application with photos on the live stack", 
   const relayCalls: string[] = [];
   page.on("response", (res) => {
     const req = res.request();
-    if (
-      req.method() === "PUT" &&
-      res.url().includes("storage.googleapis.com")
-    ) {
+    if (req.method() === "PUT" && isStorageHost(res.url())) {
       storagePuts.push({ url: res.url(), status: res.status() });
     }
     if (res.url().includes("/api/upload-application-photo?relay=1")) {
@@ -72,10 +78,7 @@ test("a phone applicant can file an application with photos on the live stack", 
   });
   const failedPuts: string[] = [];
   page.on("requestfailed", (req) => {
-    if (
-      req.method() === "PUT" &&
-      req.url().includes("storage.googleapis.com")
-    ) {
+    if (req.method() === "PUT" && isStorageHost(req.url())) {
       failedPuts.push(`${req.url()} ${req.failure()?.errorText ?? ""}`);
     }
   });

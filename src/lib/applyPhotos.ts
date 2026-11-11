@@ -134,7 +134,10 @@ async function relay(
     headers: {
       "Content-Type": file.type || "application/octet-stream",
       "x-draft-token": token,
-      "x-photo-filename": file.name.slice(0, 120),
+      // WHY encoded: a header value with characters above U+00FF (a name in
+      // Hindi, Chinese or an emoji) makes fetch throw before sending, which
+      // lost the photo exactly when the relay was its last resort.
+      "x-photo-filename": encodeURIComponent(file.name.slice(0, 120)),
       "x-photo-index": String(index),
     },
     body: file,

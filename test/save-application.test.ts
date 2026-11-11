@@ -15,6 +15,7 @@ const mocks = vi.hoisted(() => {
     failNextWrite: null as Error | null,
     conflictsToInject: 0,
     inflate: false,
+    racingFinalize: false,
   };
   return {
     FsConflictError,
@@ -58,6 +59,15 @@ vi.mock("@/lib/firestoreRest", async (importOriginal) => {
           throw err;
         }
         const d = state.docs.get(path);
+        if (state.racingFinalize && d) {
+          // A second finalize lands first: the doc is finalized and the
+          // caller's write loses its precondition.
+          state.racingFinalize = false;
+          d.fields.finalizedAt = new Date();
+          d.fields.welcomeSentAt = new Date();
+          d.t = ++state.clock;
+          throw new FsConflictError("precondition failed");
+        }
         if (state.conflictsToInject > 0 || !d || String(d.t) !== time) {
           state.conflictsToInject = Math.max(0, state.conflictsToInject - 1);
           throw new FsConflictError("precondition failed");
@@ -150,6 +160,7 @@ beforeEach(() => {
   mocks.state.failNextWrite = null;
   mocks.state.conflictsToInject = 0;
   mocks.state.inflate = false;
+  mocks.state.racingFinalize = false;
   mocks.sendMail.mockReset().mockResolvedValue({ id: "m" });
   mocks.alertOps.mockReset();
   import.meta.env.DRAFT_TOKEN_SECRET = "handler-test-secret";
@@ -371,6 +382,22 @@ describe("save-application: finalize", () => {
     expect(mocks.sendMail).toHaveBeenCalledTimes(1);
   });
 
+  it("a finalize that loses a race to another finalize sends no welcome email of its own", async () => {
+    const first = await json(
+      await post({ rev: 1, fields: { name: "P", email: "p@example.com" } }),
+    );
+    mocks.state.racingFinalize = true;
+    const res = await post({
+      token: first.token,
+      rev: 2,
+      fields: {},
+      finalize: true,
+    });
+    expect(res.status).toBe(200);
+    // The winner owns the welcome email; the retried loser must not repeat it.
+    expect(mocks.sendMail).not.toHaveBeenCalled();
+  });
+
   it("a finished application is closed to a later write with the same token", async () => {
     const first = await json(await post({ rev: 1, fields: { name: "P" } }));
     await post({ token: first.token, rev: 2, fields: {}, finalize: true });
@@ -490,15 +517,18 @@ describe("save-application: budget and failure reporting", () => {
     expect(doc.finalizedAt).toBeUndefined();
   });
 
-  it("a database failure returns 500 with the stage and raw detail, and alerts with exact context", async () => {
+  it("a database failure returns 500 with the stage and a safe cause, and alerts with the exact one", async () => {
     mocks.state.failNextWrite = new Error("PERMISSION_DENIED: key revoked");
     const res = await post({ rev: 1, fields: { name: "A", pitch: "hello" } });
     expect(res.status).toBe(500);
-    expect(await json(res)).toMatchObject({
+    const body = await res.text();
+    expect(JSON.parse(body)).toMatchObject({
       error: "save_failed",
       stage: "save_draft",
-      detail: "PERMISSION_DENIED: key revoked",
+      detail: "server error",
     });
+    // The raw upstream message is for the ops alert only.
+    expect(body).not.toContain("key revoked");
     const alert = mocks.alertOps.mock.calls[0][0];
     expect(alert).toMatchObject({
       flow: "apply",
@@ -539,6 +569,19 @@ describe("save-application: production canary", () => {
       [...mocks.state.docs.keys()].some((k) => k.startsWith("applications/")),
     ).toBe(false);
     expect(mocks.sendMail).not.toHaveBeenCalled();
+  });
+
+  it("the first canary save hands a token back so the browser can reserve photos", async () => {
+    const res = await post(
+      { rev: 1, fields: { name: "CANARY" } },
+      canaryHeaders("iphone-safari"),
+    );
+    expect(typeof (await json(res)).token).toBe("string");
+    const again = await post(
+      { token: "anything", rev: 2, fields: { name: "CANARY" } },
+      canaryHeaders("iphone-safari"),
+    );
+    expect((await json(again)).token).toBeUndefined();
   });
 
   it("every canary finalize restamps finalizedAt, so the read-back can tell this run from the last", async () => {

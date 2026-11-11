@@ -12,6 +12,7 @@ import { upsertDoc } from "@/lib/draftStore";
 import { issueDraftToken, newDraftId } from "@/lib/draftToken";
 import { jsonResponse } from "@/lib/http";
 import { alertOps } from "@/lib/opsAlert";
+import { publicCause } from "@/lib/publicCause";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { sendMail } from "@/lib/zohoMailer";
 
@@ -91,11 +92,15 @@ export const POST: APIRoute = async ({ request }) => {
   let draftId: string;
   let collection: "applications" | "_canary" = "applications";
   let canary = false;
-  let issueToken = false;
+  let issueToken: boolean;
   if (resolved.ok) {
     draftId = resolved.auth.draftId;
     collection = resolved.auth.collection;
     canary = resolved.auth.canaryKey !== null;
+    // WHY: the browser needs a token back from its first save or it treats
+    // the draft as never created and cannot reserve photos. A canary request
+    // authenticates by signature, so the token is only a hand-back.
+    issueToken = canary && !body.token;
   } else if (resolved.reason === "no_token") {
     const tooMany = await enforceRateLimit(
       request,
@@ -126,6 +131,12 @@ export const POST: APIRoute = async ({ request }) => {
     const outcome = await upsertDoc(collection, draftId, (before) => {
       const existing = before ?? {};
       storedMaxRev = maxStoredRev(existing);
+      // WHY: upsertDoc re-runs this callback after a lost write race. State
+      // from the losing attempt (a claimed welcome email, stale keys) must not
+      // leak into an attempt that returns early, or the email sends twice.
+      sendWelcome = false;
+      capped = false;
+      stale = [];
       // WHY: finalize() wipes the applicant's token, so no real client writes
       // to a finished application. A leaked token (30-day life) must not be
       // able to rewrite one. A repeated finalize is the exception: a lost
@@ -258,7 +269,7 @@ export const POST: APIRoute = async ({ request }) => {
       {
         error: "save_failed",
         stage: finalize ? "finalize" : "save_draft",
-        detail: message.slice(0, 500),
+        detail: publicCause(err),
       },
       500,
     );

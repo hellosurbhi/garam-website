@@ -243,6 +243,21 @@ describe("upload-application-photo: any file, direct to the bucket", () => {
     );
   });
 
+  it("two confirms of the same path racing each other count its bytes once", async () => {
+    const { id, token } = seedDraft();
+    const path = `photos/${id}/1-aaaa.jpg`;
+    mocks.state.objects.set(path, { size: 100, contentType: "image/jpeg" });
+    const [a, b] = await Promise.all([
+      call(token, { action: "confirm", path }),
+      call(token, { action: "confirm", path }),
+    ]);
+    expect([a.status, b.status]).toEqual([200, 200]);
+    expect(photoPaths(id)).toEqual([path]);
+    expect(mocks.state.docs.get(`applications/${id}`)?.fields.photoBytes).toBe(
+      100,
+    );
+  });
+
   it("refuses to confirm a path in another draft's folder or a traversal", async () => {
     const { token } = seedDraft();
     for (const path of [
@@ -391,6 +406,50 @@ describe("upload-application-photo: relay fallback", () => {
     });
   });
 
+  it("counts relayed bytes and a reservation against the draft", async () => {
+    const { id, token } = seedDraft();
+    await call(token, null, { relay: true, raw: new Uint8Array(500) });
+    const fields = mocks.state.docs.get(`applications/${id}`)?.fields;
+    expect(fields?.photoBytes).toBe(500);
+    expect(fields?.photoReservations).toBe(1);
+  });
+
+  it("refuses a relay once the draft is out of photo, reservation or byte quota", async () => {
+    for (const extra of [
+      { photoPaths: Array.from({ length: 10 }, (_, i) => `p${i}`) },
+      { photoReservations: 40 },
+      { photoBytes: 100 * 1024 * 1024 },
+    ]) {
+      const { token } = seedDraft(extra);
+      const res = await call(token, null, {
+        relay: true,
+        raw: new Uint8Array(10),
+      });
+      expect(res.status).toBe(409);
+      expect((await json(res)).error).toBe("photo_quota");
+    }
+  });
+
+  it("decodes a percent-encoded filename header and keeps its extension", async () => {
+    const { token } = seedDraft();
+    const res = await call(token, null, {
+      relay: true,
+      raw: new Uint8Array(10),
+      headers: { "x-photo-filename": encodeURIComponent("照片.png") },
+    });
+    expect((await json(res)).path as string).toMatch(/\.png$/);
+  });
+
+  it("ignores a malformed filename header instead of failing the photo", async () => {
+    const { token } = seedDraft();
+    const res = await call(token, null, {
+      relay: true,
+      raw: new Uint8Array(10),
+      headers: { "x-photo-filename": "%E0%A4%A" },
+    });
+    expect(res.status).toBe(200);
+  });
+
   it("413s a body over 4MB and says the limit", async () => {
     const { token } = seedDraft();
     const res = await call(token, null, {
@@ -401,7 +460,7 @@ describe("upload-application-photo: relay fallback", () => {
     expect((await json(res)).limit).toBe(4 * 1024 * 1024);
   });
 
-  it("a bucket failure is a 500 that names the stage and the raw cause, and alerts", async () => {
+  it("a bucket failure is a 500 that names the stage and a safe cause, and alerts with the raw one", async () => {
     const { token } = seedDraft();
     mocks.state.failPut = new Error(
       "storage 403: caller does not have storage.objects.create",
@@ -414,7 +473,7 @@ describe("upload-application-photo: relay fallback", () => {
     expect(await json(res)).toMatchObject({
       error: "photo_failed",
       stage: "photo_relay",
-      detail: "storage 403: caller does not have storage.objects.create",
+      detail: "storage answered HTTP 403",
     });
     expect(mocks.alertOps.mock.calls[0][0]).toMatchObject({
       flow: "apply",

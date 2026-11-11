@@ -31,6 +31,7 @@ interface Call {
   url: string;
   method: string;
   body: unknown;
+  headers: Record<string, string>;
 }
 
 /** Scriptable network: handlers keyed by endpoint kind, calls recorded. */
@@ -44,7 +45,12 @@ function network(handlers: {
   vi.stubGlobal(
     "fetch",
     vi.fn(async (url: string, init: RequestInit = {}) => {
-      calls.push({ url, method: init.method ?? "GET", body: init.body });
+      calls.push({
+        url,
+        method: init.method ?? "GET",
+        body: init.body,
+        headers: (init.headers ?? {}) as Record<string, string>,
+      });
       if (url.startsWith("https://storage.example.com/")) {
         return handlers.put?.() ?? new Response(null, { status: 200 });
       }
@@ -187,6 +193,23 @@ describe("uploadApplicationPhoto: a photo is never rejected", () => {
     });
     expect(calls.filter((c) => c.method === "PUT")).toHaveLength(3);
     expect(calls.at(-1)?.url).toContain("relay=1");
+  });
+
+  it("sends a non-Latin1 filename through the relay as a percent-encoded header", async () => {
+    // A raw header value above U+00FF makes real fetch throw before sending.
+    const original = file("照片 🌶️.jpg", "image/jpeg", 1 * MB);
+    compress.mockResolvedValue(original);
+    const calls = network({
+      put: () => {
+        throw new TypeError("Failed to fetch");
+      },
+    });
+    const { value } = await run(original);
+    expect(value?.relayed).toBe(true);
+    const header = calls.at(-1)?.headers["x-photo-filename"] ?? "";
+    // eslint-disable-next-line no-control-regex
+    expect(header).toMatch(/^[\x00-\xff]*$/);
+    expect(decodeURIComponent(header)).toBe("照片 🌶️.jpg");
   });
 
   it("relays the original when the compressed copy grew past 4MB", async () => {

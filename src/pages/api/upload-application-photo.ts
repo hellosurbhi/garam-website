@@ -4,6 +4,7 @@ import { isAllowedApplyOrigin } from "@/lib/allowedOrigin";
 import { resolveDraftAuth, type DraftAuth } from "@/lib/draftAuth";
 import { upsertDoc } from "@/lib/draftStore";
 import { jsonResponse } from "@/lib/http";
+import { publicCause } from "@/lib/publicCause";
 import { alertOpsOnce } from "@/lib/alertDedupe";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import {
@@ -46,6 +47,16 @@ function stringArray(value: unknown): string[] {
     : [];
 }
 
+/** The relay sends the filename percent-encoded; a malformed value is ignored. */
+function decodeFilenameHeader(value: string | null): string | null {
+  if (value === null) return null;
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return null;
+  }
+}
+
 function objectName(
   auth: DraftAuth,
   seq: number,
@@ -62,11 +73,31 @@ function objectName(
   return `${photoPrefix(auth.draftId)}${seq}-${randomBytes(4).toString("hex")}.${ext}`;
 }
 
-async function recordPhoto(auth: DraftAuth, path: string) {
+/**
+ * Attach a stored photo to the draft and count its bytes in ONE conditional
+ * write. WHY: bytes were added in a second write decided from a snapshot read
+ * before either write, so two confirms of the same path (a retried request)
+ * both saw "not kept yet" and counted the file twice. Here the path check and
+ * the count read the same `before`, and upsertDoc re-runs on a lost race.
+ * `reservation` also takes a reservation slot (the relay has no reserve step).
+ */
+async function recordPhoto(
+  auth: DraftAuth,
+  path: string,
+  size: number,
+  reservation = false,
+) {
   return upsertDoc(auth.collection, auth.draftId, (before) => {
     const current = stringArray(before?.photoPaths);
     if (current.includes(path)) return {};
-    return { photoPaths: [...current, path], updatedAt: new Date() };
+    return {
+      photoPaths: [...current, path],
+      photoBytes: (Number(before?.photoBytes) || 0) + size,
+      ...(reservation
+        ? { photoReservations: (Number(before?.photoReservations) || 0) + 1 }
+        : {}),
+      updatedAt: new Date(),
+    };
   });
 }
 
@@ -167,12 +198,7 @@ export const POST: APIRoute = async ({ request, url }) => {
       if (total + stored.size > MAX_TOTAL_BYTES && !auth.canaryKey) {
         return jsonResponse({ error: "photo_quota", reason: "bytes" }, 409);
       }
-      await recordPhoto(auth, path as string);
-      await upsertDoc(auth.collection, auth.draftId, (before) =>
-        kept.includes(path as string)
-          ? {}
-          : { photoBytes: (Number(before?.photoBytes) || 0) + stored.size },
-      );
+      await recordPhoto(auth, path as string, stored.size);
       return jsonResponse({ ok: true, path, size: stored.size });
     }
 
@@ -201,13 +227,21 @@ export const POST: APIRoute = async ({ request, url }) => {
           413,
         );
       }
-      if (!auth.canaryKey && kept.length >= MAX_PHOTOS_PER_DRAFT) {
+      // The relay obeys the same caps as reserve and confirm, or it would be
+      // an unmetered way to fill the bucket.
+      if (
+        !auth.canaryKey &&
+        (kept.length >= MAX_PHOTOS_PER_DRAFT ||
+          (Number(draft.photoReservations) || 0) >=
+            MAX_RESERVATIONS_PER_DRAFT ||
+          (Number(draft.photoBytes) || 0) + bytes.byteLength > MAX_TOTAL_BYTES)
+      ) {
         return jsonResponse({ error: "photo_quota", kept: kept.length }, 409);
       }
       const name = objectName(
         auth,
         (Number(draft.photoReservations) || 0) + 1,
-        request.headers.get("x-photo-filename"),
+        decodeFilenameHeader(request.headers.get("x-photo-filename")),
         request.headers.get("x-photo-index"),
       );
       await putObject(
@@ -215,7 +249,7 @@ export const POST: APIRoute = async ({ request, url }) => {
         bytes,
         safeContentType(request.headers.get("content-type")),
       );
-      await recordPhoto(auth, name);
+      await recordPhoto(auth, name, bytes.byteLength, true);
       return jsonResponse({ ok: true, path: name, size: bytes.byteLength });
     }
 
@@ -235,7 +269,7 @@ export const POST: APIRoute = async ({ request, url }) => {
       {
         error: "photo_failed",
         stage: `photo_${stage}`,
-        detail: message.slice(0, 500),
+        detail: publicCause(err),
       },
       500,
     );

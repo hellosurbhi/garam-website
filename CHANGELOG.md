@@ -2,6 +2,8 @@
 
 ## Waitlist review corrections (2026-11-11)
 
+- Reveal ticket links when deferred presale markup arrives after sales open and correct the documented V3 cache fallback.
+
 - Snapshot city and input evidence together before asynchronous attribution and centralize homepage card fallback copy.
 
 - Bind entered-city evidence to the last input value so a delayed geo prefill after clearing the field cannot count as explicit demand.

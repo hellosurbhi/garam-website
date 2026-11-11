@@ -1,5 +1,9 @@
 # Lessons
 
+## Review the complete feedback before declaring merge readiness
+
+CI and resolved inline threads do not establish independent review approval. Audit full review bodies and general comments, record each disposition and obtain the requested Claude and Codex verdicts on the final code. When markup moves into server islands, verify that scripts also initialize asynchronously inserted content.
+
 ## Finish the review loop before claiming readiness
 
 A pushed draft and passing local tests are not a ready PR. Inspect review threads, address each with evidence, verify required checks on the latest commit and confirm draft status is cleared before reporting ready to merge. A completed CodeRabbit check does not mean its findings are resolved.

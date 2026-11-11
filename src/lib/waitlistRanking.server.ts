@@ -3,7 +3,7 @@ import { fsGet, fsPatch } from "./firestoreRest";
 import { getFirestoreAccessToken } from "./firestoreAdmin";
 import { rankWaitlistCities, type CityWaitlistCount } from "./waitlistRanking";
 
-const CACHE_PATH = "systemConfig/ticketWaitlistRanking";
+const CACHE_PATH = "systemConfig/ticketWaitlistRankingV2";
 const DAY_MS = 86_400_000;
 const cacheSchema = z.object({
   updatedAt: z.number(),
@@ -26,60 +26,78 @@ async function refresh(signal: AbortSignal): Promise<CityWaitlistCount[]> {
     signal.throwIfAborted();
     const project = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
     if (!project) throw new Error("PUBLIC_FIREBASE_PROJECT_ID is required");
-    const response = await fetch(
-      `https://firestore.googleapis.com/v1/projects/${project}/databases/(default)/documents:runQuery`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        signal: AbortSignal.any([signal, AbortSignal.timeout(10_000)]),
-        body: JSON.stringify({
-          structuredQuery: {
-            from: [{ collectionId: "leads" }],
-            select: {
-              fields: ["email", "city", "sourceCitySlug", "source"].map(
-                (fieldPath) => ({ fieldPath }),
-              ),
+    const records = await Promise.all(
+      ["leads", "applications"].map(async (collectionId) => {
+        const response = await fetch(
+          `https://firestore.googleapis.com/v1/projects/${project}/databases/(default)/documents:runQuery`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
             },
+            signal: AbortSignal.any([signal, AbortSignal.timeout(10_000)]),
+            body: JSON.stringify({
+              structuredQuery: {
+                from: [{ collectionId }],
+                select: {
+                  fields: [
+                    "email",
+                    "emailNormalized",
+                    "city",
+                    "sourceCitySlug",
+                    "source",
+                    "isSynthetic",
+                    "deletedAt",
+                  ].map((fieldPath) => ({ fieldPath })),
+                },
+              },
+            }),
           },
-        }),
-      },
-    );
-    if (!response.ok)
-      throw new Error(`Waitlist query failed: ${response.status}`);
-    const rows = z
-      .array(
-        z
-          .object({
-            document: z
+        );
+        if (!response.ok)
+          throw new Error(`Waitlist query failed: ${response.status}`);
+        const rows = z
+          .array(
+            z
               .object({
-                fields: z
-                  .record(
-                    z.string(),
-                    z
-                      .object({ stringValue: z.string().optional() })
-                      .passthrough(),
-                  )
+                document: z
+                  .object({
+                    fields: z
+                      .record(
+                        z.string(),
+                        z
+                          .object({
+                            stringValue: z.string().optional(),
+                            booleanValue: z.boolean().optional(),
+                            timestampValue: z.string().optional(),
+                            nullValue: z.null().optional(),
+                          })
+                          .passthrough(),
+                      )
+                      .optional(),
+                  })
                   .optional(),
               })
-              .optional(),
-          })
-          .passthrough(),
-      )
-      .parse(await response.json());
-    const leads = rows
-      .filter((row) => row.document)
-      .map((row) =>
-        Object.fromEntries(
-          Object.entries(row.document?.fields ?? {}).map(([key, value]) => [
-            key,
-            value.stringValue ?? "",
-          ]),
-        ),
-      );
-    const counts = rankWaitlistCities(leads);
+              .passthrough(),
+          )
+          .parse(await response.json());
+        return rows
+          .filter((row) => row.document)
+          .map((row) =>
+            Object.fromEntries(
+              Object.entries(row.document?.fields ?? {}).map(([key, value]) => [
+                key,
+                value.stringValue ??
+                  value.booleanValue ??
+                  value.timestampValue ??
+                  null,
+              ]),
+            ),
+          );
+      }),
+    );
+    const counts = rankWaitlistCities(records.flat());
     signal.throwIfAborted();
     await fsPatch(CACHE_PATH, { updatedAt: Date.now(), counts }, signal);
     signal.throwIfAborted();

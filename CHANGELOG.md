@@ -1,5 +1,12 @@
 # Changelog
 
+## Five market waitlists and ticket ordering (2026-11-11)
+
+- Withdraw the Chicago December 4 and San Diego December 24 scheduled shows while keeping their history and eligibility for Notify Me.
+- Rank five markets using unique emails across leads and applications, explicit location aliases and Edison grouped under New York. Exclude active ticket markets before selecting five.
+- Show purchasable events first, then selected dated waitlists, then undated waitlists on the homepage and tickets page. Keep the existing homepage card design through a shared card component.
+- Version the aggregate cache and fix the missing gap between ticket cards and waitlist cards. Stack purchase controls below titles on small screens to avoid cramped city names.
+
 ## Resolve monitoring and waitlist review findings (2026-11-11)
 
 - Retain pending synthetic checks and incident reports with GitHub’s bounded maximum queue. Skip redirect checks for superseded revisions while retaining cleanup.

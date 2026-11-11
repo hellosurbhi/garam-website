@@ -1,5 +1,9 @@
 # Lessons
 
+## Separate scheduled shows from market demand
+
+Removing a scheduled show does not remove its city from Notify Me eligibility. Confirm the ranking population from the underlying records: a cached waitlist-only count is not the number of unique emails across leads and applications. Normalize explicit metro aliases before deduplication and distinguish entered locations from inferred IP geography.
+
 ## Test real SDK protocol selection
 
 Calling uploadBytesResumable does not guarantee a resumable HTTP request for a small file. Firebase uses multipart uploads below its threshold. Observe both formats and assert upload evidence in the test body so an unused route assertion cannot create false confidence.

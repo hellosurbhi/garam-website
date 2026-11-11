@@ -17,20 +17,17 @@ import { CREATOR_URLS } from "@/data/socials";
 import { PAGES } from "@/data/copy";
 import { buildOrganizationJsonLd } from "@/utils/organizationSchema";
 import { YOUTUBE_VIDEO_ID, VIDEO_METADATA } from "@/lib/constants";
-import { events, allEvents, isDisplayable } from "@/data/events";
-import { isUpcomingByIso } from "@/utils/eventDate";
-import { getSchemaDated } from "@/utils/eventFilters";
+import { events, allEvents } from "@/data/events";
+import { getTicketPageUpcoming, getSchemaDated } from "@/utils/eventFilters";
 import { buildEventSchemas } from "@/utils/eventSchema";
 
 const HIDDEN_FROM_HOME = ["Salt Lake City", "Denver"];
-const today = new Date().toISOString().slice(0, 10);
-const upcomingEvents = allEvents.filter(
-  (e) => isUpcomingByIso(e, today) && !HIDDEN_FROM_HOME.includes(e.city),
-);
+const now = new Date();
+const today = now.toISOString().slice(0, 10);
+const candidates = allEvents.filter((e) => !HIDDEN_FROM_HOME.includes(e.city));
+const upcomingEvents = getTicketPageUpcoming(candidates, today, now);
 const firstTicketUrl = "/tickets";
-const heroEvents = events
-  .filter((e) => isDisplayable(e) && e.isoDate && e.isoDate >= today && e.url)
-  .slice(0, 5);
+const heroEvents = getTicketPageUpcoming(events, today, now).slice(0, 5);
 
 // Organization JSON-LD
 const orgJsonLd = buildOrganizationJsonLd();
@@ -134,7 +131,12 @@ const speakableJsonLd = JSON.stringify({
     <HomeHero ticketsUrl={firstTicketUrl} heroEvents={heroEvents} />
     <HomeMarquee />
     <HomeExperience />
-    <HomeShows events={upcomingEvents} />
+    <HomeShows
+      events={upcomingEvents}
+      candidates={candidates}
+      todayISO={today}
+      nowISO={now.toISOString()}
+    />
     <HomeStats />
     <HomePress />
     <HomeTestimonials />

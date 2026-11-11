@@ -4,6 +4,8 @@ Permanent record of every show change: cancellations, date moves, time moves, ro
 
 ## Log
 
+- 2026-11-11: Chicago December 4 and San Diego December 24 scheduled shows withdrawn. Both records retained as canceled. Both cities remain eligible for the ranked Notify Me list; no market exclusion was added.
+
 - 2026-11-11: Open December 27 Los Angeles ticket sales through Lyric Hyperion Eventbrite, 7:30 PM to 9:30 PM Pacific at Lyric Hyperion Theater & Cafe. Correct December 26 San Francisco from 5 PM to 7 PM to 6 PM to 8 PM Pacific at The Faight Collective. Preserve both original slugs and date history.
 
 - 2026-11-05: Mark Austin November 19, Houston November 20, San Antonio November 21 and Dallas November 22 placeholders canceled using the shared event status. Keep their historical entries and allow the cities to appear as undated waitlists according to demand.

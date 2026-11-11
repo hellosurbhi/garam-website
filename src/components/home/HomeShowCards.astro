@@ -1,0 +1,268 @@
+---
+import type { EventEntry } from "@/data/events";
+import { buildTicketUrl } from "@/utils/eventUrl";
+import { parseMonth, parseDay, formatOnSaleDate } from "@/utils/eventDate";
+import { buildTaglineMap } from "@/utils/eventTaglines";
+import { formatEventLocation } from "@/utils/eventCity";
+import { vendorFromUrl } from "@/lib/analyticsCapture";
+
+interface Props {
+  events: EventEntry[];
+}
+
+const { events } = Astro.props;
+const taglineMap = buildTaglineMap(events);
+---
+
+{events.map((event) => {
+  const isPresale =
+    Boolean(event.onSaleAt) && new Date(event.onSaleAt!) > new Date();
+  const isLive = Boolean(event.url) && event.url !== "#";
+  const isSoldOut = event.soldOut ?? false;
+  const cityLabel = formatEventLocation(event);
+  const onSaleLabel = event.onSaleAt ? formatOnSaleDate(event.onSaleAt) : "";
+  // The tracked redirect (fires server + browser InitiateCheckout, then
+  // 302s to the real checkout): see src/pages/api/go/[slug].ts and
+  // src/lib/ticketCtaTracking.ts. Sold-out clicks skip this and link
+  // straight to the vendor URL instead: there's no checkout to
+  // initiate, so routing them through /api/go would misreport a
+  // non-purchase as checkout intent.
+  const goHref = `/api/go/${event.slug}`;
+  const cardInner = (
+    <>
+      <div class="show-date-block">
+        <div class="month">{parseMonth(event.date)}</div>
+        <div class="day">{parseDay(event.date)}</div>
+      </div>
+      <div class="show-info">
+        <h3>{cityLabel}</h3>
+        <span>
+          {isSoldOut
+            ? (event.tagline ?? "Sold out")
+            : (taglineMap.get(event.url) ?? "On sale now")}
+        </span>
+      </div>
+      <span class={`ticket-label${isSoldOut ? " ticket-label--soldout" : ""}`}>
+        {isSoldOut ? "Sold Out" : "Grab My Spot"}
+      </span>
+    </>
+  );
+  return isPresale ? (
+    <>
+      <button
+        type="button"
+        class="show-card show-card--notify"
+        data-notify-city={cityLabel}
+        data-notify-city-slug={`presale-${event.isoDate}`}
+        data-notify-on-sale-at={event.onSaleAt}
+        data-presale-notify={event.onSaleAt}
+        data-ph-capture="cta_clicked"
+        data-ph-cta="notify_me"
+        data-ph-section="shows"
+        data-ph-city={cityLabel}
+      >
+        <div class="show-date-block">
+          <div class="month">{parseMonth(event.date)}</div>
+          <div class="day">{parseDay(event.date)}</div>
+        </div>
+        <div class="show-info">
+          <h3>{cityLabel}</h3>
+          <span>On sale {onSaleLabel}</span>
+        </div>
+        <span class="ticket-label ticket-label--notify">Notify Me</span>
+      </button>
+      <a
+        href={goHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="show-card show-card--live"
+        data-go-ticket
+        data-presale-live
+        hidden
+        data-event-slug={event.slug}
+        data-event-vendor={vendorFromUrl(event.url)}
+        data-cta-position="shows"
+        data-event-city={cityLabel}
+        data-event-date={event.isoDate ?? event.date}
+        data-ph-capture="cta_clicked"
+        data-ph-cta="get_tickets"
+        data-ph-section="shows"
+        data-ph-city={cityLabel}
+        data-ph-event-date={event.date}
+        data-ph-price={event.price}
+      >
+        {cardInner}
+      </a>
+    </>
+  ) : isLive ? (
+    <a
+      href={isSoldOut ? buildTicketUrl(event.url, "home", "shows") : goHref}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="show-card show-card--live"
+      data-go-ticket={isSoldOut ? undefined : true}
+      data-event-slug={event.slug}
+      data-event-vendor={vendorFromUrl(event.url)}
+      data-cta-position="shows"
+      data-event-city={cityLabel}
+      data-event-date={event.isoDate ?? event.date}
+      data-ph-capture="cta_clicked"
+      data-ph-cta="get_tickets"
+      data-ph-section="shows"
+      data-ph-city={cityLabel}
+      data-ph-event-date={event.date}
+      data-ph-price={event.price}
+    >
+      {cardInner}
+    </a>
+  ) : (
+    <button
+      type="button"
+      class="show-card show-card--notify"
+      data-notify-city={cityLabel}
+      data-notify-city-slug={event.citySlug}
+      data-ph-capture="cta_clicked"
+      data-ph-cta="notify_me"
+      data-ph-section="shows"
+      data-ph-city={cityLabel}
+    >
+      <div class="show-date-block">
+        {parseDay(event.date) !== "" ? (
+          <>
+            <div class="month">{parseMonth(event.date)}</div>
+            <div class="day">{parseDay(event.date)}</div>
+          </>
+        ) : (
+          <div class="day day--tba">TBA</div>
+        )}
+      </div>
+      <div class="show-info">
+        <h3>{cityLabel}</h3>
+        <span>Dates to be announced</span>
+      </div>
+      <span class="ticket-label ticket-label--notify">Notify Me</span>
+    </button>
+  );
+})}
+<style>
+  .show-card {
+    background: none;
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 24px 0;
+    display: grid;
+    grid-template-columns: 48px 1fr auto;
+    gap: 16px;
+    align-items: center;
+    transition:
+      background 0.25s ease,
+      transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    text-decoration: none;
+    cursor: pointer;
+    color: white;
+    width: 100%;
+    font: inherit;
+    text-align: left;
+  }
+  .show-card[hidden] {
+    display: none;
+  }
+  .show-card:last-child {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  .show-card:hover,
+  .show-card:focus-within {
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .show-card:hover .ticket-label,
+  .show-card:focus-within .ticket-label {
+    letter-spacing: 2.5px;
+    color: white;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .show-card:hover,
+    .show-card:focus-within {
+      transform: translateX(4px);
+    }
+  }
+  .show-date-block {
+    text-align: center;
+  }
+  .show-date-block .month {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--electric-yellow);
+  }
+  .show-date-block .day {
+    font-family: var(--font-playfair), serif;
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1;
+    color: white;
+  }
+  .show-date-block .day--tba {
+    font-size: 20px;
+    font-family: var(--font-body), sans-serif;
+    font-weight: 900;
+    color: var(--electric-yellow);
+    letter-spacing: 3px;
+  }
+  .show-info h3 {
+    font-family: var(--font-playfair), serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 2px;
+  }
+  .show-info span {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.55);
+  }
+  .ticket-label {
+    background: none;
+    color: var(--electric-yellow);
+    border: none;
+    padding: 0;
+    font-family: var(--font-body), sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-align: right;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    pointer-events: none;
+    transition:
+      letter-spacing 0.25s ease,
+      color 0.25s ease;
+  }
+  .ticket-label--notify {
+    color: rgba(255, 255, 255, 0.45);
+  }
+  .ticket-label--soldout {
+    color: rgba(255, 255, 255, 0.35);
+  }
+
+  @media (min-width: 768px) {
+    .show-card {
+      grid-template-columns: 80px 1fr auto;
+      padding: 28px 0;
+    }
+    .show-date-block .day {
+      font-size: 48px;
+    }
+    .show-date-block .day--tba {
+      font-size: 20px;
+    }
+    .show-info h3 {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+    .ticket-label {
+      font-size: 13px;
+    }
+  }
+</style>

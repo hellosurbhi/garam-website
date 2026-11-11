@@ -695,6 +695,8 @@ export const events: EventEntry[] = [
     stateAbbr: "IL",
     citySlug: "chicago",
     slug: buildEventSlug("chicago", "2026-12-04"),
+    status: "canceled",
+    note: "Scheduled show withdrawn November 11, 2026. Chicago remains eligible for the city waitlist",
     description: "Chicago, December 4. Join the list for tickets.",
     lineup: DEFAULT_LINEUP,
     ticketSource: "none",
@@ -730,6 +732,7 @@ export const events: EventEntry[] = [
     citySlug: "san-diego",
     // WHY: slug keeps the original date so /events/san-diego-2026-11-15 still resolves after the reschedule (same pattern as Philadelphia Oct 4)
     slug: buildEventSlug("san-diego", "2026-11-15"),
+    status: "canceled",
     description:
       "Garam Masala Dating is heading back to San Diego. Tickets are not on sale yet, join the list to be first to know when they drop.",
     lineup: DEFAULT_LINEUP,
@@ -738,7 +741,7 @@ export const events: EventEntry[] = [
     isoDate: "2026-12-24",
     tagline: "Tickets coming soon",
     previousDate: "2026-11-15",
-    note: "Moved from Nov 15. Placeholder date, email capture only until tickets exist",
+    note: "Moved from Nov 15. Scheduled show withdrawn November 11, 2026. San Diego remains eligible for the city waitlist",
   },
   {
     date: "Dec 26",

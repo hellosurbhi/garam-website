@@ -1,22 +1,33 @@
 ---
 import { PAGES } from "@/data/copy";
-import { allEvents } from "@/data/events";
+import type { EventEntry } from "@/data/events";
+import HomeShowCards from "@/components/home/HomeShowCards.astro";
 import { getWaitlistRanking } from "@/lib/waitlistRanking.server";
 import { selectWaitlistCards } from "@/lib/waitlistRanking";
 import TicketCard from "./TicketCard.astro";
 
 interface Props {
-  scheduledCitySlugs: string[];
+  upcoming: EventEntry[];
+  todayISO: string;
+  nowISO: string;
   scheduledCount: number;
+  sourcePage?: "tickets" | "home";
 }
-const { scheduledCitySlugs, scheduledCount } = Astro.props;
-const upcoming = allEvents.filter(
-  (event) =>
-    event.citySlug !== undefined && scheduledCitySlugs.includes(event.citySlug),
-);
+const {
+  upcoming,
+  todayISO,
+  nowISO,
+  scheduledCount,
+  sourcePage = "tickets",
+} = Astro.props;
 let cards: ReturnType<typeof selectWaitlistCards> = [];
 try {
-  cards = selectWaitlistCards(await getWaitlistRanking(), upcoming);
+  cards = selectWaitlistCards(
+    await getWaitlistRanking(),
+    upcoming,
+    todayISO,
+    new Date(nowISO),
+  );
   Astro.response.headers.set(
     "Cache-Control",
     "public, max-age=0, s-maxage=3600",
@@ -30,11 +41,15 @@ try {
 }
 ---
 
-{cards.map((event, index) => (
-  <TicketCard
-    event={event}
-    index={index + scheduledCount}
-    sourcePage="tickets"
-  />
-))}
+{sourcePage === "home" ? (
+  <HomeShowCards events={cards} />
+) : (
+  cards.map((event, index) => (
+    <TicketCard
+      event={event}
+      index={index + scheduledCount}
+      sourcePage="tickets"
+    />
+  ))
+)}
 {cards.length === 0 && <p>{PAGES.tickets.waitlistEmpty}</p>}

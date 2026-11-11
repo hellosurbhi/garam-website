@@ -40,13 +40,14 @@ describe("event location data", () => {
 });
 
 describe("dated email-capture placeholders", () => {
-  const placeholders = ["2026-12-24"];
+  const placeholders = ["2026-12-04", "2026-12-24"];
 
-  it("shows each placeholder with its date and no ticket link", () => {
+  it("retains withdrawn Chicago and San Diego dates without displaying them", () => {
     for (const isoDate of placeholders) {
       const event = events.find((e) => e.isoDate === isoDate);
       expect(event, isoDate).toBeDefined();
-      expect(isDisplayable(event!)).toBe(true);
+      expect(isDisplayable(event!)).toBe(false);
+      expect(event!.status).toBe("canceled");
       expect(event!.url).toBe("");
       expect(event!.ticketSource).toBe("none");
     }

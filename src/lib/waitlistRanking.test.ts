@@ -157,3 +157,19 @@ describe("waitlist ranking", () => {
     ).toBe("chicago");
   });
 });
+
+it("keeps a dated city excluded between the build date and a later island request", () => {
+  const chicago = events.find((event) => event.slug === "chicago-2026-12-04")!;
+  const rendered = getTicketPageUpcoming([chicago], "2026-12-03");
+  const laterRequest = getTicketPageUpcoming([chicago], "2026-12-05");
+  const counts = [
+    { citySlug: "chicago", count: 100 },
+    { citySlug: "dallas", count: 20 },
+  ];
+  expect(
+    selectWaitlistCards(counts, laterRequest).map((event) => event.citySlug),
+  ).toContain("chicago");
+  expect(
+    selectWaitlistCards(counts, rendered).map((event) => event.citySlug),
+  ).toEqual(["dallas"]);
+});

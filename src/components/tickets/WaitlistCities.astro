@@ -1,14 +1,18 @@
 ---
 import { PAGES } from "@/data/copy";
 import { allEvents } from "@/data/events";
-import { getTicketPageUpcoming } from "@/utils/eventFilters";
 import { getWaitlistRanking } from "@/lib/waitlistRanking.server";
 import { selectWaitlistCards } from "@/lib/waitlistRanking";
 import TicketCard from "./TicketCard.astro";
 
-const upcoming = getTicketPageUpcoming(
-  allEvents,
-  new Date().toISOString().slice(0, 10),
+interface Props {
+  scheduledCitySlugs: string[];
+  scheduledCount: number;
+}
+const { scheduledCitySlugs, scheduledCount } = Astro.props;
+const upcoming = allEvents.filter(
+  (event) =>
+    event.citySlug !== undefined && scheduledCitySlugs.includes(event.citySlug),
 );
 let cards: ReturnType<typeof selectWaitlistCards> = [];
 try {
@@ -29,7 +33,7 @@ try {
 {cards.map((event, index) => (
   <TicketCard
     event={event}
-    index={index + upcoming.length}
+    index={index + scheduledCount}
     sourcePage="tickets"
   />
 ))}

@@ -123,7 +123,13 @@ const eventSeriesJsonLd = JSON.stringify({
         role="region"
         aria-label="Cities waiting for a show"
       >
-        <WaitlistCities server:defer>
+        <WaitlistCities
+          server:defer
+          scheduledCitySlugs={upcomingEvents.flatMap((event) =>
+            event.citySlug ? [event.citySlug] : [],
+          )}
+          scheduledCount={upcomingEvents.length}
+        >
           <p slot="fallback">Loading waitlist cities…</p>
         </WaitlistCities>
       </div>

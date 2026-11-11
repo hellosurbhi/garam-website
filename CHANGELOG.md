@@ -1,5 +1,9 @@
 # Changelog
 
+## Stable ticket page city exclusions (2026-11-11)
+
+- Keep the live waitlist section aligned with the dated city cards rendered at build time so a show date passing does not add a duplicate city card before the next build.
+
 ## Waitlist timeout recovery (2026-11-10)
 
 - Release a canceled ranking refresh at its 15-second deadline so the next visitor can retry. Retain the last good ranking and prevent late work from clearing a newer refresh or starting cache writes.

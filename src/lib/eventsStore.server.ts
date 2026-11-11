@@ -24,6 +24,7 @@ import {
   fsGetDocument,
   fsGetPublic,
   fsPatch,
+  fsQueryOrdered,
   type FsDocument,
   type FsPrecondition,
   type FsWrite,
@@ -91,18 +92,20 @@ const changesSchema = z.object({
   tbaCitiesRemoved: z.array(z.string()),
 }) satisfies z.ZodType<SnapshotDiff>;
 
-const versionDocSchema = z
-  .object({
-    version: versionNumberSchema,
-    kind: z.enum(["migration", "publish", "rollback"]),
-    restoresVersion: versionNumberSchema.optional(),
-    snapshotJson: snapshotJsonSchema,
-    note: z.string().min(1),
-    authorUid: z.string().min(1),
-    authorEmail: z.string(),
-    createdAt: isoSchema,
-    changes: changesSchema,
-  })
+/** A version record without its snapshot: what the History panel lists. */
+const versionSummarySchema = z.object({
+  version: versionNumberSchema,
+  kind: z.enum(["migration", "publish", "rollback"]),
+  restoresVersion: versionNumberSchema.optional(),
+  note: z.string().min(1),
+  authorUid: z.string().min(1),
+  authorEmail: z.string(),
+  createdAt: isoSchema,
+  changes: changesSchema,
+});
+
+const versionDocSchema = versionSummarySchema
+  .extend({ snapshotJson: snapshotJsonSchema })
   .transform(({ snapshotJson, ...rest }) => ({
     ...rest,
     snapshot: snapshotJson,
@@ -123,6 +126,7 @@ const draftDocSchema = z
 export type RebuildRequest = z.infer<typeof rebuildSchema>;
 export type PublishedEvents = z.infer<typeof publishedDocSchema>;
 export type EventVersionRecord = z.infer<typeof versionDocSchema>;
+export type EventVersionSummary = z.infer<typeof versionSummarySchema>;
 export type EventsDraft = z.infer<typeof draftDocSchema>;
 
 /** A parsed document plus the `updateTime` a later commit locks on. */
@@ -169,6 +173,30 @@ export async function readEventVersion(
 ): Promise<Stored<EventVersionRecord> | null> {
   const doc = await fsGetDocument(eventVersionDocPath(version), signal);
   return parseStored(doc, versionDocSchema);
+}
+
+/** How many versions the History panel shows (plan section 6). */
+export const VERSION_HISTORY_LIMIT = 20;
+
+/**
+ * The newest versions first, without their snapshots.
+ * WHY a projection: each record carries a full snapshot copy (about 25 KB
+ * today), which the list never shows; Restore reads the one it needs.
+ */
+export async function listEventVersions(
+  signal?: AbortSignal,
+): Promise<EventVersionSummary[]> {
+  const rows = await fsQueryOrdered(
+    {
+      collectionId: EVENT_VERSIONS_COLLECTION,
+      orderBy: "version",
+      direction: "DESCENDING",
+      limit: VERSION_HISTORY_LIMIT,
+      select: Object.keys(versionSummarySchema.shape),
+    },
+    signal,
+  );
+  return rows.map((row) => versionSummarySchema.parse(row.fields));
 }
 
 /**

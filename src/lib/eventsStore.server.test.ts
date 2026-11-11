@@ -8,6 +8,7 @@ const fsGetDocument = vi.fn<(path: string) => Promise<FsDocument | null>>();
 const fsGetPublic = vi.fn<(path: string) => Promise<FsDocument | null>>();
 const fsCommit = vi.fn();
 const fsPatch = vi.fn();
+const fsQueryOrdered = vi.fn();
 
 vi.mock("./firestoreRest", async (importOriginal) => ({
   ...(await importOriginal<typeof import("./firestoreRest")>()),
@@ -15,12 +16,14 @@ vi.mock("./firestoreRest", async (importOriginal) => ({
   fsGetPublic: (path: string) => fsGetPublic(path),
   fsCommit: (...args: unknown[]) => fsCommit(...args),
   fsPatch: (...args: unknown[]) => fsPatch(...args),
+  fsQueryOrdered: (...args: unknown[]) => fsQueryOrdered(...args),
 }));
 
 const {
   buildPublicationWrites,
   commitPublication,
   eventVersionDocPath,
+  listEventVersions,
   readEventVersion,
   readEventsDraft,
   readPublishedEvents,
@@ -62,6 +65,7 @@ beforeEach(() => {
   fsGetPublic.mockReset();
   fsCommit.mockReset();
   fsPatch.mockReset();
+  fsQueryOrdered.mockReset();
 });
 
 describe("eventVersionDocPath", () => {
@@ -264,5 +268,39 @@ describe("writers", () => {
       { rebuild },
       undefined,
     );
+  });
+});
+
+describe("listEventVersions", () => {
+  it("asks for the newest 20 versions without their snapshots", async () => {
+    const summary = {
+      version: 2,
+      kind: "publish",
+      note: "Fixture publish",
+      authorUid: "admin-uid",
+      authorEmail: "admin@example.test",
+      createdAt: NOW.toISOString(),
+      changes: diffSnapshots(snapshot, snapshot),
+    };
+    fsQueryOrdered.mockResolvedValueOnce([{ id: "v000002", fields: summary }]);
+    await expect(listEventVersions()).resolves.toEqual([summary]);
+    const [query] = fsQueryOrdered.mock.calls[0] as [
+      { select: string[] } & Record<string, unknown>,
+    ];
+    expect(query).toMatchObject({
+      collectionId: "eventVersions",
+      orderBy: "version",
+      direction: "DESCENDING",
+      limit: 20,
+    });
+    expect(query.select).not.toContain("snapshotJson");
+    expect(query.select).toContain("changes");
+  });
+
+  it("rejects a record that fails the schema", async () => {
+    fsQueryOrdered.mockResolvedValueOnce([
+      { id: "v000002", fields: { version: 2 } },
+    ]);
+    await expect(listEventVersions()).rejects.toThrow();
   });
 });

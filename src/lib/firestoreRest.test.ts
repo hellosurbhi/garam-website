@@ -215,6 +215,57 @@ describe("fsCommit", () => {
   });
 });
 
+describe("fsQueryOrdered", () => {
+  it("runs an ordered, limited, projected query and decodes each document", async () => {
+    fetchMock.mockResolvedValueOnce(TOKEN_RESPONSE()).mockResolvedValueOnce(
+      Response.json([
+        {
+          document: {
+            name: `${ROOT}/eventVersions/v000002`,
+            fields: { version: { integerValue: "2" } },
+          },
+        },
+        // runQuery ends with a document-less row carrying only readTime.
+        { readTime: "2026-11-11T10:00:00Z" },
+      ]),
+    );
+    const { fsQueryOrdered } = await import("./firestoreRest");
+    const rows = await fsQueryOrdered({
+      collectionId: "eventVersions",
+      orderBy: "version",
+      direction: "DESCENDING",
+      limit: 20,
+      select: ["version", "note"],
+    });
+    expect(rows).toEqual([{ id: "v000002", fields: { version: 2 } }]);
+    const [url, init] = fetchMock.mock.calls[1];
+    expect(url).toBe(`${BASE}:runQuery`);
+    expect(JSON.parse(init.body)).toEqual({
+      structuredQuery: {
+        from: [{ collectionId: "eventVersions" }],
+        orderBy: [{ field: { fieldPath: "version" }, direction: "DESCENDING" }],
+        limit: 20,
+        select: { fields: [{ fieldPath: "version" }, { fieldPath: "note" }] },
+      },
+    });
+  });
+
+  it("throws with the status on failure", async () => {
+    fetchMock
+      .mockResolvedValueOnce(TOKEN_RESPONSE())
+      .mockResolvedValueOnce(new Response("boom", { status: 500 }));
+    const { fsQueryOrdered } = await import("./firestoreRest");
+    await expect(
+      fsQueryOrdered({
+        collectionId: "eventVersions",
+        orderBy: "version",
+        direction: "DESCENDING",
+        limit: 1,
+      }),
+    ).rejects.toThrow("fsQueryOrdered eventVersions: 500 boom");
+  });
+});
+
 describe("commitFailure", () => {
   // Firestore picks the HTTP code per case and API surface; only the
   // canonical status is stable, so every pairing must classify the same.

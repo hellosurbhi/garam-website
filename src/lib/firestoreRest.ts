@@ -244,6 +244,65 @@ export async function fsCommit(
   if (!res.ok) throw commitFailure(res.status, await res.text());
 }
 
+export interface FsOrderedQuery {
+  collectionId: string;
+  orderBy: string;
+  direction: "ASCENDING" | "DESCENDING";
+  limit: number;
+  /** Return only these fields (a projection), e.g. to skip a large blob. */
+  select?: string[];
+}
+
+/**
+ * The first `limit` documents of a collection in `orderBy` order, each with
+ * its id. Unlike fsQuery it needs no equality filter, so it serves "latest N"
+ * listings such as the Shows history.
+ */
+export async function fsQueryOrdered(
+  query: FsOrderedQuery,
+  signal?: AbortSignal,
+): Promise<Array<{ id: string; fields: Record<string, unknown> }>> {
+  const token = await getFirestoreAccessToken(signal);
+  const structuredQuery = {
+    from: [{ collectionId: query.collectionId }],
+    orderBy: [
+      { field: { fieldPath: query.orderBy }, direction: query.direction },
+    ],
+    limit: query.limit,
+    ...(query.select
+      ? { select: { fields: query.select.map((fieldPath) => ({ fieldPath })) } }
+      : {}),
+  };
+  signal?.throwIfAborted();
+  const res = await fetch(`${baseUrl()}:runQuery`, {
+    signal,
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ structuredQuery }),
+  });
+  if (!res.ok) {
+    throw new Error(
+      `fsQueryOrdered ${query.collectionId}: ${res.status} ${await res.text()}`,
+    );
+  }
+  const rows = (await res.json()) as Array<{
+    document?: { name?: string; fields?: FirestoreFields };
+  }>;
+  return rows.flatMap((r) =>
+    r.document
+      ? [
+          {
+            id: r.document.name?.split("/").at(-1) ?? "",
+            fields: fromFields(r.document.fields ?? {}),
+          },
+        ]
+      : [],
+  );
+}
+
 /** Update specific fields on an existing document. */
 export async function fsPatch(
   docPath: string,

@@ -84,10 +84,10 @@ function reportFixture() {
   const fetcher = vi.fn(async (url, init) => {
     calls.push({ url, init });
     if (url.includes("issues?")) return new Response("[]");
-    if (url.includes("api.github.com")) return new Response('{"number":1}');
+    if (new URL(url).hostname === "api.github.com") return new Response('{"number":1}');
     if (url.includes("oauth2"))
       return new Response('{"access_token":"fixture"}');
-    if (url.includes("gmail.googleapis.com"))
+    if (new URL(url).hostname === "gmail.googleapis.com")
       return new Response('{"id":"message"}');
     if (url.includes("alert-failure")) return new Response('{"ok":true}');
     if (url.includes("hc-ping")) return new Response("OK");
@@ -98,7 +98,7 @@ function reportFixture() {
 it("does not notify on an ordinary successful run", async () => {
   const { env, fetcher, calls } = reportFixture();
   await report(env, fetcher);
-  expect(calls.some((c) => c.url.includes("gmail.googleapis.com"))).toBe(false);
+  expect(calls.some((c) => new URL(c.url).hostname === "gmail.googleapis.com")).toBe(false);
   expect(calls.filter((c) => c.url.includes("hc-ping"))).toHaveLength(1);
 });
 it("weekly heartbeat uses the scheduled slot even if execution is delayed", async () => {
@@ -106,7 +106,7 @@ it("weekly heartbeat uses the scheduled slot even if execution is delayed", asyn
   env.SCHEDULE = "30 13 * * 1";
   await report(env, fetcher);
   expect(
-    calls.filter((c) => c.url.includes("gmail.googleapis.com")),
+    calls.filter((c) => new URL(c.url).hostname === "gmail.googleapis.com"),
   ).toHaveLength(1);
   expect(calls.filter((c) => c.url.includes("hc-ping"))).toHaveLength(2);
 });

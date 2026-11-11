@@ -1,5 +1,9 @@
 # Changelog
 
+## Monitor fixture URL checks (2026-11-11)
+
+- Match mocked GitHub and Gmail requests by exact hostname so the test harness rejects lookalike hosts.
+
 ## Monitoring review corrections (2026-11-11)
 
 - Preserve custom recovery subjects, serialize upload journal updates and isolate malformed cleanup evidence.

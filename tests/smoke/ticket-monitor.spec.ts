@@ -158,3 +158,109 @@ for (const [name, status, destination, past, passes] of [
     }
   });
 }
+
+test("ticket monitor checks only links when redirects can't be followed", async ({
+  page,
+  request,
+}) => {
+  // The static preview has no /api/go route; following it would 404.
+  await page.setContent('<a href="/api/go/fixture-show">Buy Tickets</a>');
+  await checkTicketListings(page, request, [event], now, {
+    followRedirects: false,
+  });
+  await page.setContent('<a href="/api/go/other-show">Buy Tickets</a>');
+  await expect(
+    checkTicketListings(page, request, [event], now, {
+      followRedirects: false,
+    }),
+  ).rejects.toThrow();
+});
+
+// The vendor's own listing is the independent oracle: a wrong url typed into
+// events.ts redirects "correctly" because the redirect reads the same data.
+for (const [name, status, startDate, passes] of [
+  [
+    "listing published in the show's timezone",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    true,
+  ],
+  ["listing published in UTC", 200, "2026-12-05T01:30:00.000Z", true],
+  ["listing for another date", 200, "2026-12-05T19:30:00-06:00", false],
+  ["listing at another time", 200, "2026-12-04T21:00:00-06:00", false],
+  ["listing the vendor won't serve", 403, "2026-12-04T19:30:00-06:00", false],
+] as const) {
+  test(`ticket monitor: ${name}`, async ({ page }) => {
+    await page.setContent('<a href="/api/go/fixture-show">Buy Tickets</a>');
+    const { createServer } = await import("node:http");
+    const { request: api } = await import("@playwright/test");
+    let listingUrl = "";
+    const show: EventEntry = {
+      ...event,
+      startTime: "19:30",
+      timezone: "America/Chicago",
+    };
+    const server = createServer((req, res) => {
+      if (req.url?.startsWith("/api/go/")) {
+        res.writeHead(302, {
+          location: applyUtmsToUrl(
+            listingUrl,
+            {},
+            {
+              utmSource: "garamsite",
+              utmMedium: "web",
+              utmCampaign: "chicago",
+              utmContent: show.slug,
+            },
+          ),
+        });
+        res.end();
+        return;
+      }
+      res.writeHead(status, { "content-type": "text/html" });
+      res.end(
+        `<script type="application/ld+json">${JSON.stringify({ "@type": "Event", startDate })}</script>`,
+      );
+    });
+    await new Promise<void>((resolve, reject) => {
+      server.once("error", reject);
+      server.listen(0, "127.0.0.1", resolve);
+    });
+    const address = server.address();
+    if (!address || typeof address === "string")
+      throw new Error("Missing fixture server port");
+    listingUrl = `http://127.0.0.1:${address.port}/listing`;
+    const client = await api.newContext({
+      baseURL: `http://127.0.0.1:${address.port}`,
+    });
+    try {
+      const check = checkTicketListings(
+        page,
+        client,
+        [{ ...show, url: listingUrl }],
+        now,
+        { verifyListings: true },
+      );
+      if (passes) await check;
+      else await expect(check).rejects.toThrow();
+    } finally {
+      await client.dispose();
+      await new Promise<void>((resolve, reject) =>
+        server.close((e) => (e ? reject(e) : resolve())),
+      );
+    }
+  });
+}
+
+test("ticket monitor recognises checkout links after tracking rewrites them", async ({
+  page,
+  request,
+}) => {
+  // Live pages carry the shape wireTicketCtaTracking leaves behind.
+  await page.setContent(
+    '<a href="https://garammasaladating.com/api/go/fixture-show?eid=abc&utm_source=ig">Buy Tickets</a>',
+  );
+  await checkTicketListings(page, request, [event], now, {
+    followRedirects: false,
+  });
+});

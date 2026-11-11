@@ -1,5 +1,12 @@
 # Changelog
 
+## Booking smoke checks real ticket links (2026-11-11)
+
+- Check that every on-sale show on /tickets links to its own checkout. The old test matched none of the live cards, so it passed whatever they linked to.
+- Recognize checkout links after the tracking script rewrites them with event ids. The production ticket monitor had failed on every run since that rewrite shipped.
+- In the weekly and preview runs, open each vendor listing and confirm its published date and start time match the show.
+- Wait for the waiver form to finish loading before filling it, so the waiver smoke test stops timing out on production.
+
 ## Resolve monitoring and waitlist review findings (2026-11-11)
 
 - Retain pending synthetic checks and incident reports with GitHub’s bounded maximum queue. Skip redirect checks for superseded revisions while retaining cleanup.

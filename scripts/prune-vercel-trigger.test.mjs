@@ -11,13 +11,26 @@ const expression = workflow
 const eligible = (event_name, event = {}) =>
   runInNewContext(
     expression,
-    { github: { event_name, event } },
+    { github: { event_name, event, repository: "hellosurbhi/garam-website" } },
     { timeout: 1000 },
   );
 describe("deployment cleanup trigger", () => {
   it.each(["schedule", "workflow_dispatch"])("retains %s fallback", (name) =>
     expect(eligible(name)).toBe(true),
   );
+  it.each([
+    [true, "hellosurbhi/garam-website", true],
+    [false, "hellosurbhi/garam-website", false],
+    [true, "other/garam-website", false],
+  ])("handles merge=%s and head repo=%s", (merged, full_name, expected) => {
+    expect(workflow).toContain("  pull_request_target:\n    types: [closed]");
+    expect(workflow).toContain("          ref: main");
+    expect(
+      eligible("pull_request_target", {
+        pull_request: { merged, head: { repo: { full_name } } },
+      }),
+    ).toBe(expected);
+  });
   it.each([
     ["vercel[bot]", "Production", "success", true],
     ["vercel[bot]", "Preview", "success", false],

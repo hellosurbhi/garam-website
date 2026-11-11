@@ -73,7 +73,7 @@
 - Version the aggregate cache and fix the missing gap between ticket cards and waitlist cards. Stack purchase controls below titles on small screens to avoid cramped city names.
 ## Restore Vercel pull request previews (2026-11-11)
 
-- Restore preview builds and let Vercel expire stale previews through deployment retention. Limit the hourly cleanup to confirmed production deployments so a newer release cannot remove a preview under review.
+- Restore preview builds. Clean up deployments tied to a merged pull request after merge and retry hourly. Protect previews under review and keep the existing production safeguards.
 
 ## Resolve monitoring and waitlist review findings (2026-11-11)
 

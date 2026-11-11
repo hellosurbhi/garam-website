@@ -5,10 +5,96 @@ const PROJECT_ID = "prj_9ByFOoPnfaBp2DKY30DcWI8TDeJq";
 const TEAM_ID = "team_tn5J4k4lUV5PSlx7jxjjNu3r";
 const TERMINAL_STATES = new Set(["READY", "ERROR", "CANCELED"]);
 
-/** Prune obsolete production deployments. Vercel retention owns preview expiry. */
+function gitPreview(deployment) {
+  const { meta, target, source, customEnvironment, customEnvironmentId } =
+    deployment;
+  return (
+    (target === null || target === "preview") &&
+    source === "git" &&
+    !customEnvironment &&
+    !customEnvironmentId &&
+    !deployment.isRollbackCandidate &&
+    typeof meta?.githubCommitRef === "string" &&
+    /^[a-f0-9]{40}$/i.test(meta.githubCommitSha ?? "")
+  );
+}
+
+export function mergedPreviewLookup(github, repository) {
+  const [owner, repo] = repository.split("/");
+  const pullLists = new Map();
+  const commits = new Map();
+  const readAll = async (path) => {
+    const entries = [];
+    for (let page = 1; ; page++) {
+      const batch = await github(
+        `${path}${path.includes("?") ? "&" : "?"}per_page=100&page=${page}`,
+      );
+      assert.ok(
+        Array.isArray(batch) && batch.length <= 100,
+        "Invalid GitHub list",
+      );
+      entries.push(...batch);
+      if (batch.length < 100) return entries;
+    }
+  };
+
+  return async (deployment, { refresh = false } = {}) => {
+    const { meta, created } = deployment;
+    const { githubOrg, githubRepo, githubCommitRef, githubCommitSha } = meta;
+    if (githubOrg !== owner || githubRepo !== repo) return false;
+
+    if (refresh || !pullLists.has(githubCommitRef)) {
+      const head = encodeURIComponent(`${owner}:${githubCommitRef}`);
+      pullLists.set(
+        githubCommitRef,
+        await readAll(`/pulls?state=all&head=${head}`),
+      );
+    }
+    const pulls = pullLists
+      .get(githubCommitRef)
+      .filter(
+        (pull) =>
+          pull.head?.repo?.full_name === repository &&
+          pull.head.ref === githubCommitRef,
+      );
+    if (pulls.some((pull) => pull.state === "open")) return false;
+
+    for (const pull of pulls) {
+      if (
+        pull.state !== "closed" ||
+        !pull.merged_at ||
+        !(created < Date.parse(pull.merged_at))
+      )
+        continue;
+      if (pull.head.sha === githubCommitSha) return true;
+      if (!commits.has(pull.number)) {
+        assert.ok(
+          Number.isSafeInteger(pull.number) && pull.number > 0,
+          "Invalid pull request number",
+        );
+        commits.set(
+          pull.number,
+          new Set(
+            (await readAll(`/pulls/${pull.number}/commits`)).map(
+              (commit) => commit.sha,
+            ),
+          ),
+        );
+      }
+      if (commits.get(pull.number).has(githubCommitSha)) return true;
+    }
+    return false;
+  };
+}
+
+/** Prune obsolete production deployments and previews proven to belong to merged PRs. */
 export async function pruneDeployments(
   api,
-  { apply = false, log = console.log } = {},
+  {
+    apply = false,
+    log = console.log,
+    canPrunePreview = async () => false,
+  } = {},
 ) {
   const projectPath = `/v9/projects/${PROJECT_ID}`;
   /** Validate the project, ready production target and assigned domain before any deletion. */
@@ -64,14 +150,25 @@ export async function pruneDeployments(
   let removed = 0;
   for (const deployment of deployments) {
     if (
-      deployment.target !== "production" ||
       deployment.uid === current.id ||
       deployment.uid === rollback?.uid ||
       !TERMINAL_STATES.has(deployment.state) ||
-      !Number.isFinite(deployment.created) ||
-      (deployment.state === "READY" && deployment.created > current.createdAt)
+      !Number.isFinite(deployment.created)
     )
       continue;
+    const production = deployment.target === "production";
+    if (production) {
+      if (
+        deployment.state === "READY" &&
+        deployment.created > current.createdAt
+      )
+        continue;
+    } else if (
+      !gitPreview(deployment) ||
+      !(await canPrunePreview(deployment))
+    ) {
+      continue;
+    }
     assert.match(deployment.uid, /^dpl_[a-zA-Z0-9]+$/);
     const detail = await api(`/v13/deployments/${deployment.uid}`);
     assert.equal(
@@ -79,19 +176,40 @@ export async function pruneDeployments(
       PROJECT_ID,
       "Deployment belongs to another project",
     );
-    assert.equal(
-      detail.target,
-      "production",
-      "Deployment is not confirmed as production; refusing cleanup",
-    );
+    if (production) {
+      assert.equal(
+        detail.target,
+        "production",
+        "Deployment is not confirmed as production; refusing cleanup",
+      );
+    } else if (
+      detail.id !== deployment.uid ||
+      !TERMINAL_STATES.has(detail.readyState) ||
+      !gitPreview(detail) ||
+      detail.meta.githubCommitRef !== deployment.meta.githubCommitRef ||
+      detail.meta.githubCommitSha !== deployment.meta.githubCommitSha
+    ) {
+      continue;
+    }
     assert.ok(
       Array.isArray(detail.alias),
       "Missing deployment aliases; refusing cleanup",
     );
-    if (detail.alias.some((alias) => !alias.endsWith(".vercel.app"))) {
+    if (
+      detail.alias.some((alias) => !alias.endsWith(".vercel.app")) ||
+      (!production && detail.userAliases?.length)
+    ) {
       log(`Preserved ${deployment.uid}: custom domain attached`);
       continue;
     }
+    if (
+      !production &&
+      !(await canPrunePreview(
+        { ...detail, created: deployment.created },
+        { refresh: true },
+      ))
+    )
+      continue;
     const latest = await readProduction();
     assert.equal(
       latest.id,
@@ -133,7 +251,31 @@ if (
       );
       return response.status === 204 ? {} : response.json();
     };
-    await pruneDeployments(api, { apply: process.argv.includes("--apply") });
+    const { GITHUB_TOKEN, GITHUB_REPOSITORY } = process.env;
+    const canPrunePreview =
+      GITHUB_TOKEN && GITHUB_REPOSITORY
+        ? mergedPreviewLookup(async (path) => {
+            const response = await fetch(
+              `https://api.github.com/repos/${GITHUB_REPOSITORY}${path}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${GITHUB_TOKEN}`,
+                  Accept: "application/vnd.github+json",
+                },
+                signal: AbortSignal.timeout(30_000),
+              },
+            );
+            assert.ok(
+              response.ok,
+              `GitHub preview ownership lookup returned ${response.status}`,
+            );
+            return response.json();
+          }, GITHUB_REPOSITORY)
+        : undefined;
+    await pruneDeployments(api, {
+      apply: process.argv.includes("--apply"),
+      canPrunePreview,
+    });
   } catch (error) {
     console.error(
       error instanceof Error ? error.message : "Deployment cleanup failed",

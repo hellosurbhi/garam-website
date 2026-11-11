@@ -1,7 +1,34 @@
 import { describe, expect, it, vi } from "vitest";
-import { pruneDeployments } from "./prune-vercel-deployments.mjs";
+import {
+  mergedPreviewLookup,
+  pruneDeployments,
+} from "./prune-vercel-deployments.mjs";
 
 const projectId = "prj_9ByFOoPnfaBp2DKY30DcWI8TDeJq";
+const repository = "hellosurbhi/garam-website";
+const preview = {
+  uid: "dpl_mergedPreview",
+  state: "READY",
+  target: null,
+  source: "git",
+  created: 95,
+  meta: {
+    githubOrg: "hellosurbhi",
+    githubRepo: "garam-website",
+    githubCommitRef: "fix/example",
+    githubCommitSha: "a".repeat(40),
+  },
+};
+const mergedPull = {
+  number: 12,
+  state: "closed",
+  merged_at: new Date(100).toISOString(),
+  head: {
+    repo: { full_name: repository },
+    ref: "fix/example",
+    sha: "b".repeat(40),
+  },
+};
 function fixture({ ready = true, domain = true, changes = false } = {}) {
   let projectReads = 0;
   const api = vi.fn(async (path, method) => {
@@ -70,6 +97,86 @@ function fixture({ ready = true, domain = true, changes = false } = {}) {
 }
 
 describe("deployment cleanup safeguards", () => {
+  it("deletes the proven merged preview even when production has not changed", async () => {
+    const base = fixture();
+    const api = vi.fn(async (path, method) => {
+      if (method !== "DELETE" && path.endsWith(preview.uid)) {
+        return {
+          ...preview,
+          id: preview.uid,
+          projectId,
+          readyState: "READY",
+          alias: [],
+        };
+      }
+      const result = await base(path, method);
+      if (path.startsWith("/v6/")) result.deployments.push(preview);
+      return result;
+    });
+    const github = vi.fn(async (path) =>
+      path.startsWith("/pulls?")
+        ? [mergedPull]
+        : [{ sha: preview.meta.githubCommitSha }],
+    );
+    await pruneDeployments(api, {
+      apply: true,
+      log: vi.fn(),
+      canPrunePreview: mergedPreviewLookup(github, repository),
+    });
+    expect(api.mock.calls).toContainEqual([
+      `/v13/deployments/${preview.uid}`,
+      "DELETE",
+    ]);
+    expect(
+      github.mock.calls.filter(([path]) => path.startsWith("/pulls?")),
+    ).toHaveLength(2);
+  });
+
+  it.each([
+    ["open PR", [mergedPull, { ...mergedPull, state: "open" }], preview],
+    ["closed without merge", [{ ...mergedPull, merged_at: null }], preview],
+    ["new deployment after merge", [mergedPull], { ...preview, created: 101 }],
+    [
+      "fork metadata",
+      [mergedPull],
+      { ...preview, meta: { ...preview.meta, githubOrg: "fork" } },
+    ],
+    ["unrelated commit", [mergedPull], preview],
+  ])("preserves previews with %s", async (_case, pulls, candidate) => {
+    const github = vi.fn(async (path) =>
+      path.startsWith("/pulls?") ? pulls : [],
+    );
+    expect(await mergedPreviewLookup(github, repository)(candidate)).toBe(
+      false,
+    );
+  });
+
+  it("keeps a preview if its branch is reused by an open PR before deletion", async () => {
+    const base = fixture();
+    const api = vi.fn(async (path, method) => {
+      if (method !== "DELETE" && path.endsWith(preview.uid)) {
+        return {
+          ...preview,
+          id: preview.uid,
+          projectId,
+          readyState: "READY",
+          alias: [],
+        };
+      }
+      const result = await base(path, method);
+      if (path.startsWith("/v6/")) result.deployments.push(preview);
+      return result;
+    });
+    const canPrunePreview = vi
+      .fn()
+      .mockResolvedValueOnce(true)
+      .mockResolvedValueOnce(false);
+    await pruneDeployments(api, { apply: true, log: vi.fn(), canPrunePreview });
+    expect(api.mock.calls).not.toContainEqual([
+      `/v13/deployments/${preview.uid}`,
+      "DELETE",
+    ]);
+  });
   it("deletes only obsolete terminal production deployments without custom domains", async () => {
     const api = fixture();
     expect(await pruneDeployments(api, { apply: true, log: vi.fn() })).toBe(2);

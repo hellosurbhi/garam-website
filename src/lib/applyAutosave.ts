@@ -432,6 +432,17 @@ export class AutosaveController {
   /** Make sure a draft exists on the server (photos attach to it). */
   ensureDraft(): Promise<string> {
     if (this.token) return Promise.resolve(this.token);
+    // WHY: after the application is filed the token is gone on purpose; a late
+    // photo call must fail, not mint a new empty draft.
+    if (this.finalized) {
+      return Promise.reject(
+        new ApplyRequestError(
+          "save_draft",
+          null,
+          "the application was already submitted",
+        ),
+      );
+    }
     // Single flight: concurrent callers share one creation request.
     this.ensuring ??= this.sendWithRetry(false)
       .then(() => {

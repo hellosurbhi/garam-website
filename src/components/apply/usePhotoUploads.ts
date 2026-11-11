@@ -64,10 +64,11 @@ export function usePhotoUploads(
             // WHY: the applicant removed this photo while it was uploading,
             // so there was no path to remove then. The upload finished anyway
             // and the server attached it; take it off again.
-            void removeApplicationPhoto(controller, result.path).catch(
+            // Returned, so settleForSubmit waits for it: a submit that raced
+            // ahead would finalize first and the removal would be refused.
+            return removeApplicationPhoto(controller, result.path).catch(
               () => {},
             );
-            return;
           }
           patch(item.id, {
             status: "saved",
@@ -125,8 +126,15 @@ export function usePhotoUploads(
     removed.current.add(id);
     setItems((prev) => prev.filter((p) => p.id !== id));
     if (item.path) {
-      // Best effort: the stored file is kept either way.
-      void removeApplicationPhoto(controller, item.path).catch(() => {});
+      // Best effort: the stored file is kept either way. Tracked so a quick
+      // submit waits for it instead of finalizing with the photo attached.
+      const removal: Promise<void> = removeApplicationPhoto(
+        controller,
+        item.path,
+      )
+        .catch(() => {})
+        .finally(() => inFlight.current.delete(removal));
+      inFlight.current.add(removal);
     }
   }
 

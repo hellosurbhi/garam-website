@@ -62,6 +62,48 @@ describe("usePhotoUploads: removing while an upload is in flight", () => {
     expect(onFailed).not.toHaveBeenCalled();
   });
 
+  it("settleForSubmit waits for the removal so a quick submit cannot file the photo", async () => {
+    let finish!: (v: { path: string; epoch: number }) => void;
+    upload.mockReturnValue(new Promise((r) => (finish = r)));
+    let finishRemove!: () => void;
+    remove.mockReturnValue(new Promise<void>((r) => (finishRemove = r)));
+    const { result } = renderHook(() => usePhotoUploads(controller, vi.fn()));
+    act(() => result.current.addPhotos(pick("a.jpg")));
+    act(() => result.current.removePhoto(result.current.items[0].id));
+    await act(async () => finish({ path: "photos/d/1-a.jpg", epoch: 0 }));
+    let settled = false;
+    const done = result.current.settleForSubmit().then(() => (settled = true));
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 20));
+    });
+    expect(settled).toBe(false);
+    await act(async () => {
+      finishRemove();
+      await done;
+    });
+    expect(settled).toBe(true);
+  });
+
+  it("settleForSubmit also waits for the removal of an already saved photo", async () => {
+    upload.mockResolvedValue({ path: "photos/d/1-a.jpg", epoch: 0 });
+    let finishRemove!: () => void;
+    remove.mockReturnValue(new Promise<void>((r) => (finishRemove = r)));
+    const { result } = renderHook(() => usePhotoUploads(controller, vi.fn()));
+    await act(async () => result.current.addPhotos(pick("a.jpg")));
+    act(() => result.current.removePhoto(result.current.items[0].id));
+    let settled = false;
+    const done = result.current.settleForSubmit().then(() => (settled = true));
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 20));
+    });
+    expect(settled).toBe(false);
+    await act(async () => {
+      finishRemove();
+      await done;
+    });
+    expect(settled).toBe(true);
+  });
+
   it("removes a saved photo straight away", async () => {
     upload.mockResolvedValue({ path: "photos/d/1-a.jpg", epoch: 0 });
     const { result } = renderHook(() => usePhotoUploads(controller, vi.fn()));

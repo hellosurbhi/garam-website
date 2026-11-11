@@ -329,6 +329,20 @@ describe("AutosaveController: finalize after a lost response", () => {
     expect(calls).toHaveLength(sent);
   });
 
+  it("ensureDraft after the application is filed fails instead of minting a new draft", async () => {
+    const { calls, fetchImpl } = harness();
+    const c = new AutosaveController({ fetchImpl });
+    c.setField("name", "Priya");
+    const done = c.finalize();
+    await vi.runAllTimersAsync();
+    await done;
+    const sent = calls.length;
+    await expect(c.ensureDraft()).rejects.toMatchObject({
+      stage: "save_draft",
+    });
+    expect(calls).toHaveLength(sent);
+  });
+
   it("the background drain stops once the server says it is finalized", async () => {
     const { calls, fetchImpl } = harness((_call, n) =>
       n === 1 ? ok() : finalized(),

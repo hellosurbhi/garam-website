@@ -21,11 +21,17 @@ export interface TicketCheckOptions {
   verifyListings?: boolean;
 }
 
+/** One place a listing names: its venue and its city, when given. */
+export interface ListedPlace {
+  venue: string | null;
+  locality: string | null;
+}
+
 /** One schema.org *Event a vendor page publishes about itself. */
 export interface ListedEvent {
   startDate: string;
-  venue: string | null;
-  locality: string | null;
+  /** Every location the event names, in order. */
+  places: ListedPlace[];
 }
 
 /** Every schema.org *Event with a startDate in a page's JSON-LD blocks. */
@@ -41,14 +47,20 @@ export function extractListedEvents(html: string): ListedEvent[] {
       types.some((t) => typeof t === "string" && t.endsWith("Event")) &&
       typeof obj.startDate === "string"
     ) {
-      const place = [obj.location].flat()[0] as
-        Record<string, unknown> | undefined;
-      const address = place?.address as Record<string, unknown> | undefined;
-      found.push({
-        startDate: obj.startDate,
-        venue: text(place?.name),
-        locality: text(address?.addressLocality),
-      });
+      const places = [obj.location]
+        .flat()
+        .filter(
+          (place): place is Record<string, unknown> =>
+            !!place && typeof place === "object",
+        )
+        .map((place) => {
+          const address = place.address as Record<string, unknown> | undefined;
+          return {
+            venue: text(place.name),
+            locality: text(address?.addressLocality),
+          };
+        });
+      found.push({ startDate: obj.startDate, places });
     }
     Object.values(obj).forEach(visit);
   };
@@ -72,21 +84,31 @@ const comparable = (value: string) =>
 
 // WHY: a start time alone doesn't prove the listing is this show; an
 // unrelated event at the same hour passed the first version of this check.
-// Every place the listing names must agree with ours: its venue must be our
-// venue exactly (ignoring case and punctuation; a substring match let "The
-// Loft Annex" pass for "The Loft"), and its city must be our city. Vendors
-// append a region ("New York, NY"), so the city is a prefix match on whole
-// words. A listing that names no usable place can't be confirmed and fails.
+// Every place the listing names must agree with ours, not just the first: its
+// venue must be our venue exactly (ignoring case and punctuation; a substring
+// match let "The Loft Annex" pass for "The Loft"). Its city must be our city
+// exactly. Vendors may append a region ("New York, NY"); the part before the
+// comma is the city (a prefix match let "New York Mills" pass), and a region
+// after it must be our state. A listing with no usable place fails.
 export function isSameShow(listed: ListedEvent, event: EventEntry): boolean {
-  const theirVenue = comparable(listed.venue ?? "");
   const ourVenue = comparable(event.venue?.name ?? "");
-  const theirCity = comparable(listed.locality ?? "");
   const ourCity = comparable(event.venue?.addressLocality ?? event.city);
-  const checks: boolean[] = [];
-  if (theirVenue && ourVenue) checks.push(theirVenue === ourVenue);
-  if (theirCity) {
-    checks.push(theirCity === ourCity || theirCity.startsWith(`${ourCity} `));
-  }
+  const ourRegions = [
+    event.venue?.addressRegion,
+    event.stateAbbr,
+    event.state,
+  ].flatMap((region) => (region ? [comparable(region)] : []));
+  const checks = listed.places.flatMap((place) => {
+    const placeChecks: boolean[] = [];
+    const theirVenue = comparable(place.venue ?? "");
+    if (theirVenue && ourVenue) placeChecks.push(theirVenue === ourVenue);
+    const [city = "", ...rest] = (place.locality ?? "").split(",");
+    const theirCity = comparable(city);
+    const theirRegion = comparable(rest.join(" "));
+    if (theirCity) placeChecks.push(theirCity === ourCity);
+    if (theirRegion) placeChecks.push(ourRegions.includes(theirRegion));
+    return placeChecks;
+  });
   return checks.length > 0 && checks.every(Boolean);
 }
 
@@ -141,7 +163,16 @@ async function expectListingStart(
     );
   });
   const seen = listed
-    .map((c) => `${c.startDate} at ${c.venue ?? c.locality ?? "no place"}`)
+    .map(
+      (c) =>
+        `${c.startDate} at ${
+          c.places
+            .map((place) =>
+              [place.venue, place.locality].filter(Boolean).join(", "),
+            )
+            .join(" / ") || "no place"
+        }`,
+    )
     .join(", ");
   expect(
     matches,

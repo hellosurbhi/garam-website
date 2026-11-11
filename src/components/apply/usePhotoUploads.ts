@@ -39,6 +39,7 @@ export function usePhotoUploads(
   const nextId = useRef(1);
   const inFlight = useRef(new Set<Promise<void>>());
   const running = useRef(new Set<number>());
+  const removed = useRef(new Set<number>());
   const itemsRef = useRef<PhotoItem[]>([]);
   useEffect(() => {
     itemsRef.current = items;
@@ -58,14 +59,24 @@ export function usePhotoUploads(
       running.current.add(item.id);
       patch(item.id, { status: "uploading", error: undefined });
       const run = uploadApplicationPhoto(controller, item.file, item.id)
-        .then((result) =>
+        .then((result) => {
+          if (removed.current.has(item.id)) {
+            // WHY: the applicant removed this photo while it was uploading,
+            // so there was no path to remove then. The upload finished anyway
+            // and the server attached it; take it off again.
+            void removeApplicationPhoto(controller, result.path).catch(
+              () => {},
+            );
+            return;
+          }
           patch(item.id, {
             status: "saved",
             path: result.path,
             epoch: result.epoch,
-          }),
-        )
+          });
+        })
         .catch((err: unknown) => {
+          if (removed.current.has(item.id)) return;
           const error = err instanceof Error ? err : new Error(String(err));
           patch(item.id, { status: "failed", error });
           onUploadFailed(error, item);
@@ -111,6 +122,7 @@ export function usePhotoUploads(
     const item = itemsRef.current.find((p) => p.id === id);
     if (!item) return;
     URL.revokeObjectURL(item.preview);
+    removed.current.add(id);
     setItems((prev) => prev.filter((p) => p.id !== id));
     if (item.path) {
       // Best effort: the stored file is kept either way.

@@ -43,6 +43,16 @@ describe("alertOpsOnce", () => {
     expect(mockSet.mock.calls[0][2]).toEqual({ nx: true, ex: 3600 });
   });
 
+  it("keeps an HTTP status in the key so a 503 outage is not hidden behind a 403 one", async () => {
+    mockSet.mockResolvedValue("OK");
+    await alertOpsOnce(report("firestore HTTP 403: denied"));
+    await alertOpsOnce(report("firestore HTTP 503: denied"));
+    await alertOpsOnce(report("firestore HTTP 503: denied"));
+    const keys = mockSet.mock.calls.map((c) => c[0]);
+    expect(keys[0]).not.toBe(keys[1]);
+    expect(keys[1]).toBe(keys[2]);
+  });
+
   it("suppresses a duplicate inside the window without sending", async () => {
     mockSet.mockResolvedValue(null);
     await expect(alertOpsOnce(report("Firestore 503"))).resolves.toBe(true);

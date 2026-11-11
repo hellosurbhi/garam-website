@@ -347,7 +347,13 @@ export function useApplyForm() {
         });
       }
 
-      await trackSubmitted();
+      try {
+        await trackSubmitted();
+      } catch {
+        // WHY: the application is already filed here. An analytics failure
+        // must not turn it into a "submit failed" screen that invites a
+        // second submit.
+      }
 
       setForm(INITIAL);
       setCityInput("");

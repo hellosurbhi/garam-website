@@ -298,6 +298,52 @@ describe("AutosaveController: reload and storage", () => {
   });
 });
 
+describe("AutosaveController: finalize after a lost response", () => {
+  const finalized = () =>
+    new Response(JSON.stringify({ error: "finalized" }), { status: 409 });
+
+  it("treats a 409 finalized as already submitted and sends no new draft", async () => {
+    // First finalize landed but its answer was lost; the retry gets a 409.
+    const { calls, fetchImpl } = harness((_call, n) =>
+      n === 1 ? ok() : finalized(),
+    );
+    const c = new AutosaveController({ fetchImpl });
+    c.setField("name", "Priya");
+    await c.ensureDraft();
+    const done = c.finalize();
+    await vi.runAllTimersAsync();
+    await expect(done).resolves.toMatchObject({ ok: true });
+    expect(calls).toHaveLength(2);
+    expect(c.hasDraft).toBe(false);
+  });
+
+  it("a second finalize after success sends nothing", async () => {
+    const { calls, fetchImpl } = harness();
+    const c = new AutosaveController({ fetchImpl });
+    c.setField("name", "Priya");
+    const first = c.finalize();
+    await vi.runAllTimersAsync();
+    await first;
+    const sent = calls.length;
+    await expect(c.finalize()).resolves.toMatchObject({ ok: true });
+    expect(calls).toHaveLength(sent);
+  });
+
+  it("the background drain stops once the server says it is finalized", async () => {
+    const { calls, fetchImpl } = harness((_call, n) =>
+      n === 1 ? ok() : finalized(),
+    );
+    const c = new AutosaveController({ fetchImpl });
+    c.setField("name", "A");
+    await vi.advanceTimersByTimeAsync(900);
+    c.setField("name", "B");
+    await vi.advanceTimersByTimeAsync(900);
+    const sent = calls.length;
+    await vi.advanceTimersByTimeAsync(120_000);
+    expect(calls).toHaveLength(sent);
+  });
+});
+
 describe("AutosaveController: finalize", () => {
   it("sends finalize with every pending field and clears local state", async () => {
     const { calls, fetchImpl } = harness();

@@ -59,7 +59,17 @@ export async function claimAlertKey(key: string): Promise<DedupeClaim> {
 function errorClass(message: string): string {
   const stripped = message
     .replace(/[0-9a-f]{8,}/gi, "#")
-    .replace(/\d+/g, "#")
+    // WHY: an HTTP status is the cause itself. Stripping it made a 403 outage
+    // suppress a later 503 outage for the hour. Other numbers (ids, counts,
+    // durations) still collapse.
+    .replace(/\d+/g, (n, offset: number, whole: string) =>
+      /^[45]\d\d$/.test(n) &&
+      /(HTTP |: |\b(status|code) )$/i.test(
+        whole.slice(Math.max(0, offset - 7), offset),
+      )
+        ? n
+        : "#",
+    )
     .slice(0, 120);
   return createHash("sha256").update(stripped).digest("hex").slice(0, 12);
 }

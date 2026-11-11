@@ -365,6 +365,15 @@ export class AutosaveController {
       return replacement;
     }
 
+    if (res.status === 409 && data.error === "finalized") {
+      // WHY: the server only answers this for a draft that was already
+      // finalized, i.e. an earlier finalize landed and its response was lost.
+      // Treating it as a failure left the applicant unable to ever see the
+      // success screen and made the background drain retry forever.
+      this.markFinalized();
+      return { ok: true };
+    }
+
     if (!res.ok || data.ok !== true) {
       throw new ApplyRequestError(
         data.stage ?? (finalize ? "finalize" : "save_draft"),
@@ -401,6 +410,16 @@ export class AutosaveController {
     }
     this.persist();
     return data;
+  }
+
+  /** The application is filed: drop every queued value and the credential. */
+  private markFinalized(): void {
+    this.finalized = true;
+    this.pending = {};
+    this.latest = {};
+    this.token = null;
+    this.draftId = null;
+    writeStore(null);
   }
 
   /** Swap the failure handler (React binds it after render, never during). */
@@ -466,12 +485,17 @@ export class AutosaveController {
   ): Promise<SaveResponse> {
     if (this.timer) clearTimeout(this.timer);
     this.timer = null;
+    // WHY: once filed, a second call must not send anything: with no token the
+    // server would mint a new empty draft and finalize that as a junk entry.
+    if (this.finalized) return { ok: true };
     for (let round = 0; round < MAX_FINALIZE_ROUNDS; round++) {
       const epoch = this.draftEpoch;
       await settle();
       // Files everything queued and proves the token is alive while photos
       // can still be re-filed; a dead token here replaces the draft.
       await this.sendWithRetry(false);
+      // The server may have reported the application already filed.
+      if (this.finalized) return { ok: true };
       if (this.draftEpoch !== epoch) continue;
       let data: SaveResponse;
       try {
@@ -482,12 +506,7 @@ export class AutosaveController {
       }
       // A field refused as stale was queued again with a higher revision.
       if (data.stale && data.stale.length > 0) continue;
-      this.finalized = true;
-      this.pending = {};
-      this.latest = {};
-      this.token = null;
-      this.draftId = null;
-      writeStore(null);
+      this.markFinalized();
       return data;
     }
     throw new ApplyRequestError(

@@ -72,6 +72,23 @@
   gap: 24px;
 }
 
+/* Wraps the editor's field groups so a save can disable them together;
+   keeps the same column spacing as .form. */
+.lockedFields {
+  composes: form;
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+/* "Saving..." on the button is the save's feedback; a fade here would
+   flicker on every quick save, so locked fields only change the cursor. */
+.lockedFields:disabled .input,
+.lockedFields:disabled .check {
+  cursor: not-allowed;
+}
+
 .fieldset {
   border: none;
   margin: 0;

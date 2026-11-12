@@ -119,23 +119,27 @@ export default function ShowEditorModal({
         onSubmit={submit}
         noValidate
       >
-        <ShowWhereFields
-          form={form}
-          set={set}
-          errors={fields}
-          cityEditable={!base}
-          cities={cities}
-          onPickCity={(city) => setForm((f) => withCity(f, city, snapshot))}
-          onPickZone={(zone) => setForm((f) => withTimezone(f, zone, base))}
-          venues={venues}
-        />
-        <ShowTicketFields form={form} set={set} errors={fields} />
-        <ShowCardFields
-          form={form}
-          set={set}
-          errors={fields}
-          noteNeeded={noteNeeded}
-        />
+        {/* WHY: a save sends the form as of Save and closes on success; typing
+            meanwhile would be lost, so one disabled fieldset locks it all. */}
+        <fieldset className={styles.lockedFields} disabled={saving}>
+          <ShowWhereFields
+            form={form}
+            set={set}
+            errors={fields}
+            cityEditable={!base}
+            cities={cities}
+            onPickCity={(city) => setForm((f) => withCity(f, city, snapshot))}
+            onPickZone={(zone) => setForm((f) => withTimezone(f, zone, base))}
+            venues={venues}
+          />
+          <ShowTicketFields form={form} set={set} errors={fields} />
+          <ShowCardFields
+            form={form}
+            set={set}
+            errors={fields}
+            noteNeeded={noteNeeded}
+          />
+        </fieldset>
         {(issues.length > 0 || failure) && (
           <ShowIssueSummary other={other} failure={failure} />
         )}

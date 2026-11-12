@@ -577,6 +577,34 @@ describe("ShowsTab", () => {
     ).toBe("35");
   });
 
+  it("locks the editor's fields while its save is out, so no typing is lost", async () => {
+    let finishSave: (res: Response) => void = () => {};
+    routeFetch();
+    const base = fetchMock.getMockImplementation();
+    fetchMock.mockImplementation(async (path: string, init?: RequestInit) => {
+      if (path === "/api/admin/events/draft")
+        return new Promise<Response>((resolve) => (finishSave = resolve));
+      return base?.(path, init);
+    });
+    render(<ShowsTab />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Edit Chicago, Jan 9" }),
+    );
+    fireEvent.change(screen.getByLabelText("Ticket price in USD"), {
+      target: { value: "35" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Save to draft" }));
+    await waitFor(() =>
+      expect(callsTo("/api/admin/events/draft")).toHaveLength(1),
+    );
+    for (const label of ["Card tagline", "Ticket price in USD"])
+      expect(
+        (screen.getByLabelText(label) as HTMLInputElement).matches(":disabled"),
+      ).toBe(true);
+    finishSave(json(200, { basedOnVersion: 3, changes: noChanges }));
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+  });
+
   it("labels a dated show that gets a Notify Me card the way /tickets shows it", async () => {
     routeFetch();
     const base = fetchMock.getMockImplementation();

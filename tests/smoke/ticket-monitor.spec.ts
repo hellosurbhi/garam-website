@@ -43,7 +43,7 @@ test("ticket monitor rejects a missing checkout link for a purchasable show", as
   );
   await expect(
     checkTicketListings(page, request, [event], now),
-  ).rejects.toThrow();
+  ).rejects.toThrow("No visible checkout link for fixture-show");
 });
 test("ticket monitor rejects a blank page when only waitlists are expected", async ({
   page,
@@ -112,7 +112,7 @@ for (const [name, markup] of [
     );
     await expect(
       checkTicketListings(page, request, [event], now),
-    ).rejects.toThrow();
+    ).rejects.toThrow("No visible checkout link for fixture-show");
   });
 }
 test("ticket monitor flags a rewritten absolute checkout link in a waitlist-only state", async ({
@@ -135,7 +135,7 @@ test("ticket monitor does not match a longer slug that shares the prefix", async
   );
   await expect(
     checkTicketListings(page, request, [event], now),
-  ).rejects.toThrow();
+  ).rejects.toThrow("No visible checkout link for fixture-show");
 });
 test("ticket monitor checks the exact checkout destination", async ({
   page,

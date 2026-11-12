@@ -309,6 +309,39 @@ const atVenue = {
   name: venue.name,
   address: { addressLocality: "Chicago, IL" },
 };
+/** Serves one vendor listing page and checks our Chicago show against it. */
+async function checkListing(
+  page: Page,
+  status: number,
+  ldJson: unknown,
+  passes: boolean,
+) {
+  let show: EventEntry = {
+    ...event,
+    startTime: "19:30",
+    timezone: "America/Chicago",
+    venue,
+  };
+  await withSite(
+    (req, res) => {
+      if (req.url?.startsWith("/api/go/")) return goRoute([show])(req, res);
+      res.writeHead(status, { "content-type": "text/html" });
+      res.end(
+        `<script type="application/ld+json">${JSON.stringify(ldJson)}</script>`,
+      );
+    },
+    async (origin, client) => {
+      show = { ...show, url: `${origin}/listing` };
+      await showTicketPage(page, card(show.slug), origin);
+      const check = checkTicketListings(page, client, [show], now, {
+        verifyListings: true,
+      });
+      if (passes) await check;
+      else await expect(check).rejects.toThrow();
+    },
+  );
+}
+
 for (const [name, status, startDate, location, passes] of [
   [
     "listing published in the show's timezone",
@@ -477,6 +510,37 @@ for (const [name, status, startDate, location, passes] of [
     false,
   ],
   [
+    "listing whose location is a postal address in another city",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    {
+      "@type": "PostalAddress",
+      name: venue.name,
+      addressLocality: "Detroit",
+      addressRegion: "MI",
+    },
+    false,
+  ],
+  [
+    "listing whose location is a postal address in our city",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    {
+      "@type": "PostalAddress",
+      name: venue.name,
+      addressLocality: "Chicago",
+      addressRegion: "IL",
+    },
+    true,
+  ],
+  [
+    "listing whose location is online under our venue name",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    { "@type": "VirtualLocation", name: venue.name },
+    false,
+  ],
+  [
     "listing whose address list names our city",
     200,
     "2026-12-04T19:30:00-06:00",
@@ -524,30 +588,95 @@ for (const [name, status, startDate, location, passes] of [
 ] as const) {
   test(`ticket monitor: ${name}`, async ({ page }) => {
     test.setTimeout(10000);
-    let show: EventEntry = {
-      ...event,
-      startTime: "19:30",
-      timezone: "America/Chicago",
-      venue,
-    };
-    await withSite(
-      (req, res) => {
-        if (req.url?.startsWith("/api/go/")) return goRoute([show])(req, res);
-        res.writeHead(status, { "content-type": "text/html" });
-        res.end(
-          `<script type="application/ld+json">${JSON.stringify({ "@type": "Event", startDate, location })}</script>`,
-        );
-      },
-      async (origin, client) => {
-        show = { ...show, url: `${origin}/listing` };
-        await showTicketPage(page, card(show.slug), origin);
-        const check = checkTicketListings(page, client, [show], now, {
-          verifyListings: true,
-        });
-        if (passes) await check;
-        else await expect(check).rejects.toThrow();
-      },
+    await checkListing(
+      page,
+      status,
+      { "@type": "Event", startDate, location },
+      passes,
     );
+  });
+}
+
+// Listing pages whose JSON-LD isn't one plain Event. Each body is the page's
+// whole ld+json block, so references and nesting are exercised as vendors
+// publish them.
+const ourStart = "2026-12-04T19:30:00-06:00";
+for (const [name, body, passes] of [
+  [
+    "listing whose address points at another city elsewhere in the page",
+    {
+      "@graph": [
+        {
+          "@type": "Event",
+          startDate: ourStart,
+          location: { name: venue.name, address: { "@id": "#addr" } },
+        },
+        {
+          "@id": "#addr",
+          "@type": "PostalAddress",
+          addressLocality: "Detroit",
+          addressRegion: "MI",
+        },
+      ],
+    },
+    false,
+  ],
+  [
+    "listing whose address points at our city elsewhere in the page",
+    {
+      "@graph": [
+        {
+          "@type": "Event",
+          startDate: ourStart,
+          location: { name: venue.name, address: { "@id": "#addr" } },
+        },
+        {
+          "@id": "#addr",
+          "@type": "PostalAddress",
+          addressLocality: "Chicago",
+          addressRegion: "IL",
+        },
+      ],
+    },
+    true,
+  ],
+  [
+    "listing whose location points at nothing on the page",
+    {
+      "@type": "Event",
+      startDate: ourStart,
+      location: { "@id": "#missing" },
+    },
+    false,
+  ],
+  [
+    "listing for another show that recommends ours",
+    {
+      "@type": "Event",
+      startDate: "2026-12-11T19:30:00-06:00",
+      location: atVenue,
+      subjectOf: {
+        "@type": "ItemList",
+        itemListElement: [
+          { "@type": "Event", startDate: ourStart, location: atVenue },
+        ],
+      },
+    },
+    false,
+  ],
+  [
+    "venue page that lists our show in its calendar",
+    {
+      "@type": "Place",
+      ...atVenue,
+      Events: [{ "@type": "Event", startDate: ourStart, location: atVenue }],
+    },
+    false,
+  ],
+] as const) {
+  test(`ticket monitor: ${name}`, async ({ page }) => {
+    test.setTimeout(10000);
+    await checkListing(page, 200, body, passes);
   });
 }
 

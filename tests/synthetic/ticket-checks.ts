@@ -37,74 +37,121 @@ export interface ListedEvent {
   places: ListedPlace[];
 }
 
-/** Every schema.org *Event with a startDate in a page's JSON-LD blocks. */
+/** Every top-level schema.org *Event with a startDate in a page's JSON-LD. */
 export function extractListedEvents(html: string): ListedEvent[] {
-  const found: ListedEvent[] = [];
+  type Node = Record<string, unknown>;
+  const isNode = (value: unknown): value is Node =>
+    !!value && typeof value === "object" && !Array.isArray(value);
+  const typesOf = (node: Node) =>
+    [node["@type"]].flat().filter((t): t is string => typeof t === "string");
   const text = (value: unknown) => (typeof value === "string" ? value : null);
-  const visit = (node: unknown): void => {
-    if (Array.isArray(node)) return node.forEach(visit);
-    if (!node || typeof node !== "object") return;
-    const obj = node as Record<string, unknown>;
-    const types = [obj["@type"]].flat();
-    if (
-      types.some((t) => typeof t === "string" && t.endsWith("Event")) &&
-      typeof obj.startDate === "string"
-    ) {
-      const places = [obj.location].flat().flatMap((place): ListedPlace[] => {
-        if (place === undefined || place === null) return [];
-        const unreadable = (raw: unknown): ListedPlace[] => [
-          { venue: null, locality: null, region: null, text: String(raw) },
-        ];
-        if (typeof place !== "object") return unreadable(place);
-        const fields = place as Record<string, unknown>;
-        // An address may itself be a list; each one is checked as a place.
-        // An empty list names no address, so the venue is still checked
-        // (dropping the place let "Laugh Factory" with address [] pass).
-        const listed =
-          fields.address === undefined ? [] : [fields.address].flat();
-        const addresses = listed.length ? listed : [{}];
-        return addresses.flatMap((address): ListedPlace[] => {
-          if (!address || typeof address !== "object" || Array.isArray(address))
-            return unreadable(address);
-          const parts = address as Record<string, unknown>;
+  const unreadable = (raw: unknown): ListedPlace[] => [
+    { venue: null, locality: null, region: null, text: JSON.stringify(raw) },
+  ];
+
+  const blocks: unknown[] = [];
+  for (const [, body] of html.matchAll(
+    /<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi,
+  )) {
+    try {
+      blocks.push(JSON.parse(body));
+    } catch {
+      // One malformed block doesn't hide the others.
+    }
+  }
+
+  // A node may stand in for another by "@id" alone (an address kept once in
+  // @graph and pointed at from the venue), so every full node is indexed.
+  const byId = new Map<string, Node>();
+  const index = (value: unknown): void => {
+    if (Array.isArray(value)) return value.forEach(index);
+    if (!isNode(value)) return;
+    const id = value["@id"];
+    if (typeof id === "string" && Object.keys(value).length > 1)
+      if (!byId.has(id)) byId.set(id, value);
+    Object.values(value).forEach(index);
+  };
+  blocks.forEach(index);
+  // A bare reference resolves to its node; one that names nothing on the
+  // page is undefined, which callers treat as unreadable.
+  const resolve = (value: unknown): unknown => {
+    if (!isNode(value) || Object.keys(value).length !== 1) return value;
+    const id = value["@id"];
+    return typeof id === "string" ? byId.get(id) : value;
+  };
+
+  const placesOf = (location: unknown): ListedPlace[] =>
+    [location].flat().flatMap((raw): ListedPlace[] => {
+      if (raw === undefined || raw === null) return [];
+      const place = resolve(raw);
+      if (!isNode(place)) return unreadable(raw);
+      // schema.org's location is a Place, PostalAddress, text or
+      // VirtualLocation. An online location under our venue's name is not
+      // the room the show is in, so it can't confirm the listing.
+      const types = typesOf(place);
+      if (types.some((t) => t.endsWith("VirtualLocation")))
+        return unreadable(raw);
+      // Address fields are read wherever they sit: on a nested address, or
+      // on the location itself when it is a PostalAddress (reading only the
+      // nested one let a Detroit PostalAddress location pass for Chicago).
+      const listed = place.address === undefined ? [] : [place.address].flat();
+      const ownAddress =
+        types.some((t) => t.endsWith("PostalAddress")) ||
+        "addressLocality" in place ||
+        "addressRegion" in place;
+      const addresses = [...listed, ...(ownAddress ? [place] : [])];
+      // An empty list names no address, so the venue is still checked
+      // (dropping the place let "Laugh Factory" with address [] pass).
+      return (addresses.length ? addresses : [{}]).flatMap(
+        (rawAddress): ListedPlace[] => {
+          const address = resolve(rawAddress);
+          if (!isNode(address)) return unreadable(rawAddress);
           // A name, city or state given as anything but text can't be
           // compared, so the place fails rather than the field being skipped
           // (skipping let addressLocality ["Detroit"] pass for Chicago).
           const identity = [
-            fields.name,
-            parts.addressLocality,
-            parts.addressRegion,
+            place.name,
+            address.addressLocality,
+            address.addressRegion,
           ];
           if (
             identity.some(
               (v) => v !== undefined && v !== null && typeof v !== "string",
             )
           )
-            return unreadable(JSON.stringify(identity));
+            return unreadable(identity);
           return [
             {
-              venue: text(fields.name),
-              locality: text(parts.addressLocality),
-              region: text(parts.addressRegion),
+              venue: text(place.name),
+              locality: text(address.addressLocality),
+              region: text(address.addressRegion),
               text: null,
             },
           ];
-        });
-      });
-      found.push({ startDate: obj.startDate, places });
-    }
-    Object.values(obj).forEach(visit);
-  };
-  for (const [, body] of html.matchAll(
-    /<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi,
-  )) {
-    try {
-      visit(JSON.parse(body));
-    } catch {
-      // One malformed block doesn't hide the others.
-    }
-  }
-  return found;
+        },
+      );
+    });
+
+  // WHY: only the page's own top-level events describe what it sells: a
+  // block's root, the items of a root list, or @graph members. Walking every
+  // nested node let a wrong show's page pass because it recommended ours in
+  // an ItemList, and DC Comedy Loft's show page nests its whole 287-show
+  // venue calendar under a Place. A page like that can't prove which show
+  // the link opens, so it fails the check rather than matching any listing.
+  const topLevel = blocks
+    .flat()
+    .flatMap((root) =>
+      isNode(root) && root["@graph"] !== undefined
+        ? [root, ...[root["@graph"]].flat()]
+        : [root],
+    );
+  return topLevel.flatMap((node): ListedEvent[] =>
+    isNode(node) &&
+    typesOf(node).some((t) => t.endsWith("Event")) &&
+    typeof node.startDate === "string"
+      ? [{ startDate: node.startDate, places: placesOf(node.location) }]
+      : [],
+  );
 }
 
 const comparable = (value: string) =>

@@ -6,6 +6,7 @@
 - Recognize checkout links after the tracking script rewrites them with event ids. The production ticket monitor had failed on every run since that rewrite shipped.
 - Reject a checkout link that points at another site, a broken link, or a link paired with the wrong show card, and require every on-sale show to appear. The redirect check now follows the link exactly as rendered, tracking parameters included.
 - In the weekly and preview runs, open each vendor listing and confirm its published date and start time match the show.
+- Read only the event a listing page sells, not shows it recommends or a venue's whole calendar. Follow address links within the page, read a location given as a bare address and reject an online location.
 - Wait for the waiver form to finish loading before filling it, so the waiver smoke test stops timing out on production.
 
 ## Resolve monitoring and waitlist review findings (2026-11-11)

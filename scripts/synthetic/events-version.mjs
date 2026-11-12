@@ -28,7 +28,7 @@ export function decideEventsCheck({ deployed, published, supersededAt, now }) {
 /**
  * Full document name of one publish record. Same id format as
  * eventVersionDocPath in src/lib/eventsStore.server.ts, which plain Node
- * cannot import; deployment.test.mjs pins the two together.
+ * cannot import; events-version.test.mjs pins the two together.
  */
 export function eventVersionDocName(projectId, version) {
   return `projects/${projectId}/databases/(default)/documents/eventVersions/v${String(version).padStart(6, "0")}`;

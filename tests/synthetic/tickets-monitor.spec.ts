@@ -5,6 +5,13 @@ import { requireVersion } from "../../scripts/synthetic/deployment.mjs";
 import { requireEventsVersion } from "../../scripts/synthetic/events-version.mjs";
 import { checkTicketListings } from "./ticket-checks";
 
+// WHY no retry, when the config retries once: a retry reruns in a fresh
+// worker, so a rebuild that landed while the first attempt waited gives the
+// retry a later lag start, and a site that stayed behind past the 20 minute
+// grace passed on retry instead of paging. A stale verdict is a measurement,
+// not a flake, so the first attempt's answer must stand.
+test.describe.configure({ retries: 0 });
+
 test("live ticket redirects use their configured checkout destinations", async ({
   page,
   request,

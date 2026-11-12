@@ -40,12 +40,12 @@ jobs:
     needs: deployed
     if: needs.deployed.outputs.state != 'superseded'
     runs-on: ubuntu-latest
-    # WHY 75, was 15: the ticket check may wait out a 20 minute show list
-    # rebuild inside its 25 minute test timeout, and Playwright retries it
-    # once (50 minutes), on top of about 15 for setup, signup and cleanup. A
-    # job that hits this limit is cancelled, and report.mjs treats a
-    # cancelled check as superseded, so the limit must exceed the worst case.
-    timeout-minutes: 75
+    # WHY 45, was 15: the ticket check may wait out a 20 minute show list
+    # rebuild inside its 25 minute test timeout (it never retries), on top of
+    # about 15 for setup, signup and cleanup. A job that hits this limit is
+    # cancelled, and report.mjs treats a cancelled check as superseded, so the
+    # limit must exceed the worst case.
+    timeout-minutes: 45
     concurrency:
       group: synthetic-apply
       cancel-in-progress: false

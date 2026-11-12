@@ -163,6 +163,22 @@ export type TbaCity = z.infer<typeof tbaCitySchema>;
 export type EventsSnapshot = z.infer<typeof eventsSnapshotSchema>;
 export type PublishedEnvelope = z.infer<typeof publishedEnvelopeSchema>;
 
+/**
+ * The why-note every publish and restore carries (plan section 2). Shared so
+ * the admin Shows tab refuses a blank note inline with the same rule the
+ * publish and rollback routes enforce.
+ */
+export const publicationNoteSchema = z.string().trim().min(1).max(500);
+
+/**
+ * Publish, Restore and Rebuild wait this long after a rebuild request (R15).
+ * Shared so the admin buttons unlock at the moment the routes stop refusing.
+ */
+export const REBUILD_DEBOUNCE_MS = 60_000;
+
+/** A rebuild still not live after this long is reported as stuck (R10, R15). */
+export const REBUILD_STUCK_MS = 20 * 60_000;
+
 /** Validate an already JSON-parsed snapshot (read tier). Throws a ZodError. */
 export function parseEventsSnapshot(value: unknown): EventsSnapshot {
   return eventsSnapshotSchema.parse(value);

@@ -338,6 +338,12 @@ describe("GET /api/admin/events", () => {
       changes: { added: ["chicago-2027-01-09"] },
     });
     expect(history[0]).not.toHaveProperty("snapshotJson");
+    // The editor validates against these slugs instead of bundling the city pages.
+    expect(res.json.cities).toContainEqual({
+      slug: "manhattan",
+      name: "Manhattan",
+      region: "NY",
+    });
   });
 
   it("answers 503 before the seed has run", async () => {

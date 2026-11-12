@@ -13,6 +13,8 @@ import { cities } from "../data/cities";
 import {
   buildRollbackSnapshot,
   diffSnapshots,
+  publicationNoteSchema,
+  REBUILD_DEBOUNCE_MS,
   validateSnapshotAgainstLive,
   type EventsSnapshot,
   type SnapshotDiff,
@@ -38,8 +40,6 @@ import { verifyAdminIdentity, type AdminIdentity } from "./verifyToken";
 
 /** Deploy hook deadline (plan section 5). */
 const DEPLOY_HOOK_TIMEOUT_MS = 5_000;
-/** Publish, Restore and Rebuild wait this long after a rebuild request (R15). */
-export const REBUILD_DEBOUNCE_MS = 60_000;
 
 const CONFLICT_MESSAGE = "The live version changed, reload";
 
@@ -182,7 +182,31 @@ function errorText(err: unknown): string {
 
 // ── Operations ───────────────────────────────────────────────────────────
 
-/** Everything the Shows tab shows: live, draft with its pending changes, history. */
+/** One city the Shows editor can pick for a show or a coming soon card. */
+export interface AdminCityOption {
+  slug: string;
+  name: string;
+  region: string;
+}
+
+/**
+ * The city pages a show may link to, sorted by name.
+ * WHY sent from here and not imported by the admin island: src/data/cities
+ * is about 1.6 MB of page copy. The editor only needs slug, name and region,
+ * and it passes the slugs to validateSnapshotAgainstLive as knownCitySlugs so
+ * its inline check is the same check the draft route runs.
+ */
+function cityOptions(): AdminCityOption[] {
+  return Object.values(cities)
+    .map((c) => ({
+      slug: c.slug,
+      name: c.displayName,
+      region: c.addressRegion,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+/** Everything the Shows tab shows: live, draft with its pending changes, history, city choices. */
 export async function loadEventsAdmin() {
   const [live, draft, history] = await Promise.all([
     requireLive(),
@@ -198,8 +222,12 @@ export async function loadEventsAdmin() {
         }
       : null,
     history,
+    cities: cityOptions(),
   };
 }
+
+/** The GET /api/admin/events body. */
+export type EventsAdminLoad = Awaited<ReturnType<typeof loadEventsAdmin>>;
 
 export const saveDraftBodySchema = z.object({
   snapshot: z.unknown(),
@@ -230,7 +258,7 @@ export async function saveDraft(
   };
 }
 
-const noteSchema = z.string().trim().min(1).max(500);
+const noteSchema = publicationNoteSchema;
 const versionSchema = z.number().int().min(1);
 
 export const publishBodySchema = z.object({

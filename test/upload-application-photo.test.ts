@@ -581,7 +581,7 @@ describe("upload-application-photo: quotas hold under concurrent requests", () =
     expect(mocks.state.objects.size).toBe(1);
   });
 
-  it("a relay whose write was lost removes its object", async () => {
+  it("a relay whose write was lost keeps its object, because only a committed discard marker makes deleting safe", async () => {
     const { token } = seedDraft();
     mocks.state.failPatch = "before";
     const res = await call(token, null, {
@@ -590,7 +590,7 @@ describe("upload-application-photo: quotas hold under concurrent requests", () =
       headers: { "Content-Type": "image/jpeg", "x-photo-filename": "a.jpg" },
     });
     expect(res.status).toBe(500);
-    expect(mocks.state.objects.size).toBe(0);
+    expect(mocks.state.objects.size).toBe(1);
   });
 
   it("a relay whose write committed but whose response was lost keeps its object", async () => {

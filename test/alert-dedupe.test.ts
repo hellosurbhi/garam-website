@@ -61,8 +61,15 @@ describe("alertOpsOnce", () => {
 
   it("suppresses a duplicate inside the window without sending", async () => {
     mockSet.mockResolvedValue(null);
+    mockGet.mockResolvedValue("sent");
     await expect(alertOpsOnce(report("Firestore 503"))).resolves.toBe(true);
     expect(mockAlertOps).not.toHaveBeenCalled();
+  });
+
+  it("a duplicate whose claim vanished (first send failed and released) is not reported as delivered", async () => {
+    mockSet.mockResolvedValue(null);
+    mockGet.mockResolvedValue(null);
+    await expect(alertOpsOnce(report("Firestore 503"))).resolves.toBe(false);
   });
 
   it("a duplicate whose first send is still in flight is not reported as delivered", async () => {

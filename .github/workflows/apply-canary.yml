@@ -128,7 +128,7 @@ jobs:
           CANARY_RESULT: ${{ needs.canary.result }}
         run: |
           TITLE="APPLY FAILED: production apply canary"
-          DETAIL="$(cat verify.log 2>/dev/null | head -c 3000)"
+          DETAIL="$(head -c 3000 verify.log 2>/dev/null || true)"
           BODY="The production apply canary ended as: $CANARY_RESULT. Real applicants may be affected. Run: $RUN_URL
 
           $DETAIL"
@@ -158,4 +158,4 @@ jobs:
           # A test_pager dispatch whose canary ALSO genuinely failed still
           # pages for real; only a passing drill sends the test message.
           if [ "$CANARY_RESULT" != "success" ]; then MODE=page; else MODE=test; fi
-          DETAIL="$(cat verify.log 2>/dev/null | head -c 3500)" node scripts/send-pager-email.mjs "$MODE"
+          DETAIL="$(head -c 3500 verify.log 2>/dev/null || true)" node scripts/send-pager-email.mjs "$MODE"

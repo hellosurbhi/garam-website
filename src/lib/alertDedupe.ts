@@ -52,7 +52,10 @@ export async function claimAlertKey(key: string): Promise<DedupeClaim> {
       );
       return {
         duplicate: true,
-        inFlight: state === CLAIM_SENDING,
+        // Only "sent" proves delivery. "sending" is in flight and a missing key
+        // means the first sender released it after every channel failed, so
+        // both must be reported as undelivered, never as suppressed.
+        inFlight: state !== CLAIM_SENT,
         confirm: NO_CONFIRM,
         release: NO_RELEASE,
       };

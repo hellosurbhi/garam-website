@@ -182,15 +182,10 @@ async function deleteUnlessKept(auth: DraftAuth, path: string): Promise<void> {
     });
   } catch (err) {
     if (err instanceof MissingDraftError) return;
-    // The marker could not be written (Firestore is failing). Fall back to a
-    // plain read: the file goes only if the draft provably does not hold it, so
-    // a relay whose write was lost still cleans up and a committed one is kept.
-    const draft = await fsGet(`${auth.collection}/${auth.draftId}`).catch(
-      () => null,
-    );
-    if (draft && !stringArray(draft.photoPaths).includes(path)) {
-      await deleteObject(path).catch(() => {});
-    }
+    // WHY keep the file: the marker is the only thing that stops a concurrent
+    // confirm from attaching the path. Without a committed marker a read-based
+    // delete races that confirm and can leave a draft pointing at a deleted
+    // photo, which is unrecoverable; an orphan file is recoverable.
     return;
   }
   if (discard) await deleteObject(path).catch(() => {});

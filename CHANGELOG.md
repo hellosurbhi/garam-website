@@ -1,5 +1,10 @@
 # Changelog
 
+## Restore Vercel pull request previews (2026-11-11)
+
+- Restore preview builds. Clean up deployments tied to a merged pull request after merge and retry hourly. Protect previews under review and keep the existing production safeguards.
+- Add a dry run option to the manual cleanup run so it can be checked against the real Vercel account before it deletes anything.
+
 ## fix(monitor): the ticket redirect check no longer reports a healthy page as broken (2026-11-12)
 
 - The live ticket check looked for a link with the exact path `/api/go/<show>`, but the site rewrites each checkout link to an absolute URL with an `?eid=` tag after the page loads. The check never found the link, failed on every run and paged the owner for a working page. It now matches the link path whether relative or absolute, with or without the tag, and still refuses a longer show name that only shares the same start. Verified against the live site and 95 fixture runs, including the new `?eid=` and prefix cases.
@@ -10,9 +15,6 @@
 - Real failures still email you and open their own `[Monitor]` issue. A watchdog that is configured and rejects a ping still fails the run.
 - Known gap without a watchdog: if the monitor itself stops running (GitHub Actions disabled, cron paused), nothing tells you. Adding the two secrets later turns that detection back on with no code change.
 - Tests: a missing watchdog raises no notification issue, a real failure still emails and opens an issue without one, and a rejecting configured watchdog still fails.
-
-- Restore preview builds. Clean up deployments tied to a merged pull request after merge and retry hourly. Protect previews under review and keep the existing production safeguards.
-- Add a dry run option to the manual cleanup run so it can be checked against the real Vercel account before it deletes anything.
 
 ## fix(apply): outside review round (Codex, CodeRabbit, fresh Claude) and main merge (2026-11-12)
 
@@ -74,9 +76,6 @@
 - Rank five markets using unique emails across leads and applications, explicit location aliases and Edison grouped under New York. Exclude active ticket markets before selecting five.
 - Show purchasable events first, then selected dated waitlists, then undated waitlists on the homepage and tickets page. Keep the existing homepage card design through a shared card component.
 - Version the aggregate cache and fix the missing gap between ticket cards and waitlist cards. Stack purchase controls below titles on small screens to avoid cramped city names.
-## Restore Vercel pull request previews (2026-11-11)
-
-- Restore preview builds. Clean up deployments tied to a merged pull request after merge and retry hourly. Protect previews under review and keep the existing production safeguards.
 
 ## Resolve monitoring and waitlist review findings (2026-11-11)
 

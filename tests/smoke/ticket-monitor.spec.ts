@@ -82,6 +82,12 @@ async function withSite(
     await run(origin, client);
   } finally {
     await client.dispose();
+    // WHY: WebKit preconnects to this origin even though /tickets is routed,
+    // and holds that socket (no request on it, so Node never counts it idle)
+    // until the page fixture closes after this test body returns. close()
+    // alone waits on it, so every WebKit fixture test hit its timeout. The
+    // server lives only for this test, so dropping its sockets is safe.
+    server.closeAllConnections();
     await new Promise<void>((resolve, reject) =>
       server.close((e) => (e ? reject(e) : resolve())),
     );

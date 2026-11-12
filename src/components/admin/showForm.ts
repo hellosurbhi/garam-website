@@ -220,17 +220,36 @@ function keepsOnSale(
 }
 
 const LOCAL_PATTERN = /^(\d{4}-\d{2}-\d{2})T\d{2}:\d{2}$/;
+const TIME_PATTERN = /^\d{2}:\d{2}$/;
 
 export interface FormDateProblem {
   /** The record field the problem belongs to, as the validator names it. */
-  field: "isoDate" | "onSaleAt";
+  field: "isoDate" | "startTime" | "onSaleAt";
   message: string;
+}
+
+/**
+ * True when the clocks skip `local` ("YYYY-MM-DDTHH:MM") in `timeZone` at
+ * spring forward. WHY a round trip: a skipped time is the one wall clock
+ * that does not come back as itself; a repeated fall back time does, as
+ * its first occurrence (offsetForZone).
+ */
+function isSkipped(local: string, timeZone: string): boolean {
+  return isoToLocal(localToIso(local, timeZone), timeZone) !== local;
+}
+
+/** The show start as one wall clock, or "" when a part is missing. */
+function startLocal(form: ShowForm): string {
+  return form.isoDate && TIME_PATTERN.test(form.startTime)
+    ? `${form.isoDate}T${form.startTime}|${form.timezone}`
+    : "";
 }
 
 /**
  * Date problems entryFromForm cannot survive, found before it runs: a year
  * past 9999 makes Date throw RangeError, and a wall clock the zone skips
- * at spring forward would silently become another time.
+ * at spring forward would silently become another time. Only edited times
+ * are checked, so a saved show still opens and saves as it was.
  */
 export function formDateProblems(
   form: ShowForm,
@@ -239,19 +258,23 @@ export function formDateProblems(
 ): FormDateProblem[] {
   const problems: FormDateProblem[] = [];
   if (form.isoDate && !isoDateSchema.safeParse(form.isoDate).success) {
-    problems.push({ field: "isoDate", message: EDITOR.badDate });
+    return [{ field: "isoDate", message: EDITOR.badDate }];
+  }
+  const start = startLocal(form);
+  if (
+    start &&
+    form.timezone &&
+    start !== (initial ? startLocal(initial) : "") &&
+    isSkipped(`${form.isoDate}T${form.startTime}`, form.timezone)
+  ) {
+    problems.push({ field: "startTime", message: EDITOR.skippedTime });
   }
   const local = form.onSaleLocal;
   if (!local || keepsOnSale(form, base, initial)) return problems;
   const day = LOCAL_PATTERN.exec(local)?.[1];
   if (!day || !isoDateSchema.safeParse(day).success) {
     problems.push({ field: "onSaleAt", message: EDITOR.badDate });
-  } else if (
-    form.timezone &&
-    isoToLocal(localToIso(local, form.timezone), form.timezone) !== local
-  ) {
-    // WHY a round trip: a skipped time is the one wall clock that does not
-    // come back as itself; a repeated fall back time does.
+  } else if (form.timezone && isSkipped(local, form.timezone)) {
     problems.push({ field: "onSaleAt", message: EDITOR.skippedTime });
   }
   return problems;

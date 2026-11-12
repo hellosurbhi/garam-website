@@ -1,7 +1,12 @@
 import { describe, it, expect } from "vitest";
 import published from "@/data/events.published.json";
 import type { EventEntry } from "@/data/eventsSnapshot";
-import { entryFromForm, formFromEntry, timezoneChoices } from "./showForm";
+import {
+  entryFromForm,
+  formFromEntry,
+  localToIso,
+  timezoneChoices,
+} from "./showForm";
 
 // WHY the real published record: manhattan-2026-10-11 predates the timezone
 // field, which is exactly the legacy shape the on-sale round trip broke on.
@@ -53,5 +58,19 @@ describe("timezoneChoices", () => {
     const zones = timezoneChoices("");
     expect(zones).toContain("Europe/London");
     expect(zones).toContain("America/New_York");
+  });
+});
+
+describe("localToIso", () => {
+  it("reads 01:30 on fall back night in New York as the first, daylight 01:30", () => {
+    expect(localToIso("2027-11-07T01:30", "America/New_York")).toBe(
+      "2027-11-07T05:30:00.000Z",
+    );
+  });
+
+  it("reads 01:30 on fall back night in London as the first, summer time 01:30", () => {
+    expect(localToIso("2027-10-31T01:30", "Europe/London")).toBe(
+      "2027-10-31T00:30:00.000Z",
+    );
   });
 });

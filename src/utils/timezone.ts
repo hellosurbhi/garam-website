@@ -34,9 +34,21 @@ export function offsetForZone(
 
   // Treat the local wall-clock time as UTC, then refine to find the actual offset.
   const localAsUtc = Date.UTC(y, m - 1, d, h, min);
-  const offsetMin1 = offsetAtUtcMs(localAsUtc);
-  const resolvedUtc = localAsUtc - offsetMin1 * 60_000;
-  const offsetMin = offsetAtUtcMs(resolvedUtc);
+  // WHY test the offsets either side of the day: in the hour that repeats
+  // at fall back both are correct, and refining from localAsUtc alone
+  // picked the first 01:30 in New York but the second in London, so the
+  // same rule meant different things by zone. RFC 5545 3.3.5 says a
+  // repeated local time means its first occurrence: the larger offset.
+  const fits = [
+    offsetAtUtcMs(localAsUtc - 86_400_000),
+    offsetAtUtcMs(localAsUtc + 86_400_000),
+  ].filter((o) => offsetAtUtcMs(localAsUtc - o * 60_000) === o);
+  // A skipped time fits neither; it keeps the refinement below, and the
+  // admin editor refuses such times before they are saved.
+  const offsetMin =
+    fits.length > 0
+      ? Math.max(...fits)
+      : offsetAtUtcMs(localAsUtc - offsetAtUtcMs(localAsUtc) * 60_000);
 
   const sign = offsetMin >= 0 ? "+" : "-";
   const abs = Math.abs(offsetMin);

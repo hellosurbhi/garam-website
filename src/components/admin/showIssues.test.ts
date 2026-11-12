@@ -115,6 +115,33 @@ describe("checkShowForm", () => {
     });
   });
 
+  it("rejects a show start time the clocks skip on spring forward night", () => {
+    const draft = { events: [nyc], tbaCities: [] };
+    const { problems } = check(draft, draft, 0, (f) => ({
+      ...f,
+      isoDate: "2027-03-14",
+      startTime: "02:30",
+      endTime: "04:00",
+      note: "Moved to the Sunday",
+    }));
+    expect(problems).toContainEqual({
+      path: "events.0.startTime",
+      message: EDITOR.skippedTime,
+    });
+  });
+
+  it("accepts a show start time in the hour that repeats at fall back", () => {
+    const draft = { events: [nyc], tbaCities: [] };
+    const { problems } = check(draft, draft, 0, (f) => ({
+      ...f,
+      isoDate: "2027-11-07",
+      startTime: "01:30",
+      endTime: "03:00",
+      note: "Moved to the Sunday",
+    }));
+    expect(problems).toEqual([]);
+  });
+
   it("rejects an on sale time the clocks skip on spring forward night", () => {
     const draft = { events: [nyc], tbaCities: [] };
     const { problems } = check(draft, draft, 0, (f) => ({

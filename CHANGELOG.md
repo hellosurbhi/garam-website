@@ -6,6 +6,7 @@
 - Check every edit in the browser with the same rules the server uses, so a bad ticket link or missing field shows an inline error and is never sent.
 - Lock publishing and restoring for a minute after a rebuild starts and show whether the website has caught up with the live version.
 - Offer every time zone for touring shows, accept full region names like Greater London and let a show that was never published move to a new date without a note.
+- Refuse a show start or on sale time that the clocks skip at spring forward, and read a time in the hour that repeats at fall back as its first occurrence in every time zone.
 
 ## Resolve monitoring and waitlist review findings (2026-11-11)
 

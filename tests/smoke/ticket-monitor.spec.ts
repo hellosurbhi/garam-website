@@ -97,6 +97,10 @@ for (const [name, markup] of [
     '<a href="/wrong/api/go/fixture-show?eid=123">Buy Tickets</a>',
   ],
   [
+    "a checkout path that only appears inside another link's query",
+    '<a href="/tickets?next=/api/go/fixture-show?eid=123">Buy Tickets</a>',
+  ],
+  [
     "the right path on another site",
     '<a href="https://example.com/api/go/fixture-show">Buy Tickets</a>',
   ],

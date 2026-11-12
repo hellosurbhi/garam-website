@@ -11,6 +11,8 @@
  */
 
 import { test, expect, type Page } from "@playwright/test";
+import { allEvents } from "../../src/data/events";
+import { checkTicketListings } from "../synthetic/ticket-checks";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -282,17 +284,39 @@ test.describe("HomeSignup (Spice List)", () => {
 });
 
 test.describe("Standalone waiver (/waiver)", () => {
+  // WHY: the form is a client:load React island over server-rendered HTML.
+  // Filling before hydration types into inputs React then resets, and the
+  // scroll lands before onScroll is attached, so the agree box never
+  // unlocks (the production timeout in issue 336). Astro drops the island's
+  // ssr attribute once hydration starts, but React may not have committed
+  // yet, so the fill is retried until the unlocked checkbox proves it took.
   async function fillWaiverForm(page: Page) {
-    await page.fill("#waiver-first-name", "Smoke");
-    await page.fill("#waiver-last-name", "Tester");
-    await page.fill("#waiver-email", "smoketest@example.com");
-    await page.fill("#waiver-phone", "5551230100");
-    // The waiver panel requires a scroll-through before agreeing.
     await page
-      .locator("[data-testid=waiver-scroll]")
-      .evaluate((el) => el.scrollTo(0, el.scrollHeight));
+      .locator("astro-island:not([ssr]) [data-testid=waiver-form]")
+      .waitFor({ timeout: 15_000 });
+    const checkbox = page.getByRole("checkbox");
+    await expect(async () => {
+      await page.fill("#waiver-first-name", "Smoke");
+      await page.fill("#waiver-last-name", "Tester");
+      await page.fill("#waiver-email", "smoketest@example.com");
+      await page.fill("#waiver-phone", "5551230100");
+      // The waiver panel requires a scroll-through before agreeing. Start
+      // from the top so a retry still produces a scroll to the bottom.
+      const scroll = page.locator("[data-testid=waiver-scroll]");
+      // Mobile WebKit has no mouse wheel, and two scrollTo calls in one frame
+      // collapse into no scroll event, so wait a frame between them.
+      await scroll.evaluate(async (el) => {
+        el.scrollTo(0, 0);
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+        el.scrollTo(0, el.scrollHeight);
+      });
+      await expect(checkbox).toBeEnabled({ timeout: 2_000 });
+      await expect(page.locator("#waiver-email")).toHaveValue(
+        "smoketest@example.com",
+      );
+    }).toPass({ timeout: 15_000 });
     await page.fill("#waiver-signature", "Smoke Tester");
-    await page.getByRole("checkbox").check();
+    await checkbox.check();
   }
 
   test("happy path: reads, signs, submits, sees confirmation", async ({
@@ -446,27 +470,23 @@ test.describe("NotifyModal", () => {
 // ---------------------------------------------------------------------------
 
 test.describe("Ticket link integrity", () => {
-  test("/tickets: no live or sold-out card has a broken href", async ({
+  // WHY the shared checker instead of a selector loop: the old loop selected
+  // a.ticket-card--live, but regular cards are a div wrapping
+  // a.ticket-card__inner, so it matched zero of production's four ticket
+  // links and passed no matter what they pointed at (issue 336).
+  test("/tickets: every on-sale show links to its own checkout", async ({
     page,
+    request,
   }) => {
-    await page.goto("/tickets", { waitUntil: "domcontentloaded" });
-
-    const liveCards = await page
-      .locator("a.ticket-card--live, a.ticket-card--soldout")
-      .all();
-
-    for (const card of liveCards) {
-      const href = await card.getAttribute("href");
-      expect(href, "Ticket card href must be present").toBeTruthy();
-      expect(href, "Ticket card href must not be '#'").not.toBe("#");
-      expect(
-        href,
-        `Ticket card href must not contain 'undefined': ${href}`,
-      ).not.toContain("undefined");
-      expect(href, `Ticket card href must start with https: ${href}`).toMatch(
-        /^https:\/\//,
-      );
-    }
+    // "load" so the presale reveal script has run before :visible is read.
+    await page.goto("/tickets", { waitUntil: "load" });
+    // The static preview serves no /api/go route; a deployed target gets
+    // the redirect and vendor listing checks too.
+    const deployed = !!process.env.PLAYWRIGHT_BASE_URL;
+    await checkTicketListings(page, request, allEvents, new Date(), {
+      followRedirects: deployed,
+      verifyListings: deployed && "required",
+    });
   });
 
   test("/links: event and social links are all valid https URLs", async ({

@@ -9,6 +9,10 @@ import { alertOps } from "@/lib/opsAlert";
 import { sendMail } from "@/lib/zohoMailer";
 import { producerLeadNotification } from "@/data/emails";
 import { readTrimmedEnv } from "@/lib/env";
+import {
+  isPrefilledCitySource,
+  resolveWaitlistMarket,
+} from "@/lib/waitlistRanking";
 
 export const prerender = false;
 
@@ -18,6 +22,7 @@ interface LeadPayload {
   name?: string;
   instagram?: string;
   city?: string;
+  cityInputSource?: "entered";
   source?: string;
   sourcePage?: string;
   sourceCitySlug?: string;
@@ -158,7 +163,17 @@ export const POST: APIRoute = async ({ request }) => {
   addStringField(fields, "fbclid", body.fbclid, 500);
   addStringField(fields, "gclid", body.gclid, 500);
   addStringField(fields, "posthogDistinctId", body.posthogDistinctId, 200);
-  addStringField(fields, "sourceCitySlug", body.sourceCitySlug, 100);
+  // Persist entered-city evidence using the existing market field. The marker
+  // is request-only, so old clients and deployed Firestore rules stay compatible.
+  const sourceCitySlug =
+    normalizedString(body.sourceCitySlug, 100) ||
+    (body.cityInputSource === "entered" &&
+    isPrefilledCitySource(
+      normalizedString(body.source, 50)?.toLowerCase() ?? "",
+    )
+      ? resolveWaitlistMarket("", normalizedString(body.city, 100) ?? "")
+      : undefined);
+  addStringField(fields, "sourceCitySlug", sourceCitySlug, 100);
   addStringField(fields, "geoCity", body.geoCity, 100);
   addStringField(fields, "geoRegion", body.geoRegion, 100);
   addStringField(fields, "geoCountry", body.geoCountry, 100);

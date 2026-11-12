@@ -17,20 +17,19 @@ import { CREATOR_URLS } from "@/data/socials";
 import { PAGES } from "@/data/copy";
 import { buildOrganizationJsonLd } from "@/utils/organizationSchema";
 import { YOUTUBE_VIDEO_ID, VIDEO_METADATA } from "@/lib/constants";
-import { events, allEvents, isDisplayable } from "@/data/events";
-import { isUpcomingByIso } from "@/utils/eventDate";
-import { getSchemaDated } from "@/utils/eventFilters";
+import { events, allEvents } from "@/data/events";
+import {
+  getTicketPageUpcoming,
+  getListingInventory,
+} from "@/utils/eventFilters";
 import { buildEventSchemas } from "@/utils/eventSchema";
 
-const HIDDEN_FROM_HOME = ["Salt Lake City", "Denver"];
-const today = new Date().toISOString().slice(0, 10);
-const upcomingEvents = allEvents.filter(
-  (e) => isUpcomingByIso(e, today) && !HIDDEN_FROM_HOME.includes(e.city),
-);
+const now = new Date();
+const today = now.toISOString().slice(0, 10);
+const candidates = getListingInventory(allEvents, "home");
+const upcomingEvents = getTicketPageUpcoming(candidates, today, now);
 const firstTicketUrl = "/tickets";
-const heroEvents = events
-  .filter((e) => isDisplayable(e) && e.isoDate && e.isoDate >= today && e.url)
-  .slice(0, 5);
+const heroEvents = getTicketPageUpcoming(events, today, now).slice(0, 5);
 
 // Organization JSON-LD
 const orgJsonLd = buildOrganizationJsonLd();
@@ -44,7 +43,7 @@ const websiteJsonLd = JSON.stringify({
 });
 
 // Individual Event JSON-LD blocks (one per upcoming show with a real date+url)
-const eventSchemas = buildEventSchemas(getSchemaDated(events, today));
+const eventSchemas = buildEventSchemas(upcomingEvents);
 
 // VideoObject JSON-LD
 const videoJsonLd = JSON.stringify({
@@ -134,7 +133,11 @@ const speakableJsonLd = JSON.stringify({
     <HomeHero ticketsUrl={firstTicketUrl} heroEvents={heroEvents} />
     <HomeMarquee />
     <HomeExperience />
-    <HomeShows events={upcomingEvents} />
+    <HomeShows
+      events={upcomingEvents}
+      todayISO={today}
+      nowISO={now.toISOString()}
+    />
     <HomeStats />
     <HomePress />
     <HomeTestimonials />
@@ -253,6 +256,7 @@ const speakableJsonLd = JSON.stringify({
 <script>
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
+  import { trackEnteredCity } from "@/lib/cityInput";
   import { buildLeadAttribution, getGeoCity } from "@/lib/leadAttribution";
   import { safeLocalStorage } from "@/lib/safeStorage";
   import {
@@ -370,6 +374,9 @@ const speakableJsonLd = JSON.stringify({
       if (e.target === popup) close();
     });
 
+    const cityInputSource = trackEnteredCity(
+      document.getElementById("popup-city") as HTMLInputElement | null,
+    );
     let savedEmail = "";
     let popupDocId: LeadCaptureResult | null = null;
 
@@ -383,6 +390,7 @@ const speakableJsonLd = JSON.stringify({
         const popupCity = (
           document.getElementById("popup-city") as HTMLInputElement | null
         )?.value.trim();
+        const submittedCitySource = cityInputSource();
         const errorEl = document.getElementById("popup-email-error");
         const submitBtn = (
           e.target as HTMLFormElement
@@ -396,7 +404,9 @@ const speakableJsonLd = JSON.stringify({
           const attribution = await buildLeadAttribution({ source: "popup" });
           const captured = await captureLead({
             email: savedEmail,
-            ...(popupCity ? { city: popupCity } : {}),
+            ...(popupCity
+              ? { city: popupCity, cityInputSource: submittedCitySource }
+              : {}),
             ...attribution,
           });
           popupDocId = captured.id ? captured : null;

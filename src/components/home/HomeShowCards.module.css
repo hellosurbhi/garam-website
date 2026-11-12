@@ -1,0 +1,120 @@
+.show-card {
+  background: none;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 24px 0;
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  transition:
+    background 0.25s ease,
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  text-decoration: none;
+  cursor: pointer;
+  color: white;
+  width: 100%;
+  font: inherit;
+  text-align: left;
+}
+.show-card[hidden] {
+  display: none;
+}
+.show-card:last-child {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+.show-card:hover,
+.show-card:focus-within {
+  background: rgba(255, 255, 255, 0.04);
+}
+.show-card:hover .ticket-label,
+.show-card:focus-within .ticket-label {
+  letter-spacing: 2.5px;
+  color: white;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .show-card:hover,
+  .show-card:focus-within {
+    transform: translateX(4px);
+  }
+}
+.show-date-block {
+  text-align: center;
+}
+.show-date-block .month {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--electric-yellow);
+}
+.show-date-block .day {
+  font-family: var(--font-playfair), serif;
+  font-size: 36px;
+  font-weight: 900;
+  line-height: 1;
+  color: white;
+}
+.show-date-block .day--tba {
+  font-size: 20px;
+  font-family: var(--font-body), sans-serif;
+  font-weight: 900;
+  color: var(--electric-yellow);
+  letter-spacing: 3px;
+}
+.show-info h3 {
+  font-family: var(--font-playfair), serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 2px;
+}
+.show-info span {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+}
+.ticket-label {
+  background: none;
+  color: var(--electric-yellow);
+  border: none;
+  padding: 0;
+  font-family: var(--font-body), sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  text-align: right;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  pointer-events: none;
+  transition:
+    letter-spacing 0.25s ease,
+    color 0.25s ease;
+}
+.ticket-label--notify {
+  color: rgba(255, 255, 255, 0.45);
+}
+.ticket-label--soldout {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+@media (min-width: 768px) {
+  .show-card {
+    grid-template-columns: 80px 1fr auto;
+    padding: 28px 0;
+  }
+  .show-date-block .day {
+    font-size: 48px;
+  }
+  .show-date-block .day--tba {
+    font-size: 20px;
+  }
+  .show-info h3 {
+    font-size: 24px;
+    margin-bottom: 4px;
+  }
+  .ticket-label {
+    font-size: 13px;
+  }
+}

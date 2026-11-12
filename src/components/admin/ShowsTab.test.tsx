@@ -10,14 +10,29 @@ import {
 import { COMING_SOON, SHOWS_LIST, SHOWS_TOAST } from "@/data/adminShows";
 import type { EventEntry, EventsSnapshot } from "@/data/eventsSnapshot";
 import type { EventsAdminLoad } from "@/lib/eventsAdmin.server";
+import AdminDashboard from "./AdminDashboard";
 import ShowsTab from "./ShowsTab";
 
 const tokenMock = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/firebase", () => ({
+  getFirebaseDb: vi.fn(() => "mock-db"),
   getFirebaseAuth: vi.fn(() => ({
     currentUser: { getIdToken: tokenMock },
   })),
+}));
+
+// WHY: one test renders the whole AdminDashboard to switch tabs; its
+// applicant lists read Firestore on mount. Empty answers are enough here.
+vi.mock("firebase/firestore", () => ({
+  collection: vi.fn(),
+  doc: vi.fn(),
+  getDocs: vi.fn(async () => ({ docs: [] })),
+  where: vi.fn(),
+  query: vi.fn(),
+  orderBy: vi.fn(),
+  limit: vi.fn(),
+  startAfter: vi.fn(),
 }));
 
 // ── Fixtures (never production data) ─────────────────────────────────────
@@ -816,5 +831,84 @@ describe("ShowsTab", () => {
       if (zone === undefined) delete process.env.TZ;
       else process.env.TZ = zone;
     }
+  });
+
+  it("keeps a save's editing lock when the admin leaves the Shows tab and returns", async () => {
+    let finishSave: (res: Response) => void = () => {};
+    let saved = false;
+    routeFetch();
+    const base = fetchMock.getMockImplementation();
+    fetchMock.mockImplementation(async (path: string, init?: RequestInit) => {
+      if (path === "/api/admin/events/draft") {
+        if (callsTo(path).length > 1) return base?.(path, init);
+        return new Promise<Response>((resolve) => {
+          finishSave = (res) => {
+            saved = true;
+            resolve(res);
+          };
+        });
+      }
+      if (path === "/api/admin/events" && saved) {
+        const next = adminLoad();
+        if (next.draft) {
+          next.draft.snapshot = {
+            ...draft,
+            events: [fixtureShow({ price: "35" }), austin],
+          };
+          next.draft.updateTime = "2026-11-11T10:05:00.000000Z";
+        }
+        return json(200, next);
+      }
+      return base?.(path, init);
+    });
+    render(<AdminDashboard onLogout={() => {}} />);
+    fireEvent.click(screen.getByRole("button", { name: "Shows" }));
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Edit Chicago, Jan 9" }),
+    );
+    fireEvent.change(screen.getByLabelText("Ticket price in USD"), {
+      target: { value: "35" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Save to draft" }));
+    await waitFor(() =>
+      expect(callsTo("/api/admin/events/draft")).toHaveLength(1),
+    );
+    fireEvent.click(
+      within(screen.getByRole("dialog")).getAllByRole("button", {
+        name: "Close",
+      })[0],
+    );
+    // Leave the Shows tab and come back while the price save is still out.
+    fireEvent.click(screen.getByRole("button", { name: /Applicants/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Shows" }));
+    const edit = await screen.findByRole("button", {
+      name: "Edit Chicago, Jan 9",
+    });
+    expect((edit as HTMLButtonElement).disabled).toBe(true);
+
+    finishSave(json(200, { basedOnVersion: 3, changes: noChanges }));
+    await waitFor(() =>
+      expect((edit as HTMLButtonElement).disabled).toBe(false),
+    );
+    fireEvent.click(edit);
+    fireEvent.change(screen.getByLabelText("Card tagline"), {
+      target: { value: "Back by demand" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Save to draft" }));
+    await waitFor(() =>
+      expect(callsTo("/api/admin/events/draft")).toHaveLength(2),
+    );
+    const [first, second] = callsTo("/api/admin/events/draft") as Array<{
+      expectedDraftUpdateTime: string | null;
+      snapshot: { events: Array<{ slug: string; price?: string }> };
+    }>;
+    // Each save names the draft it was built on, so the server can refuse
+    // a stale one; the second builds on the saved draft and keeps 35.
+    expect(first.expectedDraftUpdateTime).toBe(adminLoad().draft?.updateTime);
+    expect(second.expectedDraftUpdateTime).toBe("2026-11-11T10:05:00.000000Z");
+    expect(
+      second.snapshot.events.find((e) => e.slug === "chicago-2099-01-09")
+        ?.price,
+    ).toBe("35");
   });
 });

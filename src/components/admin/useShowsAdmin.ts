@@ -171,13 +171,19 @@ export function useShowsAdmin() {
       const res = await mutate(
         "save",
         SHOWS_ROUTES.draft,
-        { snapshot, basedOnVersion: liveVersion },
+        {
+          snapshot,
+          basedOnVersion: liveVersion,
+          // WHY: the server refuses (409) a save built on a draft that changed
+          // since this load, so a stale editor can never overwrite a newer save.
+          expectedDraftUpdateTime: draftUpdateTime ?? null,
+        },
         "PUT",
       );
       if (res.ok) setToast({ msg: doneMsg, ok: true });
       return res;
     },
-    [liveVersion, mutate],
+    [liveVersion, draftUpdateTime, mutate],
   );
 
   const announce = useCallback(

@@ -206,14 +206,27 @@ export async function listEventVersions(
  * Save the shared draft. Last writer wins by design (plan section 10, risk
  * 5): two admins share one draft, and publish is still guarded atomically.
  */
+/**
+ * Replace the draft, only if it is still the one the admin loaded.
+ * WHY a precondition: a save built on an older copy of the draft (another
+ * tab, or a tab reopened while its own save was out) would silently undo
+ * the save that landed in between. Throws CommitConflictError then.
+ */
 export async function saveEventsDraft(
   draft: EventsDraft,
+  precondition: FsPrecondition,
   signal?: AbortSignal,
 ): Promise<void> {
   const { snapshot, ...rest } = draft;
-  await fsPatch(
-    EVENTS_DRAFT_PATH,
-    { ...rest, snapshotJson: JSON.stringify(snapshot) },
+  await fsCommit(
+    [
+      {
+        docPath: EVENTS_DRAFT_PATH,
+        fields: { ...rest, snapshotJson: JSON.stringify(snapshot) },
+        merge: true,
+        precondition,
+      },
+    ],
     signal,
   );
 }

@@ -305,24 +305,40 @@ export type EventsAdminLoad = Awaited<ReturnType<typeof loadEventsAdmin>>;
 export const saveDraftBodySchema = z.object({
   snapshot: z.unknown(),
   basedOnVersion: z.number().int().min(1),
+  /**
+   * The draft's updateTime from the load the edit was built on, or null
+   * when there was no draft. Required, so no client can skip the check.
+   */
+  expectedDraftUpdateTime: z.string().min(1).nullable(),
 });
 
 export async function saveDraft(
   body: z.infer<typeof saveDraftBodySchema>,
   admin: AdminIdentity,
 ) {
-  const live = await requireLive();
+  const [live, draft] = await Promise.all([requireLive(), readEventsDraft()]);
   // WHY: a draft edited from an older live version would silently undo
   // whatever was published since; the editor must reload first.
   requireVersion(body.basedOnVersion, live);
+  // WHY: the same for an older copy of the draft itself, so a save never
+  // undoes a save that landed after this edit was loaded.
+  if (body.expectedDraftUpdateTime !== (draft?.updateTime ?? null)) {
+    throw new EventsAdminError(409, DRAFT_CONFLICT_MESSAGE);
+  }
   const snapshot = validateCandidate(body.snapshot, live.data.snapshot);
   const updatedAt = new Date().toISOString();
-  await saveEventsDraft({
-    snapshot,
-    basedOnVersion: body.basedOnVersion,
-    updatedAt,
-    updatedBy: admin.email,
-  });
+  // The precondition closes the gap between the check above and the write.
+  await saveEventsDraft(
+    {
+      snapshot,
+      basedOnVersion: body.basedOnVersion,
+      updatedAt,
+      updatedBy: admin.email,
+    },
+    body.expectedDraftUpdateTime
+      ? { updateTime: body.expectedDraftUpdateTime }
+      : { exists: false },
+  );
   return {
     basedOnVersion: body.basedOnVersion,
     updatedAt,

@@ -154,6 +154,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<
     "today" | "applicants" | "analytics" | "waitlist" | "shows"
   >("applicants");
+  const [showsOpened, setShowsOpened] = useState(false);
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
@@ -485,7 +486,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
               <button
                 className={styles.tab}
                 data-active={activeTab === "shows" || undefined}
-                onClick={() => setActiveTab("shows")}
+                onClick={() => {
+                  setActiveTab("shows");
+                  setShowsOpened(true);
+                }}
               >
                 {SHOWS_TAB_LABEL}
               </button>
@@ -609,7 +613,21 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
       {activeTab === "waitlist" && <WaitlistTab />}
 
-      {activeTab === "shows" && <ShowsTab />}
+      {/* WHY mounted then hidden, unlike the other tabs: a conditional mount
+          threw away the Shows tab's in-flight save locks and reload order
+          when the admin switched tabs mid save, so the reopened editor
+          loaded the old draft and its next save undid the first. Hoisting
+          useShowsAdmin into this component would also fix that, but would
+          load shows and poll the live version for admins who never open the
+          tab; mounting on first visit keeps that cost opt in. A modal editor
+          makes the tab bar inert, so a dialog is never hidden mid edit.
+          Switching back to conditional mounting reopens the lost save bug
+          (ShowsTab.test.tsx covers it). */}
+      {showsOpened && (
+        <div hidden={activeTab !== "shows"}>
+          <ShowsTab />
+        </div>
+      )}
 
       {activeTab === "applicants" && (
         <main className={styles.main}>

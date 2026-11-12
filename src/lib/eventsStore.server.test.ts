@@ -237,21 +237,30 @@ describe("readers", () => {
 });
 
 describe("writers", () => {
-  it("saveEventsDraft stores the snapshot as one JSON string", async () => {
-    await saveEventsDraft({
-      snapshot,
-      basedOnVersion: 3,
-      updatedAt: NOW.toISOString(),
-      updatedBy: "admin@example.test",
-    });
-    expect(fsPatch).toHaveBeenCalledWith(
-      EVENTS_DRAFT_PATH,
+  it("saveEventsDraft stores the snapshot as one JSON string, guarded by the loaded draft", async () => {
+    await saveEventsDraft(
       {
+        snapshot,
         basedOnVersion: 3,
         updatedAt: NOW.toISOString(),
         updatedBy: "admin@example.test",
-        snapshotJson: JSON.stringify(snapshot),
       },
+      { updateTime: UPDATE_TIME },
+    );
+    expect(fsCommit).toHaveBeenCalledWith(
+      [
+        {
+          docPath: EVENTS_DRAFT_PATH,
+          fields: {
+            basedOnVersion: 3,
+            updatedAt: NOW.toISOString(),
+            updatedBy: "admin@example.test",
+            snapshotJson: JSON.stringify(snapshot),
+          },
+          merge: true,
+          precondition: { updateTime: UPDATE_TIME },
+        },
+      ],
       undefined,
     );
   });

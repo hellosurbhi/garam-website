@@ -84,6 +84,18 @@ vi.mock("@/lib/firestoreRest", async (importOriginal) => {
   };
 });
 
+/**
+ * The commits that publish or restore a version. WHY filtered: a draft save
+ * is a one-write commit too (it carries the draft's precondition).
+ */
+function publicationCommits(): FsWrite[][] {
+  return mocks.fsCommit.mock.calls
+    .map(([writes]) => writes as FsWrite[])
+    .filter((writes) =>
+      writes.some((w) => w.docPath.startsWith("eventVersions/")),
+    );
+}
+
 const { CommitConflictError, commitFailure } =
   await import("../src/lib/firestoreRest");
 
@@ -250,8 +262,17 @@ async function call(
   };
 }
 
-const saveDraft = (snapshot: unknown, basedOnVersion: number) =>
-  call(draftRoute.PUT as Route, "PUT", { snapshot, basedOnVersion });
+/** A save from a client that loaded the current draft, unless told otherwise. */
+const saveDraft = (
+  snapshot: unknown,
+  basedOnVersion: number,
+  expectedDraftUpdateTime: string | null = draftToken() ?? null,
+) =>
+  call(draftRoute.PUT as Route, "PUT", {
+    snapshot,
+    basedOnVersion,
+    expectedDraftUpdateTime,
+  });
 /** The draft's lock token as GET /api/admin/events reports it. */
 const draftToken = () => store.get("eventsDraft/current")?.updateTime;
 const publish = (
@@ -332,7 +353,7 @@ describe("admin auth", () => {
     expect(res.status).toBe(401);
     expect(res.json).toEqual({ error: "Unauthorized" });
     expect([...store.entries()]).toEqual(before);
-    expect(mocks.fsCommit).not.toHaveBeenCalled();
+    expect(publicationCommits()).toHaveLength(0);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
@@ -433,8 +454,8 @@ describe("publish", () => {
 
     expect(res.status).toBe(200);
     expect(res.json).toMatchObject({ version: 2, rebuild: "requested" });
-    expect(mocks.fsCommit).toHaveBeenCalledTimes(1);
-    const [writes] = mocks.fsCommit.mock.calls[0] as [FsWrite[]];
+    expect(publicationCommits()).toHaveLength(1);
+    const [writes] = publicationCommits();
     expect(writes.map((w) => [w.docPath, w.precondition])).toEqual([
       ["eventVersions/v000002", { exists: false }],
       ["eventsPublished/current", { updateTime: pointerTimeBefore }],
@@ -500,7 +521,7 @@ describe("publish", () => {
     const res = await publish(7);
     expect(res.status).toBe(409);
     expect(res.json.error).toBe("The live version changed, reload");
-    expect(mocks.fsCommit).not.toHaveBeenCalled();
+    expect(publicationCommits()).toHaveLength(0);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -523,7 +544,7 @@ describe("publish", () => {
 
     expect(res.status).toBe(409);
     expect(res.json.error).toBe("The draft changed, reload");
-    expect(mocks.fsCommit).not.toHaveBeenCalled();
+    expect(publicationCommits()).toHaveLength(0);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -561,12 +582,12 @@ describe("publish", () => {
     ["ALREADY_EXISTS", 409],
     ["ABORTED", 409],
   ])("maps a %s (%i) commit failure to 409", async (status, code) => {
-    mocks.fsCommit.mockRejectedValueOnce(
-      commitFailure(code, JSON.stringify({ error: { code, status } })),
-    );
     await saveDraft(
       { ...baseline, events: [...baseline.events, fixtureShow()] },
       1,
+    );
+    mocks.fsCommit.mockRejectedValueOnce(
+      commitFailure(code, JSON.stringify({ error: { code, status } })),
     );
     const res = await publish(1);
     expect(res.status).toBe(409);
@@ -577,12 +598,12 @@ describe("publish", () => {
     ["PERMISSION_DENIED", 403],
     ["UNAVAILABLE", 503],
   ])("maps a %s (%i) commit failure to 502 and pages", async (status, code) => {
-    mocks.fsCommit.mockRejectedValueOnce(
-      commitFailure(code, JSON.stringify({ error: { code, status } })),
-    );
     await saveDraft(
       { ...baseline, events: [...baseline.events, fixtureShow()] },
       1,
+    );
+    mocks.fsCommit.mockRejectedValueOnce(
+      commitFailure(code, JSON.stringify({ error: { code, status } })),
     );
     const res = await publish(1);
     expect(res.status).toBe(502);
@@ -633,13 +654,13 @@ describe("publish", () => {
 
     expect(res.status).toBe(429);
     expect(res.json.retryAfterSeconds).toBe(30);
-    expect(mocks.fsCommit).toHaveBeenCalledTimes(1);
+    expect(publicationCommits()).toHaveLength(1);
   });
 
   it("refuses a publish with no changes", async () => {
     const res = await publish(1);
     expect(res.status).toBe(400);
-    expect(mocks.fsCommit).not.toHaveBeenCalled();
+    expect(publicationCommits()).toHaveLength(0);
   });
 
   it("revalidates the stored draft and answers 400 with field paths", async () => {
@@ -660,7 +681,7 @@ describe("publish", () => {
       path: `events.${baseline.events.length}.timezone`,
       message: "Pick the show's time zone",
     });
-    expect(mocks.fsCommit).not.toHaveBeenCalled();
+    expect(publicationCommits()).toHaveLength(0);
   });
 
   it("answers 400 with field errors for a bad body", async () => {
@@ -716,6 +737,7 @@ describe("draft save", () => {
     const res = await call(draftRoute.POST as Route, "POST", {
       snapshot: { ...baseline, events: [...baseline.events, fixtureShow()] },
       basedOnVersion: 1,
+      expectedDraftUpdateTime: draftToken(),
     });
     expect(res.status).toBe(200);
     expect(res.json).toMatchObject({
@@ -735,6 +757,22 @@ describe("draft save", () => {
     await publish(1);
     const res = await saveDraft(baseline, 1);
     expect(res.status).toBe(409);
+  });
+
+  it("refuses a save built on a draft that changed since it was loaded", async () => {
+    const loaded = draftToken() ?? null;
+    const show = fixtureShow();
+    const withTagline = (tagline: string): EventsSnapshot => ({
+      ...baseline,
+      events: [...baseline.events, { ...show, tagline }],
+    });
+    expect((await saveDraft(withTagline("First save"), 1, loaded)).status).toBe(
+      200,
+    );
+    // A second client (or a remounted tab) still holds the old token.
+    const res = await saveDraft(withTagline("Stale copy"), 1, loaded);
+    expect(res.status).toBe(409);
+    expect(bySlug(draftDoc().snapshot, show.slug).tagline).toBe("First save");
   });
 
   it("refuses removing a show (never delete)", async () => {
@@ -773,7 +811,7 @@ describe("rollback", () => {
 
     expect(res.status).toBe(200);
     expect(res.json).toMatchObject({ version: 3, rebuild: "requested" });
-    const [writes] = mocks.fsCommit.mock.calls[1] as [FsWrite[]];
+    const writes = publicationCommits()[1];
     expect(writes[0]).toMatchObject({
       docPath: "eventVersions/v000003",
       precondition: { exists: false },
@@ -856,7 +894,7 @@ describe("rollback", () => {
     const res = await rollback(1, 2);
 
     expect(res.status).toBe(200);
-    const [writes] = mocks.fsCommit.mock.calls[1] as [FsWrite[]];
+    const writes = publicationCommits()[1];
     expect(writes[2]).toMatchObject({
       docPath: "eventsDraft/current",
       precondition: { exists: false },
@@ -879,7 +917,7 @@ describe("rollback", () => {
   it("refuses a stale expectedVersion with 409", async () => {
     await publishFixture();
     expect((await rollback(1, 1)).status).toBe(409);
-    expect(mocks.fsCommit).toHaveBeenCalledTimes(1);
+    expect(publicationCommits()).toHaveLength(1);
   });
 });
 

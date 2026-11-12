@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { buildEventSchemas } from "../src/utils/eventSchema";
 import { events } from "../src/data/events";
 import type { EventEntry } from "../src/data/events";
+import { DEFAULT_LINEUP } from "../src/data/lineup";
 
 const BASE_VENUE = {
   name: "Top Secret Comedy Club",
@@ -24,6 +25,7 @@ const VALID_EVENT: EventEntry = {
   endTime: "22:00",
   venue: BASE_VENUE,
   price: "25",
+  lineup: DEFAULT_LINEUP,
 };
 
 describe("buildEventSchemas", () => {

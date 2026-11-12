@@ -23,9 +23,10 @@ import {
   getListingInventory,
 } from "@/utils/eventFilters";
 import { buildEventSchemas } from "@/utils/eventSchema";
+import { utcTodayIso } from "@/utils/date";
 
 const now = new Date();
-const today = now.toISOString().slice(0, 10);
+const today = utcTodayIso(now);
 const candidates = getListingInventory(allEvents, "home");
 const upcomingEvents = getTicketPageUpcoming(candidates, today, now);
 const firstTicketUrl = "/tickets";

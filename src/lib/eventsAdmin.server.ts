@@ -1,0 +1,541 @@
+/**
+ * What the admin Shows routes do (issue 337, plan sections 5 and R2, R9,
+ * R14, R15, R19): load, save the draft, publish, roll back and rebuild.
+ *
+ * All Firestore access goes through ./eventsStore.server and all validation
+ * through ../data/eventsSnapshot; this module only sequences them, maps
+ * failures to HTTP answers and asks Vercel for a rebuild. The route files
+ * under src/pages/api/admin/events/ are thin wrappers around `runAdminRoute`.
+ */
+import type { APIContext } from "astro";
+import { z } from "zod";
+import { cities } from "../data/cities";
+import { buildAllEvents } from "../data/events";
+import {
+  buildRollbackSnapshot,
+  diffSnapshots,
+  publicationNoteSchema,
+  REBUILD_DEBOUNCE_MS,
+  validateSnapshotAgainstLive,
+  type EventsSnapshot,
+  type SnapshotDiff,
+  type SnapshotIssue,
+} from "../data/eventsSnapshot";
+import {
+  commitPublication,
+  listEventVersions,
+  readEventVersion,
+  readEventsDraft,
+  readPublishedEvents,
+  recordRebuildRequest,
+  saveEventsDraft,
+  type EventsDraft,
+  type PublicationKind,
+  type PublishedEvents,
+  type Stored,
+} from "./eventsStore.server";
+import { readTrimmedEnv } from "./env";
+import { CommitConflictError } from "./firestoreRest";
+import { jsonResponse, parseJsonRequest } from "./http";
+import { alertOps } from "./opsAlert";
+import { verifyAdminIdentity, type AdminIdentity } from "./verifyToken";
+import { selectWaitlistCards, type CityWaitlistCount } from "./waitlistRanking";
+import { getWaitlistRanking } from "./waitlistRanking.server";
+import { utcTodayIso } from "../utils/date";
+import { getListingInventory } from "../utils/eventFilters";
+
+/** Deploy hook deadline (plan section 5). */
+const DEPLOY_HOOK_TIMEOUT_MS = 5_000;
+
+const CONFLICT_MESSAGE = "The live version changed, reload";
+const DRAFT_CONFLICT_MESSAGE = "The draft changed, reload";
+
+/** A refusal the admin UI shows as is; never paged. */
+export class EventsAdminError extends Error {
+  constructor(
+    readonly status: number,
+    message: string,
+    readonly extra: Record<string, unknown> = {},
+  ) {
+    super(message);
+    this.name = "EventsAdminError";
+  }
+}
+
+export type RebuildStatus = "requested" | "failed";
+
+/** Field paths as "events.3.url", the key the editor matches inputs on. */
+function issuesBody(issues: SnapshotIssue[]) {
+  return issues.map((i) => ({
+    path: i.path.map(String).join("."),
+    message: i.message,
+  }));
+}
+
+function invalidShows(issues: SnapshotIssue[]): EventsAdminError {
+  return new EventsAdminError(400, "Some shows need fixing", {
+    issues: issuesBody(issues),
+  });
+}
+
+/**
+ * Validate a candidate against live with every write rule (R12, R19).
+ * WHY the city list is built here: eventsSnapshot.ts takes it as a
+ * parameter so the client bundles that import events.ts never pull in every
+ * city page's data; the server routes are the place that can afford it.
+ */
+function validateCandidate(
+  next: unknown,
+  live: EventsSnapshot,
+  rollbackTarget?: EventsSnapshot,
+): EventsSnapshot {
+  const result = validateSnapshotAgainstLive(next, live, {
+    knownCitySlugs: new Set(Object.keys(cities)),
+    rollbackTarget,
+  });
+  if (!result.ok) throw invalidShows(result.issues);
+  return result.snapshot;
+}
+
+function hasChanges(diff: SnapshotDiff): boolean {
+  return Object.values(diff).some((slugs) => slugs.length > 0);
+}
+
+async function requireLive(): Promise<Stored<PublishedEvents>> {
+  const live = await readPublishedEvents();
+  if (!live) {
+    // WHY 503 and not a page: the seed (plan section 7) has not run yet,
+    // which is a rollout step, not an outage.
+    throw new EventsAdminError(503, "Shows are not set up yet");
+  }
+  return live;
+}
+
+/**
+ * WHY: the publish confirmation lists the draft's changes as loaded. A save
+ * from another tab after that would otherwise go live unseen, so publish
+ * names the draft it showed, the same compare and set as expectedVersion.
+ */
+/**
+ * Refuse (409) a write built on a different draft than the one there now.
+ * `expected` is the draft's updateTime the client loaded, or null when it
+ * saw no draft; every Shows write that replaces the draft checks it.
+ */
+function requireDraftUnchanged(
+  expected: string | null,
+  draft: Stored<EventsDraft> | null,
+) {
+  if (expected !== (draft?.updateTime ?? null)) {
+    throw new EventsAdminError(409, DRAFT_CONFLICT_MESSAGE);
+  }
+}
+
+function requireVersion(expected: number, live: Stored<PublishedEvents>) {
+  if (expected !== live.data.version) {
+    throw new EventsAdminError(409, CONFLICT_MESSAGE, {
+      liveVersion: live.data.version,
+    });
+  }
+}
+
+/** Refuse while a rebuild was requested under 60 s ago (R15). */
+function requireRebuildSettled(live: PublishedEvents, now: Date): void {
+  if (!live.rebuild) return;
+  const waitMs =
+    Date.parse(live.rebuild.requestedAt) + REBUILD_DEBOUNCE_MS - now.getTime();
+  if (waitMs > 0) {
+    throw new EventsAdminError(429, "A rebuild just started, try again soon", {
+      retryAfterSeconds: Math.ceil(waitMs / 1000),
+    });
+  }
+}
+
+const deployHookResponseSchema = z.object({
+  job: z.object({ id: z.string() }),
+});
+
+/**
+ * POST the Vercel deploy hook for `version` and record it on the live
+ * pointer. Never throws: a failed rebuild must not undo a publish whose data
+ * is already live for /api/go (plan section 5, step 3), so it pages instead
+ * and the admin offers the Rebuild button.
+ */
+export async function requestRebuild(
+  version: number,
+  now: Date,
+): Promise<RebuildStatus> {
+  const hookUrl = readTrimmedEnv(import.meta.env.VERCEL_DEPLOY_HOOK);
+  let jobId: string;
+  try {
+    if (!hookUrl) throw new Error("VERCEL_DEPLOY_HOOK is not set");
+    const res = await fetch(hookUrl, {
+      method: "POST",
+      signal: AbortSignal.timeout(DEPLOY_HOOK_TIMEOUT_MS),
+    });
+    if (!res.ok) throw new Error(`Deploy hook answered ${res.status}`);
+    const body = deployHookResponseSchema.safeParse(await res.json());
+    // WHY tolerate a missing job id: Vercel accepted the hook, so the build
+    // is queued; the id only labels it.
+    jobId = body.success ? body.data.job.id : "";
+  } catch (err) {
+    await alertOps({
+      flow: "ops",
+      stage: "events_rebuild",
+      errorMessage: `Shows v${version} is live but the site rebuild was not requested: ${errorText(err)}`,
+    });
+    return "failed";
+  }
+  try {
+    await recordRebuildRequest({
+      requestedAt: now.toISOString(),
+      jobId,
+      version,
+    });
+  } catch (err) {
+    // The build is queued either way; only the 60 s debounce record is lost.
+    await alertOps({
+      flow: "ops",
+      stage: "events_rebuild_record",
+      errorMessage: `Rebuild for shows v${version} requested but not recorded: ${errorText(err)}`,
+    });
+  }
+  return "requested";
+}
+
+function errorText(err: unknown): string {
+  return err instanceof Error ? err.message : String(err);
+}
+
+// ── Operations ───────────────────────────────────────────────────────────
+
+/** One city the Shows editor can pick for a show or a coming soon card. */
+export interface AdminCityOption {
+  slug: string;
+  name: string;
+  region: string;
+}
+
+/**
+ * The city pages a show may link to, sorted by name.
+ * WHY sent from here and not imported by the admin island: src/data/cities
+ * is about 1.6 MB of page copy. The editor only needs slug, name and region,
+ * and it passes the slugs to validateSnapshotAgainstLive as knownCitySlugs so
+ * its inline check is the same check the draft route runs.
+ */
+function cityOptions(): AdminCityOption[] {
+  return Object.values(cities)
+    .map((c) => ({
+      slug: c.slug,
+      name: c.displayName,
+      region: c.addressRegion,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+/** The Notify Me cards /tickets would show for a snapshot. */
+export interface WaitlistPreview {
+  /** Dated shows that appear as a Notify Me card. */
+  datedSlugs: string[];
+  /** Every city with a Notify Me card, in page order. */
+  cities: string[];
+}
+
+/**
+ * The /tickets Notify Me selection for `snapshot`, made by the same calls
+ * WaitlistCities.astro makes, so the admin preview cannot drift from it.
+ * WHY on the server: selectWaitlistCards needs src/data/cities (see
+ * cityOptions) and the demand ranking, which only the server can read.
+ */
+export function previewWaitlist(
+  snapshot: EventsSnapshot,
+  counts: CityWaitlistCount[],
+  now: Date,
+): WaitlistPreview {
+  const todayIso = utcTodayIso(now);
+  const cards = selectWaitlistCards(
+    counts,
+    getListingInventory(buildAllEvents(snapshot, todayIso), "tickets"),
+    todayIso,
+    now,
+  );
+  return {
+    datedSlugs: cards.filter((c) => c.isoDate).map((c) => c.slug),
+    cities: cards.map((c) => c.city),
+  };
+}
+
+// WHY an empty ranking on failure: WaitlistCities.astro renders no Notify
+// Me cards when the ranking cannot load, so an empty preview is what the
+// public page shows in that case. The cause is still logged.
+async function rankingOrEmpty(): Promise<CityWaitlistCount[]> {
+  try {
+    return await getWaitlistRanking();
+  } catch (error) {
+    console.error(
+      "[events-admin] Waitlist ranking unavailable for the preview",
+      error instanceof Error ? error.message : "Unknown error",
+    );
+    return [];
+  }
+}
+
+/** Everything the Shows tab shows: live, draft with its pending changes, history, city choices. */
+export async function loadEventsAdmin() {
+  const [live, draft, history, ranking] = await Promise.all([
+    requireLive(),
+    readEventsDraft(),
+    listEventVersions(),
+    rankingOrEmpty(),
+  ]);
+  const now = new Date();
+  return {
+    waitlist: {
+      live: previewWaitlist(live.data.snapshot, ranking, now),
+      draft: draft ? previewWaitlist(draft.data.snapshot, ranking, now) : null,
+    },
+    live: live.data,
+    draft: draft
+      ? {
+          ...draft.data,
+          // The lock token publish sends back to prove which draft it showed.
+          updateTime: draft.updateTime,
+          changes: diffSnapshots(live.data.snapshot, draft.data.snapshot),
+        }
+      : null,
+    history,
+    cities: cityOptions(),
+  };
+}
+
+/** The GET /api/admin/events body. */
+export type EventsAdminLoad = Awaited<ReturnType<typeof loadEventsAdmin>>;
+
+export const saveDraftBodySchema = z.object({
+  snapshot: z.unknown(),
+  basedOnVersion: z.number().int().min(1),
+  /**
+   * The draft's updateTime from the load the edit was built on, or null
+   * when there was no draft. Required, so no client can skip the check.
+   */
+  expectedDraftUpdateTime: z.string().min(1).nullable(),
+});
+
+export async function saveDraft(
+  body: z.infer<typeof saveDraftBodySchema>,
+  admin: AdminIdentity,
+) {
+  const [live, draft] = await Promise.all([requireLive(), readEventsDraft()]);
+  // WHY: a draft edited from an older live version would silently undo
+  // whatever was published since; the editor must reload first.
+  requireVersion(body.basedOnVersion, live);
+  // WHY: the same for an older copy of the draft itself, so a save never
+  // undoes a save that landed after this edit was loaded.
+  requireDraftUnchanged(body.expectedDraftUpdateTime, draft);
+  const snapshot = validateCandidate(body.snapshot, live.data.snapshot);
+  const updatedAt = new Date().toISOString();
+  // The precondition closes the gap between the check above and the write.
+  await saveEventsDraft(
+    {
+      snapshot,
+      basedOnVersion: body.basedOnVersion,
+      updatedAt,
+      updatedBy: admin.email,
+    },
+    body.expectedDraftUpdateTime
+      ? { updateTime: body.expectedDraftUpdateTime }
+      : { exists: false },
+  );
+  return {
+    basedOnVersion: body.basedOnVersion,
+    updatedAt,
+    updatedBy: admin.email,
+    changes: diffSnapshots(live.data.snapshot, snapshot),
+  };
+}
+
+const noteSchema = publicationNoteSchema;
+const versionSchema = z.number().int().min(1);
+
+export const publishBodySchema = z.object({
+  expectedVersion: versionSchema,
+  /** The draft's updateTime from the load the confirmation was built on. */
+  expectedDraftUpdateTime: z.string().min(1),
+  note: noteSchema,
+});
+
+export const rollbackBodySchema = z.object({
+  targetVersion: versionSchema,
+  expectedVersion: versionSchema,
+  /**
+   * The draft's updateTime when the confirmation was shown, or null when
+   * there was no draft. A restore resets the draft, so without this an
+   * unpublished save made after the confirmation opened would be lost.
+   */
+  expectedDraftUpdateTime: z.string().min(1).nullable(),
+  note: noteSchema,
+});
+
+interface CommitInput {
+  live: Stored<PublishedEvents>;
+  draftUpdateTime: string | undefined;
+  action: PublicationKind;
+  snapshot: EventsSnapshot;
+  note: string;
+  admin: AdminIdentity;
+  now: Date;
+}
+
+/** Commit a validated snapshot as the next version, then ask for a rebuild. */
+async function publishSnapshot(input: CommitInput) {
+  const changes = diffSnapshots(input.live.data.snapshot, input.snapshot);
+  if (!hasChanges(changes)) {
+    throw new EventsAdminError(400, "Nothing changed since the live version");
+  }
+  const version = await commitPublication({
+    live: {
+      version: input.live.data.version,
+      updateTime: input.live.updateTime,
+    },
+    // WHY exists:false when there is no draft: the commit then creates it
+    // and still fails if another admin created one in the meantime.
+    draftPrecondition: input.draftUpdateTime
+      ? { updateTime: input.draftUpdateTime }
+      : { exists: false },
+    action: input.action,
+    snapshot: input.snapshot,
+    changes,
+    note: input.note,
+    author: input.admin,
+    now: input.now,
+  });
+  const rebuild = await requestRebuild(version, input.now);
+  return { version, rebuild, changes };
+}
+
+export async function publishDraft(
+  body: z.infer<typeof publishBodySchema>,
+  admin: AdminIdentity,
+) {
+  const now = new Date();
+  const [live, draft] = await Promise.all([requireLive(), readEventsDraft()]);
+  requireVersion(body.expectedVersion, live);
+  requireRebuildSettled(live.data, now);
+  if (!draft) throw new EventsAdminError(409, "There is no draft to publish");
+  requireDraftUnchanged(body.expectedDraftUpdateTime, draft);
+  requireVersion(draft.data.basedOnVersion, live);
+  const snapshot = validateCandidate(draft.data.snapshot, live.data.snapshot);
+  return publishSnapshot({
+    live,
+    // WHY lock on the draft too: an edit saved between this read and the
+    // commit would otherwise be marked published without ever going live.
+    draftUpdateTime: draft.updateTime,
+    action: { kind: "publish" },
+    snapshot,
+    note: body.note,
+    admin,
+    now,
+  });
+}
+
+export async function rollbackTo(
+  body: z.infer<typeof rollbackBodySchema>,
+  admin: AdminIdentity,
+) {
+  const now = new Date();
+  const [live, draft] = await Promise.all([requireLive(), readEventsDraft()]);
+  requireVersion(body.expectedVersion, live);
+  requireRebuildSettled(live.data, now);
+  requireDraftUnchanged(body.expectedDraftUpdateTime, draft);
+  if (body.targetVersion >= live.data.version) {
+    throw new EventsAdminError(400, "Pick an earlier version to restore");
+  }
+  const target = await readEventVersion(body.targetVersion);
+  if (!target) {
+    throw new EventsAdminError(404, `Version ${body.targetVersion} not found`);
+  }
+  const candidate = buildRollbackSnapshot(
+    live.data.snapshot,
+    target.data.snapshot,
+    body.targetVersion,
+    body.note,
+  );
+  const snapshot = validateCandidate(
+    candidate,
+    live.data.snapshot,
+    target.data.snapshot,
+  );
+  return publishSnapshot({
+    live,
+    draftUpdateTime: draft?.updateTime,
+    action: { kind: "rollback", restoresVersion: body.targetVersion },
+    snapshot,
+    note: body.note,
+    admin,
+    now,
+  });
+}
+
+export async function rebuildLive() {
+  const now = new Date();
+  const live = await requireLive();
+  requireRebuildSettled(live.data, now);
+  const rebuild = await requestRebuild(live.data.version, now);
+  return { version: live.data.version, rebuild };
+}
+
+// ── Route plumbing ───────────────────────────────────────────────────────
+
+type AdminHandler = (
+  admin: AdminIdentity,
+  context: APIContext,
+) => Promise<Response>;
+
+/**
+ * Admin auth plus one error mapping for every Shows route:
+ * EventsAdminError -> its status; CommitConflictError -> 409 (R9);
+ * anything else -> 502 and a page, because Firestore or the network failed.
+ */
+export async function runAdminRoute(
+  context: APIContext,
+  stage: string,
+  handler: AdminHandler,
+): Promise<Response> {
+  const admin = await verifyAdminIdentity(
+    context.request.headers.get("authorization") ?? undefined,
+  );
+  if (!admin) return jsonResponse({ error: "Unauthorized" }, 401);
+  try {
+    return await handler(admin, context);
+  } catch (err) {
+    if (err instanceof EventsAdminError) {
+      return jsonResponse({ error: err.message, ...err.extra }, err.status);
+    }
+    if (err instanceof CommitConflictError) {
+      return jsonResponse({ error: CONFLICT_MESSAGE }, 409);
+    }
+    await alertOps({
+      flow: "ops",
+      stage,
+      errorMessage: errorText(err),
+      context: { admin: admin.email },
+    });
+    return jsonResponse(
+      { error: "Could not reach the show data, try again" },
+      502,
+    );
+  }
+}
+
+/** A JSON-body admin route: parse with `schema` (400 with field errors), then run. */
+export function adminJsonRoute<TSchema extends z.ZodType>(
+  stage: string,
+  schema: TSchema,
+  run: (body: z.infer<TSchema>, admin: AdminIdentity) => Promise<unknown>,
+) {
+  return (context: APIContext) =>
+    runAdminRoute(context, stage, async (admin) => {
+      const parsed = await parseJsonRequest(context.request, schema);
+      if (!parsed.success) return parsed.response;
+      return jsonResponse(await run(parsed.data, admin));
+    });
+}

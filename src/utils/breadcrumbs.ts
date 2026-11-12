@@ -1,3 +1,5 @@
+import { serializeJsonLd } from "@/utils/jsonLd";
+
 const BASE = "https://garammasaladating.com";
 
 interface Crumb {
@@ -11,7 +13,7 @@ interface Crumb {
  * @param crumbs Ordered list of breadcrumb entries; omit `url` on the last (current) item.
  */
 export function buildBreadcrumbJsonLd(crumbs: Crumb[]): string {
-  return JSON.stringify({
+  return serializeJsonLd({
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: crumbs.map((crumb, i) => {

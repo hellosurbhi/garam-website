@@ -10,7 +10,7 @@ import { holdsRetryBudget, sendCapiEvent } from "@/lib/capi";
 import { MAX_CAPI_ATTEMPTS, nextCapiFailureState } from "@/lib/capiRetryState";
 import { mapWithConcurrency } from "@/utils/concurrency";
 import { alertOps } from "@/lib/opsAlert";
-import { events } from "@/data/events";
+import { getLiveEvents } from "@/lib/publishedEvents.server";
 import type { EventEntry } from "@/data/events";
 import type { Order, SyncMeta } from "@/types/analytics";
 
@@ -710,6 +710,7 @@ export const POST: APIRoute = async ({ request }) => {
     const lastSyncAt = prevMeta?.lastSyncAt;
     const previousTotal = prevMeta?.ordersProcessed ?? 0;
 
+    const { events } = await getLiveEvents();
     const syncableEvents = orderSyncableEvents(events);
 
     const syncErrors: string[] = [];

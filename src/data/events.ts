@@ -6,817 +6,59 @@
 // `astro build`/`astro check`. cities/index.ts and journal/index.ts (also imported
 // directly by astro.config.mjs) follow the same relative-import convention for the
 // same reason. If this file stops being imported directly by astro.config.mjs,
-// this restriction no longer applies.
-import type { PerformerId } from "./lineup";
+// this restriction no longer applies. test/events-config-safe.test.ts locks it in.
+//
+// The show records themselves live in events.published.json (issue 337): the
+// admin Shows tab publishes new versions of that snapshot, and the build
+// validates it with the schemas in ./eventsSnapshot (see below). Never delete a record
+// from it (src/data/CLAUDE.md); cancel or hide instead.
 import { DEFAULT_LINEUP } from "./lineup";
+import publishedJson from "./events.published.json" with { type: "json" };
+import { buildEventSlug } from "./eventSlug";
+import type {
+  EventEntry,
+  EventsSnapshot,
+  PublishedEnvelope,
+  TbaCity,
+} from "./eventsSnapshot";
+
+export type {
+  EventEntry,
+  EventVenue,
+  EventsSnapshot,
+  TbaCity,
+  TicketSource,
+} from "./eventsSnapshot";
+export { isDisplayable } from "./eventPredicates";
 
 const TODAY_ISO = new Date().toISOString().slice(0, 10);
 
-export interface EventVenue {
-  name: string;
-  streetAddress?: string;
-  addressLocality: string;
-  addressRegion: string;
-  postalCode?: string;
-  addressCountry: string;
-}
+// WHY a type assertion instead of publishedEnvelopeSchema.parse here: this
+// module is bundled into client islands (the apply success panel and the
+// admin casting pickers). Parsing here shipped zod and every snapshot schema
+// to the public apply page (a 117 KB events chunk). The snapshot is validated
+// before it can reach a build instead: astro.config.mjs parses it on every
+// build and fails it loudly, and test/eventsSnapshot.test.ts parses the
+// committed file in CI. Removing the astro.config.mjs parse makes this
+// assertion unchecked.
+const published = publishedJson as PublishedEnvelope;
 
-/**
- * Who sells the tickets for this show.
- *
- * "our-eventbrite": our own Eventbrite account. We can pull order data and
- * Eventbrite's native pixel/webhooks are ours to configure, so Purchase can
- * be tracked server-side.
- * "their-eventbrite": someone else's Eventbrite account (the venue's or a
- * promoter's). We have no order-level access, so Purchase can never be
- * tracked server-side: only InitiateCheckout (browser + CAPI) applies.
- * "other-platform": a non-Eventbrite ticketing platform (City Winery,
- * DC Comedy Loft). Same tracking limits as "their-eventbrite".
- * "none": no tickets on sale anywhere yet (TBA notify-me cards).
- *
- * Ownership can't be inferred from `eventbriteId` or the URL alone: a
- * promoter-run show (e.g. Los Angeles) still carries a real, public
- * Eventbrite ID that belongs to someone else's account. Every event must
- * set this explicitly.
- */
-export type TicketSource =
-  "our-eventbrite" | "their-eventbrite" | "other-platform" | "none";
+/** The published snapshot this build renders. */
+export const publishedSnapshot: EventsSnapshot = published.snapshot;
 
-export interface EventEntry {
-  date: string;
-  city: string;
-  state: string;
-  stateAbbr: string;
-  citySlug?: string; // Stable slug matching src/data/cities key (e.g. "manhattan")
-  /** Unique slug for this specific show's /events/[slug] landing page. */
-  slug: string;
-  /** Overview copy for the per-event landing page. Never rendered as a price/CTA. */
-  description: string;
-  /** Performers appearing on stage for this show. Defaults to both hosts. */
-  lineup: PerformerId[];
-  ticketSource: TicketSource;
-  url: string;
-  hidden?: boolean;
-  isoDate?: string; // YYYY-MM-DD — present only for events with a specific date
-  startTime?: string; // HH:MM 24h format, ET (default: "20:00")
-  endTime?: string; // HH:MM 24h format, ET (default: "22:00")
-  venue?: EventVenue;
-  price?: string; // USD amount, e.g. "15": JSON-LD (offers.price) only, never rendered in UI
-  soldOut?: boolean; // Machine-readable sold-out flag; do not use tagline for control flow
-  tagline?: string; // Short status line shown on the card (e.g. "Selling fast")
-  eventbriteId?: string; // Numeric Eventbrite event ID
-  onSaleAt?: string; // ISO 8601 UTC datetime — card shows pre-sale notify state until this moment
-  timezone?: string; // IANA timezone identifier, e.g. "America/New_York" (default: "America/New_York")
-  status?: "canceled"; // Canceled shows stay in this file forever; every surface hides them
-  previousDate?: string; // YYYY-MM-DD the show was originally scheduled for, set on reschedule
-  previousDates?: string[]; // Additional former dates, retained across repeated reschedules
-  note?: string; // Human log note, e.g. "Canceled", "Moved from Aug 2"; see EVENTS-HISTORY.md
-}
-
-/** Default per-event slug: stable, unique, and human-readable in a URL. */
-function buildEventSlug(citySlug: string, isoDate?: string): string {
-  return isoDate ? `${citySlug}-${isoDate}` : `${citySlug}-tba`;
-}
-
-const VENUE_TOP_SECRET: EventVenue = {
-  name: "Top Secret Comedy Club",
-  streetAddress: "44 Avenue A",
-  addressLocality: "New York",
-  addressRegion: "NY",
-  postalCode: "10009",
-  addressCountry: "US",
-};
-
-const VENUE_LAUGH_TOUR: EventVenue = {
-  name: "The Laugh Tour Comedy Club",
-  streetAddress: "555 Washington Blvd",
-  addressLocality: "Jersey City",
-  addressRegion: "NJ",
-  postalCode: "07310",
-  addressCountry: "US",
-};
-
-const VENUE_FAIGHT_COLLECTIVE: EventVenue = {
-  name: "The Faight Collective",
-  streetAddress: "473A Haight St",
-  addressLocality: "San Francisco",
-  addressRegion: "CA",
-  postalCode: "94117",
-  addressCountry: "US",
-};
-
-const VENUE_LYRIC_HYPERION: EventVenue = {
-  name: "Lyric Hyperion Theater & Cafe",
-  streetAddress: "2106 Hyperion Ave",
-  addressLocality: "Los Angeles",
-  addressRegion: "CA",
-  postalCode: "90027",
-  addressCountry: "US",
-};
-
-const VENUE_CITY_WINERY_NYC: EventVenue = {
-  name: "The Loft at City Winery NYC",
-  streetAddress: "25 11th Ave",
-  addressLocality: "New York",
-  addressRegion: "NY",
-  postalCode: "10011",
-  addressCountry: "US",
-};
-
-const VENUE_ELEPHANT_CASTLE: EventVenue = {
-  name: "Elephant & Castle",
-  streetAddress: "161 Devonshire Street",
-  addressLocality: "Boston",
-  addressRegion: "MA",
-  postalCode: "02110",
-  addressCountry: "US",
-};
-
-const VENUE_NEXT_IN_LINE: EventVenue = {
-  name: "Next In Line Comedy",
-  streetAddress: "1025 Hamilton Street",
-  addressLocality: "Philadelphia",
-  addressRegion: "PA",
-  postalCode: "19123",
-  addressCountry: "US",
-};
-
-const VENUE_LINCOLN_LODGE: EventVenue = {
-  name: "The Lincoln Lodge",
-  streetAddress: "2040 North Milwaukee Avenue",
-  addressLocality: "Chicago",
-  addressRegion: "IL",
-  postalCode: "60647",
-  addressCountry: "US",
-};
-
-const VENUE_KOMIC_KARMA: EventVenue = {
-  name: "Komic Karma Entertainment",
-  addressLocality: "North Brunswick Township",
-  addressRegion: "NJ",
-  addressCountry: "US",
-};
-
-const VENUE_DC_COMEDY_LOFT: EventVenue = {
-  name: "DC Comedy Loft",
-  addressLocality: "Washington",
-  addressRegion: "DC",
-  addressCountry: "US",
-};
-
-export const events: EventEntry[] = [
-  {
-    date: "Feb 22",
-    city: "Manhattan",
-    state: "New York",
-    stateAbbr: "NY",
-    citySlug: "manhattan",
-    slug: buildEventSlug("manhattan", "2026-02-22"),
-    description:
-      "A belated Valentine's Day edition of America's #1 live desi comedy dating show at Top Secret Comedy Club. Two real singles go on a blind date on stage while Surbhi and Wyatt run the room. This show has sold out.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "their-eventbrite",
-    url: "https://www.eventbrite.com/e/garam-masala-dating-a-belated-valentines-day-tickets-1982103088695",
-    isoDate: "2026-02-22",
-    previousDate: "2026-02-28",
-    note: "Moved from Feb 28",
-    venue: VENUE_TOP_SECRET,
-    startTime: "18:00",
-    endTime: "20:00",
-    price: "15",
-    soldOut: true,
-    tagline: "Sold out",
-  },
-  {
-    date: "Mar 7",
-    city: "San Diego",
-    state: "California",
-    stateAbbr: "CA",
-    citySlug: "san-diego",
-    slug: buildEventSlug("san-diego", "2026-03-07"),
-    description:
-      "Garam Masala Dating's San Diego debut. Two real singles, one blind date, one live audience voting on the outcome. This show has sold out.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "their-eventbrite",
-    url: "https://www.eventbrite.com/e/garam-masala-dating-live-in-san-diego-tickets-1983622967694",
-    isoDate: "2026-03-07",
-    venue: {
-      name: "San Diego Venue",
-      addressLocality: "San Diego",
-      addressRegion: "CA",
-      addressCountry: "US",
-    },
-    startTime: "18:00",
-    endTime: "20:00",
-    price: "15",
-    soldOut: true,
-    tagline: "Sold out",
-  },
-  {
-    date: "Mar 15",
-    city: "Manhattan",
-    state: "New York",
-    stateAbbr: "NY",
-    citySlug: "manhattan",
-    slug: buildEventSlug("manhattan", "2026-03-15"),
-    description:
-      "A St. Patrick's Day edition of Garam Masala Dating at Top Secret Comedy Club. Real singles, real chaos, hosted by Surbhi and Wyatt. This show has sold out.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "their-eventbrite",
-    url: "https://www.eventbrite.com/e/garam-masala-dating-st-patricks-day-tickets-1982103088695",
-    isoDate: "2026-03-15",
-    previousDate: "2026-03-14",
-    note: "Moved from Mar 14",
-    venue: VENUE_TOP_SECRET,
-    startTime: "18:00",
-    endTime: "20:00",
-    price: "15",
-    soldOut: true,
-    tagline: "Sold out",
-  },
-  {
-    date: "Apr 4",
-    city: "Chicago",
-    state: "Illinois",
-    stateAbbr: "IL",
-    citySlug: "chicago",
-    slug: buildEventSlug("chicago", "2026-04-04"),
-    description:
-      "Garam Masala Dating comes to Chicago for a night of live comedy and blind dating on stage. This show has sold out.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "their-eventbrite",
-    url: "https://www.eventbrite.com/e/saturday-april-4-garam-masala-dating-tickets-1983144430376",
-    hidden: true,
-    note: "Hidden from site Mar 27 2026, reason unrecorded",
-    isoDate: "2026-04-04",
-    venue: {
-      name: "Chicago Venue",
-      addressLocality: "Chicago",
-      addressRegion: "IL",
-      addressCountry: "US",
-    },
-    price: "15",
-    soldOut: true,
-    tagline: "Sold out",
-  },
-  {
-    date: "Apr 19",
-    city: "Manhattan",
-    state: "New York",
-    stateAbbr: "NY",
-    citySlug: "manhattan",
-    slug: buildEventSlug("manhattan", "2026-04-19"),
-    description:
-      "A 420 themed edition of Garam Masala Dating at Top Secret Comedy Club. Two singles meet for the first time on stage while the audience decides if sparks fly.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "our-eventbrite",
-    url: "https://www.eventbrite.com/e/garam-masala-dating-420-blazin-in-love-tickets-1985330936274",
-    isoDate: "2026-04-19",
-    startTime: "18:00",
-    endTime: "20:00",
-    venue: VENUE_TOP_SECRET,
-    price: "15",
-    tagline: "Low tickets, grab yours now",
-    eventbriteId: "1985330936274",
-  },
-  {
-    date: "May 3",
-    city: "Jersey City",
-    state: "New Jersey",
-    stateAbbr: "NJ",
-    citySlug: "jersey-city",
-    slug: buildEventSlug("jersey-city", "2026-05-03"),
-    description:
-      "Garam Masala Dating's Jersey City edition at The Laugh Tour Comedy Club. A live blind date, real singles, and a singles mixer after the show.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "our-eventbrite",
-    url: "https://www.eventbrite.com/e/garam-masala-dating-show-jersey-city-edition-tickets-1986100570270",
-    isoDate: "2026-05-03",
-    previousDate: "2026-04-26",
-    note: "Moved from Apr 26",
-    startTime: "18:00",
-    endTime: "20:00",
-    venue: VENUE_LAUGH_TOUR,
-    price: "15",
-    eventbriteId: "1986100570270",
-  },
-  {
-    date: "May 10",
-    city: "San Francisco",
-    state: "California",
-    stateAbbr: "CA",
-    citySlug: "san-francisco",
-    slug: buildEventSlug("san-francisco", "2026-05-10"),
-    description:
-      "Garam Masala Dating comes to The Faight Collective in San Francisco for a night of live comedy and real blind dates on stage.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "our-eventbrite",
-    url: "https://www.eventbrite.com/e/garam-masala-dating-show-san-francisco-tickets-1988516311818",
-    isoDate: "2026-05-10",
-    startTime: "18:30",
-    endTime: "20:30",
-    venue: VENUE_FAIGHT_COLLECTIVE,
-    price: "15",
-    eventbriteId: "1988516311818",
-  },
-  {
-    date: "May 31",
-    city: "Manhattan",
-    state: "New York",
-    stateAbbr: "NY",
-    citySlug: "manhattan",
-    slug: buildEventSlug("manhattan", "2026-05-31"),
-    description:
-      "A May flowers bring June bridal showers edition of Garam Masala Dating at Top Secret Comedy Club, with two real singles on a blind date in front of a packed house.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "our-eventbrite",
-    url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-may-flowers-bring-june-bridal-showers-tickets-1990168950906",
-    isoDate: "2026-05-31",
-    startTime: "18:30",
-    endTime: "20:30",
-    venue: VENUE_TOP_SECRET,
-    price: "15",
-    eventbriteId: "1990168950906",
-  },
-  {
-    date: "Jun 7",
-    city: "Manhattan",
-    state: "New York",
-    stateAbbr: "NY",
-    citySlug: "manhattan",
-    slug: buildEventSlug("manhattan", "2026-06-07"),
-    description:
-      "A Summer of Love edition of Garam Masala Dating at Top Secret Comedy Club. Real singles, live comedy, and a singles mixer to close out the night.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "our-eventbrite",
-    url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-summer-of-love-tickets-1990821381343",
-    isoDate: "2026-06-07",
-    startTime: "18:00",
-    endTime: "20:00",
-    venue: VENUE_TOP_SECRET,
-    price: "15",
-    eventbriteId: "1990821381343",
-  },
-  {
-    date: "Jun 21",
-    city: "Manhattan",
-    state: "New York",
-    stateAbbr: "NY",
-    citySlug: "manhattan",
-    slug: buildEventSlug("manhattan", "2026-06-21"),
-    description:
-      "A Pride edition of Garam Masala Dating at Top Secret Comedy Club, celebrating every kind of love with a live blind date on stage.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "our-eventbrite",
-    url: "https://www.eventbrite.com/e/garam-masala-dating-show-pride-edition-tickets-1987763579375",
-    isoDate: "2026-06-21",
-    previousDate: "2026-06-14",
-    note: "Moved from Jun 14",
-    startTime: "18:00",
-    endTime: "20:00",
-    venue: VENUE_TOP_SECRET,
-    price: "15",
-    eventbriteId: "1987763579375",
-  },
-  {
-    date: "Jun 25",
-    city: "San Francisco",
-    state: "California",
-    stateAbbr: "CA",
-    citySlug: "san-francisco",
-    slug: buildEventSlug("san-francisco", "2026-06-25"),
-    description:
-      "A Seed Round edition of Garam Masala Dating at The Faight Collective in San Francisco, with two real singles pitching for a second date.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "our-eventbrite",
-    url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-san-francisco-seed-round-tickets-1989633237573",
-    isoDate: "2026-06-25",
-    startTime: "18:30",
-    endTime: "20:30",
-    venue: VENUE_FAIGHT_COLLECTIVE,
-    price: "15",
-    eventbriteId: "1989633237573",
-  },
-  {
-    date: "TBA",
-    city: "Edison",
-    state: "New Jersey",
-    stateAbbr: "NJ",
-    citySlug: "edison",
-    slug: buildEventSlug("edison"),
-    description:
-      "Garam Masala Dating comes to Edison, New Jersey with Komic Karma Entertainment. Tickets are not on sale yet, join the list to be first to know when they drop.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "our-eventbrite",
-    url: "",
-    hidden: true,
-    note: "Jul 11 date canceled Jul 7 2026; taken off notify me Aug 14 2026",
-    venue: VENUE_KOMIC_KARMA,
-    price: "15",
-    eventbriteId: "1992185715102",
-  },
-  {
-    date: "Jul 19",
-    city: "Los Angeles",
-    state: "California",
-    stateAbbr: "CA",
-    citySlug: "los-angeles",
-    slug: buildEventSlug("los-angeles", "2026-07-19"),
-    description:
-      "Garam Masala Dating comes to the Lyric Hyperion Theater in Los Angeles for a night of live comedy and blind dating on stage.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "their-eventbrite",
-    url: "https://www.eventbrite.com/e/garam-masala-tickets-1989799702474",
-    isoDate: "2026-07-19",
-    startTime: "18:30",
-    endTime: "20:30",
-    venue: VENUE_LYRIC_HYPERION,
-    price: "15",
-    eventbriteId: "1989799702474",
-  },
-  {
-    date: "Jul 26",
-    city: "Manhattan",
-    state: "New York",
-    stateAbbr: "NY",
-    citySlug: "manhattan",
-    slug: buildEventSlug("manhattan", "2026-07-26"),
-    description:
-      "An All Stars edition of Garam Masala Dating at The Loft at City Winery NYC, bringing back fan favorite daters for one more round.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "other-platform",
-    url: "https://tickets.citywinery.com/event/garam-masala-comedy-dating-show-all-stars-editio-ownqgw",
-    isoDate: "2026-07-26",
-    startTime: "19:00",
-    endTime: "21:00",
-    venue: VENUE_CITY_WINERY_NYC,
-    price: "15",
-  },
-  {
-    date: "Aug 13",
-    city: "Boston",
-    state: "Massachusetts",
-    stateAbbr: "MA",
-    citySlug: "boston",
-    slug: buildEventSlug("boston", "2026-08-02"),
-    description:
-      "A Spilling Tea in Boston edition of Garam Masala Dating at Elephant & Castle, with two real singles on a blind date in front of a live audience.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "our-eventbrite",
-    url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-spilling-tea-in-boston-tickets-1992075859521",
-    isoDate: "2026-08-13",
-    previousDate: "2026-08-02",
-    note: "Moved from Aug 2, start moved from 6 PM to 7 PM",
-    startTime: "19:00",
-    endTime: "21:00",
-    venue: VENUE_ELEPHANT_CASTLE,
-    price: "15",
-    eventbriteId: "1992075859521",
-  },
-  {
-    date: "Aug 16",
-    city: "Manhattan",
-    state: "New York",
-    stateAbbr: "NY",
-    citySlug: "manhattan",
-    slug: buildEventSlug("manhattan", "2026-08-16"),
-    description:
-      "A Cuffing Season Coming edition of Garam Masala Dating at Top Secret Comedy Club, just in time to find your person before the cold sets in.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "our-eventbrite",
-    url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-cuffing-season-coming-tickets-1990583884985",
-    isoDate: "2026-08-16",
-    previousDate: "2026-08-02",
-    startTime: "18:30",
-    endTime: "20:30",
-    venue: VENUE_TOP_SECRET,
-    price: "15",
-    eventbriteId: "1990583884985",
-    status: "canceled",
-    note: "Canceled Aug 14 2026; had moved from Aug 2",
-  },
-  {
-    date: "Aug 28",
-    city: "Philadelphia",
-    state: "Pennsylvania",
-    stateAbbr: "PA",
-    citySlug: "philadelphia",
-    slug: buildEventSlug("philadelphia", "2026-08-28"),
-    description:
-      "Garam Masala Dating's Philadelphia debut at Next In Line Comedy, with two real singles on a blind date in front of a live audience.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "their-eventbrite",
-    url: "https://www.eventbrite.com/e/garam-masala-1-desi-dating-show-tickets-1989618938805?aff=oddtdtcreator",
-    isoDate: "2026-08-28",
-    previousDate: "2026-07-12",
-    note: "Jul 12 date canceled Jul 7, rescheduled to Aug 28 with 7 PM start",
-    startTime: "19:00",
-    endTime: "21:00",
-    venue: VENUE_NEXT_IN_LINE,
-    price: "15",
-    eventbriteId: "1989618938805",
-  },
-  {
-    date: "Aug 30",
-    city: "Washington",
-    state: "District of Columbia",
-    stateAbbr: "DC",
-    citySlug: "washington-dc",
-    slug: buildEventSlug("washington-dc", "2026-08-30"),
-    description:
-      "Garam Masala Dating comes to DC Comedy Loft in Washington, D.C. for a night of live comedy and real blind dates on stage.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "other-platform",
-    venue: VENUE_DC_COMEDY_LOFT,
-    url: "https://www.dccomedyloft.com/shows/378527",
-    isoDate: "2026-08-30",
-    startTime: "18:00",
-    endTime: "20:00",
-    note: "Start time moved from 8 PM to 6 PM, still Aug 30.",
-    price: "15",
-  },
-  {
-    date: "Oct 4",
-    city: "Philadelphia",
-    state: "Pennsylvania",
-    stateAbbr: "PA",
-    citySlug: "philadelphia",
-    slug: buildEventSlug("philadelphia", "2026-10-04"),
-    description:
-      "Garam Masala Dating returns to Next In Line Comedy in Philadelphia for a BYOB night of live comedy and real blind dates on stage.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "their-eventbrite",
-    url: "https://www.eventbrite.com/e/garam-masala-1-desi-dating-show-byob-tickets-1999515971095",
-    isoDate: "2026-10-04",
-    previousDate: "2026-09-27",
-    note: "Moved from Sep 27 to Oct 4",
-    startTime: "19:30",
-    endTime: "21:00",
-    venue: VENUE_NEXT_IN_LINE,
-    price: "15",
-    eventbriteId: "1999515971095",
-  },
-  {
-    date: "Oct 11",
-    city: "Manhattan",
-    state: "New York",
-    stateAbbr: "NY",
-    citySlug: "manhattan",
-    slug: buildEventSlug("manhattan", "2026-10-11"),
-    description:
-      "Another All Stars edition of Garam Masala Dating at The Loft at City Winery NYC, bringing back fan favorite daters for a second round on stage.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "other-platform",
-    url: "https://tickets.citywinery.com/event/garam-masala-comedy-dating-show-all-stars-editio-suakfs",
-    isoDate: "2026-10-11",
-    startTime: "19:00",
-    endTime: "21:00",
-    venue: VENUE_CITY_WINERY_NYC,
-    price: "15",
-    onSaleAt: "2026-08-20T19:00:00Z",
-  },
-  {
-    date: "Oct 24",
-    city: "Chicago",
-    state: "Illinois",
-    stateAbbr: "IL",
-    citySlug: "chicago",
-    slug: buildEventSlug("chicago", "2026-10-24"),
-    description:
-      "Garam Masala Dating returns to Chicago at The Lincoln Lodge for a night of live comedy, a real blind date on stage and a singles mixer.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "our-eventbrite",
-    url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-shacking-up-in-chicago-tickets-2002169289241",
-    isoDate: "2026-10-24",
-    startTime: "18:00",
-    endTime: "19:30",
-    venue: VENUE_LINCOLN_LODGE,
-    price: "15",
-    eventbriteId: "2002169289241",
-    timezone: "America/Chicago",
-  },
-  {
-    date: "Nov 13",
-    city: "Manhattan",
-    state: "New York",
-    stateAbbr: "NY",
-    citySlug: "manhattan",
-    // WHY: slug keeps the original date so /events/manhattan-2026-12-12 still resolves after the reschedule (same pattern as Philadelphia Oct 4)
-    slug: buildEventSlug("manhattan", "2026-12-12"),
-    description:
-      "New York City, our first Friday date. You better come by. No excuses this time.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "other-platform",
-    url: "https://tickets.citywinery.com/event/garam-masala-comedy-dating-show-as6jo1",
-    isoDate: "2026-11-13",
-    startTime: "19:30",
-    endTime: "21:30",
-    price: "36",
-    venue: VENUE_CITY_WINERY_NYC,
-    previousDate: "2026-12-12",
-    note: "Moved from Dec 12",
-  },
-  {
-    date: "Nov 19",
-    city: "Austin",
-    state: "Texas",
-    stateAbbr: "TX",
-    citySlug: "austin",
-    slug: buildEventSlug("austin", "2026-11-19"),
-    status: "canceled",
-    description:
-      "Garam Masala Dating is coming to Austin. Tickets are not on sale yet, join the list to be first to know when they drop.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "none",
-    url: "",
-    isoDate: "2026-11-19",
-    tagline: "Tickets coming soon",
-    timezone: "America/Chicago",
-    note: "Placeholder withdrawn November 5, 2026. No ticket link was published",
-  },
-  {
-    date: "Nov 20",
-    city: "Houston",
-    state: "Texas",
-    stateAbbr: "TX",
-    citySlug: "houston",
-    slug: buildEventSlug("houston", "2026-11-20"),
-    status: "canceled",
-    description:
-      "Garam Masala Dating is coming to Houston. Tickets are not on sale yet, join the list to be first to know when they drop.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "none",
-    url: "",
-    isoDate: "2026-11-20",
-    tagline: "Tickets coming soon",
-    timezone: "America/Chicago",
-    note: "Placeholder withdrawn November 5, 2026. No ticket link was published",
-  },
-  {
-    date: "Nov 21",
-    city: "San Antonio",
-    state: "Texas",
-    stateAbbr: "TX",
-    citySlug: "san-antonio",
-    slug: buildEventSlug("san-antonio", "2026-11-21"),
-    status: "canceled",
-    description:
-      "Garam Masala Dating is coming to San Antonio. Tickets are not on sale yet, join the list to be first to know when they drop.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "none",
-    url: "",
-    isoDate: "2026-11-21",
-    tagline: "Tickets coming soon",
-    timezone: "America/Chicago",
-    note: "Placeholder withdrawn November 5, 2026. No ticket link was published",
-  },
-  {
-    date: "Nov 22",
-    city: "Dallas",
-    state: "Texas",
-    stateAbbr: "TX",
-    citySlug: "dallas",
-    slug: buildEventSlug("dallas", "2026-11-22"),
-    status: "canceled",
-    description:
-      "Garam Masala Dating is coming to Dallas. Tickets are not on sale yet, join the list to be first to know when they drop.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "none",
-    url: "",
-    isoDate: "2026-11-22",
-    tagline: "Tickets coming soon",
-    timezone: "America/Chicago",
-    note: "Placeholder withdrawn November 5, 2026. No ticket link was published",
-  },
-  {
-    date: "Dec 4",
-    city: "Chicago",
-    state: "Illinois",
-    stateAbbr: "IL",
-    citySlug: "chicago",
-    slug: buildEventSlug("chicago", "2026-12-04"),
-    status: "canceled",
-    note: "Scheduled show withdrawn November 11, 2026. Chicago remains eligible for the city waitlist",
-    description: "Chicago, December 4. Join the list for tickets.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "none",
-    url: "",
-    isoDate: "2026-12-04",
-    tagline: "Tickets coming soon",
-    timezone: "America/Chicago",
-  },
-  {
-    date: "Dec 6",
-    city: "Philadelphia",
-    state: "Pennsylvania",
-    stateAbbr: "PA",
-    citySlug: "philadelphia",
-    slug: buildEventSlug("philadelphia", "2026-12-06"),
-    description:
-      "Garam Masala Dating closes out the year at Next In Line Comedy in Philadelphia. A BYOB Sunday night, two real singles meeting for the first time on stage and an audience that decides how it ends.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "their-eventbrite",
-    url: "https://www.eventbrite.com/e/garam-masala-1-desi-dating-show-byob-tickets-2002925676616",
-    isoDate: "2026-12-06",
-    startTime: "18:30",
-    endTime: "20:00",
-    venue: VENUE_NEXT_IN_LINE,
-    price: "15",
-    eventbriteId: "2002925676616",
-  },
-  {
-    date: "Dec 24",
-    city: "San Diego",
-    state: "California",
-    stateAbbr: "CA",
-    citySlug: "san-diego",
-    // WHY: slug keeps the original date so /events/san-diego-2026-11-15 still resolves after the reschedule (same pattern as Philadelphia Oct 4)
-    slug: buildEventSlug("san-diego", "2026-11-15"),
-    status: "canceled",
-    description:
-      "Garam Masala Dating is heading back to San Diego. Tickets are not on sale yet, join the list to be first to know when they drop.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "none",
-    url: "",
-    isoDate: "2026-12-24",
-    tagline: "Tickets coming soon",
-    previousDate: "2026-11-15",
-    note: "Moved from Nov 15. Scheduled show withdrawn November 11, 2026. San Diego remains eligible for the city waitlist",
-  },
-  {
-    date: "Dec 26",
-    city: "San Francisco",
-    state: "California",
-    stateAbbr: "CA",
-    citySlug: "san-francisco",
-    // WHY: slug keeps the original date so /events/san-francisco-2026-11-14 still resolves after the reschedule (same pattern as Philadelphia Oct 4)
-    slug: buildEventSlug("san-francisco", "2026-11-14"),
-    description:
-      "A Cuffing Season Coming edition of Garam Masala Dating at The Faight Collective in San Francisco, with two real singles on a blind date just in time for the cold months.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "our-eventbrite",
-    url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-cuffing-season-coming-to-sf-tickets-2003672498380?aff=oddtdtcreator",
-    isoDate: "2026-12-26",
-    startTime: "18:00",
-    endTime: "20:00",
-    venue: VENUE_FAIGHT_COLLECTIVE,
-    price: "15",
-    eventbriteId: "2003672498380",
-    timezone: "America/Los_Angeles",
-    previousDate: "2026-11-14",
-    note: "Moved from Nov 14",
-  },
-  {
-    date: "Dec 27",
-    city: "Los Angeles",
-    state: "California",
-    stateAbbr: "CA",
-    citySlug: "los-angeles",
-    // WHY: slug keeps the original date so /events/los-angeles-2026-11-13 still resolves after the reschedule (same pattern as Philadelphia Oct 4)
-    slug: buildEventSlug("los-angeles", "2026-11-13"),
-    description: "Garam Masala Dating is coming back to Los Angeles.",
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "their-eventbrite",
-    url: "https://www.eventbrite.com/e/garam-masala-dating-la-tickets-2004696892370",
-    isoDate: "2026-12-27",
-    startTime: "19:30",
-    endTime: "21:30",
-    venue: VENUE_LYRIC_HYPERION,
-    price: "23.38",
-    eventbriteId: "2004696892370",
-    timezone: "America/Los_Angeles",
-    previousDate: "2026-11-13",
-    note: "Moved from Nov 13",
-  },
-];
+/** Every show ever scheduled, including hidden and canceled records. */
+export const events: EventEntry[] = publishedSnapshot.events;
 
 // Legacy expansion inventory also supplies the footer city roster.
 // Homepage and tickets Notify Me cards use the ranked five-market selection.
-const TBA_CITIES = [
-  {
-    city: "Los Angeles",
-    state: "California",
-    stateAbbr: "CA",
-    citySlug: "los-angeles",
-  },
-  {
-    city: "San Francisco",
-    state: "California",
-    stateAbbr: "CA",
-    citySlug: "san-francisco",
-  },
-  {
-    city: "Manhattan",
-    state: "New York",
-    stateAbbr: "NY",
-    citySlug: "manhattan",
-  },
-];
+// Edited from the admin Shows tab.
+const TBA_CITIES: TbaCity[] = publishedSnapshot.tbaCities;
 
 export const TBA_CITY_SLUGS: string[] = TBA_CITIES.map((c) => c.citySlug);
 
-export const comingSoonEvents: EventEntry[] = TBA_CITIES.map(
-  (city): EventEntry => ({
+/** The notify-me card for a city with no announced date. */
+export function tbaCityToEvent(city: TbaCity): EventEntry {
+  return {
     date: "TBA",
     city: city.city,
     state: city.state,
@@ -828,20 +70,10 @@ export const comingSoonEvents: EventEntry[] = TBA_CITIES.map(
     ticketSource: "none",
     url: "",
     tagline: "Coming soon",
-  }),
-);
-
-/**
- * True when an event may appear anywhere on the public site.
- * Canceled shows are permanent records (see EVENTS-HISTORY.md), never
- * deleted from this file; this predicate is what keeps them off every
- * surface. All upcoming/visible filters must go through it.
- */
-export function isDisplayable(
-  e: Pick<EventEntry, "hidden" | "status">,
-): boolean {
-  return !e.hidden && e.status !== "canceled";
+  };
 }
+
+export const comingSoonEvents: EventEntry[] = TBA_CITIES.map(tbaCityToEvent);
 
 /**
  * Confirmed shows + TBA notify-me cards. A city's TBA card is suppressed
@@ -869,12 +101,41 @@ export function computeAllEvents(
   ];
 }
 
+/**
+ * Every show page for a snapshot: confirmed shows plus TBA cities. Shared
+ * by this build and the admin preview so both compute it identically.
+ */
+export function buildAllEvents(
+  snapshot: EventsSnapshot,
+  todayIso: string,
+): EventEntry[] {
+  return computeAllEvents(
+    snapshot.events,
+    snapshot.tbaCities.map(tbaCityToEvent),
+    todayIso,
+  );
+}
+
 /** All events: confirmed shows + TBA cities (suppressed when city has an upcoming confirmed show) */
-export const allEvents: EventEntry[] = computeAllEvents(
-  events,
-  comingSoonEvents,
+export const allEvents: EventEntry[] = buildAllEvents(
+  publishedSnapshot,
   TODAY_ISO,
 );
+
+/**
+ * Sitemap lastmod (YYYY-MM-DD) per show page slug: the entry's own
+ * `updatedAt`, which the Shows tab sets on every edit, else the snapshot's
+ * `publishedAt` (TBA cards and records never edited since the migration).
+ * Pass `allEvents`, not `events`: every slug that gets a page needs a date.
+ */
+export function eventLastmodDates(
+  list: EventEntry[],
+  publishedAt: string,
+): Record<string, string> {
+  return Object.fromEntries(
+    list.map((e) => [e.slug, (e.updatedAt ?? publishedAt).slice(0, 10)]),
+  );
+}
 
 /**
  * Returns the canonical display status for an event.
@@ -894,7 +155,13 @@ export function getEventDisplayStatus(event: EventEntry): string | undefined {
  * cities) must resolve here. Callers that redirect to a real checkout
  * (src/pages/api/go/[slug].ts) must separately verify `event.url` is a
  * usable destination: TBA/coming-soon entries deliberately carry `url: ""`.
+ *
+ * `list` defaults to this build's list; runtime routes pass the live
+ * published list from src/lib/publishedEvents.server.ts instead.
  */
-export function getEventBySlug(slug: string): EventEntry | undefined {
-  return allEvents.find((e) => e.slug === slug);
+export function getEventBySlug(
+  slug: string,
+  list: EventEntry[] = allEvents,
+): EventEntry | undefined {
+  return list.find((e) => e.slug === slug);
 }

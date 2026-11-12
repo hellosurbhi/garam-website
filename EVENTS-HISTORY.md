@@ -4,6 +4,8 @@ Permanent record of every show change: cancellations, date moves, time moves, ro
 
 ## Log
 
+From issue 337 on, every publish and restore in the admin Shows tab is also kept as a numbered version with its note, author and the shows it changed (Firestore `eventVersions`). Version 1 is the list as it stood when the tab launched. Keep adding a line here for cancellations and date moves.
+
 - 2026-11-11: Chicago December 4 and San Diego December 24 scheduled shows withdrawn. Both records retained as canceled. Both cities remain eligible for the ranked Notify Me list; no market exclusion was added.
 
 - 2026-11-11: Open December 27 Los Angeles ticket sales through Lyric Hyperion Eventbrite, 7:30 PM to 9:30 PM Pacific at Lyric Hyperion Theater & Cafe. Correct December 26 San Francisco from 5 PM to 7 PM to 6 PM to 8 PM Pacific at The Faight Collective. Preserve both original slugs and date history.

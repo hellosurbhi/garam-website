@@ -4,7 +4,7 @@ import { cleanPhone } from "@/lib/phone";
 import { alertOps } from "@/lib/opsAlert";
 import { signPortalToken, _midnightLocalUnix } from "@/lib/portalToken";
 import { WAIVER_VERSION, WAIVER_TEXT } from "@/data/waiver";
-import { events } from "@/data/events";
+import { getLiveEvents } from "@/lib/publishedEvents.server";
 import { sendMail } from "@/lib/zohoMailer";
 import { waiverReceiptWithText } from "@/data/emails";
 import { producerWaiverNotification } from "@/data/emails";
@@ -55,6 +55,8 @@ export const POST: APIRoute = async ({ request }) => {
 
   const phone = cleanPhone(rawPhone);
   if (!phone) return jsonResponse({ error: "Invalid phone number" }, 400);
+
+  const { events } = await getLiveEvents();
 
   const event = events.find(
     (e) =>

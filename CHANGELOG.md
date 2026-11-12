@@ -1,5 +1,20 @@
 # Changelog
 
+## Admin Shows tab (2026-11-11)
+
+- Add a Shows tab to /admin where the owner can add, edit, cancel and hide shows in a draft, see what changes before publishing, publish with a note, restore an older version and press Rebuild site.
+- Check every edit in the browser with the same rules the server uses, so a bad ticket link or missing field shows an inline error and is never sent.
+- Lock publishing and restoring for a minute after a rebuild starts and show whether the website has caught up with the live version.
+- Offer every time zone for touring shows, accept full region names like Greater London and let a show that was never published move to a new date without a note.
+- Refuse a show start, end or on sale time that the clocks skip at spring forward, and read a time in the hour that repeats at fall back as its first occurrence in every time zone.
+- Publish only the draft the confirmation showed: a save from another tab after it opened is refused and the tab reloads. Refuse a show that ends at or before it starts, and keep a newly opened editor open when an earlier slow save finishes.
+- Keep show editors closed while a save, publish or restore is still out, so a reopened editor never undoes it. Show an untouched on sale time in a newly picked time zone so the field matches what is saved.
+- Keep show editing locked until every draft save finishes, even when a rebuild settles first. Preview Notify Me cards with the same demand ranked selection /tickets uses, and say in Coming soon cities which cities have one. Event JSON-LD now names only the performers in each show's lineup.
+- Apply only the newest reload of the show list, so a slow reload that lands late can't put back a value you just saved. The editor stays locked until every reload has answered. The preview now uses the same UTC day as the public pages. The server refuses a start or end time the clocks skip at spring forward, and a Coming soon city corrected under the same slug now counts as a change you can publish.
+- Keep the Shows tab and its pending saves alive when you switch to another tab and come back, so a reopened editor never loads an older draft. The server now refuses a draft save built on a draft that changed since it was loaded, the same check publishing uses.
+- Add `npm run events:seed`, the one time setup that copies today's show list into Firestore as version 1. It only prints what it would do unless given `--execute`, refuses to touch a list that already exists and checks the public read afterwards. Its writes are tested against the admin's own publish code so the two stay identical.
+- An open show editor now saves against the draft it was opened from. If another admin's save reaches the tab while it is open, the editor is set aside with a notice instead of saving its older values over theirs. Restoring a version is refused when the draft changed after the confirmation was shown, so an unpublished save is never lost.
+
 ## fix(monitor): the ticket redirect check no longer reports a healthy page as broken (2026-11-12)
 
 - The live ticket check looked for a link with the exact path `/api/go/<show>`, but the site rewrites each checkout link to an absolute URL with an `?eid=` tag after the page loads. The check never found the link, failed on every run and paged the owner for a working page. It now matches the link path whether relative or absolute, with or without the tag, and still refuses a longer show name that only shares the same start. Verified against the live site and 95 fixture runs, including the new `?eid=` and prefix cases.

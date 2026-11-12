@@ -155,27 +155,33 @@ test("ticket monitor rejects a blank page when only waitlists are expected", asy
 });
 // Cases from #403 (main), ported to this checker's served-page fixtures. The
 // ?eid= and other-host cases are covered above and by "follows the rendered
-// link with its tracking parameters".
-for (const [name, html, shows] of [
+// link with its tracking parameters". Each case pins the problem it must be
+// rejected for, so an unrelated failure (missing inventory, a card without
+// identity) cannot make it pass by accident.
+for (const [name, html, shows, problem] of [
   [
     "a wrong path that merely contains the checkout path",
     card(event.slug, `/wrong/api/go/${event.slug}?eid=123`),
     [event],
+    /fixture-show -> \/wrong\/api\/go\/fixture-show\?eid=123 \(points at another show\)/,
   ],
   [
     "a checkout path that only appears inside another link's query",
     card(event.slug, `/tickets?next=/api/go/${event.slug}?eid=123`),
     [event],
+    /fixture-show -> \/tickets\?next=\S+ \(points at another show\)/,
   ],
   [
     "a longer slug that shares the show's prefix",
-    card(`${event.slug}-late`) + notifyMe,
+    card(event.slug, `/api/go/${event.slug}-late`),
     [event],
+    /fixture-show -> \/api\/go\/fixture-show-late \(points at another show\)/,
   ],
   [
     "a rewritten absolute checkout link in a waitlist-only state",
-    `<a href="${SITE}/api/go/unknown?eid=1">Buy Tickets</a>` + notifyMe,
+    card("unknown", `${SITE}/api/go/unknown?eid=1`) + notifyMe,
     [],
+    /unknown: checkout link for a show not on sale/,
   ],
 ] as const) {
   test(`ticket monitor rejects ${name}`, async ({ page, request }) => {
@@ -185,7 +191,7 @@ for (const [name, html, shows] of [
       checkTicketListings(page, request, [...shows], now, {
         followRedirects: false,
       }),
-    ).rejects.toThrow();
+    ).rejects.toThrow(problem);
   });
 }
 test("ticket monitor checks the exact checkout destination", async ({

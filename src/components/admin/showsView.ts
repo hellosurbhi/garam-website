@@ -138,8 +138,3 @@ export function sortShows(list: EventEntry[], todayIso: string): EventEntry[] {
     return ua ? da.localeCompare(db) : db.localeCompare(da);
   });
 }
-
-/** Today's date in the owner's browser as YYYY-MM-DD. */
-export function localTodayIso(): string {
-  return new Date().toLocaleDateString("en-CA");
-}

@@ -10,6 +10,7 @@
 - Publish only the draft the confirmation showed: a save from another tab after it opened is refused and the tab reloads. Refuse a show that ends at or before it starts, and keep a newly opened editor open when an earlier slow save finishes.
 - Keep show editors closed while a save, publish or restore is still out, so a reopened editor never undoes it. Show an untouched on sale time in a newly picked time zone so the field matches what is saved.
 - Keep show editing locked until every draft save finishes, even when a rebuild settles first. Preview Notify Me cards with the same demand ranked selection /tickets uses, and say in Coming soon cities which cities have one. Event JSON-LD now names only the performers in each show's lineup.
+- Apply only the newest reload of the show list, so a slow reload that lands late can't put back a value you just saved. The editor stays locked until every reload has answered. The preview now uses the same UTC day as the public pages. The server refuses a start or end time the clocks skip at spring forward, and a Coming soon city corrected under the same slug now counts as a change you can publish.
 
 ## Waitlist review corrections (2026-11-11)
 

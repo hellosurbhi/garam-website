@@ -89,6 +89,9 @@ const changesSchema = z.object({
   changed: z.array(z.string()),
   canceled: z.array(z.string()),
   tbaCitiesAdded: z.array(z.string()),
+  // WHY a default: version records written before this field existed have
+  // no edited cities to report, and must still list in the History panel.
+  tbaCitiesChanged: z.array(z.string()).default([]),
   tbaCitiesRemoved: z.array(z.string()),
 }) satisfies z.ZodType<SnapshotDiff>;
 

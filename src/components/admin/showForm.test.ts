@@ -4,10 +4,10 @@ import type { EventEntry } from "@/data/eventsSnapshot";
 import {
   entryFromForm,
   formFromEntry,
-  localToIso,
   timezoneChoices,
   withTimezone,
 } from "./showForm";
+import { localToIso } from "@/utils/timezone";
 
 // WHY the real published record: manhattan-2026-10-11 predates the timezone
 // field, which is exactly the legacy shape the on-sale round trip broke on.

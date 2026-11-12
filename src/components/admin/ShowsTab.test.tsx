@@ -72,6 +72,7 @@ const noChanges = {
   changed: [],
   canceled: [],
   tbaCitiesAdded: [],
+  tbaCitiesChanged: [],
   tbaCitiesRemoved: [],
 };
 
@@ -692,6 +693,128 @@ describe("ShowsTab", () => {
     for (const box of boxes) {
       expect(box.getAttribute("aria-invalid")).toBe("true");
       expect(box.getAttribute("aria-describedby")).toBe(errorId);
+    }
+  });
+
+  it("never lets an older reload overwrite a newer one, so a save is not undone", async () => {
+    let finishRebuild: (res: Response) => void = () => {};
+    let finishSave: (res: Response) => void = () => {};
+    let finishOldReload: () => void = () => {};
+    let loads = 0;
+    const priced = (price: string) => {
+      const next = adminLoad();
+      if (next.draft) {
+        next.draft.snapshot = {
+          ...draft,
+          events: [fixtureShow({ price }), austin],
+        };
+      }
+      return json(200, next);
+    };
+    routeFetch();
+    const base = fetchMock.getMockImplementation();
+    fetchMock.mockImplementation(async (path: string, init?: RequestInit) => {
+      if (path === "/api/admin/events/rebuild") {
+        return new Promise<Response>((resolve) => (finishRebuild = resolve));
+      }
+      if (path === "/api/admin/events/draft") {
+        if (callsTo(path).length > 1) return base?.(path, init);
+        return new Promise<Response>((resolve) => (finishSave = resolve));
+      }
+      if (path === "/api/admin/events") {
+        loads += 1;
+        // The rebuild's reload (the second load) read the draft before the
+        // save landed and answers last, after the save's reload.
+        if (loads === 2) {
+          return new Promise<Response>(
+            (resolve) => (finishOldReload = () => resolve(priced("25"))),
+          );
+        }
+        return priced(loads === 1 ? "25" : "35");
+      }
+      return base?.(path, init);
+    });
+    render(<ShowsTab />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Rebuild site" }),
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "Edit Chicago, Jan 9" }),
+    );
+    fireEvent.change(screen.getByLabelText("Ticket price in USD"), {
+      target: { value: "35" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Save to draft" }));
+    await waitFor(() =>
+      expect(callsTo("/api/admin/events/draft")).toHaveLength(1),
+    );
+    fireEvent.click(
+      within(screen.getByRole("dialog")).getAllByRole("button", {
+        name: "Close",
+      })[0],
+    );
+    finishRebuild(json(200, { version: 3, rebuild: "requested" }));
+    await waitFor(() => expect(loads).toBe(2));
+    finishSave(json(200, { basedOnVersion: 3, changes: noChanges }));
+    await waitFor(() => expect(loads).toBe(3));
+    finishOldReload();
+    await waitFor(() =>
+      expect(screen.getByText(SHOWS_TOAST.rebuildStarted)).toBeTruthy(),
+    );
+    const edit = screen.getByRole("button", { name: "Edit Chicago, Jan 9" });
+    await waitFor(() =>
+      expect((edit as HTMLButtonElement).disabled).toBe(false),
+    );
+    fireEvent.click(edit);
+    fireEvent.change(screen.getByLabelText("Card tagline"), {
+      target: { value: "Back by demand" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Save to draft" }));
+    await waitFor(() =>
+      expect(callsTo("/api/admin/events/draft")).toHaveLength(2),
+    );
+    const second = callsTo("/api/admin/events/draft")[1] as {
+      snapshot: { events: Array<{ slug: string; price?: string }> };
+    };
+    expect(
+      second.snapshot.events.find((e) => e.slug === "chicago-2099-01-09")
+        ?.price,
+    ).toBe("35");
+  });
+
+  it("previews the tickets page on the UTC day the public pages use", async () => {
+    const zone = process.env.TZ;
+    // WHY only Date: waitFor and the fetch stub still need real timers.
+    vi.useFakeTimers({ toFake: ["Date"] });
+    // 8pm on Nov 11 in New York is already Nov 12 in UTC, so the public
+    // pages (which use the UTC day) no longer list a Nov 11 show.
+    process.env.TZ = "America/New_York";
+    vi.setSystemTime(new Date("2026-11-12T01:00:00Z"));
+    try {
+      const nov11 = fixtureShow({
+        date: "Nov 11",
+        isoDate: "2026-11-11",
+        slug: "chicago-2026-11-11",
+      });
+      routeFetch();
+      const base = fetchMock.getMockImplementation();
+      fetchMock.mockImplementation(async (path: string, init?: RequestInit) => {
+        if (path === "/api/admin/events") {
+          const next = adminLoad();
+          if (next.draft) {
+            next.draft.snapshot = { ...draft, events: [nov11] };
+          }
+          return json(200, next);
+        }
+        return base?.(path, init);
+      });
+      render(<ShowsTab />);
+      expect(await screen.findByText(SHOWS_LIST.past)).toBeTruthy();
+      expect(screen.queryByText(SHOWS_LIST.listed)).toBeNull();
+    } finally {
+      vi.useRealTimers();
+      if (zone === undefined) delete process.env.TZ;
+      else process.env.TZ = zone;
     }
   });
 });

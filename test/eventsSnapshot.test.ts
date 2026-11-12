@@ -211,6 +211,30 @@ describe("write tier", () => {
   it("requires a note on a canceled show", () => {
     expect(issuesFor(newShow({ status: "canceled" }))).toContain("note");
   });
+
+  it("refuses a show time the clocks skip at spring forward", () => {
+    // Chicago jumps from 02:00 to 03:00 on March 14, 2027.
+    const springForward = {
+      date: "Mar 14",
+      isoDate: "2027-03-14",
+      slug: "chicago-2027-03-14",
+    };
+    expect(
+      issuesFor(
+        newShow({ ...springForward, startTime: "02:30", endTime: "04:00" }),
+      ),
+    ).toEqual(["startTime"]);
+    expect(
+      issuesFor(
+        newShow({ ...springForward, startTime: "01:00", endTime: "02:15" }),
+      ),
+    ).toEqual(["endTime"]);
+    expect(
+      issuesFor(
+        newShow({ ...springForward, startTime: "03:30", endTime: "04:00" }),
+      ),
+    ).toEqual([]);
+  });
 });
 
 describe("validateSnapshotAgainstLive", () => {
@@ -315,6 +339,23 @@ describe("validateSnapshotAgainstLive", () => {
 });
 
 describe("diffSnapshots", () => {
+  it("reports a coming soon city whose details changed under the same slug", () => {
+    const [first, ...rest] = live.tbaCities;
+    if (!first) throw new Error("fixture needs a coming soon city");
+    const next: EventsSnapshot = {
+      ...live,
+      tbaCities: [...rest, { ...first, state: `${first.state} corrected` }],
+    };
+    expect(diffSnapshots(live, next).tbaCitiesChanged).toEqual([
+      first.citySlug,
+    ]);
+    // Order alone is not a change.
+    expect(
+      diffSnapshots(live, { ...live, tbaCities: [...rest, first] })
+        .tbaCitiesChanged,
+    ).toEqual([]);
+  });
+
   it("reports added, changed, canceled and coming soon changes", () => {
     const next: EventsSnapshot = {
       events: [
@@ -334,6 +375,7 @@ describe("diffSnapshots", () => {
       changed: [live.events[0].slug],
       canceled: [liveLa.slug],
       tbaCitiesAdded: [],
+      tbaCitiesChanged: [],
       tbaCitiesRemoved: [live.tbaCities[0].citySlug],
     });
   });

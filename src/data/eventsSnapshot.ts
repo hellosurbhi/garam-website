@@ -19,7 +19,7 @@
 import { z } from "zod";
 import { httpsUrlSchema } from "../lib/schemas";
 import { buildEventRedirects, eventAliasDates } from "../utils/eventRedirects";
-import { offsetForZone } from "../utils/timezone";
+import { isSkippedLocalTime, offsetForZone } from "../utils/timezone";
 import { isSchemaEligible } from "./eventPredicates";
 import { buildEventSlug } from "./eventSlug";
 import { PERFORMER_IDS } from "./lineup";
@@ -33,6 +33,9 @@ const EVENTBRITE_ID_PATTERN = /^\d+$/;
 // brackets at input is defense in depth (plan R21): no show copy needs them.
 const NO_ANGLE_BRACKETS = /^[^<>]*$/;
 const ANGLE_BRACKET_MESSAGE = "Remove the < and > characters";
+/** Shared with the editor, which checks the same rule before saving. */
+export const SKIPPED_TIME_MESSAGE =
+  "That time doesn't exist there: the clocks skip it when daylight saving starts. Pick another.";
 
 /** Hosts a ticket link may point at, by who sells the tickets. */
 export const TICKET_URL_HOSTS = {
@@ -268,6 +271,19 @@ function checkWriteRules(e: WriteEntry, ctx: z.RefinementCtx): void {
   // Times are zero padded HH:MM, so string order is clock order.
   if (e.startTime && e.endTime && e.endTime <= e.startTime) {
     issue("endTime", "The show must end after it starts");
+  }
+
+  // WHY here and not only in the editor: a wall clock the zone skips at
+  // spring forward (Chicago 02:30 on March 14, 2027) has no instant, so
+  // offsetForZone guesses one and the event schema publishes a wrong time.
+  // The write tier is the one place every write passes, API calls included.
+  if (e.isoDate && e.timezone) {
+    for (const key of ["startTime", "endTime"] as const) {
+      const time = e[key];
+      if (time && isSkippedLocalTime(`${e.isoDate}T${time}`, e.timezone)) {
+        issue(key, SKIPPED_TIME_MESSAGE);
+      }
+    }
   }
 
   const urlIssue = ticketUrlIssue(e.ticketSource, e.url);
@@ -537,6 +553,8 @@ export interface SnapshotDiff {
   changed: string[];
   canceled: string[];
   tbaCitiesAdded: string[];
+  /** Same slug, different details (a corrected state, say). */
+  tbaCitiesChanged: string[];
   tbaCitiesRemoved: string[];
 }
 
@@ -551,6 +569,7 @@ export function diffSnapshots(
     changed: [],
     canceled: [],
     tbaCitiesAdded: [],
+    tbaCitiesChanged: [],
     tbaCitiesRemoved: [],
   };
   for (const entry of next.events) {
@@ -560,10 +579,17 @@ export function diffSnapshots(
       diff.canceled.push(entry.slug);
     } else if (!sameContent(entry, before)) diff.changed.push(entry.slug);
   }
-  const prevTba = new Set(prev.tbaCities.map((c) => c.citySlug));
-  const nextTba = new Set(next.tbaCities.map((c) => c.citySlug));
-  diff.tbaCitiesAdded = [...nextTba].filter((s) => !prevTba.has(s));
-  diff.tbaCitiesRemoved = [...prevTba].filter((s) => !nextTba.has(s));
+  // WHY the whole record and not only the slug: removing a city and adding
+  // it back with a corrected state keeps its slug, and a slug-only diff
+  // reported no change, so the fix could never be published.
+  const prevTba = new Map(prev.tbaCities.map((c) => [c.citySlug, c]));
+  const nextTba = new Map(next.tbaCities.map((c) => [c.citySlug, c]));
+  for (const [slug, city] of nextTba) {
+    const before = prevTba.get(slug);
+    if (!before) diff.tbaCitiesAdded.push(slug);
+    else if (!sameContent(city, before)) diff.tbaCitiesChanged.push(slug);
+  }
+  diff.tbaCitiesRemoved = [...prevTba.keys()].filter((s) => !nextTba.has(s));
   return diff;
 }
 

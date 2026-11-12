@@ -176,6 +176,8 @@ function seedVersion1(): void {
       added: [],
       changed: [],
       canceled: [],
+      // No tbaCitiesChanged: version records written before it existed
+      // must still read (changesSchema defaults it).
       tbaCitiesAdded: [],
       tbaCitiesRemoved: [],
     },

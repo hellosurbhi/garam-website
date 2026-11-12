@@ -2,7 +2,7 @@
  * State and actions for the admin Shows tab (issue 337): load, save the
  * draft, publish, restore, rebuild, and watch the website catch up (R15).
  */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SHOWS_TOAST } from "@/data/adminShows";
 import type { EventsSnapshot } from "@/data/eventsSnapshot";
 import type { EventsAdminLoad, RebuildStatus } from "@/lib/eventsAdmin.server";
@@ -56,25 +56,42 @@ export function useShowsAdmin() {
   // undefined: not asked yet; null: /api/version could not say.
   const [siteVersion, setSiteVersion] = useState<number | null>();
   const [now, setNow] = useState(() => Date.now());
+  // WHY numbered loads: a rebuild and a save can each reload, and answers
+  // come back in any order. A load that started earlier read older data,
+  // so applying it after a later one put back a value the admin had just
+  // saved (price 25 over 35), and the next save made that loss permanent.
+  // Only an answer newer than the one shown is applied.
+  const issuedLoads = useRef(0);
+  const appliedLoad = useRef(0);
+  // WHY counted: the editor stays locked until every reload has answered,
+  // so it never opens on a list that one still out is about to replace.
+  const [reloading, setReloading] = useState(0);
 
-  const reload = useCallback(async () => {
-    setLoad(await fetchShows());
+  const fetchOrdered = useCallback(async (isMounted: () => boolean) => {
+    issuedLoads.current += 1;
+    const ticket = issuedLoads.current;
+    const next = await fetchShows();
+    if (!isMounted() || ticket <= appliedLoad.current) return;
+    appliedLoad.current = ticket;
+    setLoad(next);
     setNow(Date.now());
   }, []);
+
+  const reload = useCallback(async () => {
+    setReloading((n) => n + 1);
+    await fetchOrdered(() => true);
+    setReloading((n) => n - 1);
+  }, [fetchOrdered]);
 
   // WHY not reload(): the first load has to ignore an answer that lands
   // after the tab unmounted, and state is only set in the async callback.
   useEffect(() => {
     let cancelled = false;
-    void fetchShows().then((next) => {
-      if (cancelled) return;
-      setLoad(next);
-      setNow(Date.now());
-    });
+    void fetchOrdered(() => !cancelled);
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [fetchOrdered]);
 
   useEffect(() => {
     if (!toast) return;
@@ -235,8 +252,10 @@ export function useShowsAdmin() {
     reload,
     inFlight,
     busy: inFlight.length > 0,
-    // A rebuild leaves the draft alone, so editing may start during one.
-    draftWriting: inFlight.some((action) => action !== "rebuild"),
+    // A rebuild leaves the draft alone, so editing may start during one,
+    // but not while any reload is out (see reloading).
+    draftWriting:
+      reloading > 0 || inFlight.some((action) => action !== "rebuild"),
     toast,
     siteVersion,
     now,

@@ -19,7 +19,7 @@ import {
 } from "@/data/eventsSnapshot";
 import * as venuePresets from "@/data/venues";
 import type { AdminCityOption } from "@/lib/eventsAdmin.server";
-import { offsetForZone } from "@/utils/timezone";
+import { isoToLocal, isSkippedLocalTime, localToIso } from "@/utils/timezone";
 
 export type VenueForm = Record<keyof EventVenue, string>;
 
@@ -98,33 +98,6 @@ export function cityTimezone(events: EventEntry[], citySlug: string): string {
 export function timezoneChoices(current: string): string[] {
   const zones = Intl.supportedValuesOf("timeZone");
   return current && !zones.includes(current) ? [current, ...zones] : zones;
-}
-
-/** "YYYY-MM-DDTHH:MM" wall clock in `timeZone` for a UTC instant. */
-export function isoToLocal(iso: string, timeZone: string): string {
-  const parts = Object.fromEntries(
-    new Intl.DateTimeFormat("en-US", {
-      timeZone: timeZone || "UTC",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      hourCycle: "h23",
-    })
-      .formatToParts(new Date(iso))
-      .map((p) => [p.type, p.value]),
-  );
-  return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
-}
-
-/** UTC ISO instant for a wall clock in `timeZone`. */
-export function localToIso(local: string, timeZone: string): string {
-  const [date, time] = local.split("T");
-  // WHY UTC when no zone is picked yet: the write tier then reports the
-  // missing zone on both fields, so this value is never published.
-  const offset = timeZone ? offsetForZone(date, time, timeZone) : "+00:00";
-  return new Date(`${date}T${time}:00${offset}`).toISOString();
 }
 
 export function emptyForm(): ShowForm {
@@ -245,16 +218,6 @@ export interface FormDateProblem {
   message: string;
 }
 
-/**
- * True when the clocks skip `local` ("YYYY-MM-DDTHH:MM") in `timeZone` at
- * spring forward. WHY a round trip: a skipped time is the one wall clock
- * that does not come back as itself; a repeated fall back time does, as
- * its first occurrence (offsetForZone).
- */
-function isSkipped(local: string, timeZone: string): boolean {
-  return isoToLocal(localToIso(local, timeZone), timeZone) !== local;
-}
-
 /** A show time as one wall clock in its zone, or "" when a part is missing. */
 function wallClock(form: ShowForm, key: "startTime" | "endTime"): string {
   return form.isoDate && form.timezone && TIME_PATTERN.test(form[key])
@@ -281,7 +244,7 @@ export function formDateProblems(
     const clock = wallClock(form, key);
     const before = initial ? wallClock(initial, key) : "";
     const edited = clock !== before || form.timezone !== initial?.timezone;
-    if (clock && edited && isSkipped(clock, form.timezone)) {
+    if (clock && edited && isSkippedLocalTime(clock, form.timezone)) {
       problems.push({ field: key, message: EDITOR.skippedTime });
     }
   }
@@ -290,7 +253,7 @@ export function formDateProblems(
   const day = LOCAL_PATTERN.exec(local)?.[1];
   if (!day || !isoDateSchema.safeParse(day).success) {
     problems.push({ field: "onSaleAt", message: EDITOR.badDate });
-  } else if (form.timezone && isSkipped(local, form.timezone)) {
+  } else if (form.timezone && isSkippedLocalTime(local, form.timezone)) {
     problems.push({ field: "onSaleAt", message: EDITOR.skippedTime });
   }
   return problems;

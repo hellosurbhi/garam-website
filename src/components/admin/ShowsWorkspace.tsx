@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { SHOWS_TOAST } from "@/data/adminShows";
 import type { SnapshotDiff } from "@/data/eventsSnapshot";
 import type { EventsAdminLoad } from "@/lib/eventsAdmin.server";
+import { utcTodayIso } from "@/utils/date";
 import ComingSoonCities from "./ComingSoonCities";
 import ShowEditorModal from "./ShowEditorModal";
 import ShowsDialogs from "./ShowsDialogs";
@@ -12,13 +13,7 @@ import ShowsToolbar from "./ShowsToolbar";
 import StaleEditorNotice from "./StaleEditorNotice";
 import type { ShowsAdmin } from "./useShowsAdmin";
 import { useShowsDialog } from "./useShowsDialog";
-import {
-  countChanges,
-  localTodayIso,
-  previewShows,
-  sitePhase,
-  sortShows,
-} from "./showsView";
+import { countChanges, previewShows, sitePhase, sortShows } from "./showsView";
 import styles from "./ShowsTab.module.css";
 
 const NO_CHANGES: SnapshotDiff = {
@@ -26,6 +21,7 @@ const NO_CHANGES: SnapshotDiff = {
   changed: [],
   canceled: [],
   tbaCitiesAdded: [],
+  tbaCitiesChanged: [],
   tbaCitiesRemoved: [],
 };
 
@@ -50,7 +46,8 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
   const changes = fresh?.changes ?? NO_CHANGES;
   const waitlist = (fresh && data.waitlist.draft) || data.waitlist.live;
   const changeCount = countChanges(changes);
-  const todayIso = localTodayIso();
+  // The hook's clock, and the UTC day the public pages use (utcTodayIso).
+  const todayIso = utcTodayIso(new Date(admin.now));
   const previews = useMemo(
     () => previewShows(draft, todayIso, waitlist),
     [draft, todayIso, waitlist],

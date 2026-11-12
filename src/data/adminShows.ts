@@ -3,7 +3,11 @@
  * publish, restore and the version history. Components import from here and
  * never hardcode their own text.
  */
-import type { SnapshotDiff, TicketSource } from "./eventsSnapshot";
+import {
+  SKIPPED_TIME_MESSAGE,
+  type SnapshotDiff,
+  type TicketSource,
+} from "./eventsSnapshot";
 
 export const SHOWS_TAB_LABEL = "Shows";
 
@@ -90,6 +94,7 @@ export const CHANGE_LABELS: Record<keyof SnapshotDiff, string> = {
   changed: "Edited shows",
   canceled: "Canceled shows",
   tbaCitiesAdded: "Coming soon cities added",
+  tbaCitiesChanged: "Coming soon cities edited",
   tbaCitiesRemoved: "Coming soon cities removed",
 };
 
@@ -204,8 +209,7 @@ export const EDITOR = {
   noteHint: "Needed when you cancel the show or move its date.",
   noteNeeded: "Add a note saying why.",
   badDate: "Enter a real date with a four digit year.",
-  skippedTime:
-    "That time doesn't exist there: the clocks skip it when daylight saving starts. Pick another.",
+  skippedTime: SKIPPED_TIME_MESSAGE,
   stale:
     "Someone published a newer version while the editor was open, so nothing you typed was saved. Open the show again to edit the current version.",
   staleDismiss: "OK",

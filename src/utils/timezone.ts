@@ -44,7 +44,8 @@ export function offsetForZone(
     offsetAtUtcMs(localAsUtc + 86_400_000),
   ].filter((o) => offsetAtUtcMs(localAsUtc - o * 60_000) === o);
   // A skipped time fits neither; it keeps the refinement below, and the
-  // admin editor refuses such times before they are saved.
+  // write tier (src/data/eventsSnapshot.ts) refuses such show times, so
+  // none is ever published.
   const offsetMin =
     fits.length > 0
       ? Math.max(...fits)
@@ -58,4 +59,41 @@ export function offsetForZone(
 /** Compute the UTC offset string (±HH:MM) for a date/time in America/New_York. */
 export function nyOffset(isoDate: string, time: string): string {
   return offsetForZone(isoDate, time, "America/New_York");
+}
+
+/** "YYYY-MM-DDTHH:MM" wall clock in `timeZone` for a UTC instant. */
+export function isoToLocal(iso: string, timeZone: string): string {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: timeZone || "UTC",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+    })
+      .formatToParts(new Date(iso))
+      .map((p) => [p.type, p.value]),
+  );
+  return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
+}
+
+/** UTC ISO instant for a wall clock in `timeZone`. */
+export function localToIso(local: string, timeZone: string): string {
+  const [date, time] = local.split("T");
+  // WHY UTC when no zone is picked yet: the write tier then reports the
+  // missing zone on both fields, so this value is never published.
+  const offset = timeZone ? offsetForZone(date, time, timeZone) : "+00:00";
+  return new Date(`${date}T${time}:00${offset}`).toISOString();
+}
+
+/**
+ * True when the clocks skip `local` ("YYYY-MM-DDTHH:MM") in `timeZone` at
+ * spring forward. WHY a round trip: a skipped time is the one wall clock
+ * that does not come back as itself; a repeated fall back time does, as
+ * its first occurrence (offsetForZone).
+ */
+export function isSkippedLocalTime(local: string, timeZone: string): boolean {
+  return isoToLocal(localToIso(local, timeZone), timeZone) !== local;
 }

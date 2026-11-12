@@ -41,6 +41,7 @@ import { alertOps } from "./opsAlert";
 import { verifyAdminIdentity, type AdminIdentity } from "./verifyToken";
 import { selectWaitlistCards, type CityWaitlistCount } from "./waitlistRanking";
 import { getWaitlistRanking } from "./waitlistRanking.server";
+import { utcTodayIso } from "../utils/date";
 import { getListingInventory } from "../utils/eventFilters";
 
 /** Deploy hook deadline (plan section 5). */
@@ -242,7 +243,7 @@ export function previewWaitlist(
   counts: CityWaitlistCount[],
   now: Date,
 ): WaitlistPreview {
-  const todayIso = now.toISOString().slice(0, 10);
+  const todayIso = utcTodayIso(now);
   const cards = selectWaitlistCards(
     counts,
     getListingInventory(buildAllEvents(snapshot, todayIso), "tickets"),

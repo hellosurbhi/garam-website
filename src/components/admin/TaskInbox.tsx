@@ -1,6 +1,7 @@
 import { type ReactNode, useState } from "react";
 import { getFirebaseAuth } from "@/lib/firebase";
 import { type Application } from "@/types/application";
+import { applicantName } from "@/utils/applicantDisplay";
 import ContestantInviteModal from "./ContestantInviteModal";
 import styles from "./TaskInbox.module.css";
 
@@ -172,8 +173,8 @@ function BucketRow({
   return (
     <div className={styles.row}>
       <div className={styles.rowMeta}>
-        <span className={styles.rowName}>{app.name}</span>
-        <span className={styles.rowCity}>{app.city}</span>
+        <span className={styles.rowName}>{applicantName(app)}</span>
+        <span className={styles.rowCity}>{app.city ?? ""}</span>
         <span className={styles.rowContext}>{context}</span>
       </div>
       <button

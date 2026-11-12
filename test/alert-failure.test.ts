@@ -5,6 +5,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 const mockSend = vi.hoisted(() => vi.fn());
 const mockRedisSet = vi.hoisted(() => vi.fn());
 const mockRedisDel = vi.hoisted(() => vi.fn());
+const mockRedisGet = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/zohoMailer", () => ({
   sendMail: mockSend,
@@ -18,6 +19,7 @@ vi.mock("@upstash/redis", () => ({
   Redis: class {
     set = mockRedisSet;
     del = mockRedisDel;
+    get = mockRedisGet;
   },
 }));
 
@@ -58,6 +60,11 @@ const validReport = {
   },
 };
 
+/** Mirrors alertKey in alert-failure.ts: the reason is part of the dedupe key. */
+function reasonHash(message: string): string {
+  return createHash("sha256").update(message).digest("hex").slice(0, 12);
+}
+
 describe("alert-failure handler", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -77,7 +84,10 @@ describe("alert-failure handler", () => {
     expect(mockSend).toHaveBeenCalledTimes(1);
     const mail = mockSend.mock.calls[0][0];
     expect(mail.to).toBe("admin@example.com");
-    expect(mail.subject).toBe("FAILURE [apply/submit]");
+    // The subject names the real cause, never a canned sentence.
+    expect(mail.subject).toBe(
+      "APPLY FAILED: submit: Firebase Storage: User does not have permission to access 'photos/x.jpeg'. (storage/unauthorized)",
+    );
     expect(mail.html).toContain("storage/unauthorized");
     expect(mail.html).toContain("priya@example.com");
     expect(mail.text).toContain("instagram: applicant_fixture_1");
@@ -93,20 +103,43 @@ describe("alert-failure handler", () => {
     expect(mockSend).not.toHaveBeenCalled();
   });
 
-  it("accepts a report without contact fields (ops heartbeat shape)", async () => {
+  it("accepts a report without contact fields (cron failure shape)", async () => {
     const res = await POST(
       makeContext(
         makeRequest({
           flow: "ops",
-          stage: "heartbeat",
-          errorMessage:
-            "Weekly pager test: if you received this, alerting works.",
+          stage: "cron_daily_digest",
+          errorMessage: "Zoho SMTP 535 authentication failed",
         }),
       ),
     );
     expect(res.status).toBe(200);
     expect(mockSend).toHaveBeenCalledTimes(1);
-    expect(mockSend.mock.calls[0][0].subject).toBe("FAILURE [ops/heartbeat]");
+    expect(mockSend.mock.calls[0][0].subject).toBe(
+      "OPS FAILED: cron_daily_digest: Zoho SMTP 535 authentication failed",
+    );
+  });
+
+  it("two different failures for the same person are two emails, never collapsed", async () => {
+    import.meta.env.UPSTASH_REDIS_REST_URL = "https://fake.upstash.io";
+    import.meta.env.UPSTASH_REDIS_REST_TOKEN = "test-token";
+    mockRedisSet.mockResolvedValue("OK");
+    try {
+      await POST(makeContext(makeRequest(validReport)));
+      await POST(
+        makeContext(
+          makeRequest({
+            ...validReport,
+            errorMessage: "photo 2 of 3 timed out",
+          }),
+        ),
+      );
+      const keys = mockRedisSet.mock.calls.map((c) => c[0]);
+      expect(new Set(keys).size).toBe(2);
+    } finally {
+      delete import.meta.env.UPSTASH_REDIS_REST_URL;
+      delete import.meta.env.UPSTASH_REDIS_REST_TOKEN;
+    }
   });
 
   it("rejects unknown flows and empty error messages", async () => {
@@ -170,8 +203,8 @@ describe("alert-failure handler", () => {
         .update("priya@example.com")
         .digest("hex");
       expect(mockRedisSet).toHaveBeenCalledWith(
-        `alert:apply:submit:${digest}`,
-        "1",
+        `alert:apply:submit:${reasonHash(validReport.errorMessage)}:${digest}`,
+        "sending",
         {
           nx: true,
           ex: 3600,
@@ -191,7 +224,9 @@ describe("alert-failure handler", () => {
       const digest = createHash("sha256")
         .update("priya@example.com")
         .digest("hex");
-      expect(mockRedisDel).toHaveBeenCalledWith(`alert:apply:submit:${digest}`);
+      expect(mockRedisDel).toHaveBeenCalledWith(
+        `alert:apply:submit:${reasonHash(validReport.errorMessage)}:${digest}`,
+      );
     });
 
     it("keeps the dedupe claim when the alert delivers", async () => {
@@ -201,8 +236,17 @@ describe("alert-failure handler", () => {
       expect(mockRedisDel).not.toHaveBeenCalled();
     });
 
+    it("a retry while the first send is still in flight is not called suppressed", async () => {
+      mockRedisSet.mockResolvedValue(null);
+      mockRedisGet.mockResolvedValue("sending");
+      const res = await POST(makeContext(makeRequest(validReport)));
+      expect(res.status).toBe(503);
+      expect(mockSend).not.toHaveBeenCalled();
+    });
+
     it("a retry inside the window is suppressed, not mailed (Dua's four duplicate pages)", async () => {
       mockRedisSet.mockResolvedValue(null);
+      mockRedisGet.mockResolvedValue("sent");
       const res = await POST(makeContext(makeRequest(validReport)));
       expect(res.status).toBe(200);
       const body = (await res.json()) as { ok: boolean; suppressed?: boolean };
@@ -230,7 +274,7 @@ describe("alert-failure handler", () => {
         expect.objectContaining({
           method: "POST",
           headers: expect.objectContaining({
-            Title: "FAILURE apply/submit",
+            Title: expect.stringContaining("APPLY FAILED: submit:"),
             Priority: "urgent",
           }),
         }),

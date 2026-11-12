@@ -32,6 +32,26 @@ export const RATE_LIMITS = {
     limit: 10,
     windowSeconds: 60,
   },
+  // Autosave fires per field, so a real applicant makes dozens of calls in a
+  // minute. Sized well above any human; the limiter also fails open.
+  saveApplication: {
+    prefix: "ratelimit:save-application",
+    limit: 600,
+    windowSeconds: 60,
+  },
+  // Creating a NEW draft (no token yet) is the only unauthenticated write, so
+  // it gets its own tighter bound against bots filling the admin Draft list.
+  // Sized for a shared carrier or venue wifi IP; the limiter fails open.
+  newApplicationDraft: {
+    prefix: "ratelimit:new-application-draft",
+    limit: 300,
+    windowSeconds: 3600,
+  },
+  uploadApplicationPhoto: {
+    prefix: "ratelimit:upload-application-photo",
+    limit: 300,
+    windowSeconds: 60,
+  },
   notifyApplication: {
     prefix: "ratelimit:notify-application",
     limit: 5,

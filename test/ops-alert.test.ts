@@ -2,8 +2,10 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { validateEmail } from "@/utils/validateEmail";
 
 const mockSend = vi.hoisted(() => vi.fn());
+const mockFsAdd = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/zohoMailer", () => ({ sendMail: mockSend }));
+vi.mock("@/lib/firestoreRest", () => ({ fsAdd: mockFsAdd }));
 
 const { alertOps, redactEmails } = await import("@/lib/opsAlert");
 
@@ -27,6 +29,7 @@ describe("alertOps push webhook", () => {
     vi.clearAllMocks();
     pushes.length = 0;
     mockSend.mockResolvedValue(undefined);
+    mockFsAdd.mockResolvedValue("incident-1");
     import.meta.env.NOTIFICATION_EMAIL = "admin@example.com";
     import.meta.env.ALERT_WEBHOOK_URL = WEBHOOK;
     vi.spyOn(globalThis, "fetch").mockImplementation((async (
@@ -56,7 +59,7 @@ describe("alertOps push webhook", () => {
     expect(body).toContain("[email redacted]");
     // The diagnosis itself survives; only the identity is removed.
     expect(body).toContain("SMTP 535");
-    expect(body).toContain("Failure in ops/cron_post_show");
+    expect(body).toContain("OPS FAILED: cron_post_show");
   });
 
   it("keeps the unredacted message on the private email channel", async () => {
@@ -152,6 +155,54 @@ describe("alertOps push webhook", () => {
     const body = lastPushBody();
     expect(body).toContain("storage/unauthorized on photos/x.jpeg");
     expect(body).not.toContain("redacted");
+  });
+
+  it("a webhook that answers 5xx does not count as a delivered page", async () => {
+    mockSend.mockRejectedValue(new Error("SMTP down"));
+    vi.spyOn(globalThis, "fetch").mockImplementation(
+      (async () =>
+        new Response("bad gateway", { status: 502 })) as typeof fetch,
+    );
+    const delivered = await alertOps({
+      flow: "ops",
+      stage: "cron_post_show",
+      errorMessage: "boom",
+    });
+    expect(delivered).toBe(false);
+  });
+
+  it("still counts as delivered when email works and the webhook is down", async () => {
+    vi.spyOn(globalThis, "fetch").mockImplementation(
+      (async () => new Response("no", { status: 500 })) as typeof fetch,
+    );
+    const delivered = await alertOps({
+      flow: "ops",
+      stage: "cron_post_show",
+      errorMessage: "boom",
+    });
+    expect(delivered).toBe(true);
+  });
+
+  it("a hung or failing incident record never blocks or fails the page", async () => {
+    vi.useFakeTimers();
+    try {
+      mockFsAdd.mockReturnValue(new Promise(() => {}));
+      const run = alertOps({
+        flow: "ops",
+        stage: "cron_post_show",
+        errorMessage: "boom",
+      });
+      await vi.advanceTimersByTimeAsync(2500);
+      await expect(run).resolves.toBe(true);
+      expect(mockSend).toHaveBeenCalledTimes(1);
+      mockFsAdd.mockRejectedValue(new Error("firestore down"));
+      vi.spyOn(console, "error").mockImplementation(() => {});
+      await expect(
+        alertOps({ flow: "ops", stage: "cron_post_show", errorMessage: "x" }),
+      ).resolves.toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("never sends context entries over the webhook", async () => {

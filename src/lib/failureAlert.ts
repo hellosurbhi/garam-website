@@ -21,6 +21,24 @@ export interface FailureReport {
     phone?: string;
     instagram?: string;
   };
+  /** Plain facts that name the cause: failing field, field lengths, photo sizes, what was saved. */
+  details?: Record<string, string | undefined>;
+}
+
+const MAX_DETAIL_ENTRIES = 40;
+
+function cleanDetails(
+  details: FailureReport["details"],
+): Record<string, string> | undefined {
+  if (!details) return undefined;
+  const out: Record<string, string> = {};
+  for (const [key, value] of Object.entries(details)) {
+    if (value === undefined || Object.keys(out).length >= MAX_DETAIL_ENTRIES) {
+      continue;
+    }
+    out[key.slice(0, 60)] = value.slice(0, 500);
+  }
+  return out;
 }
 
 // Mirrors FailureSchema in /api/alert-failure.ts: an over-limit field would
@@ -49,6 +67,7 @@ export function reportFailure(report: FailureReport): void {
               },
             }
           : {}),
+        ...(report.details ? { details: cleanDetails(report.details) } : {}),
         pageUrl: window.location.href.slice(0, 2000),
         userAgent: navigator.userAgent.slice(0, 1000),
       }),

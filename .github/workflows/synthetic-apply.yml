@@ -77,7 +77,7 @@ jobs:
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
           FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
 
-      - name: Test real application and Notify Me
+      - name: Test Notify Me signup
         id: flow
         if: success() && steps.rules.outcome == 'success' && steps.preversion.outputs.state == 'ready'
         run: npx playwright test --config playwright.synthetic.config.ts --grep-invert 'ticket redirects'

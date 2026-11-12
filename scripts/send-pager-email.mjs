@@ -66,20 +66,34 @@ export async function sendPagerEmail(mode, env, fetchImpl) {
   const to = env.PAGER_EMAIL_TO?.trim() || user;
   const runUrl = env.RUN_URL?.trim() ?? "";
 
+  // The verify step's own output, so the email names the exact failure
+  // instead of a canned sentence. Capped so a runaway log cannot bloat it.
+  const detail = env.DETAIL?.trim().slice(0, 4000) ?? "";
+
   const subject =
     env.MONITOR_SUBJECT?.replace(/[\r\n]/g, " ").slice(0, 160) ||
     (mode === "page"
-      ? "Website monitor needs attention"
+      ? detail
+        ? `APPLY FAILED: ${
+            detail
+              .split("\n")
+              .find((l) => l.startsWith("- "))
+              ?.slice(2, 160) ??
+            "production canary could not file an application"
+          }`
+        : "Website monitor needs attention"
       : "Weekly monitoring notification test");
   const text =
     mode === "page"
       ? [
           env.MONITOR_MESSAGE ||
-            "The production monitor did not complete. Customer impact needs investigation.",
+            (detail
+              ? "The production apply canary FAILED. Real applicants may be affected."
+              : "The production monitor did not complete. Customer impact needs investigation."),
           "",
-          `Workflow run with the diagnosis: ${runUrl || "(run URL unavailable)"}`,
+          detail || "(the failing step printed no detail, open the run)",
           "",
-          "The verify and rules-drift step outputs in that run show the cause and the applicant impact.",
+          `Workflow run with full logs: ${runUrl || "(run URL unavailable)"}`,
         ].join("\n")
       : [
           "This is a labelled notification test. Receiving it confirms delivery to this inbox.",

@@ -1,0 +1,161 @@
+# Production apply canary, every 30 minutes.
+#
+# Drives the LIVE /apply page in three phone profiles (iPhone Safari, Android
+# Chrome, an Instagram user agent), files one draft per profile through the
+# real endpoints with a multi-MB JPEG and a HEIC, then reads each draft back
+# and requires THIS run's id in it (scripts/canary-verify.mjs). Each profile
+# overwrites ONE fixed `_canary/<id>` document and fixed photo slots, so it
+# never grows, never deletes and never shows in the admin list.
+#
+# Pages ONLY on failure, through channels independent of the website (GitHub
+# issue plus the show's Gmail), so a broken site can never silence its own
+# alarm (2026-08-19 postmortem). A passing run sends nothing. The daily digest
+# is the "everything is fine" email.
+#
+# Required repo secrets: FIREBASE_ADMIN_CLIENT_EMAIL, FIREBASE_ADMIN_PRIVATE_KEY,
+# FIREBASE_PROJECT_ID, FIREBASE_STORAGE_BUCKET; for the Gmail pager: GMAIL_USER,
+# GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN. Optional:
+# PAGER_EMAIL_TO, DRAFT_TOKEN_SECRET (only if set in Vercel too).
+name: Apply Canary
+
+on:
+  schedule:
+    - cron: "7,37 * * * *"
+  workflow_dispatch:
+    inputs:
+      test_pager:
+        description: "Send a test email through the Gmail pager channel"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: apply-canary
+  cancel-in-progress: false
+
+jobs:
+  canary:
+    name: File and read back on production
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CANARY_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - name: Record the run start
+        # The canary reuses one document and fixed photo slots, so the
+        # read-back needs a start time to tell this run's writes from the last.
+        run: echo "CANARY_STARTED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm install -g npm@11
+      - run: npm ci
+      - name: Install browsers
+        timeout-minutes: 6
+        run: npx playwright install chromium webkit --with-deps
+      - name: File an application in each phone profile
+        # WHY a step timeout under the job's 20: a hung browser must fail this
+        # step so the read-back and the upload below still run. A job-level
+        # timeout kills every remaining step and would page nobody.
+        timeout-minutes: 10
+        run: npx playwright test --config playwright.canary.config.ts
+        env:
+          PLAYWRIGHT_BASE_URL: https://garammasaladating.com
+          FIREBASE_ADMIN_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY }}
+          DRAFT_TOKEN_SECRET: ${{ secrets.DRAFT_TOKEN_SECRET }}
+      - name: Read each draft back and check this run's id
+        # always(): the read-back IS the diagnosis. It names which profile
+        # failed and why, even when the browser step died first.
+        if: ${{ !cancelled() }}
+        id: verify
+        timeout-minutes: 4
+        run: |
+          set -o pipefail
+          node scripts/canary-verify.mjs 2>&1 | tee verify.log
+        env:
+          FIREBASE_ADMIN_CLIENT_EMAIL: ${{ secrets.FIREBASE_ADMIN_CLIENT_EMAIL }}
+          FIREBASE_ADMIN_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
+      - name: Keep the evidence for the report job
+        uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: apply-canary-report
+          path: |
+            verify.log
+            playwright-report/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  # WHY a separate job: steps after a failure inside the canary job never run
+  # when the job times out or is cancelled, which is exactly when a hung
+  # production site most needs to page. A dependent job runs on failure,
+  # cancellation and timeout alike, and it holds the pager credentials so the
+  # browser job never sees them.
+  report:
+    name: Page on failure
+    needs: canary
+    # issues: write exists ONLY for the pager step below, so the browser job
+    # runs with read-only access.
+    permissions:
+      contents: read
+      issues: write
+    if: ${{ always() && (needs.canary.result != 'success' || (github.event_name == 'workflow_dispatch' && inputs.test_pager)) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v7
+        # Missing when the canary died before it could upload; the pager
+        # then reports the bare job result.
+        continue-on-error: true
+        with:
+          name: apply-canary-report
+      - name: Page the producer via GitHub issue on failure
+        if: ${{ needs.canary.result != 'success' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          CANARY_RESULT: ${{ needs.canary.result }}
+        run: |
+          TITLE="APPLY FAILED: production apply canary"
+          DETAIL="$(head -c 3000 verify.log 2>/dev/null || true)"
+          BODY="The production apply canary ended as: $CANARY_RESULT. Real applicants may be affected. Run: $RUN_URL
+
+          $DETAIL"
+          EXISTING=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"$TITLE\" in:title" --json number --jq '.[0].number // empty' || true)
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --repo "$GITHUB_REPOSITORY" --body "$BODY"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$TITLE" --body "$BODY" --assignee hellosurbhi
+          fi
+      - name: Email the producer from the show's Gmail
+        # Sent by the workflow itself through the Gmail REST API, independent
+        # of GitHub's notification sender and of the site's email path.
+        # WHY after the issue step: a broken Gmail credential must never open a
+        # fake incident before the GitHub issue pager above has run. It runs
+        # even if that step failed, so one dead channel never mutes the other.
+        if: ${{ always() }}
+        timeout-minutes: 2
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_CLIENT_ID: ${{ secrets.GMAIL_CLIENT_ID }}
+          GMAIL_CLIENT_SECRET: ${{ secrets.GMAIL_CLIENT_SECRET }}
+          GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
+          PAGER_EMAIL_TO: ${{ secrets.PAGER_EMAIL_TO }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          CANARY_RESULT: ${{ needs.canary.result }}
+        run: |
+          # A test_pager dispatch whose canary ALSO genuinely failed still
+          # pages for real; only a passing drill sends the test message.
+          if [ "$CANARY_RESULT" != "success" ]; then MODE=page; else MODE=test; fi
+          DETAIL="$(head -c 3500 verify.log 2>/dev/null || true)" node scripts/send-pager-email.mjs "$MODE"

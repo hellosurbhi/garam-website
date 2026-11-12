@@ -1,5 +1,17 @@
 # Lessons
 
+## A pager step inside the job it watches can never page a hung job
+
+**What went wrong:** The canary workflow paged from `failure()` steps in the same job as the browser run. A job that timed out or was cancelled skips every remaining step, so the one case a hung production site produces paged nobody.
+**Why:** The wrong assumption was that a step after the failing one always runs. Job-level timeouts and cancellation stop the whole job.
+**Rule:** Alarms live in a separate job that `needs` the monitored job and runs on `always()`. The monitored job's steps carry their own shorter timeouts so evidence still uploads.
+
+## Never put form validation in the database rules
+
+**What went wrong:** The apply form failed with "Missing or insufficient permissions" in July, August and again in November, each time for different applicants, and the synthetic monitor stayed green.
+**Why:** The wrong assumption was that rules are a safe place to decide what a valid application looks like. Rules, Storage rules and anonymous login are three separate things a real phone can fail, they are deployed by hand, and the error they produce names no field and no cause. A monitor with one clean desktop browser cannot reproduce a strict-rule rejection of an unusual real submission.
+**Rule:** Public forms post to our server, which accepts everything, files it and flags what looks wrong. Rules stay admin-only and are never in the applicant's path. Every failure alert names the stage and the raw error, and a monitor overwrites one fixed document instead of creating and deleting fake ones.
+
 ## Review the complete feedback before declaring merge readiness
 
 Use the actual overnight queue format with file paths when deferring work; a prose heading is not a runnable queue entry.

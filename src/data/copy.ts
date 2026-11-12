@@ -174,11 +174,35 @@ export const APPLY_PAGE = {
     `I am submitting this on behalf of ${friendName ?? "someone I know"}, with their permission. They will not be shocked to hear from us.`,
   nominationContactNote: (friendName?: string): string =>
     `All contact info below is ${friendName ? `${friendName}'s` : "your friend's"}, not yours. Double-check every detail. If we cannot reach them, they will never hear from us.`,
+  fieldErrors: {
+    required: "Required",
+    underage: "Must be 18 or older",
+    photoRequired: "A photo is required",
+    marketingUnanswered: "Please select Yes or No.",
+    marketingDeclined: (isNomination: boolean, friendName?: string): string =>
+      isNomination
+        ? `${friendName ?? "Your friend"} must select Yes to apply.`
+        : "You must select Yes to apply.",
+    nominationConsent: (friendName?: string): string =>
+      friendName
+        ? `Please confirm you have permission to nominate ${friendName}`
+        : "Please confirm you have permission to nominate this person",
+    termsAgreed: "You must agree to the Terms & Conditions",
+  },
   headingSelf: "Applying for yourself",
   headingNomination: "Nominating a friend",
   photosFailedTitle: "One thing: your photos did not come through",
   photosFailedNote:
     "Your application is safely with us, but the photo upload failed on your connection. DM your photos to @garammasaladating on Instagram and we will attach them for you.",
+  submitFailed: (detail: string): string =>
+    `We could not finish sending your application (${detail}). Your answers are still on this page and we have kept what you typed. Tap Submit again, or DM us @garammasaladating on Instagram and we will sort it out.`,
+  photoStatusSaving: (count: number): string =>
+    `Saving ${count} ${count === 1 ? "photo" : "photos"}...`,
+  photoStatusSaved: "All photos saved",
+  photoRemovalFailed:
+    "A photo you removed could not be taken off your application. Check your connection and try again.",
+  photoStatusRetrying: (count: number): string =>
+    `${count} ${count === 1 ? "photo is" : "photos are"} still retrying. You can keep going, we will try again when you submit.`,
   photoGuidanceHeading: "Photos: up to 10",
   photoGuidanceIntro: "We need to be able to tell what you look like. Include:",
   photoGuidanceItems: [

@@ -27,6 +27,7 @@ import {
   STATUS_SECTION_DEFAULTS,
 } from "@/types/application";
 import { SHOWS_TAB_LABEL } from "@/data/adminShows";
+import { applicantName } from "@/utils/applicantDisplay";
 import { adminSelectStyles } from "@/utils/reactSelectStyles";
 import Skeleton from "../ui/Skeleton";
 import ApplicantCard from "./ApplicantCard";
@@ -353,7 +354,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     const cities = new Set(
       applications
         .filter((a) => !a.deletedAt && a.city?.trim())
-        .map((a) => a.city.trim()),
+        .map((a) => (a.city ?? "").trim()),
     );
     return [...cities].sort().map((c) => ({ value: c, label: c }));
   }, [applications]);
@@ -377,20 +378,22 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     let result = [...active];
     if (genderFilter.length > 0) {
       const selected = new Set(genderFilter.map((o) => o.value));
-      result = result.filter((a) => selected.has(a.gender));
+      result = result.filter((a) => selected.has(a.gender ?? ""));
     }
     if (orientationFilter.length > 0) {
       const selected = new Set(orientationFilter.map((o) => o.value));
-      result = result.filter((a) => selected.has(a.orientation));
+      result = result.filter((a) => selected.has(a.orientation ?? ""));
     }
     if (cityFilter.length > 0) {
       const selected = new Set(cityFilter.map((o) => o.value));
-      result = result.filter((a) => selected.has(a.city?.trim()));
+      result = result.filter((a) => selected.has((a.city ?? "").trim()));
     }
 
     const nameQuery = nameSearch.trim().toLowerCase();
     if (nameQuery) {
-      result = result.filter((a) => a.name.toLowerCase().includes(nameQuery));
+      result = result.filter((a) =>
+        applicantName(a).toLowerCase().includes(nameQuery),
+      );
     }
 
     result.sort(
@@ -401,10 +404,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     let filteredParticipated = [...participated];
     if (nameQuery) {
       filteredDeleted = filteredDeleted.filter((a) =>
-        a.name.toLowerCase().includes(nameQuery),
+        applicantName(a).toLowerCase().includes(nameQuery),
       );
       filteredParticipated = filteredParticipated.filter((a) =>
-        a.name.toLowerCase().includes(nameQuery),
+        applicantName(a).toLowerCase().includes(nameQuery),
       );
     }
 

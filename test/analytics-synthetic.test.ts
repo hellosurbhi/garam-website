@@ -13,6 +13,7 @@ import { GET } from "@/pages/api/analytics";
 it("excludes test leads and applications from the dashboard totals", async () => {
   const emails = [
     "customer@example.com",
+    "draft-only@example.com",
     "synthetic-monitor+01234567-89ab-4cde-8fab-0123456789ab@garammasaladating.com",
   ];
   const network = vi
@@ -28,7 +29,9 @@ it("excludes test leads and applications from the dashboard totals", async () =>
               email: { stringValue: email },
               city: { stringValue: "Chicago" },
               source: { stringValue: "notify-modal" },
-              status: { stringValue: "New" },
+              status: {
+                stringValue: email.startsWith("draft-only") ? "Draft" : "New",
+              },
               createdAt: { stringValue: "2026-11-11T00:00:00Z" },
             },
           }));
@@ -45,8 +48,11 @@ it("excludes test leads and applications from the dashboard totals", async () =>
     expect(response.status).toBe(200);
     const body = await response.json();
     expect(body.applications.total).toBe(1);
+    expect(body.applications.byStatus.Draft).toBeUndefined();
     expect(JSON.stringify(body)).not.toContain("synthetic-monitor");
-    expect(body.funnel.leadsByCity.Chicago).toBe(1);
+    // The shared fixture feeds the leads list too: the draft-only address is a
+    // plain lead there, the synthetic one is still excluded.
+    expect(body.funnel.leadsByCity.Chicago).toBe(2);
   } finally {
     network.mockRestore();
     delete import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;

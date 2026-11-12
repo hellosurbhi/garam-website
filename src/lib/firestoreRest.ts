@@ -110,17 +110,28 @@ function toFsDocument(label: string, docPath: string, raw: RawDocument) {
   } satisfies FsDocument;
 }
 
+/**
+ * Every Firestore call is bounded. A caller-supplied signal (a request
+ * deadline) is passed through untouched because the caller owns that budget
+ * and its tests assert the exact signal reaches fetch; without one, the call
+ * gets a default timeout so a hung Firestore can never hold a function open.
+ */
+function withTimeout(signal: AbortSignal | undefined, ms: number): AbortSignal {
+  return signal ?? AbortSignal.timeout(ms);
+}
+
 /** Read a single document. Returns null if not found. */
 export async function fsGet(
   docPath: string,
   signal?: AbortSignal,
 ): Promise<Record<string, unknown> | null> {
-  const token = await getFirestoreAccessToken(signal);
+  const deadline = withTimeout(signal, 10_000);
+  const token = await getFirestoreAccessToken(deadline);
   const doc = await getRawDocument(
     "fsGet",
     docPath,
     { Authorization: `Bearer ${token}` },
-    signal,
+    deadline,
   );
   if (!doc) return null;
   return doc.fields ? fromFields(doc.fields) : {};
@@ -134,12 +145,13 @@ export async function fsGetDocument(
   docPath: string,
   signal?: AbortSignal,
 ): Promise<FsDocument | null> {
-  const token = await getFirestoreAccessToken(signal);
+  const deadline = withTimeout(signal, 10_000);
+  const token = await getFirestoreAccessToken(deadline);
   const doc = await getRawDocument(
     "fsGetDocument",
     docPath,
     { Authorization: `Bearer ${token}` },
-    signal,
+    deadline,
   );
   return doc ? toFsDocument("fsGetDocument", docPath, doc) : null;
 }
@@ -157,7 +169,12 @@ export async function fsGetPublic(
   docPath: string,
   signal?: AbortSignal,
 ): Promise<FsDocument | null> {
-  const doc = await getRawDocument("fsGetPublic", docPath, {}, signal);
+  const doc = await getRawDocument(
+    "fsGetPublic",
+    docPath,
+    {},
+    withTimeout(signal, 10_000),
+  );
   return doc ? toFsDocument("fsGetPublic", docPath, doc) : null;
 }
 
@@ -172,11 +189,16 @@ export interface FsWrite {
   precondition?: FsPrecondition;
 }
 
+/** Thrown when a conditional write lost a race; callers re-read and retry. */
+export class FsConflictError extends Error {}
+
 /**
  * A commit refused because a precondition no longer held: someone else wrote
  * first. The caller should reload and retry, never overwrite.
+ * WHY a subclass: the commit path also carries Firestore's canonical status,
+ * and one family means `instanceof FsConflictError` catches every lost race.
  */
-export class CommitConflictError extends Error {
+export class CommitConflictError extends FsConflictError {
   constructor(
     readonly status: string,
     message: string,
@@ -232,7 +254,8 @@ export async function fsCommit(
   writes: FsWrite[],
   signal?: AbortSignal,
 ): Promise<void> {
-  const token = await getFirestoreAccessToken(signal);
+  const deadline = withTimeout(signal, 10_000);
+  const token = await getFirestoreAccessToken(deadline);
   const root = documentsRoot();
   const body = {
     writes: writes.map((w) => ({
@@ -241,9 +264,9 @@ export async function fsCommit(
       ...(w.precondition ? { currentDocument: w.precondition } : {}),
     })),
   };
-  signal?.throwIfAborted();
+  deadline.throwIfAborted();
   const res = await fetch(`${baseUrl()}:commit`, {
-    signal,
+    signal: deadline,
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -265,10 +288,11 @@ async function runQuery(
   label: string,
   signal?: AbortSignal,
 ): Promise<Array<{ id: string; fields?: FirestoreFields }>> {
-  const token = await getFirestoreAccessToken(signal);
-  signal?.throwIfAborted();
+  const deadline = withTimeout(signal, 10_000);
+  const token = await getFirestoreAccessToken(deadline);
+  deadline.throwIfAborted();
   const res = await fetch(`${baseUrl()}:runQuery`, {
-    signal,
+    signal: deadline,
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -334,13 +358,146 @@ export async function fsQueryOrdered(
   }));
 }
 
+/**
+ * Expand `{"a.b": 1}` into `{a: {b: 1}}`. Firestore's updateMask addresses a
+ * nested map entry by dotted path, but the request BODY must carry the nested
+ * shape; sending the dotted string as a literal key would create a top-level
+ * field named "a.b" and leave the real map untouched.
+ */
+export function expandDottedKeys(
+  fields: Record<string, unknown>,
+): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const [path, value] of Object.entries(fields)) {
+    const parts = path.split(".");
+    let cursor = out;
+    for (const part of parts.slice(0, -1)) {
+      const next = cursor[part];
+      cursor = (
+        next && typeof next === "object" && !(next instanceof Date)
+          ? next
+          : (cursor[part] = {})
+      ) as Record<string, unknown>;
+    }
+    cursor[parts[parts.length - 1]] = value;
+  }
+  return out;
+}
+
+/** A document with the server's updateTime, for optimistic concurrency. */
+export type FsDocMeta = FsDocument;
+
+/**
+ * Read one document plus its updateTime. Returns null if not found. Unlike
+ * fsGetDocument, a response without updateTime reads as "" instead of
+ * throwing; the applicant draft store was built on that behavior.
+ */
+export async function fsGetMeta(docPath: string): Promise<FsDocMeta | null> {
+  // WHY one deadline: the token exchange is a network call too; a separate
+  // clock for it let one operation outlive its budget.
+  const deadline = AbortSignal.timeout(10_000);
+  const token = await getFirestoreAccessToken(deadline);
+  const doc = await getRawDocument(
+    "fsGetMeta",
+    docPath,
+    { Authorization: `Bearer ${token}` },
+    deadline,
+  );
+  if (!doc) return null;
+  return {
+    fields: doc.fields ? fromFields(doc.fields) : {},
+    updateTime: doc.updateTime ?? "",
+  };
+}
+
+/**
+ * Create a document with a caller-chosen ID. Throws FsConflictError when the
+ * ID already exists (two first-saves racing on the same draft).
+ */
+export async function fsCreateWithId(
+  collectionPath: string,
+  docId: string,
+  fields: Record<string, unknown>,
+): Promise<void> {
+  // WHY one deadline: the token exchange is a network call too; a separate
+  // clock for it let one operation outlive its budget.
+  const deadline = AbortSignal.timeout(10_000);
+  const token = await getFirestoreAccessToken(deadline);
+  const res = await fetch(
+    `${baseUrl()}/${collectionPath}?documentId=${encodeURIComponent(docId)}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ fields: toFields(expandDottedKeys(fields)) }),
+      signal: deadline,
+    },
+  );
+  if (res.status === 409) {
+    throw new FsConflictError(`${collectionPath}/${docId}`);
+  }
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(
+      `fsCreateWithId ${collectionPath}/${docId}: ${res.status} ${body}`,
+    );
+  }
+}
+
+/**
+ * Patch fields only if the document is unchanged since `updateTime`.
+ * Throws FsConflictError on a lost race so the caller can merge again.
+ */
+export async function fsPatchIfUnchanged(
+  docPath: string,
+  fields: Record<string, unknown>,
+  updateTime: string,
+): Promise<void> {
+  // WHY one deadline: the token exchange is a network call too; a separate
+  // clock for it let one operation outlive its budget.
+  const deadline = AbortSignal.timeout(10_000);
+  const token = await getFirestoreAccessToken(deadline);
+  const params = [
+    ...Object.keys(fields).map(
+      (f) => `updateMask.fieldPaths=${encodeURIComponent(f)}`,
+    ),
+    `currentDocument.updateTime=${encodeURIComponent(updateTime)}`,
+  ].join("&");
+  const res = await fetch(`${baseUrl()}/${docPath}?${params}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ fields: toFields(expandDottedKeys(fields)) }),
+    signal: deadline,
+  });
+  if (res.status === 409 || res.status === 412) {
+    throw new FsConflictError(docPath);
+  }
+  if (!res.ok) {
+    const body = await res.text();
+    // WHY the body check: the Firestore REST API reports a failed
+    // currentDocument.updateTime precondition as FAILED_PRECONDITION, which
+    // travels as HTTP 400, not 409 or 412. Mapping only those two turned every
+    // lost race into a 500 and an alert email instead of a silent re-read.
+    if (res.status === 400 && /FAILED_PRECONDITION/.test(body)) {
+      throw new FsConflictError(docPath);
+    }
+    throw new Error(`fsPatchIfUnchanged ${docPath}: ${res.status} ${body}`);
+  }
+}
+
 /** Update specific fields on an existing document. */
 export async function fsPatch(
   docPath: string,
   fields: Record<string, unknown>,
   signal?: AbortSignal,
 ): Promise<void> {
-  const token = await getFirestoreAccessToken(signal);
+  const deadline = withTimeout(signal, 10_000);
+  const token = await getFirestoreAccessToken(deadline);
   const fieldNames = Object.keys(fields);
   const mask = fieldNames
     .map((f) => `updateMask.fieldPaths=${encodeURIComponent(f)}`)
@@ -348,13 +505,13 @@ export async function fsPatch(
 
   signal?.throwIfAborted();
   const res = await fetch(`${baseUrl()}/${docPath}?${mask}`, {
-    signal,
     method: "PATCH",
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ fields: toFields(fields) }),
+    signal: deadline,
   });
   if (!res.ok) {
     const body = await res.text();
@@ -367,7 +524,10 @@ export async function fsAdd(
   collectionPath: string,
   fields: Record<string, unknown>,
 ): Promise<string> {
-  const token = await getFirestoreAccessToken();
+  // WHY one deadline: the token exchange is a network call too; a separate
+  // clock for it let one operation outlive its budget.
+  const deadline = AbortSignal.timeout(10_000);
+  const token = await getFirestoreAccessToken(deadline);
   const res = await fetch(`${baseUrl()}/${collectionPath}`, {
     method: "POST",
     headers: {
@@ -375,6 +535,7 @@ export async function fsAdd(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ fields: toFields(fields) }),
+    signal: deadline,
   });
   if (!res.ok) {
     const body = await res.text();
@@ -432,7 +593,10 @@ export async function fsQuery(
 export async function fsListAll(
   collectionId: string,
 ): Promise<Array<Record<string, unknown>>> {
-  const token = await getFirestoreAccessToken();
+  // WHY one deadline: the token exchange is a network call too; a separate
+  // clock for it let one operation outlive its budget.
+  const deadline = AbortSignal.timeout(15_000);
+  const token = await getFirestoreAccessToken(deadline);
   const results: Array<Record<string, unknown>> = [];
   let pageToken: string | undefined;
 
@@ -443,7 +607,7 @@ export async function fsListAll(
 
     const res = await fetch(url.toString(), {
       headers: { Authorization: `Bearer ${token}` },
-      signal: AbortSignal.timeout(15_000),
+      signal: deadline,
     });
     if (!res.ok) {
       const text = await res.text();
@@ -472,7 +636,10 @@ export async function fsDeleteFields(
   docPath: string,
   fieldNames: string[],
 ): Promise<void> {
-  const token = await getFirestoreAccessToken();
+  // WHY one deadline: the token exchange is a network call too; a separate
+  // clock for it let one operation outlive its budget.
+  const deadline = AbortSignal.timeout(10_000);
+  const token = await getFirestoreAccessToken(deadline);
   const mask = fieldNames
     .map((f) => `updateMask.fieldPaths=${encodeURIComponent(f)}`)
     .join("&");
@@ -485,6 +652,7 @@ export async function fsDeleteFields(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ fields: {} }),
+    signal: deadline,
   });
   if (!res.ok) {
     const body = await res.text();

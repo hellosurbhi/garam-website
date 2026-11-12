@@ -2,39 +2,58 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import ApplyPage from "./ApplyPage";
 
-const mockAddDoc = vi.fn();
-const mockUploadBytesResumable = vi
-  .fn()
-  .mockImplementation(() =>
-    Object.assign(Promise.resolve({}), { cancel: vi.fn() }),
-  );
-const mockSignInAnonymously = vi
-  .fn()
-  .mockResolvedValue({ user: { uid: "anon-uid-1" } });
+// The apply page talks only to our own endpoints: no Firebase client, no
+// anonymous login. Every test routes fetch through this fake server.
+// Set per test to make ONLY the final submit fail (autosaves still succeed).
+let failFinalize = false;
 
-vi.mock("firebase/firestore", () => ({
-  collection: vi.fn(),
-  addDoc: (...args: unknown[]) => mockAddDoc(...args),
-  serverTimestamp: vi.fn(() => "mock-timestamp"),
-}));
-
-vi.mock("firebase/storage", () => ({
-  ref: vi.fn((_storage: unknown, path: string) => ({ fullPath: path })),
-  uploadBytesResumable: (...args: unknown[]) =>
-    mockUploadBytesResumable(...args),
-  // The failure path cleans up uploaded photos, so the mock must cover it.
-  deleteObject: vi.fn().mockResolvedValue(undefined),
-}));
-
-vi.mock("firebase/auth", () => ({
-  signInAnonymously: (...args: unknown[]) => mockSignInAnonymously(...args),
-}));
-
-vi.mock("@/lib/firebase", () => ({
-  getFirebaseDb: vi.fn(() => "mock-db"),
-  getFirebaseStorage: vi.fn(() => "mock-storage"),
-  getFirebaseAuth: vi.fn(() => Promise.resolve("mock-auth")),
-}));
+function fakeServer(
+  input: RequestInfo | URL,
+  init?: RequestInit,
+): Promise<Response> {
+  const url = String(input);
+  if (url.includes("/api/save-application")) {
+    if (failFinalize && String(init?.body).includes('"finalize":true')) {
+      return Promise.resolve(
+        new Response(JSON.stringify({ error: "Database unavailable" }), {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        }),
+      );
+    }
+    return Promise.resolve(
+      new Response(
+        JSON.stringify({
+          ok: true,
+          draftId: "draft-1",
+          token: "token-1",
+          rev: 1,
+          status: "Draft",
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      ),
+    );
+  }
+  if (url.includes("/api/upload-application-photo")) {
+    // Reserve returns a signed URL, confirm acknowledges: the direct path
+    // succeeds first try so these tests exercise submit, not photo retry timing.
+    return Promise.resolve(
+      new Response(
+        JSON.stringify({
+          ok: true,
+          uploadUrl: "https://storage.example.com/signed-put",
+          path: "photos/draft-1/0.jpg",
+          contentType: "image/jpeg",
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      ),
+    );
+  }
+  if (url.startsWith("https://storage.example.com/")) {
+    return Promise.resolve(new Response("", { status: 200 }));
+  }
+  return Promise.resolve(new Response("{}"));
+}
 
 vi.mock("@/data/events", () => ({
   events: [
@@ -51,15 +70,20 @@ vi.mock("./ApplyPage.module.css", () => ({
   default: new Proxy({}, { get: (_, prop) => String(prop) }),
 }));
 
+// The final submit retries twice (1s then 2s) before showing the failure toast.
+const FINAL_SUBMIT_RETRY_WAIT = { timeout: 10_000 };
+
 describe("ApplyPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockAddDoc.mockResolvedValue({ id: "doc-1" });
-    mockUploadBytesResumable.mockImplementation(() =>
-      Object.assign(Promise.resolve({}), { cancel: vi.fn() }),
-    );
-    // Mock fetch for notify-application
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response("{}"));
+    // The form now restores the saved draft, so one test's answers would
+    // otherwise be the next test's starting state.
+    localStorage.clear();
+    failFinalize = false;
+    vi.spyOn(globalThis, "fetch").mockImplementation(((
+      input: RequestInfo | URL,
+      init?: RequestInit,
+    ) => fakeServer(input, init)) as typeof fetch);
     // Mock crypto.randomUUID
     vi.spyOn(crypto, "randomUUID").mockReturnValue(
       "test-uuid" as `${string}-${string}-${string}-${string}-${string}`,
@@ -500,23 +524,29 @@ describe("ApplyPage", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("toast has dismiss button on submission failure", async () => {
-    mockAddDoc.mockRejectedValueOnce(new Error("Firestore error"));
-    render(<ApplyPage />);
-    fillAllRequiredFields();
-    await waitFor(() =>
-      expect(
-        screen.getByText("Submit Application").closest("button"),
-      ).not.toBeDisabled(),
-    );
-    fireEvent.click(screen.getByText("Submit Application").closest("button")!);
-    await waitFor(() => {
-      expect(screen.getByLabelText("Dismiss")).toBeInTheDocument();
-    });
-  });
+  it(
+    "toast has dismiss button on submission failure",
+    { timeout: 15_000 },
+    async () => {
+      failFinalize = true;
+      render(<ApplyPage />);
+      fillAllRequiredFields();
+      await waitFor(() =>
+        expect(
+          screen.getByText("Submit Application").closest("button"),
+        ).not.toBeDisabled(),
+      );
+      fireEvent.click(
+        screen.getByText("Submit Application").closest("button")!,
+      );
+      await waitFor(() => {
+        expect(screen.getByLabelText("Dismiss")).toBeInTheDocument();
+      }, FINAL_SUBMIT_RETRY_WAIT);
+    },
+  );
 
-  it("toast dismiss button removes toast", async () => {
-    mockAddDoc.mockRejectedValueOnce(new Error("Firestore error"));
+  it("toast dismiss button removes toast", { timeout: 15_000 }, async () => {
+    failFinalize = true;
     render(<ApplyPage />);
     fillAllRequiredFields();
     await waitFor(() =>
@@ -527,7 +557,7 @@ describe("ApplyPage", () => {
     fireEvent.click(screen.getByText("Submit Application").closest("button")!);
     await waitFor(() => {
       expect(screen.getByLabelText("Dismiss")).toBeInTheDocument();
-    });
+    }, FINAL_SUBMIT_RETRY_WAIT);
     fireEvent.click(screen.getByLabelText("Dismiss"));
     await waitFor(() => {
       expect(screen.queryByLabelText("Dismiss")).not.toBeInTheDocument();

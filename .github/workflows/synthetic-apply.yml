@@ -93,6 +93,7 @@ jobs:
         run: npx playwright test --config playwright.synthetic.config.ts --grep 'ticket redirects'
         env:
           PLAYWRIGHT_BASE_URL: https://garammasaladating.com
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
       - name: Recover and verify test cleanup
         id: cleanup
         if: always() && steps.setup.outcome == 'success'

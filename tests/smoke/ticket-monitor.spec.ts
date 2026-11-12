@@ -43,7 +43,7 @@ test("ticket monitor rejects a missing checkout link for a purchasable show", as
   );
   await expect(
     checkTicketListings(page, request, [event], now),
-  ).rejects.toThrow();
+  ).rejects.toThrow("No visible checkout link for fixture-show");
 });
 test("ticket monitor rejects a blank page when only waitlists are expected", async ({
   page,
@@ -52,6 +52,90 @@ test("ticket monitor rejects a blank page when only waitlists are expected", asy
   test.setTimeout(10000);
   await page.setContent("<h1>Upcoming Shows</h1>");
   await expect(checkTicketListings(page, request, [], now)).rejects.toThrow();
+});
+test("ticket monitor finds a checkout link that carries the ?eid= the site adds", async ({
+  page,
+}) => {
+  await page.setContent(
+    '<a href="/api/go/fixture-show?eid=1b57f1fa">Buy Tickets</a><a href="/api/go/fixture-show-late">Other</a>',
+  );
+  const destination = applyUtmsToUrl(
+    event.url!,
+    {},
+    {
+      utmSource: "garamsite",
+      utmMedium: "web",
+      utmCampaign: "chicago",
+      utmContent: event.slug,
+    },
+  );
+  const { createServer } = await import("node:http");
+  const { request: api } = await import("@playwright/test");
+  const server = createServer((_req, res) => {
+    res.writeHead(302, { location: destination });
+    res.end();
+  });
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  const address = server.address();
+  if (!address || typeof address === "string")
+    throw new Error("Missing fixture server port");
+  const client = await api.newContext({
+    baseURL: `http://127.0.0.1:${address.port}`,
+  });
+  try {
+    await checkTicketListings(page, client, [event], now);
+  } finally {
+    await client.dispose();
+    await new Promise<void>((resolve, reject) =>
+      server.close((e) => (e ? reject(e) : resolve())),
+    );
+  }
+});
+for (const [name, markup] of [
+  [
+    "a wrong path that merely contains the checkout path",
+    '<a href="/wrong/api/go/fixture-show?eid=123">Buy Tickets</a>',
+  ],
+  [
+    "a checkout path that only appears inside another link's query",
+    '<a href="/tickets?next=/api/go/fixture-show?eid=123">Buy Tickets</a>',
+  ],
+  [
+    "the right path on another site",
+    '<a href="https://example.com/api/go/fixture-show">Buy Tickets</a>',
+  ],
+] as const) {
+  test(`ticket monitor rejects ${name}`, async ({ page, request }) => {
+    test.setTimeout(10000);
+    await page.setContent(
+      `${markup}<button data-notify-city="Chicago">Notify Me</button>`,
+    );
+    await expect(
+      checkTicketListings(page, request, [event], now),
+    ).rejects.toThrow("No visible checkout link for fixture-show");
+  });
+}
+test("ticket monitor flags a rewritten absolute checkout link in a waitlist-only state", async ({
+  page,
+  request,
+}) => {
+  test.setTimeout(10000);
+  await page.setContent(
+    '<a href="https://garammasaladating.com/api/go/unknown?eid=1">Buy Tickets</a><button data-notify-city="Chicago">Notify Me</button>',
+  );
+  await expect(checkTicketListings(page, request, [], now)).rejects.toThrow();
+});
+test("ticket monitor does not match a longer slug that shares the prefix", async ({
+  page,
+  request,
+}) => {
+  test.setTimeout(10000);
+  await page.setContent(
+    '<a href="/api/go/fixture-show-late">Other</a><button data-notify-city="Chicago">Notify Me</button>',
+  );
+  await expect(
+    checkTicketListings(page, request, [event], now),
+  ).rejects.toThrow("No visible checkout link for fixture-show");
 });
 test("ticket monitor checks the exact checkout destination", async ({
   page,

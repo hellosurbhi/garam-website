@@ -64,7 +64,8 @@ const descriptions = {
   flow: "A live signup check did not complete. Check the run for form errors or rate limiting before concluding customers are blocked.",
   cleanup:
     "Test data cleanup needs attention. Test identities remain excluded from customer counts and marketing.",
-  redirects: "A live ticket redirect did not match the expected destination.",
+  redirects:
+    "A live ticket link did not lead to its own show: the redirect or the checkout page named another destination or event. The run names the show.",
   notification:
     "A monitoring notification channel or external watchdog failed verification.",
 };

@@ -5,7 +5,11 @@ import {
   type APIRequestContext,
   type Page,
 } from "@playwright/test";
-import { createServer, type RequestListener } from "node:http";
+import {
+  createServer,
+  type RequestListener,
+  type ServerResponse,
+} from "node:http";
 import { checkTicketListings } from "../synthetic/ticket-checks";
 import type { EventEntry } from "../../src/data/events";
 import { goRedirectDestination } from "../../src/utils/utmForwarding";
@@ -325,6 +329,26 @@ async function checkListing(
   ldJson: unknown,
   passes: boolean,
 ) {
+  await checkVendorResponse(
+    page,
+    (res) => {
+      res.writeHead(status, { "content-type": "text/html" });
+      res.end(
+        `<script type="application/ld+json">${JSON.stringify(ldJson)}</script>`,
+      );
+    },
+    passes,
+    "required",
+  );
+}
+
+/** Serves the vendor's answer for our Chicago show's checkout page. */
+async function checkVendorResponse(
+  page: Page,
+  respond: (res: ServerResponse) => void,
+  passes: boolean,
+  mode: "required" | "whenServed",
+) {
   let show: EventEntry = {
     ...event,
     startTime: "19:30",
@@ -334,16 +358,13 @@ async function checkListing(
   await withSite(
     (req, res) => {
       if (req.url?.startsWith("/api/go/")) return goRoute([show])(req, res);
-      res.writeHead(status, { "content-type": "text/html" });
-      res.end(
-        `<script type="application/ld+json">${JSON.stringify(ldJson)}</script>`,
-      );
+      respond(res);
     },
     async (origin, client) => {
       show = { ...show, url: `${origin}/listing` };
       await showTicketPage(page, card(show.slug), origin);
       const check = checkTicketListings(page, client, [show], now, {
-        verifyListings: true,
+        verifyListings: mode,
       });
       if (passes) await check;
       else await expect(check).rejects.toThrow();
@@ -831,6 +852,79 @@ for (const [name, body, passes] of [
     await checkListing(page, 200, body, passes);
   });
 }
+
+// The frequent monitor notes a checkout page the vendor won't serve instead
+// of paging, but a page that loads and names another event, or a dead link,
+// still fails it.
+const ourListing = `<script type="application/ld+json">${JSON.stringify({
+  "@type": "Event",
+  startDate: ourStart,
+  location: atVenue,
+})}</script>`;
+const otherDate = `<script type="application/ld+json">${JSON.stringify({
+  "@type": "Event",
+  startDate: "2026-12-05T19:30:00-06:00",
+  location: atVenue,
+})}</script>`;
+const venueCalendar = `<script type="application/ld+json">${JSON.stringify({
+  "@type": "Place",
+  ...atVenue,
+  Events: [{ "@type": "Event", startDate: ourStart, location: atVenue }],
+})}</script>`;
+const challenge = "<html><body>Checking your browser</body></html>";
+// Columns: name, status, body, mode, passes, notes it as unavailable.
+for (const [name, status, body, mode, passes, noted] of [
+  ["our listing", 200, ourListing, "whenServed", true, false],
+  ["a blocked runner", 403, ourListing, "whenServed", true, true],
+  ["a rate limited runner", 429, ourListing, "whenServed", true, true],
+  ["a vendor outage", 503, ourListing, "whenServed", true, true],
+  ["a bot challenge page", 200, challenge, "whenServed", true, true],
+  [
+    "a bot challenge page when required",
+    200,
+    challenge,
+    "required",
+    false,
+    false,
+  ],
+  ["a listing for another date", 200, otherDate, "whenServed", false, false],
+  ["a venue calendar page", 200, venueCalendar, "whenServed", false, false],
+  ["a deleted listing", 404, ourListing, "whenServed", false, false],
+  ["a removed listing", 410, ourListing, "whenServed", false, false],
+] as const) {
+  test(`ticket monitor checking listings when served: ${name}`, async ({
+    page,
+  }) => {
+    test.setTimeout(10000);
+    await checkVendorResponse(
+      page,
+      (res) => {
+        res.writeHead(status, { "content-type": "text/html" });
+        res.end(body);
+      },
+      passes,
+      mode,
+    );
+    expect(
+      test.info().annotations.filter((a) => a.type === "listing unavailable"),
+    ).toHaveLength(noted ? 1 : 0);
+  });
+}
+
+test("ticket monitor notes a vendor that drops the connection", async ({
+  page,
+}) => {
+  test.setTimeout(10000);
+  await checkVendorResponse(
+    page,
+    (res) => res.socket?.destroy(),
+    true,
+    "whenServed",
+  );
+  expect(
+    test.info().annotations.filter((a) => a.type === "listing unavailable"),
+  ).toHaveLength(1);
+});
 
 test("ticket monitor follows the rendered link with its tracking parameters", async ({
   page,

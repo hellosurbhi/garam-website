@@ -1,4 +1,10 @@
-import { expect, type Page, type APIRequestContext } from "@playwright/test";
+import {
+  expect,
+  test,
+  type Page,
+  type APIRequestContext,
+  type APIResponse,
+} from "@playwright/test";
 import { isDisplayable, type EventEntry } from "../../src/data/events";
 import { getTicketPageUpcoming } from "../../src/utils/eventFilters";
 import { goRedirectDestination } from "../../src/utils/utmForwarding";
@@ -15,10 +21,14 @@ export interface TicketCheckOptions {
    * Fetch each checkout page and require its own schema.org Event start to
    * match the show. This is the independent check: a wrong url typed into
    * events.ts passes every redirect assertion, because the redirect reads the
-   * same data. Off for the frequent synthetic monitor so a vendor hiccup
-   * can't page anyone; on for the weekly and preview smoke runs.
+   * same data. "required" fails when a vendor won't serve the page, so the
+   * weekly and preview smoke runs surface a lasting block. "whenServed" notes
+   * a page the vendor would not serve (blocked, rate limited, timed out or a
+   * bot challenge with no structured data) and checks the rest, so the
+   * frequent monitor pages only for a page that loads and names another
+   * event, or for a dead link.
    */
-  verifyListings?: boolean;
+  verifyListings?: false | "required" | "whenServed";
 }
 
 /** One place a listing names: its venue and its city, when given. */
@@ -275,20 +285,52 @@ function localStart(iso: string, timeZone: string): string | null {
   return `${p.year}-${p.month}-${p.day} ${p.hour}:${p.minute}`;
 }
 
+/** Fails a listing check that needs the page, or notes it in "whenServed". */
+function listingUnavailable(
+  mode: "required" | "whenServed",
+  problem: string,
+): void {
+  if (mode === "required") throw new Error(problem);
+  test
+    .info()
+    .annotations.push({ type: "listing unavailable", description: problem });
+}
+
 async function expectListingStart(
   request: APIRequestContext,
   url: string,
   event: EventEntry,
+  mode: "required" | "whenServed",
 ) {
-  const response = await request.get(url, {
-    timeout: 15_000,
-    headers: MONITOR_HEADERS,
-  });
-  expect(
-    response.ok(),
-    `${event.slug}: ${url} returned ${response.status()}`,
-  ).toBe(true);
-  const listed = extractListedEvents(await response.text());
+  let response: APIResponse;
+  try {
+    response = await request.get(url, {
+      timeout: 15_000,
+      headers: MONITOR_HEADERS,
+    });
+  } catch (error) {
+    return listingUnavailable(
+      mode,
+      `${event.slug}: ${url} did not respond (${error instanceof Error ? error.message : String(error)})`,
+    );
+  }
+  if (!response.ok()) {
+    const problem = `${event.slug}: ${url} returned ${response.status()}`;
+    // WHY 404 and 410 always fail: the vendor is saying the page does not
+    // exist, which is a dead checkout link, not a block of our runner.
+    if ([404, 410].includes(response.status())) throw new Error(problem);
+    return listingUnavailable(mode, problem);
+  }
+  const html = await response.text();
+  // WHY only a page with no structured data at all counts as unserved: bot
+  // challenges carry none, while a real page that names another event (or a
+  // venue calendar) has some and must still fail as a wrong link.
+  if (!/application\/ld\+json/i.test(html))
+    return listingUnavailable(
+      mode,
+      `${event.slug}: ${url} served no structured data, likely a bot challenge`,
+    );
+  const listed = extractListedEvents(html);
   const expectedStart = event.startTime
     ? `${event.isoDate} ${event.startTime}`
     : `${event.isoDate} `;
@@ -527,6 +569,7 @@ export async function checkTicketListings(
         new URL(verdict.target, pageOrigin).searchParams,
       ),
     );
-    if (verifyListings) await expectListingStart(request, location, event);
+    if (verifyListings)
+      await expectListingStart(request, location, event, verifyListings);
   }
 }

@@ -485,7 +485,7 @@ test.describe("Ticket link integrity", () => {
     const deployed = !!process.env.PLAYWRIGHT_BASE_URL;
     await checkTicketListings(page, request, allEvents, new Date(), {
       followRedirects: deployed,
-      verifyListings: deployed,
+      verifyListings: deployed && "required",
     });
   });
 

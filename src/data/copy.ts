@@ -199,6 +199,8 @@ export const APPLY_PAGE = {
   photoStatusSaving: (count: number): string =>
     `Saving ${count} ${count === 1 ? "photo" : "photos"}...`,
   photoStatusSaved: "All photos saved",
+  photoRemovalFailed:
+    "A photo you removed could not be taken off your application. Check your connection and try again.",
   photoStatusRetrying: (count: number): string =>
     `${count} ${count === 1 ? "photo is" : "photos are"} still retrying. You can keep going, we will try again when you submit.`,
   photoGuidanceHeading: "Photos: up to 10",

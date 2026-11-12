@@ -585,6 +585,34 @@ describe("AutosaveController: a rejected token replaces the draft", () => {
     });
   });
 
+  it("a finalize ack for a draft replaced mid-request never marks the replacement filed", async () => {
+    let release: () => void = () => {};
+    const gate = new Promise<void>((r) => (release = r));
+    let finalizeCalls = 0;
+    const { calls, fetchImpl } = harness(async (call, n) => {
+      if (call.body.finalize === true) {
+        finalizeCalls += 1;
+        if (finalizeCalls === 1) await gate;
+      }
+      // A new draft token whenever the request carries no token, else echo it.
+      return ok({ token: call.body.token ?? `tok-${n}` });
+    });
+    const c = new AutosaveController({ fetchImpl });
+    await c.ensureDraft();
+    const original = c.draftToken as string;
+    const done = c.finalize(async () => {});
+    await vi.advanceTimersByTimeAsync(10);
+    c.resetDraft(original);
+    release();
+    await vi.advanceTimersByTimeAsync(10);
+    await done;
+    // The first finalize's ack belonged to the replaced draft; a second
+    // finalize had to run against the replacement.
+    const finalizes = calls.filter((x) => x.body.finalize === true);
+    expect(finalizes).toHaveLength(2);
+    expect(finalizes[1].body.token).not.toBe(original);
+  });
+
   it("tells listeners after a 401 recovery so photos can be filed again", async () => {
     const { fetchImpl } = harness((call, n) =>
       call.body.token === "tok-1"

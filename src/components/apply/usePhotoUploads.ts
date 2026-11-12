@@ -5,6 +5,7 @@ import {
   useState,
   type ChangeEvent,
 } from "react";
+import { APPLY_PAGE } from "@/data/copy";
 import type { AutosaveController } from "@/lib/applyAutosave";
 import {
   removeApplicationPhoto,
@@ -181,9 +182,7 @@ export function usePhotoUploads(
     }
     await Promise.all(retries);
     if (pendingRemovals.current.size > 0) {
-      throw new Error(
-        "A photo you removed could not be taken off your application. Check your connection and try again.",
-      );
+      throw new Error(APPLY_PAGE.photoRemovalFailed);
     }
   }
 

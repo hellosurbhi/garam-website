@@ -107,6 +107,23 @@ describe("useApplyForm: submit", () => {
     expect(reportFailure).not.toHaveBeenCalled();
   });
 
+  it("a city in the link replaces the saved location, country included", () => {
+    controller.saved = {
+      city: "Austin",
+      state: "TX",
+      country: "United States",
+    };
+    window.history.pushState({}, "", "/apply?city=Mumbai&state=MH");
+    try {
+      const { result } = renderHook(() => useApplyForm());
+      expect(result.current.form.city).toBe("Mumbai");
+      expect(result.current.form.state).toBe("MH");
+      expect(result.current.form.country).toBe("");
+    } finally {
+      window.history.pushState({}, "", "/");
+    }
+  });
+
   it("a reload refills the form from the saved answers instead of starting blank", () => {
     controller.saved = {
       name: "Priya",

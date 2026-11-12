@@ -64,7 +64,13 @@ export function useApplyForm() {
   const [form, setForm] = useState<FormState>(() => {
     const urlParams = getUrlCityParams();
     if (!urlParams) return saved.form;
-    return { ...saved.form, city: urlParams.city, state: urlParams.state };
+    // The saved country belonged to the saved city, so it is cleared with it.
+    return {
+      ...saved.form,
+      country: "",
+      city: urlParams.city,
+      state: urlParams.state,
+    };
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);

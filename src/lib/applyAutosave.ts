@@ -391,7 +391,13 @@ export class AutosaveController {
     // WHY: resetDraft() can replace the draft while this request is in flight.
     // Adopting this ack would put the OLD draft's token back and clear queued
     // fields the replacement draft still owes, silently losing them.
-    if (this.draftEpoch !== sentEpoch || this.token !== sentToken) return data;
+    if (this.draftEpoch !== sentEpoch || this.token !== sentToken) {
+      // WHY a finalize throws: its ack says the OLD draft was finalized, and
+      // returning it let the caller mark the replacement filed. finalize()
+      // catches this, re-settles photos on the new draft and retries.
+      if (finalize) throw new DraftResetError();
+      return data;
+    }
 
     if (data.token) this.token = data.token;
     if (data.draftId) this.draftId = data.draftId;

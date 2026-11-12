@@ -1,5 +1,11 @@
 # Changelog
 
+## fix(canary): a photo the bucket accepted no longer counts as a blocked upload on Android (2026-11-12)
+
+- The apply canary failed Android Chrome and the Instagram browser on its first live run, saying the direct photo upload to the bucket was blocked. Every photo had in fact been filed. Chrome reports an upload as failed when the bucket answers "OK" with an empty reply the page never reads, and the canary counted that as a block. iPhone Safari does not do this, which is why only the two Android profiles failed.
+- The canary now counts an upload as blocked only when the bucket never answered, or answered with an error. A real block (site security policy, bucket CORS rule, dropped connection) never gets an answer, so it is still caught. Reproduced locally in Chrome and Safari: an accepted upload whose reply goes unread shows as aborted after a 200 answer, and a CORS block shows as failed with no answer.
+- Tests: an aborted upload after a 200 answer passes; an upload with no answer, or with an error answer, fails the canary.
+
 ## fix(monitor): the ticket redirect check no longer reports a healthy page as broken (2026-11-12)
 
 - The live ticket check looked for a link with the exact path `/api/go/<show>`, but the site rewrites each checkout link to an absolute URL with an `?eid=` tag after the page loads. The check never found the link, failed on every run and paged the owner for a working page. It now matches the link path whether relative or absolute, with or without the tag, and still refuses a longer show name that only shares the same start. Verified against the live site and 95 fixture runs, including the new `?eid=` and prefix cases.

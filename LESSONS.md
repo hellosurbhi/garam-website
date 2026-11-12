@@ -1,5 +1,11 @@
 # Lessons
 
+## Chrome reports an accepted upload as failed when nobody reads the reply
+
+**What went wrong:** The apply canary's first live run failed Android Chrome and the Instagram browser with "direct upload to the bucket was blocked", while every photo had been filed.
+**Why:** The wrong assumption was that Playwright's `requestfailed` means the request never landed. Chromium also fires it (`net::ERR_ABORTED`) when the server already answered 200 and the page never read the empty reply body. WebKit does not, so only the Chromium profiles failed.
+**Rule:** A network check that treats `requestfailed` as a failure must first ask `request.response()`: a 2xx answer means the request landed. Only a missing answer or an error status is a real block.
+
 ## A pager step inside the job it watches can never page a hung job
 
 **What went wrong:** The canary workflow paged from `failure()` steps in the same job as the browser run. A job that timed out or was cancelled skips every remaining step, so the one case a hung production site produces paged nobody.

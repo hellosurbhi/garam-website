@@ -11,15 +11,14 @@ test("live ticket redirects use their configured checkout destinations", async (
   page,
   request,
 }) => {
+  // WHY 25 minutes: requireEventsVersion may wait out a 20 minute rebuild
+  // grace in this run rather than skip it (a skip would read as a pass).
+  test.setTimeout(25 * 60_000);
   await requireVersion(process.env.GITHUB_SHA);
   // WHY not the repo's events.published.json: the Shows tab publishes
   // without a commit, so the deployment was built from Firestore's list,
   // not the file at GITHUB_SHA (plan R10).
-  const published = await requireEventsVersion(process.env.FIREBASE_PROJECT_ID);
-  test.skip(
-    published === null,
-    "A newly published show list is still rebuilding; checked next run",
-  );
+  const published = await requireEventsVersion();
   const allEvents = buildAllEvents(
     parseEventsSnapshot(published),
     new Date().toISOString().slice(0, 10),

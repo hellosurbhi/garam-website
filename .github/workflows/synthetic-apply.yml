@@ -40,7 +40,9 @@ jobs:
     needs: deployed
     if: needs.deployed.outputs.state != 'superseded'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # WHY 40, was 15: the ticket check may wait out a 20 minute show list
+    # rebuild (requireEventsVersion) on top of the other phases.
+    timeout-minutes: 40
     concurrency:
       group: synthetic-apply
       cancel-in-progress: false
@@ -94,6 +96,9 @@ jobs:
         env:
           PLAYWRIGHT_BASE_URL: https://garammasaladating.com
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          # Read only while a rebuild lags, to date the replaced version.
+          FIREBASE_ADMIN_CLIENT_EMAIL: ${{ secrets.FIREBASE_ADMIN_CLIENT_EMAIL }}
+          FIREBASE_ADMIN_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY }}
       - name: Recover and verify test cleanup
         id: cleanup
         if: always() && steps.setup.outcome == 'success'

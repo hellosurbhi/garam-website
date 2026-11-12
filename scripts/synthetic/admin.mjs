@@ -1,6 +1,7 @@
 import { getServiceAccountToken } from "../lib/google-access-token.mjs";
 
-const trimmed = (value) => value?.trim().replace(/\\n$/, "");
+/** Secrets pasted with a trailing newline or a literal "\n" still work. */
+export const trimmed = (value) => value?.trim().replace(/\\n$/, "");
 export async function createAdmin(env = process.env, fetchImpl = fetch) {
   const project = trimmed(env.FIREBASE_PROJECT_ID);
   const bucket = trimmed(env.FIREBASE_STORAGE_BUCKET);

@@ -1,6 +1,8 @@
 import { appendFile } from "node:fs/promises";
 import { setTimeout as sleep } from "node:timers/promises";
 import { fetchPublishedEnvelope } from "../fetch-published-events.mjs";
+import { getServiceAccountToken } from "../lib/google-access-token.mjs";
+import { trimmed } from "./admin.mjs";
 export const PRODUCTION = "https://garammasaladating.com";
 /** What production reports it is running: commit and show list version. */
 async function deployedVersion(fetchImpl) {
@@ -27,43 +29,104 @@ export async function requireVersion(expected, fetchImpl = fetch) {
 }
 /** How long a publish may take to reach the site before the monitor pages. */
 export const REBUILD_GRACE_MS = 20 * 60_000;
+/** How often the ticket check rereads the versions while a rebuild runs. */
+export const EVENTS_POLL_MS = 30_000;
+const PROJECT_ID = /^[a-z0-9-]+$/;
 /**
  * Plan R10: the ticket checks compare the live page with the show list the
  * deployment was built from. A publish starts a rebuild, so for a while the
- * site is one version behind: "check" when they match, "wait" while the
- * newer version is under 20 minutes old, "stale" after that (a failed or
- * stuck rebuild must page). The admin status strip uses the same 20 minutes.
+ * site is behind: "check" when the versions match, "wait" while the deployed
+ * version was replaced under 20 minutes ago, "stale" after that or when the
+ * site is ahead (a failed or stuck rebuild must page).
+ * WHY supersededAt and not the latest publishedAt: each new publish would
+ * restart the clock, so steady publishing could hide a rebuild that never
+ * lands. The deployed version stopped being current exactly when the next
+ * version was created, however many came after it.
  */
-export function decideEventsCheck({ deployed, published, now }) {
+export function decideEventsCheck({ deployed, published, supersededAt, now }) {
   if (deployed === published.version) return "check";
-  const age = now - Date.parse(published.publishedAt);
-  return deployed < published.version && age < REBUILD_GRACE_MS
-    ? "wait"
-    : "stale";
+  if (deployed > published.version) return "stale";
+  const age = now - Date.parse(supersededAt);
+  return age < REBUILD_GRACE_MS ? "wait" : "stale";
 }
 /**
- * Returns the published snapshot to check the live site against, or null
- * while a rebuild is still within its grace period. Throws when production
- * is stale or the versions cannot be read.
+ * Full document name of one publish record. Same id format as
+ * eventVersionDocPath in src/lib/eventsStore.server.ts, which plain Node
+ * cannot import; deployment.test.mjs pins the two together.
+ */
+export function eventVersionDocName(projectId, version) {
+  return `projects/${projectId}/databases/(default)/documents/eventVersions/v${String(version).padStart(6, "0")}`;
+}
+/** When the given version was published. eventVersions is admin-only. */
+export async function versionCreatedAt(projectId, version, env, fetchImpl) {
+  const token = await getServiceAccountToken({
+    email: trimmed(env.FIREBASE_ADMIN_CLIENT_EMAIL),
+    privateKey: env.FIREBASE_ADMIN_PRIVATE_KEY,
+    scopes: ["https://www.googleapis.com/auth/datastore"],
+    label: "Monitor",
+    fetchImpl,
+  });
+  const res = await fetchImpl(
+    `https://firestore.googleapis.com/v1/${eventVersionDocName(projectId, version)}?mask.fieldPaths=createdAt`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+      redirect: "error",
+      signal: AbortSignal.timeout(10_000),
+    },
+  );
+  if (!res.ok)
+    throw new Error(`Show list version ${version} unavailable (${res.status})`);
+  const createdAt = (await res.json()).fields?.createdAt?.stringValue;
+  if (!Number.isFinite(Date.parse(createdAt ?? "")))
+    throw new Error(`Show list version ${version} has no creation time`);
+  return createdAt;
+}
+/**
+ * Returns the published snapshot once production renders it. While a
+ * rebuild is inside its grace period it rereads every 30 seconds instead of
+ * skipping, so a stuck rebuild pages within this run and a skipped check can
+ * never count as a passing one. Throws when production is stale or the
+ * versions cannot be read.
  */
 export async function requireEventsVersion(
-  projectId,
-  { fetchImpl = fetch, now = Date.now() } = {},
+  env = process.env,
+  {
+    fetchImpl = fetch,
+    now = Date.now,
+    sleep: wait = sleep,
+    pollMs = EVENTS_POLL_MS,
+  } = {},
 ) {
-  if (!projectId) throw new Error("Firebase project for the show list is missing");
-  const [{ eventsVersion }, published] = await Promise.all([
-    deployedVersion(fetchImpl),
-    fetchPublishedEnvelope(projectId, { fetch: fetchImpl }),
-  ]);
-  if (!Number.isInteger(eventsVersion))
-    throw new Error("Deployment show list version is invalid");
-  if (!published) throw new Error("Published show list is missing");
-  const state = decideEventsCheck({ deployed: eventsVersion, published, now });
-  if (state === "stale")
-    throw new Error(
-      `Site shows list version ${eventsVersion} but version ${published.version} was published at ${published.publishedAt}`,
-    );
-  return state === "check" ? published.snapshot : null;
+  const projectId = trimmed(env.FIREBASE_PROJECT_ID);
+  if (!projectId || !PROJECT_ID.test(projectId))
+    throw new Error("Firebase project for the show list is missing or invalid");
+  const supersededAt = new Map();
+  for (;;) {
+    const [{ eventsVersion }, published] = await Promise.all([
+      deployedVersion(fetchImpl),
+      fetchPublishedEnvelope(projectId, { fetch: fetchImpl }),
+    ]);
+    if (!Number.isInteger(eventsVersion))
+      throw new Error("Deployment show list version is invalid");
+    if (!published) throw new Error("Published show list is missing");
+    if (eventsVersion < published.version && !supersededAt.has(eventsVersion))
+      supersededAt.set(
+        eventsVersion,
+        await versionCreatedAt(projectId, eventsVersion + 1, env, fetchImpl),
+      );
+    const state = decideEventsCheck({
+      deployed: eventsVersion,
+      published,
+      supersededAt: supersededAt.get(eventsVersion),
+      now: now(),
+    });
+    if (state === "check") return published.snapshot;
+    if (state === "stale")
+      throw new Error(
+        `Site shows list version ${eventsVersion} but version ${published.version} was published at ${published.publishedAt}`,
+      );
+    await wait(pollMs);
+  }
 }
 export async function desiredMain(env, fetchImpl = fetch) {
   if (

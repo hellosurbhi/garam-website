@@ -1,11 +1,12 @@
-import { useState, type FormEvent } from "react";
-import { COMING_SOON, EDITOR } from "@/data/adminShows";
+import { useState, type SubmitEvent } from "react";
+import { COMING_SOON } from "@/data/adminShows";
 import {
   validateSnapshotAgainstLive,
   type EventsSnapshot,
   type TbaCity,
 } from "@/data/eventsSnapshot";
 import type { AdminCityOption } from "@/lib/eventsAdmin.server";
+import ComingSoonAddForm from "./ComingSoonAddForm";
 import { splitIssues, toFieldIssues } from "./showIssues";
 import { failureMessage, type ApiResult, type FieldIssue } from "./showsApi";
 import styles from "./ShowsTab.module.css";
@@ -16,15 +17,22 @@ interface ComingSoonCitiesProps {
   /** The live version, which the draft is validated against. */
   live: EventsSnapshot;
   cities: AdminCityOption[];
+  /** Cities /tickets gives a Notify Me card, chosen by waitlist demand. */
+  notifyCities: string[];
   busy: boolean;
   onSave: (snapshot: EventsSnapshot) => Promise<ApiResult<unknown> | null>;
 }
 
-/** The "notify me" cities with no booked date yet, with add and remove. */
+/**
+ * Coming soon cities, with add and remove. WHY the read only Notify Me
+ * line: since #361 those cards follow waitlist demand, not this list, so
+ * the section says which cities have one instead of implying it controls them.
+ */
 export default function ComingSoonCities({
   snapshot,
   live,
   cities,
+  notifyCities,
   busy,
   onSave,
 }: ComingSoonCitiesProps) {
@@ -63,7 +71,7 @@ export default function ComingSoonCities({
     return Boolean(res?.ok);
   }
 
-  async function add(e: FormEvent) {
+  async function add(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     const city = cities.find((c) => c.slug === slug);
     if (!city) return;
@@ -84,6 +92,11 @@ export default function ComingSoonCities({
         {COMING_SOON.heading}
       </h2>
       <p className={styles.muted}>{COMING_SOON.hint}</p>
+      <p className={styles.muted}>
+        {notifyCities.length > 0
+          ? COMING_SOON.notifyNow(notifyCities)
+          : COMING_SOON.notifyNone}
+      </p>
       {snapshot.tbaCities.length === 0 ? (
         <p className={styles.emptyHint}>{COMING_SOON.empty}</p>
       ) : (
@@ -111,38 +124,15 @@ export default function ComingSoonCities({
           {problems.join(" ")}
         </div>
       )}
-      <form className={styles.addRow} onSubmit={add}>
-        <label className={styles.label}>
-          {COMING_SOON.cityLabel}
-          <select
-            className={styles.input}
-            value={slug}
-            onChange={(e) => pick(e.target.value)}
-          >
-            <option value="">{EDITOR.pickOne}</option>
-            {choices.map((c) => (
-              <option key={c.slug} value={c.slug}>
-                {`${c.name}, ${c.region}`}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className={styles.label}>
-          {COMING_SOON.stateLabel}
-          <input
-            className={styles.input}
-            value={state}
-            onChange={(e) => setState(e.target.value)}
-          />
-        </label>
-        <button
-          type="submit"
-          className={styles.secondaryButton}
-          disabled={busy || !slug}
-        >
-          {COMING_SOON.add}
-        </button>
-      </form>
+      <ComingSoonAddForm
+        choices={choices}
+        slug={slug}
+        state={state}
+        busy={busy}
+        onPick={pick}
+        onState={setState}
+        onSubmit={add}
+      />
     </section>
   );
 }

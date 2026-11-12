@@ -321,7 +321,9 @@ export default function TaskInbox({
       onRefresh(appId, patch);
     } catch (e) {
       console.error(e);
-      setActionError(e instanceof Error ? e.message : "Action failed. Please try again.");
+      setActionError(
+        e instanceof Error ? e.message : "Action failed. Please try again.",
+      );
     } finally {
       setLoadingId(null);
     }

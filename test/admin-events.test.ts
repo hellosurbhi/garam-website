@@ -45,12 +45,16 @@ const mocks = vi.hoisted(() => ({
   alertOps: vi.fn(),
   beforeCommit: vi.fn(),
   fsCommit: vi.fn(),
+  getWaitlistRanking: vi.fn(),
 }));
 
 vi.mock("@/lib/verifyToken", () => ({
   verifyAdminIdentity: mocks.verifyAdminIdentity,
 }));
 vi.mock("@/lib/opsAlert", () => ({ alertOps: mocks.alertOps }));
+vi.mock("@/lib/waitlistRanking.server", () => ({
+  getWaitlistRanking: mocks.getWaitlistRanking,
+}));
 vi.mock("@/lib/firestoreRest", async (importOriginal) => {
   const real =
     await importOriginal<typeof import("../src/lib/firestoreRest")>();
@@ -109,6 +113,11 @@ const draftRoute = await import("../src/pages/api/admin/events/draft");
 const publishRoute = await import("../src/pages/api/admin/events/publish");
 const rollbackRoute = await import("../src/pages/api/admin/events/rollback");
 const rebuildRoute = await import("../src/pages/api/admin/events/rebuild");
+const { previewShows } = await import("../src/components/admin/showsView");
+const { selectWaitlistCards } = await import("../src/lib/waitlistRanking");
+const { getListingInventory, getTicketPageUpcoming } =
+  await import("../src/utils/eventFilters");
+const { buildAllEvents } = await import("../src/data/events");
 
 // ── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -283,6 +292,7 @@ beforeEach(() => {
   mocks.verifyAdminIdentity.mockResolvedValue(ADMIN);
   mocks.alertOps.mockResolvedValue(true);
   mocks.fsCommit.mockImplementation(fakeCommit);
+  mocks.getWaitlistRanking.mockResolvedValue([]);
   fetchMock.mockImplementation(async () =>
     Response.json({ job: { id: "job-1", state: "PENDING" } }),
   );
@@ -354,6 +364,47 @@ describe("GET /api/admin/events", () => {
       name: "Manhattan",
       region: "NY",
     });
+  });
+
+  it("previews a ranked market's unticketed dated show exactly as /tickets selects it", async () => {
+    // Codex round 5: a future Chicago show with no tickets, Chicago ranked
+    // among the five markets. /tickets gives it a dated Notify Me card.
+    const chicago = fixtureShow({
+      ticketSource: "none",
+      url: "",
+      eventbriteId: undefined,
+    });
+    const draft = { ...baseline, events: [...baseline.events, chicago] };
+    const counts = [{ citySlug: "chicago", count: 40 }];
+    mocks.getWaitlistRanking.mockResolvedValue(counts);
+    expect((await saveDraft(draft, 1)).status).toBe(200);
+
+    const res = await call(index.GET as Route, "GET");
+    const waitlist = (
+      res.json as { waitlist: { draft: Parameters<typeof previewShows>[2] } }
+    ).waitlist.draft;
+    const today = T0.toISOString().slice(0, 10);
+    const preview = previewShows(draft, today, waitlist);
+    expect(preview.get(chicago.slug)?.tone).toBe("listed");
+
+    // The public page's own selection over the same snapshot.
+    const all = buildAllEvents(draft, today);
+    const shown = new Set(
+      [
+        ...getTicketPageUpcoming(all, today, T0),
+        ...selectWaitlistCards(
+          counts,
+          getListingInventory(all, "tickets"),
+          today,
+          T0,
+        ),
+      ].map((e) => e.slug),
+    );
+    for (const e of draft.events) {
+      expect(preview.get(e.slug)?.tone === "listed", e.slug).toBe(
+        shown.has(e.slug),
+      );
+    }
   });
 
   it("answers 503 before the seed has run", async () => {

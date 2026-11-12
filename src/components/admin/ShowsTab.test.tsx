@@ -7,6 +7,7 @@ import {
   waitFor,
   within,
 } from "@testing-library/react";
+import { COMING_SOON, SHOWS_LIST, SHOWS_TOAST } from "@/data/adminShows";
 import type { EventEntry, EventsSnapshot } from "@/data/eventsSnapshot";
 import type { EventsAdminLoad } from "@/lib/eventsAdmin.server";
 import ShowsTab from "./ShowsTab";
@@ -103,6 +104,10 @@ function adminLoad(): EventsAdminLoad {
       { slug: "chicago", name: "Chicago", region: "IL" },
       { slug: "austin", name: "Austin", region: "TX" },
     ],
+    waitlist: {
+      live: { datedSlugs: [], cities: [] },
+      draft: { datedSlugs: [], cities: [] },
+    },
   };
 }
 
@@ -483,6 +488,88 @@ describe("ShowsTab", () => {
       second.snapshot.events.find((e) => e.slug === "chicago-2099-01-09")
         ?.price,
     ).toBe("35");
+  });
+
+  it("labels a dated show that gets a Notify Me card the way /tickets shows it", async () => {
+    routeFetch();
+    const base = fetchMock.getMockImplementation();
+    fetchMock.mockImplementation(async (path: string, init?: RequestInit) => {
+      if (path === "/api/admin/events") {
+        const next = adminLoad();
+        if (next.draft) {
+          next.draft.snapshot = {
+            ...draft,
+            events: [
+              fixtureShow({
+                ticketSource: "none",
+                url: "",
+                eventbriteId: undefined,
+              }),
+              austin,
+            ],
+          };
+        }
+        next.waitlist.draft = {
+          datedSlugs: ["chicago-2099-01-09"],
+          cities: ["Chicago", "Dallas"],
+        };
+        return json(200, next);
+      }
+      return base?.(path, init);
+    });
+    render(<ShowsTab />);
+    expect(await screen.findByText(SHOWS_LIST.notifyCard)).toBeTruthy();
+    expect(screen.queryByText(SHOWS_LIST.hidden)).toBeNull();
+    expect(
+      screen.getByText(COMING_SOON.notifyNow(["Chicago", "Dallas"])),
+    ).toBeTruthy();
+  });
+
+  it("keeps editing locked while a save is out, even when a rebuild settles first", async () => {
+    let finishRebuild: (res: Response) => void = () => {};
+    let finishSave: (res: Response) => void = () => {};
+    routeFetch();
+    const base = fetchMock.getMockImplementation();
+    fetchMock.mockImplementation(async (path: string, init?: RequestInit) => {
+      if (path === "/api/admin/events/rebuild") {
+        return new Promise<Response>((resolve) => (finishRebuild = resolve));
+      }
+      if (path === "/api/admin/events/draft") {
+        return new Promise<Response>((resolve) => (finishSave = resolve));
+      }
+      return base?.(path, init);
+    });
+    render(<ShowsTab />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Rebuild site" }),
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "Edit Chicago, Jan 9" }),
+    );
+    fireEvent.change(screen.getByLabelText("Ticket price in USD"), {
+      target: { value: "35" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Save to draft" }));
+    await waitFor(() =>
+      expect(callsTo("/api/admin/events/draft")).toHaveLength(1),
+    );
+    fireEvent.click(
+      within(screen.getByRole("dialog")).getAllByRole("button", {
+        name: "Close",
+      })[0],
+    );
+    // The rebuild settles first; the price save is still out.
+    finishRebuild(json(200, { version: 3, rebuild: "requested" }));
+    await waitFor(() =>
+      expect(screen.getByText(SHOWS_TOAST.rebuildStarted)).toBeTruthy(),
+    );
+    const edit = screen.getByRole("button", { name: "Edit Chicago, Jan 9" });
+    expect((edit as HTMLButtonElement).disabled).toBe(true);
+
+    finishSave(json(200, { basedOnVersion: 3, changes: noChanges }));
+    await waitFor(() =>
+      expect((edit as HTMLButtonElement).disabled).toBe(false),
+    );
   });
 
   it("shows an untouched on-sale time in a newly picked zone and saves it unchanged", async () => {

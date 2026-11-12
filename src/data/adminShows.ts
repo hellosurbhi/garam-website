@@ -61,6 +61,7 @@ export const SHOWS_LIST = {
   empty: "No upcoming shows. Add the next one.",
   unpublished: "Unpublished",
   listed: "On the tickets page",
+  notifyCard: "Notify me card on the tickets page",
   hidden: "Hidden",
   canceled: "Canceled",
   past: "Past",
@@ -139,7 +140,10 @@ export const HISTORY = {
 
 export const COMING_SOON = {
   heading: "Coming soon cities",
-  hint: "Each city gets a notify me card until a date is booked.",
+  hint: "Each city here gets a coming soon page and can fill a spare footer city link. Notify me cards on the homepage and tickets page go to the five cities with the most waitlist signups.",
+  notifyNow: (cities: string[]) =>
+    `Notify me cards right now: ${cities.join(", ")}.`,
+  notifyNone: "No notify me cards right now.",
   empty: "No coming soon cities.",
   cityLabel: "City to add",
   stateLabel: "State",

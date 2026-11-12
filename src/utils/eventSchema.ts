@@ -1,5 +1,6 @@
 import { isSchemaEligible } from "@/data/eventPredicates";
 import type { EventEntry } from "@/data/events";
+import { PERFORMERS } from "@/data/lineup";
 import { offsetForZone } from "@/utils/timezone";
 import { addMinutesToTime } from "@/utils/eventDate";
 import { BASE } from "@/utils/breadcrumbs";
@@ -75,18 +76,13 @@ export function buildEventSchemas(eventsList: EventEntry[]): string[] {
         name: "Garam Masala Dating",
         url: "https://garammasaladating.com",
       },
-      performer: [
-        {
-          "@type": "Person",
-          name: "Surbhi",
-          url: "https://www.instagram.com/lordmakemetaller/",
-        },
-        {
-          "@type": "Person",
-          name: "Wyatt Feegrado",
-          url: "https://www.instagram.com/wyattfeegrado/",
-        },
-      ],
+      // WHY from the lineup: the admin edits who is on stage per show, and
+      // the event page lists that lineup; the schema must name the same people.
+      performer: e.lineup.map((id) => ({
+        "@type": "Person",
+        name: PERFORMERS[id].name,
+        url: PERFORMERS[id].instagramUrl,
+      })),
       offers: {
         "@type": "Offer",
         // Points at our own landing page, not the vendor checkout: Google's

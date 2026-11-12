@@ -46,7 +46,12 @@ async function fetchShows(): Promise<ShowsLoad> {
 
 export function useShowsAdmin() {
   const [load, setLoad] = useState<ShowsLoad>({ kind: "loading" });
-  const [pending, setPending] = useState<ShowsAction | null>(null);
+  // WHY a list, not one pending action: a rebuild and a draft write can be
+  // out at once, and whichever finishes first must not clear the other.
+  // The editor lock reads draftWriting, so a rebuild settling never unlocks
+  // editing while a save is still out (that reopened editor would copy the
+  // old draft and undo the save).
+  const [inFlight, setInFlight] = useState<readonly ShowsAction[]>([]);
   const [toast, setToast] = useState<ShowsToast | null>(null);
   // undefined: not asked yet; null: /api/version could not say.
   const [siteVersion, setSiteVersion] = useState<number | null>();
@@ -119,7 +124,7 @@ export function useShowsAdmin() {
       body: unknown,
       method: "POST" | "PUT" = "POST",
     ): Promise<ApiResult<T>> => {
-      setPending(action);
+      setInFlight((list) => [...list, action]);
       const res = await showsRequest<T>(path, { method, body });
       if (res.ok) {
         await reload();
@@ -134,7 +139,10 @@ export function useShowsAdmin() {
       // WHY no toast for other failures: the toast sits outside the open
       // dialog, which makes the rest of the page inert, so the admin would
       // never see it. Each caller shows failureMessage(res) where it acts.
-      setPending(null);
+      setInFlight((list) => {
+        const at = list.indexOf(action);
+        return list.filter((_, i) => i !== at);
+      });
       return res;
     },
     [reload],
@@ -225,7 +233,10 @@ export function useShowsAdmin() {
   return {
     load,
     reload,
-    pending,
+    inFlight,
+    busy: inFlight.length > 0,
+    // A rebuild leaves the draft alone, so editing may start during one.
+    draftWriting: inFlight.some((action) => action !== "rebuild"),
     toast,
     siteVersion,
     now,

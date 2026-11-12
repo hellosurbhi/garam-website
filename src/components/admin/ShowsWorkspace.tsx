@@ -38,9 +38,7 @@ interface ShowsWorkspaceProps {
 export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
   const [showHistory, setShowHistory] = useState(false);
   const { live, cities } = data;
-  const busy = admin.pending !== null;
-  // A rebuild leaves the draft alone, so editing may start during one.
-  const draftWriting = busy && admin.pending !== "rebuild";
+  const { busy, draftWriting } = admin;
   const { dialog, session, stale, error, show, close, settle } = useShowsDialog(
     live.version,
     draftWriting,
@@ -50,11 +48,12 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
   const fresh = data.draft?.basedOnVersion === live.version ? data.draft : null;
   const draft = fresh?.snapshot ?? live.snapshot;
   const changes = fresh?.changes ?? NO_CHANGES;
+  const waitlist = (fresh && data.waitlist.draft) || data.waitlist.live;
   const changeCount = countChanges(changes);
   const todayIso = localTodayIso();
   const previews = useMemo(
-    () => previewShows(draft, todayIso),
-    [draft, todayIso],
+    () => previewShows(draft, todayIso, waitlist),
+    [draft, todayIso, waitlist],
   );
   const shows = useMemo(
     () => sortShows(draft.events, todayIso),
@@ -74,7 +73,7 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
         phase={sitePhase(live, admin.siteVersion, admin.now)}
         lockMs={admin.lockMs}
         changeCount={changeCount}
-        rebuilding={admin.pending === "rebuild"}
+        rebuilding={admin.inFlight.includes("rebuild")}
         busy={busy}
         onRebuild={() => void admin.rebuild()}
       />
@@ -109,6 +108,7 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
         snapshot={draft}
         live={live.snapshot}
         cities={cities}
+        notifyCities={waitlist.cities}
         busy={busy}
         onSave={(snapshot) => admin.saveDraft(snapshot)}
       />
@@ -121,7 +121,7 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
           cities={cities}
           slug={dialog.slug}
           startCanceled={dialog.startCanceled}
-          saving={admin.pending === "save"}
+          saving={admin.inFlight.includes("save")}
           onSave={(snapshot) => admin.saveDraft(snapshot)}
           onClose={close}
         />

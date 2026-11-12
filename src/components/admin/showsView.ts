@@ -16,6 +16,7 @@ import {
   type SnapshotDiff,
 } from "@/data/eventsSnapshot";
 import { SHOWS_LIST } from "@/data/adminShows";
+import type { WaitlistPreview } from "@/lib/eventsAdmin.server";
 import type { PublishedEvents } from "@/lib/eventsStore.server";
 import { getTicketPageUpcoming } from "@/utils/eventFilters";
 
@@ -83,19 +84,23 @@ export interface ShowPreview {
 }
 
 /**
- * How each draft show will read on the website, computed with the same
- * functions /tickets uses (buildAllEvents, getTicketPageUpcoming,
+ * How each draft show will read on /tickets, computed with the same
+ * functions the page uses (buildAllEvents, getTicketPageUpcoming,
  * getEventDisplayStatus), so the preview cannot disagree with the page.
+ * `waitlist` is the page's own Notify Me selection for this snapshot,
+ * made on the server by previewWaitlist.
  */
 export function previewShows(
   snapshot: EventsSnapshot,
   todayIso: string,
+  waitlist: WaitlistPreview,
 ): Map<string, ShowPreview> {
   const listed = new Set(
     getTicketPageUpcoming(buildAllEvents(snapshot, todayIso), todayIso).map(
       (e) => e.slug,
     ),
   );
+  const notify = new Set(waitlist.datedSlugs);
   const out = new Map<string, ShowPreview>();
   for (const e of snapshot.events) {
     if (listed.has(e.slug)) {
@@ -104,6 +109,8 @@ export function previewShows(
         ? `${SHOWS_LIST.listed}: ${status}`
         : SHOWS_LIST.listed;
       out.set(e.slug, { label, tone: "listed" });
+    } else if (notify.has(e.slug)) {
+      out.set(e.slug, { label: SHOWS_LIST.notifyCard, tone: "listed" });
     } else {
       out.set(e.slug, { label: offLabel(e, todayIso), tone: "off" });
     }
@@ -116,19 +123,6 @@ function offLabel(e: EventEntry, todayIso: string): string {
   if (!isDisplayable(e)) return SHOWS_LIST.hidden;
   if (!e.isoDate) return SHOWS_LIST.undated;
   return e.isoDate < todayIso ? SHOWS_LIST.past : SHOWS_LIST.hidden;
-}
-
-/** Coming soon cities whose notify card is on the website right now. */
-export function shownTbaSlugs(
-  snapshot: EventsSnapshot,
-  todayIso: string,
-): Set<string> {
-  const eventSlugs = new Set(snapshot.events.map((e) => e.slug));
-  return new Set(
-    buildAllEvents(snapshot, todayIso)
-      .filter((e) => !eventSlugs.has(e.slug) && e.citySlug)
-      .map((e) => e.citySlug as string),
-  );
 }
 
 /** Upcoming shows soonest first, then undated and past shows newest first. */

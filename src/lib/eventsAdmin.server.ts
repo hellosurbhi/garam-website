@@ -10,6 +10,7 @@
 import type { APIContext } from "astro";
 import { z } from "zod";
 import { cities } from "../data/cities";
+import { buildAllEvents } from "../data/events";
 import {
   buildRollbackSnapshot,
   diffSnapshots,
@@ -38,6 +39,9 @@ import { CommitConflictError } from "./firestoreRest";
 import { jsonResponse, parseJsonRequest } from "./http";
 import { alertOps } from "./opsAlert";
 import { verifyAdminIdentity, type AdminIdentity } from "./verifyToken";
+import { selectWaitlistCards, type CityWaitlistCount } from "./waitlistRanking";
+import { getWaitlistRanking } from "./waitlistRanking.server";
+import { getListingInventory } from "../utils/eventFilters";
 
 /** Deploy hook deadline (plan section 5). */
 const DEPLOY_HOOK_TIMEOUT_MS = 5_000;
@@ -219,14 +223,67 @@ function cityOptions(): AdminCityOption[] {
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
+/** The Notify Me cards /tickets would show for a snapshot. */
+export interface WaitlistPreview {
+  /** Dated shows that appear as a Notify Me card. */
+  datedSlugs: string[];
+  /** Every city with a Notify Me card, in page order. */
+  cities: string[];
+}
+
+/**
+ * The /tickets Notify Me selection for `snapshot`, made by the same calls
+ * WaitlistCities.astro makes, so the admin preview cannot drift from it.
+ * WHY on the server: selectWaitlistCards needs src/data/cities (see
+ * cityOptions) and the demand ranking, which only the server can read.
+ */
+export function previewWaitlist(
+  snapshot: EventsSnapshot,
+  counts: CityWaitlistCount[],
+  now: Date,
+): WaitlistPreview {
+  const todayIso = now.toISOString().slice(0, 10);
+  const cards = selectWaitlistCards(
+    counts,
+    getListingInventory(buildAllEvents(snapshot, todayIso), "tickets"),
+    todayIso,
+    now,
+  );
+  return {
+    datedSlugs: cards.filter((c) => c.isoDate).map((c) => c.slug),
+    cities: cards.map((c) => c.city),
+  };
+}
+
+// WHY an empty ranking on failure: WaitlistCities.astro renders no Notify
+// Me cards when the ranking cannot load, so an empty preview is what the
+// public page shows in that case. The cause is still logged.
+async function rankingOrEmpty(): Promise<CityWaitlistCount[]> {
+  try {
+    return await getWaitlistRanking();
+  } catch (error) {
+    console.error(
+      "[events-admin] Waitlist ranking unavailable for the preview",
+      error instanceof Error ? error.message : "Unknown error",
+    );
+    return [];
+  }
+}
+
 /** Everything the Shows tab shows: live, draft with its pending changes, history, city choices. */
 export async function loadEventsAdmin() {
-  const [live, draft, history] = await Promise.all([
+  const [live, draft, history, ranking] = await Promise.all([
     requireLive(),
     readEventsDraft(),
     listEventVersions(),
+    rankingOrEmpty(),
   ]);
+  const now = new Date();
   return {
+    waitlist: {
+      live: previewWaitlist(live.data.snapshot, ranking, now),
+      draft: draft ? previewWaitlist(draft.data.snapshot, ranking, now) : null,
+    },
     live: live.data,
     draft: draft
       ? {

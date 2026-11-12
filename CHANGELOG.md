@@ -1,5 +1,11 @@
 # Changelog
 
+## Admin Shows tab (2026-11-11)
+
+- Add a Shows tab to /admin where the owner can add, edit, cancel and hide shows in a draft, see what changes before publishing, publish with a note, restore an older version and press Rebuild site.
+- Check every edit in the browser with the same rules the server uses, so a bad ticket link or missing field shows an inline error and is never sent.
+- Lock publishing and restoring for a minute after a rebuild starts and show whether the website has caught up with the live version.
+
 ## Resolve monitoring and waitlist review findings (2026-11-11)
 
 - Retain pending synthetic checks and incident reports with GitHub’s bounded maximum queue. Skip redirect checks for superseded revisions while retaining cleanup.

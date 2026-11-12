@@ -26,6 +26,7 @@ import {
   STATUS_ORDER,
   STATUS_SECTION_DEFAULTS,
 } from "@/types/application";
+import { SHOWS_TAB_LABEL } from "@/data/adminShows";
 import { adminSelectStyles } from "@/utils/reactSelectStyles";
 import Skeleton from "../ui/Skeleton";
 import ApplicantCard from "./ApplicantCard";
@@ -33,6 +34,7 @@ import ApplicantModal from "./ApplicantModal";
 import AnalyticsDashboard from "./AnalyticsDashboard";
 import ContestantFunnel from "./ContestantFunnel";
 import TaskInbox from "./TaskInbox";
+import ShowsTab from "./ShowsTab";
 import WaitlistTab from "./WaitlistTab";
 import styles from "./AdminDashboard.module.css";
 
@@ -150,7 +152,7 @@ export type PendingAdminAction = {
 
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<
-    "today" | "applicants" | "analytics" | "waitlist"
+    "today" | "applicants" | "analytics" | "waitlist" | "shows"
   >("applicants");
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
@@ -480,6 +482,13 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
               >
                 Waitlist
               </button>
+              <button
+                className={styles.tab}
+                data-active={activeTab === "shows" || undefined}
+                onClick={() => setActiveTab("shows")}
+              >
+                {SHOWS_TAB_LABEL}
+              </button>
             </div>
           </div>
           <button onClick={onLogout} className={styles.logoutButton}>
@@ -599,6 +608,8 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       )}
 
       {activeTab === "waitlist" && <WaitlistTab />}
+
+      {activeTab === "shows" && <ShowsTab />}
 
       {activeTab === "applicants" && (
         <main className={styles.main}>

@@ -2,11 +2,24 @@ import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
 import { SMOKE_TEST_EMAIL } from "./smokeTestIdentity";
 import { cities } from "@/data/cities";
 import type { EventEntry } from "@/data/events";
+import {
+  WAITLIST_MARKET_ALIASES,
+  WAITLIST_MARKET_LIMIT,
+} from "@/data/waitlistMarkets";
+import { getUpcomingDated, hasPurchasableTickets } from "@/utils/eventFilters";
 import { DEFAULT_LINEUP } from "@/data/lineup";
 
 export interface CityWaitlistCount {
   citySlug: string;
   count: number;
+}
+
+export function isPrefilledCitySource(source: string): boolean {
+  return (
+    source === "popup" ||
+    source === "spice-list" ||
+    source.startsWith("spice-list-")
+  );
 }
 
 /** Normalize city labels for matching, retaining malformed URL encoding literally. */
@@ -40,41 +53,57 @@ for (const city of Object.values(cities)) {
     );
   }
 }
-for (const [name, slug] of Object.entries({
-  "new york": "manhattan",
-  "new york city": "manhattan",
-  nyc: "manhattan",
-  sf: "san-francisco",
-  "washington dc nova": "washington-dc",
-}))
-  aliases.set(name, slug);
+for (const [slug, names] of Object.entries(WAITLIST_MARKET_ALIASES)) {
+  for (const name of names) aliases.set(normalize(name), slug);
+}
 
-/** Count unique normalized emails for explicitly requested cities, excluding smoke fixtures and unrelated signup sources. */
+/** Resolve explicit city interest first, then entered location. Never infer from IP data. */
+export function resolveWaitlistMarket(
+  slug: string,
+  city = "",
+): string | undefined {
+  const canonical = Object.hasOwn(cities, slug)
+    ? slug
+    : aliases.get(normalize(city));
+  return canonical ? aliases.get(normalize(canonical)) || canonical : undefined;
+}
+
+/** Deduplicate explicit city demand across leads and applications, excluding test/deleted records. */
 export function rankWaitlistCities(
   leads: Array<Record<string, unknown>>,
 ): CityWaitlistCount[] {
   const emailsByCity = new Map<string, Set<string>>();
   for (const lead of leads) {
     const source =
-      typeof lead.source === "string" ? lead.source.toLowerCase() : "";
+      typeof lead.source === "string" ? lead.source.trim().toLowerCase() : "";
     if (
-      !source.includes("notify") &&
-      !source.includes("waitlist") &&
-      !["city-page", "tickets-city-request", "request-city"].includes(source)
+      lead.deletedAt ||
+      ["claude-verification-test", "codex-production-check"].includes(source)
     )
       continue;
+    const rawEmail =
+      typeof lead.emailNormalized === "string" && lead.emailNormalized.trim()
+        ? lead.emailNormalized
+        : lead.email;
     const email =
-      typeof lead.email === "string" ? lead.email.trim().toLowerCase() : "";
-    if (!email || email === SMOKE_TEST_EMAIL || isSyntheticSubmission(email))
+      typeof rawEmail === "string" ? rawEmail.trim().toLowerCase() : "";
+    if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+      email === SMOKE_TEST_EMAIL ||
+      isSyntheticSubmission(email)
+    )
       continue;
     const slug =
       typeof lead.sourceCitySlug === "string"
         ? lead.sourceCitySlug.trim().toLowerCase()
         : "";
-    const rawCity = typeof lead.city === "string" ? lead.city : "";
-    const citySlug = Object.hasOwn(cities, slug)
-      ? slug
-      : aliases.get(normalize(rawCity));
+    // These legacy capture flows stored IP prefills as city without provenance.
+    // Only their explicit market slug is reliable enough to rank.
+    const rawCity =
+      !isPrefilledCitySource(source) && typeof lead.city === "string"
+        ? lead.city
+        : "";
+    const citySlug = resolveWaitlistMarket(slug, rawCity);
     if (!citySlug) continue;
     const emails = emailsByCity.get(citySlug) ?? new Set<string>();
     emails.add(email);
@@ -91,16 +120,26 @@ export function rankWaitlistCities(
     );
 }
 
-/** Build the ten highest-demand undated cards, excluding scheduled cities and breaking ties alphabetically. */
+/** Select five markets by demand, then present dated waitlists before undated ones. */
 export function selectWaitlistCards(
   counts: CityWaitlistCount[],
-  upcoming: EventEntry[],
+  events: EventEntry[],
+  todayISO = new Date().toISOString().slice(0, 10),
+  now = new Date(),
 ): EventEntry[] {
-  const scheduled = new Set(upcoming.map((event) => event.citySlug));
+  const upcoming = getUpcomingDated(events, todayISO);
+  const ticketed = new Set(
+    upcoming
+      .filter((event) => hasPurchasableTickets(event, now))
+      .map((event) => resolveWaitlistMarket(event.citySlug ?? "", event.city)),
+  );
   return counts
     .filter(
-      ({ citySlug }) =>
-        Object.hasOwn(cities, citySlug) && !scheduled.has(citySlug),
+      ({ citySlug, count }) =>
+        count > 0 &&
+        Object.hasOwn(cities, citySlug) &&
+        resolveWaitlistMarket(citySlug) === citySlug &&
+        !ticketed.has(citySlug),
     )
     .sort(
       (a, b) =>
@@ -109,8 +148,14 @@ export function selectWaitlistCards(
           cities[b.citySlug].displayName,
         ),
     )
-    .slice(0, 10)
-    .map(({ citySlug }) => {
+    .slice(0, WAITLIST_MARKET_LIMIT)
+    .map(({ citySlug }): EventEntry => {
+      const dated = upcoming.find(
+        (event) =>
+          !event.soldOut &&
+          resolveWaitlistMarket(event.citySlug ?? "", event.city) === citySlug,
+      );
+      if (dated) return dated;
       const city = cities[citySlug];
       return {
         city: city.addressLocality,
@@ -124,5 +169,14 @@ export function selectWaitlistCards(
         ticketSource: "none",
         url: "",
       };
-    });
+    })
+    .sort((a, b) =>
+      a.isoDate && b.isoDate
+        ? a.isoDate.localeCompare(b.isoDate)
+        : a.isoDate
+          ? -1
+          : b.isoDate
+            ? 1
+            : 0,
+    );
 }

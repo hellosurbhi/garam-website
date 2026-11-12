@@ -49,11 +49,9 @@ export const publishedSnapshot: EventsSnapshot = published.snapshot;
 /** Every show ever scheduled, including hidden and canceled records. */
 export const events: EventEntry[] = publishedSnapshot.events;
 
-// Only show TBA entries for cities with active tour planning (not all 200+
-// expansion pages). These slugs appear as notify-me TBA cards on the tickets
-// page and home shows section. Standing roster per owner instruction
-// 2026-08-14: LA, SF and New York, always. Chicago and Houston removed the
-// same day (see EVENTS-HISTORY.md). Edited from the admin Shows tab.
+// Legacy expansion inventory also supplies the footer city roster.
+// Homepage and tickets Notify Me cards use the ranked five-market selection.
+// Edited from the admin Shows tab.
 const TBA_CITIES: TbaCity[] = publishedSnapshot.tbaCities;
 
 export const TBA_CITY_SLUGS: string[] = TBA_CITIES.map((c) => c.citySlug);

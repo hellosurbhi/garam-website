@@ -10,6 +10,30 @@
 - Publish only the draft the confirmation showed: a save from another tab after it opened is refused and the tab reloads. Refuse a show that ends at or before it starts, and keep a newly opened editor open when an earlier slow save finishes.
 - Keep show editors closed while a save, publish or restore is still out, so a reopened editor never undoes it. Show an untouched on sale time in a newly picked time zone so the field matches what is saved.
 
+## Waitlist review corrections (2026-11-11)
+
+- Remove the unused former schema filter and document the execution limits of deferred automation work.
+
+- Initialize tracking for deferred checkout links, show accurate dated-waitlist copy and limit homepage event schemas to displayed ticket cards. Make the deferred follow-up plans discoverable by the overnight queue.
+
+- Reveal ticket links when deferred presale markup arrives after sales open and correct the documented V3 cache fallback.
+
+- Snapshot city and input evidence together before asynchronous attribution and centralize homepage card fallback copy.
+
+- Bind entered-city evidence to the last input value so a delayed geo prefill after clearing the field cannot count as explicit demand.
+
+- Exclude ambiguous historical popup and Spice List city prefills from demand ranking. New edited city inputs record explicit market interest through the existing source city field without changing Firestore rules.
+- Refresh the corrected counts under the V3 cache. Retain identity-based synthetic exclusion and remove the unused synthetic flag projection.
+- Load event inventory inside the waitlist island to preserve cacheable GET requests. Keep the ticket and waitlist selection timestamps aligned.
+- Mark Notify Me bells decorative, extract homepage card styles into a CSS module and correct the roster maintenance instructions.
+
+## Five market waitlists and ticket ordering (2026-11-11)
+
+- Withdraw the Chicago December 4 and San Diego December 24 scheduled shows while keeping their history and eligibility for Notify Me.
+- Rank five markets using unique emails across leads and applications, explicit location aliases and Edison grouped under New York. Exclude active ticket markets before selecting five.
+- Show purchasable events first, then selected dated waitlists, then undated waitlists on the homepage and tickets page. Keep the existing homepage card design through a shared card component.
+- Version the aggregate cache and fix the missing gap between ticket cards and waitlist cards. Stack purchase controls below titles on small screens to avoid cramped city names.
+
 ## Resolve monitoring and waitlist review findings (2026-11-11)
 
 - Retain pending synthetic checks and incident reports with GitHub’s bounded maximum queue. Skip redirect checks for superseded revisions while retaining cleanup.

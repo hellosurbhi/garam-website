@@ -57,13 +57,18 @@ const {
   eventLastmodDates,
   comingSoonEvents,
 } = await import("@/data/events");
-const { getTicketPageUpcoming, getSchemaDated } =
+const { getTicketPageUpcoming, getListingInventory } =
   await import("@/utils/eventFilters");
-const { isUpcomingByIso } = await import("@/utils/eventDate");
 const { buildEventSchemas } = await import("@/utils/eventSchema");
 const { buildEventRedirects } = await import("@/utils/eventRedirects");
 
 const today = new Date().toISOString().slice(0, 10);
+// The homepage's ticketed show list, built the way src/pages/index.astro
+// builds it; its JSON-LD blocks come from this same list.
+const homeUpcoming = getTicketPageUpcoming(
+  getListingInventory(allEvents, "home"),
+  today,
+);
 
 describe("build-time consumers read the published snapshot", () => {
   it("guards the fixture: the committed baseline does not have the show", async () => {
@@ -83,10 +88,8 @@ describe("build-time consumers read the published snapshot", () => {
   it("lists the show on the homepage", () => {
     // The homepage's two lists (src/pages/index.astro): upcoming cards and
     // the hero's next shows.
-    expect(allEvents.filter((e) => isUpcomingByIso(e, today))).toContainEqual(
-      FIXTURE_SHOW,
-    );
-    expect(events).toContainEqual(FIXTURE_SHOW);
+    expect(homeUpcoming).toContainEqual(FIXTURE_SHOW);
+    expect(getTicketPageUpcoming(events, today)).toContainEqual(FIXTURE_SHOW);
   });
 
   it("builds an /events/[slug] page for the show", () => {
@@ -97,7 +100,7 @@ describe("build-time consumers read the published snapshot", () => {
   });
 
   it("emits the show's date and venue in its JSON-LD", () => {
-    const schemas = buildEventSchemas(getSchemaDated(events, today)).map(
+    const schemas = buildEventSchemas(homeUpcoming).map(
       (json) => JSON.parse(json) as Record<string, unknown>,
     );
     const schema = schemas.find(

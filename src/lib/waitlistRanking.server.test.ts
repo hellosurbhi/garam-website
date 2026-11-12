@@ -36,21 +36,23 @@ describe("daily waitlist aggregate cache", () => {
   });
   it("refreshes once for concurrent callers and persists only aggregate counts", async () => {
     mocks.get.mockResolvedValue(null);
-    fetchMock.mockResolvedValue(
-      new Response(
-        JSON.stringify([
-          {
-            document: {
-              fields: {
-                email: { stringValue: "person@real.test" },
-                city: { stringValue: "Houston" },
-                source: { stringValue: "tickets-notify" },
+    fetchMock.mockImplementation(() =>
+      Promise.resolve(
+        new Response(
+          JSON.stringify([
+            {
+              document: {
+                fields: {
+                  email: { stringValue: "person@real.test" },
+                  city: { stringValue: "Houston" },
+                  source: { stringValue: "tickets-notify" },
+                },
               },
             },
-          },
-          { document: {} },
-          { readTime: "now" },
-        ]),
+            { document: {} },
+            { readTime: "now" },
+          ]),
+        ),
       ),
     );
     const [a, b] = await Promise.all([
@@ -59,9 +61,9 @@ describe("daily waitlist aggregate cache", () => {
     ]);
     expect(a).toEqual([{ citySlug: "houston", count: 1 }]);
     expect(b).toEqual(a);
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(mocks.patch).toHaveBeenCalledWith(
-      "systemConfig/ticketWaitlistRanking",
+      "systemConfig/ticketWaitlistRankingV3",
       { updatedAt: expect.any(Number), counts: a },
       expect.any(AbortSignal),
     );
@@ -70,7 +72,14 @@ describe("daily waitlist aggregate cache", () => {
       query.structuredQuery.select.fields.map(
         (f: { fieldPath: string }) => f.fieldPath,
       ),
-    ).toEqual(["email", "city", "sourceCitySlug", "source"]);
+    ).toEqual([
+      "email",
+      "emailNormalized",
+      "city",
+      "sourceCitySlug",
+      "source",
+      "deletedAt",
+    ]);
   });
   it("retains yesterday's list on a failed refresh", async () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
@@ -87,8 +96,8 @@ describe("daily waitlist aggregate cache", () => {
   it("rejects malformed query responses instead of replacing a valid ranking", async () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
     mocks.get.mockResolvedValue({ updatedAt: 0, counts });
-    fetchMock.mockResolvedValue(
-      new Response(JSON.stringify({ error: "bad query" })),
+    fetchMock.mockImplementation(() =>
+      Promise.resolve(new Response(JSON.stringify({ error: "bad query" }))),
     );
     expect(await getWaitlistRanking()).toEqual(counts);
     expect(mocks.patch).not.toHaveBeenCalled();
@@ -143,7 +152,7 @@ it("retries after a stale-cache deadline and late work cannot unlock the retry",
   expect(mocks.patch).not.toHaveBeenCalled();
   expect(getWaitlistRanking()).toBe(retry);
   expect(mocks.get).toHaveBeenCalledTimes(2);
-  fetchMock.mockResolvedValue(Response.json([]));
+  fetchMock.mockImplementation(() => Promise.resolve(Response.json([])));
   finishNew("new-token");
   expect(await retry).toEqual([]);
   expect(mocks.patch).toHaveBeenCalledTimes(1);
@@ -184,7 +193,7 @@ it("clears its deadline after normal completion", async () => {
 it("aborts a hanging cache write and retains the old ranking", async () => {
   vi.spyOn(console, "error").mockImplementation(() => {});
   mocks.get.mockResolvedValue({ updatedAt: 0, counts });
-  fetchMock.mockResolvedValue(Response.json([]));
+  fetchMock.mockImplementation(() => Promise.resolve(Response.json([])));
   mocks.patch.mockImplementation(
     (_path, _data, signal: AbortSignal) =>
       new Promise((_, reject) => {
@@ -225,5 +234,63 @@ it("propagates the overall deadline to the cache read and lead query", async () 
   expect(readSignal.aborted).toBe(true);
   expect(querySignal.aborted).toBe(true);
   expect(await result).toEqual(counts);
+  expect(mocks.patch).not.toHaveBeenCalled();
+});
+
+it("reads both collections, deduplicates them and honors typed deletion and synthetic fields", async () => {
+  mocks.get.mockResolvedValue(null);
+  fetchMock.mockImplementation(async (_url: string, init: RequestInit) => {
+    const collection = JSON.parse(String(init.body)).structuredQuery.from[0]
+      .collectionId;
+    const document = (email: string, extra = {}) => ({
+      document: {
+        fields: {
+          email: { stringValue: email },
+          city: { stringValue: "Edison" },
+          ...extra,
+        },
+      },
+    });
+    return Response.json(
+      collection === "leads"
+        ? [document("same@real.test")]
+        : [
+            document(" SAME@real.test "),
+            document("second@real.test"),
+            document("synthetic-monitor@garammasaladating.com", {
+              isSynthetic: { booleanValue: true },
+            }),
+            document("deleted@real.test", {
+              deletedAt: { timestampValue: "2026-11-01T00:00:00Z" },
+            }),
+          ],
+    );
+  });
+  expect(await getWaitlistRanking()).toEqual([
+    { citySlug: "manhattan", count: 2 },
+  ]);
+  expect(
+    fetchMock.mock.calls.map(
+      ([, init]) => JSON.parse(init.body).structuredQuery.from[0].collectionId,
+    ),
+  ).toEqual(["leads", "applications"]);
+  expect(mocks.get).toHaveBeenCalledWith(
+    "systemConfig/ticketWaitlistRankingV3",
+    expect.any(AbortSignal),
+  );
+});
+
+it("does not persist a partial ranking when one collection fails", async () => {
+  mocks.get.mockResolvedValue(null);
+  fetchMock.mockImplementation(async (_url: string, init: RequestInit) => {
+    const collection = JSON.parse(String(init.body)).structuredQuery.from[0]
+      .collectionId;
+    return collection === "leads"
+      ? Response.json([])
+      : new Response("unavailable", { status: 503 });
+  });
+  await expect(getWaitlistRanking()).rejects.toThrow(
+    "Waitlist query failed: 503",
+  );
   expect(mocks.patch).not.toHaveBeenCalled();
 });

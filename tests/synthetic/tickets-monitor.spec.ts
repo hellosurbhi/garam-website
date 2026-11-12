@@ -1,10 +1,8 @@
 import { test } from "@playwright/test";
 import { buildAllEvents } from "../../src/data/events";
 import { parseEventsSnapshot } from "../../src/data/eventsSnapshot";
-import {
-  requireEventsVersion,
-  requireVersion,
-} from "../../scripts/synthetic/deployment.mjs";
+import { requireVersion } from "../../scripts/synthetic/deployment.mjs";
+import { requireEventsVersion } from "../../scripts/synthetic/events-version.mjs";
 import { checkTicketListings } from "./ticket-checks";
 
 test("live ticket redirects use their configured checkout destinations", async ({

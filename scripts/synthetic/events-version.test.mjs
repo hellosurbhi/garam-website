@@ -1,6 +1,8 @@
 // @vitest-environment node
 import { describe, expect, it, vi } from "vitest";
 import { generateKeyPairSync } from "node:crypto";
+import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 import { eventVersionDocPath } from "../../src/lib/eventsStore.server";
 import {
   EVENTS_POLL_MS,
@@ -8,7 +10,7 @@ import {
   decideEventsCheck,
   eventVersionDocName,
   requireEventsVersion,
-} from "./deployment.mjs";
+} from "./events-version.mjs";
 
 const PUBLISHED_AT = "2026-11-12T09:00:00.000Z";
 const SUPERSEDED_AT = "2026-11-12T08:50:00.000Z";
@@ -32,7 +34,11 @@ function published(version) {
  * the public published document, the token grant and the admin-only
  * eventVersions record.
  */
-function fetchFor(deployedVersions, publishedVersion) {
+function fetchFor(
+  deployedVersions,
+  publishedVersion,
+  createdAt = () => SUPERSEDED_AT,
+) {
   const deployed = [...deployedVersions];
   return vi.fn(async (url) => {
     const target = String(url);
@@ -45,7 +51,7 @@ function fetchFor(deployedVersions, publishedVersion) {
       return Response.json({ access_token: "fixture-token" });
     if (target.includes("/eventVersions/"))
       return Response.json({
-        fields: { createdAt: { stringValue: SUPERSEDED_AT } },
+        fields: { createdAt: { stringValue: createdAt(target) } },
       });
     return Response.json({
       fields: {
@@ -141,7 +147,7 @@ describe("requireEventsVersion", () => {
     const record = fetchImpl.mock.calls.filter(([url]) =>
       String(url).includes("/eventVersions/"),
     );
-    // Dated once per deployed version, as the record of the version after it.
+    // Dated once per run, as the record of the version after the first one.
     expect(record).toHaveLength(1);
     expect(String(record[0][0])).toContain(
       "projects/demo/databases/(default)/documents/eventVersions/v000003",
@@ -164,6 +170,23 @@ describe("requireEventsVersion", () => {
     expect(sleep).toHaveBeenCalledTimes(REBUILD_GRACE_MS / EVENTS_POLL_MS);
   });
 
+  it("keeps the first lag date when a rebuild lands still behind", async () => {
+    let clock = T0;
+    const sleep = vi.fn(async (ms) => {
+      clock += ms;
+    });
+    // Each later version was created 15 minutes after the one before it, so
+    // redating on every intermediate rebuild would keep the run waiting.
+    const fetchImpl = fetchFor([2, 3, 4], 5, (url) =>
+      new Date(T0 + (Number(url.match(/eventVersions\/v(\d+)/)[1]) - 3) * 15 * 60_000)
+        .toISOString(),
+    );
+    await expect(
+      requireEventsVersion(ENV, { fetchImpl, now: () => clock, sleep }),
+    ).rejects.toThrow(/version 4 but version 5 was published/);
+    expect(sleep).toHaveBeenCalledTimes(REBUILD_GRACE_MS / EVENTS_POLL_MS);
+  });
+
   it("fails without a valid project or a deployed version", async () => {
     await expect(
       requireEventsVersion({}, { fetchImpl: fetchFor([3], 3) }),
@@ -178,4 +201,27 @@ describe("requireEventsVersion", () => {
       requireEventsVersion(ENV, { fetchImpl: fetchFor([undefined], 3) }),
     ).rejects.toThrow(/show list version is invalid/);
   });
+});
+
+describe("dependency-free monitor modules", () => {
+  // WHY: the version gate and the reporter run without npm ci, so anything
+  // they import outside Node fails before monitoring starts.
+  it.each(["scripts/synthetic/deployment.mjs", "scripts/synthetic/report.mjs"])(
+    "%s imports only Node built-ins and relative modules",
+    (entry) => {
+      const seen = new Set();
+      const walk = (file) => {
+        if (seen.has(file)) return;
+        seen.add(file);
+        for (const [, spec] of readFileSync(file, "utf8").matchAll(
+          /^\s*(?:import|export)\b[^"'`]*?from\s+["']([^"']+)["']/gm,
+        )) {
+          if (spec.startsWith(".")) walk(resolve(dirname(file), spec));
+          else expect(spec, `${file} imports ${spec}`).toMatch(/^node:/);
+        }
+      };
+      walk(resolve(entry));
+      expect(seen.size).toBeGreaterThan(0);
+    },
+  );
 });

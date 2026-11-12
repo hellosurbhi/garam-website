@@ -450,6 +450,33 @@ for (const [name, status, startDate, location, passes] of [
     false,
   ],
   [
+    "listing whose second location has an empty address list",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    [atVenue, { name: "Laugh Factory", address: [] }],
+    false,
+  ],
+  [
+    "listing whose city and state are given as lists",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    {
+      name: venue.name,
+      address: { addressLocality: ["Detroit"], addressRegion: ["MI"] },
+    },
+    false,
+  ],
+  [
+    "listing whose venue name is given as a list",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    {
+      name: ["Laugh Factory"],
+      address: { addressLocality: "Chicago", addressRegion: "IL" },
+    },
+    false,
+  ],
+  [
     "listing whose address list names our city",
     200,
     "2026-12-04T19:30:00-06:00",

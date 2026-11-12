@@ -58,12 +58,29 @@ export function extractListedEvents(html: string): ListedEvent[] {
         if (typeof place !== "object") return unreadable(place);
         const fields = place as Record<string, unknown>;
         // An address may itself be a list; each one is checked as a place.
-        const addresses =
-          fields.address === undefined ? [{}] : [fields.address].flat();
+        // An empty list names no address, so the venue is still checked
+        // (dropping the place let "Laugh Factory" with address [] pass).
+        const listed =
+          fields.address === undefined ? [] : [fields.address].flat();
+        const addresses = listed.length ? listed : [{}];
         return addresses.flatMap((address): ListedPlace[] => {
           if (!address || typeof address !== "object" || Array.isArray(address))
             return unreadable(address);
           const parts = address as Record<string, unknown>;
+          // A name, city or state given as anything but text can't be
+          // compared, so the place fails rather than the field being skipped
+          // (skipping let addressLocality ["Detroit"] pass for Chicago).
+          const identity = [
+            fields.name,
+            parts.addressLocality,
+            parts.addressRegion,
+          ];
+          if (
+            identity.some(
+              (v) => v !== undefined && v !== null && typeof v !== "string",
+            )
+          )
+            return unreadable(JSON.stringify(identity));
           return [
             {
               venue: text(fields.name),

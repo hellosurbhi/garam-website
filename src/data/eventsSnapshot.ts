@@ -384,7 +384,8 @@ function eventAliases(e: EventEntry): string[] {
     : [];
 }
 
-function appendNote(note: string | undefined, addition: string): string {
+/** Add to an entry's log note, keeping what it already says. */
+export function appendNote(note: string | undefined, addition: string): string {
   return note ? `${note}; ${addition}` : addition;
 }
 

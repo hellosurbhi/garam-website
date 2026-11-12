@@ -82,6 +82,16 @@ scripts/          # Build-time scripts (prerender, data migration)
 | `npm run test:runtime` | Check the existing Vercel server artifact |
 | `npm run lint`         | Run ESLint                                |
 | `npm run preview`      | Preview production build locally          |
+| `npm run events:pull`  | Copy the live show list into the repo     |
+| `npm run events:seed`  | One time setup of the admin Shows tab     |
+
+### Shows tab setup
+
+The admin Shows tab keeps the show list in Firestore (`eventsPublished/current`, its history in `eventVersions` and the working copy in `eventsDraft/current`). Each build copies the live version into `src/data/events.published.json` and fails if the list is missing, so the setup runs once, before the first build that needs it:
+
+1. Deploy `firestore.rules`, which lets anyone read the published list (it is what the site already shows) and keeps history and drafts admin only.
+2. `npm run events:seed` prints what it would write. `npm run events:seed -- --execute` writes version 1 from `src/data/events.published.json` in one step and checks the public read returns it. It refuses to run once any of the three documents exists.
+3. Make sure `PUBLIC_FIREBASE_PROJECT_ID` is set for Vercel builds.
 
 ## Deployment
 

@@ -24,6 +24,7 @@
     "check": "astro check",
     "migrate:locations": "npx tsx scripts/migrate-locations.ts",
     "events:pull": "node --env-file-if-exists=.env.local scripts/fetch-published-events.mjs --pull",
+    "events:seed": "node --env-file-if-exists=.env.local scripts/seed-events-firestore.mjs",
     "admin:grant-claims": "node --env-file=.env.local scripts/grant-admin-claims.mjs",
     "test": "vitest run",
     "test:redirects": "node scripts/check-event-redirects.mjs",

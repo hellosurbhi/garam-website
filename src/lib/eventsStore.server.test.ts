@@ -135,6 +135,26 @@ describe("buildPublicationWrites", () => {
     });
   });
 
+  it("creates version 1 and every document from nothing on migration", () => {
+    const p = {
+      ...publication({ kind: "migration" }),
+      live: { version: 0, updateTime: null },
+      draftPrecondition: { exists: false },
+    };
+    const [record, pointer, draft] = buildPublicationWrites(p);
+    expect(record.docPath).toBe("eventVersions/v000001");
+    expect(record.fields).toMatchObject({ version: 1, kind: "migration" });
+    expect(record.fields).not.toHaveProperty("restoresVersion");
+    expect(pointer.precondition).toEqual({ exists: false });
+    expect(draft.precondition).toEqual({ exists: false });
+    expect(draft.fields).toEqual({
+      basedOnVersion: 1,
+      snapshotJson: JSON.stringify(p.snapshot),
+      updatedAt: NOW.toISOString(),
+      updatedBy: "admin@example.test",
+    });
+  });
+
   it("writes documents the readers parse back to the same snapshot", async () => {
     const p = publication({ kind: "rollback", restoresVersion: 2 });
     const [record, pointer, draft] = buildPublicationWrites(p);

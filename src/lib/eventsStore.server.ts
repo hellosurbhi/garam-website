@@ -240,11 +240,17 @@ export async function recordRebuildRequest(
 }
 
 export type PublicationKind =
-  { kind: "publish" } | { kind: "rollback"; restoresVersion: number };
+  | { kind: "migration" }
+  | { kind: "publish" }
+  | { kind: "rollback"; restoresVersion: number };
 
 export interface Publication {
-  /** The live version and its `updateTime`, exactly as read before validating. */
-  live: { version: number; updateTime: string };
+  /**
+   * The live version and its `updateTime`, exactly as read before validating.
+   * The seed (scripts/seed-events-firestore.mjs) passes version 0 and a null
+   * `updateTime`: nothing is live yet, so the live document must not exist.
+   */
+  live: { version: number; updateTime: string | null };
   /** Guards the draft write: the draft's `updateTime` for a publish. */
   draftPrecondition: FsPrecondition;
   action: PublicationKind;
@@ -281,8 +287,9 @@ export function buildPublicationWrites(p: Publication): FsWrite[] {
     createdAt: at,
     changes: p.changes,
   };
+  // A rollback or the first version also replaces the draft's content.
   const draftFields: Record<string, unknown> =
-    p.action.kind === "rollback"
+    p.action.kind !== "publish"
       ? {
           basedOnVersion: version,
           snapshotJson,
@@ -299,7 +306,10 @@ export function buildPublicationWrites(p: Publication): FsWrite[] {
     {
       docPath: EVENTS_PUBLISHED_PATH,
       fields: { version, snapshotJson, publishedAt: at, rebuild: null },
-      precondition: { updateTime: p.live.updateTime },
+      precondition:
+        p.live.updateTime === null
+          ? { exists: false }
+          : { updateTime: p.live.updateTime },
     },
     {
       docPath: EVENTS_DRAFT_PATH,

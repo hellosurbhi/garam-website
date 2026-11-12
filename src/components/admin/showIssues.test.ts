@@ -130,6 +130,21 @@ describe("checkShowForm", () => {
     });
   });
 
+  it("rejects a show end time the clocks skip on spring forward night", () => {
+    const draft = { events: [nyc], tbaCities: [] };
+    const { problems } = check(draft, draft, 0, (f) => ({
+      ...f,
+      isoDate: "2027-03-14",
+      startTime: "01:00",
+      endTime: "02:30",
+      note: "Moved to the Sunday",
+    }));
+    expect(problems).toContainEqual({
+      path: "events.0.endTime",
+      message: EDITOR.skippedTime,
+    });
+  });
+
   it("accepts a show start time in the hour that repeats at fall back", () => {
     const draft = { events: [nyc], tbaCities: [] };
     const { problems } = check(draft, draft, 0, (f) => ({

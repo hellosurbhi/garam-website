@@ -224,7 +224,7 @@ const TIME_PATTERN = /^\d{2}:\d{2}$/;
 
 export interface FormDateProblem {
   /** The record field the problem belongs to, as the validator names it. */
-  field: "isoDate" | "startTime" | "onSaleAt";
+  field: "isoDate" | "startTime" | "endTime" | "onSaleAt";
   message: string;
 }
 
@@ -238,10 +238,10 @@ function isSkipped(local: string, timeZone: string): boolean {
   return isoToLocal(localToIso(local, timeZone), timeZone) !== local;
 }
 
-/** The show start as one wall clock, or "" when a part is missing. */
-function startLocal(form: ShowForm): string {
-  return form.isoDate && TIME_PATTERN.test(form.startTime)
-    ? `${form.isoDate}T${form.startTime}|${form.timezone}`
+/** A show time as one wall clock in its zone, or "" when a part is missing. */
+function wallClock(form: ShowForm, key: "startTime" | "endTime"): string {
+  return form.isoDate && form.timezone && TIME_PATTERN.test(form[key])
+    ? `${form.isoDate}T${form[key]}`
     : "";
 }
 
@@ -260,14 +260,13 @@ export function formDateProblems(
   if (form.isoDate && !isoDateSchema.safeParse(form.isoDate).success) {
     return [{ field: "isoDate", message: EDITOR.badDate }];
   }
-  const start = startLocal(form);
-  if (
-    start &&
-    form.timezone &&
-    start !== (initial ? startLocal(initial) : "") &&
-    isSkipped(`${form.isoDate}T${form.startTime}`, form.timezone)
-  ) {
-    problems.push({ field: "startTime", message: EDITOR.skippedTime });
+  for (const key of ["startTime", "endTime"] as const) {
+    const clock = wallClock(form, key);
+    const before = initial ? wallClock(initial, key) : "";
+    const edited = clock !== before || form.timezone !== initial?.timezone;
+    if (clock && edited && isSkipped(clock, form.timezone)) {
+      problems.push({ field: key, message: EDITOR.skippedTime });
+    }
   }
   const local = form.onSaleLocal;
   if (!local || keepsOnSale(form, base, initial)) return problems;

@@ -26,7 +26,7 @@ export interface ListedPlace {
   venue: string | null;
   locality: string | null;
   region: string | null;
-  /** A location given as bare text instead of a Place object. */
+  /** A location or address given as bare text instead of an object. */
   text: string | null;
 }
 
@@ -51,16 +51,21 @@ export function extractListedEvents(html: string): ListedEvent[] {
       typeof obj.startDate === "string"
     ) {
       const places = [obj.location].flat().flatMap((place): ListedPlace[] => {
-        if (typeof place === "string")
-          return [{ venue: null, locality: null, region: null, text: place }];
-        if (!place || typeof place !== "object") return [];
+        if (place === undefined || place === null) return [];
+        const unreadable = (raw: unknown): ListedPlace[] => [
+          { venue: null, locality: null, region: null, text: String(raw) },
+        ];
+        if (typeof place !== "object") return unreadable(place);
         const fields = place as Record<string, unknown>;
-        const address = fields.address as Record<string, unknown> | undefined;
+        const address = fields.address;
+        if (address !== undefined && (!address || typeof address !== "object"))
+          return unreadable(address);
+        const parts = (address ?? {}) as Record<string, unknown>;
         return [
           {
             venue: text(fields.name),
-            locality: text(address?.addressLocality),
-            region: text(address?.addressRegion),
+            locality: text(parts.addressLocality),
+            region: text(parts.addressRegion),
             text: null,
           },
         ];
@@ -94,10 +99,11 @@ const comparable = (value: string) =>
 // match let "The Loft Annex" pass for "The Loft"). Its city must be our city
 // exactly. Vendors may append a region ("New York, NY"); the part before the
 // comma is the city (a prefix match let "New York Mills" pass), and a region
-// after it must be our state, as must a separate addressRegion. A location
-// given only as free text can't be checked field by field, so it fails rather
-// than being skipped (skipping let "Laugh Factory, Detroit, MI" pass beside our
-// venue). A listing with no usable place fails.
+// after it must be our state, as must a separate addressRegion. Each place
+// must name our venue or our city; a state alone fails. A location or address
+// given only as text can't be checked field by field, so it fails rather than
+// being skipped (skipping let "Laugh Factory, Detroit, MI" pass beside our
+// venue). A listing with no place fails.
 export function isSameShow(listed: ListedEvent, event: EventEntry): boolean {
   const ourVenue = comparable(event.venue?.name ?? "");
   const ourCity = comparable(event.venue?.addressLocality ?? event.city);
@@ -115,6 +121,9 @@ export function isSameShow(listed: ListedEvent, event: EventEntry): boolean {
     const theirCity = comparable(city);
     const theirRegion = comparable(rest.join(" "));
     if (theirCity) placeChecks.push(theirCity === ourCity);
+    // A state alone fits a whole state's worth of venues, so a place that
+    // names neither a venue nor a city we can compare proves nothing.
+    if (placeChecks.length === 0) return [false];
     if (theirRegion) placeChecks.push(ourRegions.includes(theirRegion));
     // City Winery fills addressRegion with "New York, NY", so each comma part
     // of the region field must name our city or our state.

@@ -426,6 +426,20 @@ for (const [name, status, startDate, location, passes] of [
     false,
   ],
   [
+    "listing that names only our state",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    { address: { addressRegion: "IL" } },
+    false,
+  ],
+  [
+    "listing whose second address is plain text",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    [atVenue, { address: "Detroit, MI" }],
+    false,
+  ],
+  [
     "listing whose second location is plain text",
     200,
     "2026-12-04T19:30:00-06:00",

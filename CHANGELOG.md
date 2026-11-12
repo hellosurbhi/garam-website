@@ -11,6 +11,9 @@
 - Known gap without a watchdog: if the monitor itself stops running (GitHub Actions disabled, cron paused), nothing tells you. Adding the two secrets later turns that detection back on with no code change.
 - Tests: a missing watchdog raises no notification issue, a real failure still emails and opens an issue without one, and a rejecting configured watchdog still fails.
 
+- Restore preview builds. Clean up deployments tied to a merged pull request after merge and retry hourly. Protect previews under review and keep the existing production safeguards.
+- Add a dry run option to the manual cleanup run so it can be checked against the real Vercel account before it deletes anything.
+
 ## fix(apply): outside review round (Codex, CodeRabbit, fresh Claude) and main merge (2026-11-12)
 
 - Merged main (#331, #361) into the branch and settled every conflict, keeping the rules-free applicant path and main's synthetic monitor.

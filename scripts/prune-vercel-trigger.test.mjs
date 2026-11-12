@@ -24,7 +24,9 @@ describe("deployment cleanup trigger", () => {
     [true, "other/garam-website", false],
   ])("handles merge=%s and head repo=%s", (merged, full_name, expected) => {
     expect(workflow).toContain("  pull_request_target:\n    types: [closed]");
-    expect(workflow).toContain("          ref: main");
+    expect(workflow).toContain(
+      "          ref: ${{ inputs.dry_run && github.sha || 'main' }}",
+    );
     expect(
       eligible("pull_request_target", {
         pull_request: { merged, head: { repo: { full_name } } },
@@ -48,6 +50,12 @@ describe("deployment cleanup trigger", () => {
         deployment_status: { state },
       }),
     ).toBe(expected);
+  });
+  it("deletes only outside a dispatched dry run", () => {
+    expect(workflow).toContain("DRY_RUN: ${{ inputs.dry_run }}");
+    expect(workflow).toMatch(
+      /if \[ "\$DRY_RUN" = true \]; then\n\s+node scripts\/prune-vercel-deployments\.mjs\n\s+else\n\s+node scripts\/prune-vercel-deployments\.mjs --apply/,
+    );
   });
   it("retains only successful Vercel classic statuses", () => {
     expect(eligible("status", { context: "Vercel", state: "success" })).toBe(

@@ -8,6 +8,11 @@ on:
   schedule:
     - cron: "23 * * * *"
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "List what cleanup would delete without deleting anything"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -29,11 +34,21 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        # WHY the dry run checks out the dispatched commit: deletion always runs
+        # trusted main code, but a cleanup change must be proven against the
+        # real Vercel API before it reaches main. Only repository writers can
+        # dispatch, and a dry run never calls DELETE.
         with:
-          ref: main
+          ref: ${{ inputs.dry_run && github.sha || 'main' }}
           persist-credentials: false
       - name: Remove obsolete deployments after protecting the live production target
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           GITHUB_TOKEN: ${{ github.token }}
-        run: node scripts/prune-vercel-deployments.mjs --apply
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          if [ "$DRY_RUN" = true ]; then
+            node scripts/prune-vercel-deployments.mjs
+          else
+            node scripts/prune-vercel-deployments.mjs --apply
+          fi

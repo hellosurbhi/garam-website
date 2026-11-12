@@ -57,7 +57,7 @@ test("ticket monitor finds a checkout link that carries the ?eid= the site adds"
   page,
 }) => {
   await page.setContent(
-    '<a href="https://garammasaladating.com/api/go/fixture-show?eid=1b57f1fa">Buy Tickets</a><a href="/api/go/fixture-show-late">Other</a>',
+    '<a href="/api/go/fixture-show?eid=1b57f1fa">Buy Tickets</a><a href="/api/go/fixture-show-late">Other</a>',
   );
   const destination = applyUtmsToUrl(
     event.url!,
@@ -90,6 +90,36 @@ test("ticket monitor finds a checkout link that carries the ?eid= the site adds"
       server.close((e) => (e ? reject(e) : resolve())),
     );
   }
+});
+for (const [name, markup] of [
+  [
+    "a wrong path that merely contains the checkout path",
+    '<a href="/wrong/api/go/fixture-show?eid=123">Buy Tickets</a>',
+  ],
+  [
+    "the right path on another site",
+    '<a href="https://example.com/api/go/fixture-show">Buy Tickets</a>',
+  ],
+] as const) {
+  test(`ticket monitor rejects ${name}`, async ({ page, request }) => {
+    test.setTimeout(10000);
+    await page.setContent(
+      `${markup}<button data-notify-city="Chicago">Notify Me</button>`,
+    );
+    await expect(
+      checkTicketListings(page, request, [event], now),
+    ).rejects.toThrow();
+  });
+}
+test("ticket monitor flags a rewritten absolute checkout link in a waitlist-only state", async ({
+  page,
+  request,
+}) => {
+  test.setTimeout(10000);
+  await page.setContent(
+    '<a href="https://garammasaladating.com/api/go/unknown?eid=1">Buy Tickets</a><button data-notify-city="Chicago">Notify Me</button>',
+  );
+  await expect(checkTicketListings(page, request, [], now)).rejects.toThrow();
 });
 test("ticket monitor does not match a longer slug that shares the prefix", async ({
   page,

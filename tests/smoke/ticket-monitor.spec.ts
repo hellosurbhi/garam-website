@@ -53,6 +53,56 @@ test("ticket monitor rejects a blank page when only waitlists are expected", asy
   await page.setContent("<h1>Upcoming Shows</h1>");
   await expect(checkTicketListings(page, request, [], now)).rejects.toThrow();
 });
+test("ticket monitor finds a checkout link that carries the ?eid= the site adds", async ({
+  page,
+}) => {
+  await page.setContent(
+    '<a href="https://garammasaladating.com/api/go/fixture-show?eid=1b57f1fa">Buy Tickets</a><a href="/api/go/fixture-show-late">Other</a>',
+  );
+  const destination = applyUtmsToUrl(
+    event.url!,
+    {},
+    {
+      utmSource: "garamsite",
+      utmMedium: "web",
+      utmCampaign: "chicago",
+      utmContent: event.slug,
+    },
+  );
+  const { createServer } = await import("node:http");
+  const { request: api } = await import("@playwright/test");
+  const server = createServer((_req, res) => {
+    res.writeHead(302, { location: destination });
+    res.end();
+  });
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  const address = server.address();
+  if (!address || typeof address === "string")
+    throw new Error("Missing fixture server port");
+  const client = await api.newContext({
+    baseURL: `http://127.0.0.1:${address.port}`,
+  });
+  try {
+    await checkTicketListings(page, client, [event], now);
+  } finally {
+    await client.dispose();
+    await new Promise<void>((resolve, reject) =>
+      server.close((e) => (e ? reject(e) : resolve())),
+    );
+  }
+});
+test("ticket monitor does not match a longer slug that shares the prefix", async ({
+  page,
+  request,
+}) => {
+  test.setTimeout(10000);
+  await page.setContent(
+    '<a href="/api/go/fixture-show-late">Other</a><button data-notify-city="Chicago">Notify Me</button>',
+  );
+  await expect(
+    checkTicketListings(page, request, [event], now),
+  ).rejects.toThrow();
+});
 test("ticket monitor checks the exact checkout destination", async ({
   page,
 }) => {

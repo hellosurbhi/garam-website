@@ -3,6 +3,15 @@ import type { EventEntry } from "../../src/data/events";
 import { getTicketPageUpcoming } from "../../src/utils/eventFilters";
 import { applyUtmsToUrl } from "../../src/utils/utmForwarding";
 
+// WHY: the site script rewrites every /api/go/ link after load to an absolute
+// URL with a per-link ?eid= (Meta event dedupe), so the live href is never the
+// bare relative path. An exact-href selector reported a healthy page as broken
+// and paged. Match the path whether relative or absolute, with or without a
+// query; anchoring on the end or "?" keeps one slug from matching a longer slug
+// that shares its prefix.
+const checkoutLinkSelector = (slug: string) =>
+  `a[href$="/api/go/${slug}"]:visible, a[href*="/api/go/${slug}?"]:visible`;
+
 export async function checkTicketListings(
   page: Page,
   request: APIRequestContext,
@@ -30,7 +39,8 @@ export async function checkTicketListings(
     // Static cards can outlive their show between deployments. Their runtime
     // redirects must return to /tickets, never to an expired vendor checkout.
     for (const href of hrefs) {
-      const event = past.find((item) => href === `/api/go/${item.slug}`);
+      const path = new URL(href!, "http://placeholder.invalid").pathname;
+      const event = past.find((item) => path === `/api/go/${item.slug}`);
       expect(
         event,
         `Unexpected checkout in waitlist-only state: ${href}`,
@@ -54,7 +64,7 @@ export async function checkTicketListings(
   }
   for (const event of available) {
     await expect(
-      page.locator(`a[href="/api/go/${event.slug}"]:visible`).first(),
+      page.locator(checkoutLinkSelector(event.slug)).first(),
     ).toBeVisible();
     const response = await request.get(`/api/go/${event.slug}`, {
       maxRedirects: 0,

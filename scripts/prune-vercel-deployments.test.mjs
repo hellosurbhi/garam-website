@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import {
+  githubClients,
   mergedPreviewLookup,
   pruneDeployments,
 } from "./prune-vercel-deployments.mjs";
@@ -163,8 +164,11 @@ describe("deployment cleanup safeguards", () => {
       const github = vi.fn(async (path) => {
         if (path.startsWith("/pulls?")) return [pull];
         if (path.startsWith("/pulls/12/commits")) return [];
-        if (path === `/compare/${pull.base.sha}...${replaced}`)
-          return { commits: [{ sha: "a".repeat(40) }, { sha: replaced }] };
+        if (path.startsWith(`/compare/${pull.base.sha}...${replaced}?`))
+          return {
+            total_commits: 2,
+            commits: [{ sha: "a".repeat(40) }, { sha: replaced }],
+          };
         throw new Error(`unexpected ${path}`);
       });
       const replacedHeads = vi.fn(async () => [replaced]);
@@ -185,7 +189,7 @@ describe("deployment cleanup safeguards", () => {
     [
       "a replaced series without the commit",
       ["c".repeat(40)],
-      { commits: [{ sha: "c".repeat(40) }] },
+      { total_commits: 1, commits: [{ sha: "c".repeat(40) }] },
     ],
   ])(
     "preserves a merged PR's preview after %s",
@@ -206,6 +210,46 @@ describe("deployment cleanup safeguards", () => {
       ).toBe(false);
     },
   );
+
+  it("reads every page of a replaced series longer than one page", async () => {
+    const pull = { ...mergedPull, base: { sha: "d".repeat(40) } };
+    const pageOne = Array.from({ length: 100 }, (_, i) => ({
+      sha: i.toString(16).padStart(40, "e"),
+    }));
+    const github = vi.fn(async (path) => {
+      if (path.startsWith("/pulls?")) return [pull];
+      if (path.startsWith("/pulls/12/commits")) return [];
+      if (path.endsWith("page=1"))
+        return { total_commits: 101, commits: pageOne };
+      if (path.endsWith("page=2"))
+        return { total_commits: 101, commits: [{ sha: "a".repeat(40) }] };
+      throw new Error(`unexpected ${path}`);
+    });
+    expect(
+      await mergedPreviewLookup(github, repository, async () => [
+        "c".repeat(40),
+      ])(preview),
+    ).toBe(true);
+    expect(
+      github.mock.calls.filter(([path]) => path.startsWith("/compare/")),
+    ).toHaveLength(2);
+  });
+
+  it("deletes the preview of a replaced head the base later reached", async () => {
+    const pull = { ...mergedPull, base: { sha: "d".repeat(40) } };
+    const github = vi.fn(async (path) => {
+      if (path.startsWith("/pulls?")) return [pull];
+      if (path.startsWith("/pulls/12/commits")) return [];
+      if (path.startsWith("/compare/"))
+        return { total_commits: 0, commits: [] };
+      throw new Error(`unexpected ${path}`);
+    });
+    expect(
+      await mergedPreviewLookup(github, repository, async () => [
+        preview.meta.githubCommitSha,
+      ])(preview),
+    ).toBe(true);
+  });
 
   it("keeps a preview if its branch is reused by an open PR before deletion", async () => {
     const base = fixture();
@@ -386,5 +430,78 @@ describe("deployment cleanup safeguards", () => {
     expect(api.mock.calls.some(([, method]) => method === "DELETE")).toBe(
       false,
     );
+  });
+});
+
+describe("GitHub readers for preview ownership", () => {
+  const respond = (status, body) => ({
+    ok: status >= 200 && status < 300,
+    status,
+    json: async () => body,
+  });
+  const graphPage = (oids, hasNextPage, endCursor) =>
+    respond(200, {
+      data: {
+        repository: {
+          pullRequest: {
+            timelineItems: {
+              pageInfo: { hasNextPage, endCursor },
+              nodes: oids.map((oid) => ({ beforeCommit: oid && { oid } })),
+            },
+          },
+        },
+      },
+    });
+
+  it("returns null only for a missing compare", async () => {
+    const fetchImpl = vi.fn(async () => respond(404, {}));
+    const { rest } = githubClients(fetchImpl, repository, "token");
+    expect(await rest("/compare/a...b?per_page=100&page=1")).toBeNull();
+    await expect(rest("/pulls/12/commits")).rejects.toThrow("returned 404");
+  });
+
+  it("fails on a GitHub error instead of guessing", async () => {
+    const { rest } = githubClients(
+      vi.fn(async () => respond(500, {})),
+      repository,
+      "token",
+    );
+    await expect(rest("/compare/a...b")).rejects.toThrow("returned 500");
+  });
+
+  it("reads every force-push page and skips replaced heads GitHub lost", async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(graphPage(["c".repeat(40), null], true, "next"))
+      .mockResolvedValueOnce(graphPage(["f".repeat(40)], false, null));
+    const { forcePushedHeads } = githubClients(fetchImpl, repository, "token");
+    expect(await forcePushedHeads(12)).toEqual([
+      "c".repeat(40),
+      "f".repeat(40),
+    ]);
+    const second = JSON.parse(fetchImpl.mock.calls[1][1].body);
+    expect(second.variables).toEqual({
+      owner: "hellosurbhi",
+      name: "garam-website",
+      number: 12,
+      after: "next",
+    });
+  });
+
+  it.each([
+    ["an HTTP failure", respond(502, {}), "returned 502"],
+    [
+      "a GraphQL error",
+      respond(200, { errors: [{ message: "nope" }], data: null }),
+      "Invalid GitHub force-push lookup",
+    ],
+    ["a repeated cursor", graphPage([], true, null), "Repeated GitHub cursor"],
+  ])("fails on %s", async (_case, response, message) => {
+    const { forcePushedHeads } = githubClients(
+      vi.fn(async () => response),
+      repository,
+      "token",
+    );
+    await expect(forcePushedHeads(12)).rejects.toThrow(message);
   });
 });

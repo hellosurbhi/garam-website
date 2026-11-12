@@ -94,10 +94,27 @@ export function mergedPreviewLookup(github, repository, replacedHeads) {
         const shas = new Set();
         for (const head of await replacedHeads(pull.number)) {
           assert.ok(/^[a-f0-9]{40}$/i.test(head), "Invalid replaced head");
-          // A null compare means the replaced series was garbage collected:
-          // nothing proves the preview belonged to this PR, so it is kept.
-          const compare = await github(`/compare/${pull.base.sha}...${head}`);
-          for (const commit of compare?.commits ?? []) shas.add(commit.sha);
+          // GitHub witnessed this commit as the PR's head, so it counts even
+          // when the base later reached it and the compare below omits it.
+          shas.add(head);
+          for (let page = 1, seen = 0; ; page++) {
+            // A null compare means the replaced series was garbage collected:
+            // nothing proves its other commits belonged to this PR.
+            const compare = await github(
+              `/compare/${pull.base.sha}...${head}?per_page=100&page=${page}`,
+            );
+            if (compare === null) break;
+            assert.ok(
+              Array.isArray(compare?.commits) &&
+                compare.commits.length <= 100 &&
+                Number.isSafeInteger(compare.total_commits),
+              "Invalid GitHub compare",
+            );
+            for (const commit of compare.commits) shas.add(commit.sha);
+            seen += compare.commits.length;
+            if (compare.commits.length < 100 || seen >= compare.total_commits)
+              break;
+          }
         }
         replacedCommits.set(pull.number, shas);
       }
@@ -105,6 +122,66 @@ export function mergedPreviewLookup(github, repository, replacedHeads) {
     }
     return false;
   };
+}
+
+/**
+ * GitHub readers for mergedPreviewLookup, taking fetch so tests can drive the
+ * real request, pagination and failure handling.
+ */
+export function githubClients(fetchImpl, repository, token) {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    Accept: "application/vnd.github+json",
+  };
+  const rest = async (path) => {
+    const response = await fetchImpl(
+      `https://api.github.com/repos/${repository}${path}`,
+      { headers, signal: AbortSignal.timeout(30_000) },
+    );
+    if (response.status === 404 && path.startsWith("/compare/")) return null;
+    assert.ok(
+      response.ok,
+      `GitHub preview ownership lookup returned ${response.status}`,
+    );
+    return response.json();
+  };
+  // REST timeline events carry only the new head; GraphQL keeps the
+  // replaced one (beforeCommit), which is what proves the old preview.
+  const forcePushedHeads = async (number) => {
+    const [owner, name] = repository.split("/");
+    const heads = [];
+    for (let after = null; ;) {
+      const response = await fetchImpl("https://api.github.com/graphql", {
+        method: "POST",
+        headers,
+        signal: AbortSignal.timeout(30_000),
+        body: JSON.stringify({
+          query: `query($owner:String!,$name:String!,$number:Int!,$after:String){repository(owner:$owner,name:$name){pullRequest(number:$number){timelineItems(first:100,after:$after,itemTypes:[HEAD_REF_FORCE_PUSHED_EVENT]){pageInfo{hasNextPage endCursor} nodes{... on HeadRefForcePushedEvent{beforeCommit{oid}}}}}}}`,
+          variables: { owner, name, number, after },
+        }),
+      });
+      assert.ok(
+        response.ok,
+        `GitHub force-push lookup returned ${response.status}`,
+      );
+      const body = await response.json();
+      const items = body?.data?.repository?.pullRequest?.timelineItems;
+      assert.ok(
+        items && !body.errors && Array.isArray(items.nodes),
+        "Invalid GitHub force-push lookup",
+      );
+      for (const node of items.nodes) {
+        if (node?.beforeCommit?.oid) heads.push(node.beforeCommit.oid);
+      }
+      if (!items.pageInfo?.hasNextPage) return heads;
+      assert.ok(
+        items.pageInfo.endCursor && items.pageInfo.endCursor !== after,
+        "Repeated GitHub cursor",
+      );
+      after = items.pageInfo.endCursor;
+    }
+  };
+  return { rest, forcePushedHeads };
 }
 
 /** Prune obsolete production deployments and previews proven to belong to merged PRs. */
@@ -272,60 +349,19 @@ if (
       return response.status === 204 ? {} : response.json();
     };
     const { GITHUB_TOKEN, GITHUB_REPOSITORY } = process.env;
-    const githubHeaders = {
-      Authorization: `Bearer ${GITHUB_TOKEN}`,
-      Accept: "application/vnd.github+json",
-    };
-    // REST timeline events carry only the new head; GraphQL keeps the
-    // replaced one (beforeCommit), which is what proves the old preview.
-    const forcePushedHeads = async (number) => {
-      const [owner, name] = GITHUB_REPOSITORY.split("/");
-      const heads = [];
-      for (let after = null; ;) {
-        const response = await fetch("https://api.github.com/graphql", {
-          method: "POST",
-          headers: githubHeaders,
-          signal: AbortSignal.timeout(30_000),
-          body: JSON.stringify({
-            query: `query($owner:String!,$name:String!,$number:Int!,$after:String){repository(owner:$owner,name:$name){pullRequest(number:$number){timelineItems(first:100,after:$after,itemTypes:[HEAD_REF_FORCE_PUSHED_EVENT]){pageInfo{hasNextPage endCursor} nodes{... on HeadRefForcePushedEvent{beforeCommit{oid}}}}}}}`,
-            variables: { owner, name, number, after },
-          }),
-        });
-        assert.ok(
-          response.ok,
-          `GitHub force-push lookup returned ${response.status}`,
-        );
-        const body = await response.json();
-        const items = body?.data?.repository?.pullRequest?.timelineItems;
-        assert.ok(items && !body.errors, "Invalid GitHub force-push lookup");
-        for (const node of items.nodes) {
-          if (node?.beforeCommit?.oid) heads.push(node.beforeCommit.oid);
-        }
-        if (!items.pageInfo.hasNextPage) return heads;
-        assert.ok(items.pageInfo.endCursor !== after, "Repeated GitHub cursor");
-        after = items.pageInfo.endCursor;
-      }
-    };
-    const canPrunePreview =
-      GITHUB_TOKEN && GITHUB_REPOSITORY
-        ? mergedPreviewLookup(
-            async (path) => {
-              const response = await fetch(
-                `https://api.github.com/repos/${GITHUB_REPOSITORY}${path}`,
-                { headers: githubHeaders, signal: AbortSignal.timeout(30_000) },
-              );
-              if (response.status === 404 && path.startsWith("/compare/"))
-                return null;
-              assert.ok(
-                response.ok,
-                `GitHub preview ownership lookup returned ${response.status}`,
-              );
-              return response.json();
-            },
-            GITHUB_REPOSITORY,
-            (number) => forcePushedHeads(number),
-          )
-        : undefined;
+    let canPrunePreview;
+    if (GITHUB_TOKEN && GITHUB_REPOSITORY) {
+      const { rest, forcePushedHeads } = githubClients(
+        fetch,
+        GITHUB_REPOSITORY,
+        GITHUB_TOKEN,
+      );
+      canPrunePreview = mergedPreviewLookup(
+        rest,
+        GITHUB_REPOSITORY,
+        forcePushedHeads,
+      );
+    }
     await pruneDeployments(api, {
       apply: process.argv.includes("--apply"),
       canPrunePreview,

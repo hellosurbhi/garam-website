@@ -878,12 +878,12 @@ for (const [name, status, body, mode, passes, noted] of [
   ["a blocked runner", 403, ourListing, "whenServed", true, true],
   ["a rate limited runner", 429, ourListing, "whenServed", true, true],
   ["a vendor outage", 503, ourListing, "whenServed", true, true],
-  ["a bot challenge page", 200, challenge, "whenServed", true, true],
+  ["a bot challenge page", 200, challenge, "whenServed", false, false],
   [
-    "a bot challenge page when required",
-    200,
+    "a login page the vendor sent us to",
+    401,
     challenge,
-    "required",
+    "whenServed",
     false,
     false,
   ],
@@ -924,6 +924,21 @@ test("ticket monitor notes a vendor that drops the connection", async ({
   expect(
     test.info().annotations.filter((a) => a.type === "listing unavailable"),
   ).toHaveLength(1);
+});
+
+test("ticket monitor fails a listing that redirects to itself", async ({
+  page,
+}) => {
+  test.setTimeout(10000);
+  await checkVendorResponse(
+    page,
+    (res) => {
+      res.writeHead(302, { location: "/listing" });
+      res.end();
+    },
+    false,
+    "whenServed",
+  );
 });
 
 test("ticket monitor follows the rendered link with its tracking parameters", async ({

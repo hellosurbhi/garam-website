@@ -23,10 +23,9 @@ export interface TicketCheckOptions {
    * events.ts passes every redirect assertion, because the redirect reads the
    * same data. "required" fails when a vendor won't serve the page, so the
    * weekly and preview smoke runs surface a lasting block. "whenServed" notes
-   * a page the vendor would not serve (blocked, rate limited, timed out or a
-   * bot challenge with no structured data) and checks the rest, so the
-   * frequent monitor pages only for a page that loads and names another
-   * event, or for a dead link.
+   * a page the vendor would not serve (403, 429, 5xx, a timeout or a dropped
+   * connection) and checks the rest, so the frequent monitor pages only for
+   * a page that loads without naming this show, or for a dead link.
    */
   verifyListings?: false | "required" | "whenServed";
 }
@@ -285,6 +284,10 @@ function localStart(iso: string, timeZone: string): string | null {
   return `${p.year}-${p.month}-${p.day} ${p.hour}:${p.minute}`;
 }
 
+/** Request errors that mean the vendor's network failed, not our link. */
+const TRANSIENT_REQUEST_ERROR =
+  /Timeout \d+ms exceeded|ETIMEDOUT|ECONNRESET|ECONNREFUSED|EAI_AGAIN|socket hang up/;
+
 /** Fails a listing check that needs the page, or notes it in "whenServed". */
 function listingUnavailable(
   mode: "required" | "whenServed",
@@ -309,27 +312,29 @@ async function expectListingStart(
       headers: MONITOR_HEADERS,
     });
   } catch (error) {
-    return listingUnavailable(
-      mode,
-      `${event.slug}: ${url} did not respond (${error instanceof Error ? error.message : String(error)})`,
-    );
-  }
-  if (!response.ok()) {
-    const problem = `${event.slug}: ${url} returned ${response.status()}`;
-    // WHY 404 and 410 always fail: the vendor is saying the page does not
-    // exist, which is a dead checkout link, not a block of our runner.
-    if ([404, 410].includes(response.status())) throw new Error(problem);
+    const message = error instanceof Error ? error.message : String(error);
+    const problem = `${event.slug}: ${url} did not respond (${message})`;
+    // WHY only timeouts and dropped or refused connections count as unserved:
+    // those are the vendor's network, while a redirect loop or a domain that
+    // does not resolve is a broken link we published and must fail.
+    if (!TRANSIENT_REQUEST_ERROR.test(message))
+      throw new Error(problem, { cause: error });
     return listingUnavailable(mode, problem);
   }
+  const status = response.status();
+  if (!response.ok()) {
+    const problem = `${event.slug}: ${url} returned ${status}`;
+    // WHY only 403, 429 and 5xx count as unserved: those are a block, a rate
+    // limit or an outage. Any other error (404, 410, 401) says the link we
+    // published is wrong or dead.
+    if (status !== 403 && status !== 429 && status < 500)
+      throw new Error(problem);
+    return listingUnavailable(mode, problem);
+  }
+  // WHY every 200 must match, even one with no structured data: a homepage,
+  // search page, login redirect or script shell also loads fine, so a page
+  // the monitor cannot read is a wrong link until it names this show.
   const html = await response.text();
-  // WHY only a page with no structured data at all counts as unserved: bot
-  // challenges carry none, while a real page that names another event (or a
-  // venue calendar) has some and must still fail as a wrong link.
-  if (!/application\/ld\+json/i.test(html))
-    return listingUnavailable(
-      mode,
-      `${event.slug}: ${url} served no structured data, likely a bot challenge`,
-    );
   const listed = extractListedEvents(html);
   const expectedStart = event.startTime
     ? `${event.isoDate} ${event.startTime}`

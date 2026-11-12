@@ -9,6 +9,7 @@ import ShowsHistory from "./ShowsHistory";
 import ShowsList from "./ShowsList";
 import ShowsStatus from "./ShowsStatus";
 import ShowsToolbar from "./ShowsToolbar";
+import { attemptSettled, type ApiResult } from "./showsApi";
 import type { ShowsAdmin } from "./useShowsAdmin";
 import {
   countChanges,
@@ -60,8 +61,8 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
   const busy = admin.pending !== null;
   const locked = admin.lockMs > 0;
   const close = () => setDialog(null);
-  const settle = (res: { ok: boolean; status?: number } | null) => {
-    if (res && (res.ok || res.status === 409)) close();
+  const settle = (res: ApiResult<unknown> | null) => {
+    if (attemptSettled(res)) close();
   };
 
   return (

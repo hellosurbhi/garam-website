@@ -8,6 +8,7 @@ import type { EventsSnapshot } from "@/data/eventsSnapshot";
 import type { EventsAdminLoad, RebuildStatus } from "@/lib/eventsAdmin.server";
 import {
   fetchSiteVersion,
+  isDenied,
   showsRequest,
   SHOWS_ROUTES,
   type ApiResult,
@@ -38,7 +39,7 @@ const TOAST_MS = 4_000;
 async function fetchShows(): Promise<ShowsLoad> {
   const res = await showsRequest<EventsAdminLoad>(SHOWS_ROUTES.load);
   if (res.ok) return { kind: "ready", data: res.data };
-  if (res.status === 401) return { kind: "denied" };
+  if (isDenied(res)) return { kind: "denied" };
   return { kind: "error", message: res.error };
 }
 
@@ -119,7 +120,7 @@ export function useShowsAdmin() {
       const res = await showsRequest<T>(path, { method, body });
       if (res.ok) {
         await reload();
-      } else if (res.status === 401) {
+      } else if (isDenied(res)) {
         setLoad({ kind: "denied" });
       } else if (res.status === 409) {
         // WHY reload: someone published (or saved) first; editing on top of

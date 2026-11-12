@@ -215,20 +215,25 @@ function rescheduleHistory(base: EventEntry, isoDate: string | undefined) {
 /**
  * The record the form describes. `base` is the draft entry being edited
  * (undefined for a new show); fields the form does not show are kept.
+ * `initial` is the form as it first opened from `base`.
  */
 export function entryFromForm(
   form: ShowForm,
   base: EventEntry | undefined,
   nowIso: string,
+  initial: ShowForm | undefined,
 ): EventEntry {
   const isoDate = text(form.isoDate);
   const timezone = text(form.timezone);
   // WHY slug and city come from `base`: both are permanent once a show
   // exists (R13); its page and date links are built from them.
   const citySlug = base?.citySlug ?? form.citySlug;
+  // WHY compare with the opened form and not re-derive from the new zone:
+  // a legacy show with no zone opened its on-sale time in UTC, so picking a
+  // zone and re-deriving shifted the instant (19:00Z to 23:00Z) although the
+  // admin never touched it. An untouched field keeps its exact saved value.
   const keepOnSale =
-    base?.onSaleAt &&
-    isoToLocal(base.onSaleAt, timezone ?? "") === form.onSaleLocal;
+    base?.onSaleAt && initial && form.onSaleLocal === initial.onSaleLocal;
   const note = text(form.note);
   // Empty fields become undefined, which JSON drops on the way to the server.
   return {

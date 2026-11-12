@@ -17,7 +17,7 @@ import {
   type ShowForm,
 } from "./showForm";
 import { checkShowForm, splitIssues } from "./showIssues";
-import type { ApiResult, FieldIssue } from "./showsApi";
+import { attemptSettled, type ApiResult, type FieldIssue } from "./showsApi";
 import styles from "./ShowEditorModal.module.css";
 
 interface ShowEditorModalProps {
@@ -72,6 +72,7 @@ export default function ShowEditorModal({
     if (JSON.stringify(form) === JSON.stringify(initial)) return onClose();
     const { candidate, problems } = checkShowForm({
       form,
+      initial,
       base,
       index,
       snapshot,
@@ -82,8 +83,8 @@ export default function ShowEditorModal({
     setIssues(problems);
     if (problems.length > 0) return;
     const res = await onSave(candidate);
-    if (res?.ok) onClose();
-    else if (res) setIssues(res.issues);
+    if (attemptSettled(res)) onClose();
+    else if (res && !res.ok) setIssues(res.issues);
   }
 
   return (

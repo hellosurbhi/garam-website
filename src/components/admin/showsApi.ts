@@ -43,7 +43,15 @@ export async function showsRequest<T>(
   path: string,
   options: { method?: "GET" | "POST" | "PUT"; body?: unknown } = {},
 ): Promise<ApiResult<T>> {
-  const token = await adminIdToken();
+  let token: string | null;
+  try {
+    token = await adminIdToken();
+  } catch {
+    // WHY here and not in the caller: Firebase refreshes an expired token
+    // over the network, so offline this rejects. Every route must still come
+    // back as `ok: false`, or the tab waits on loading or pending forever.
+    return { ok: false, status: 0, error: SHOWS_LOAD.network, issues: [] };
+  }
   if (!token) {
     return {
       ok: false,
@@ -78,6 +86,20 @@ export async function showsRequest<T>(
       ? body.error
       : SHOWS_LOAD.failed;
   return { ok: false, status: res.status, error, issues: issuesOf(body) };
+}
+
+/** 401 (not signed in) and 403 (signed in, not an admin) both lock the tab. */
+export function isDenied(res: ApiResult<unknown>): boolean {
+  return !res.ok && (res.status === 401 || res.status === 403);
+}
+
+/**
+ * True when an attempt is over and its dialog should close: it worked, or
+ * someone else changed the shows first (409) and the tab reloaded their
+ * version, so the values in the dialog are stale and must not be sent again.
+ */
+export function attemptSettled(res: ApiResult<unknown> | null): boolean {
+  return Boolean(res && (res.ok || res.status === 409));
 }
 
 /** The show list version the deployed website rendered, or null if unknown. */

@@ -10,9 +10,11 @@ import type { EventEntry, EventsSnapshot } from "@/data/eventsSnapshot";
 import type { EventsAdminLoad } from "@/lib/eventsAdmin.server";
 import ShowsTab from "./ShowsTab";
 
+const tokenMock = vi.hoisted(() => vi.fn());
+
 vi.mock("@/lib/firebase", () => ({
   getFirebaseAuth: vi.fn(() => ({
-    currentUser: { getIdToken: vi.fn().mockResolvedValue("tok") },
+    currentUser: { getIdToken: tokenMock },
   })),
 }));
 
@@ -110,7 +112,10 @@ function json(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), { status });
 }
 
-function routeFetch(loadStatus = 200) {
+function routeFetch(
+  loadStatus = 200,
+  writes: Record<string, () => Response> = {},
+) {
   fetchMock.mockImplementation(async (path: string) => {
     if (path === "/api/version") return json(200, { eventsVersion: 3 });
     if (path === "/api/admin/events") {
@@ -118,6 +123,8 @@ function routeFetch(loadStatus = 200) {
         ? json(200, adminLoad())
         : json(loadStatus, { error: "Unauthorized" });
     }
+    const write = writes[path];
+    if (write) return write();
     return json(200, { version: 4, rebuild: "requested", changes: noChanges });
   });
 }
@@ -137,6 +144,8 @@ const nativeShowModal = dialogProto.showModal;
 const nativeClose = dialogProto.close;
 
 beforeEach(() => {
+  tokenMock.mockReset();
+  tokenMock.mockResolvedValue("tok");
   fetchMock.mockReset();
   vi.stubGlobal("fetch", fetchMock);
   dialogProto.showModal = function showModal(this: HTMLDialogElement) {
@@ -231,5 +240,104 @@ describe("ShowsTab", () => {
         { targetVersion: 2, expectedVersion: 3, note: "Back to the old list" },
       ]),
     );
+  });
+  it("shows the denied state when the load answers 403", async () => {
+    routeFetch(403);
+    render(<ShowsTab />);
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toMatch(/can't manage shows/);
+    expect(screen.queryByText("Add show")).toBeNull();
+  });
+
+  it("denies the whole tab when a publish answers 403", async () => {
+    routeFetch(200, {
+      "/api/admin/events/publish": () => json(403, { error: "Forbidden" }),
+    });
+    render(<ShowsTab />);
+    fireEvent.click(await screen.findByRole("button", { name: "Publish" }));
+    fireEvent.change(screen.getByLabelText("What changed and why"), {
+      target: { value: "Austin is booked" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Publish now" }));
+    await waitFor(() =>
+      expect(screen.getByRole("alert").textContent).toMatch(
+        /can't manage shows/,
+      ),
+    );
+    expect(screen.queryByText("Add show")).toBeNull();
+  });
+
+  it("shows the error and a retry when the token refresh fails on load", async () => {
+    routeFetch();
+    tokenMock.mockRejectedValue(new Error("auth/network-request-failed"));
+    render(<ShowsTab />);
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toMatch(/Couldn't reach the server/);
+    expect(screen.getByRole("button", { name: "Try again" })).toBeTruthy();
+  });
+
+  it("frees the buttons when the token refresh fails during a publish", async () => {
+    routeFetch();
+    render(<ShowsTab />);
+    fireEvent.click(await screen.findByRole("button", { name: "Publish" }));
+    fireEvent.change(screen.getByLabelText("What changed and why"), {
+      target: { value: "Austin is booked" },
+    });
+    tokenMock.mockRejectedValue(new Error("auth/network-request-failed"));
+    fireEvent.click(screen.getByRole("button", { name: "Publish now" }));
+    await waitFor(() =>
+      expect(
+        screen
+          .getByRole("button", { name: "Publish now" })
+          .hasAttribute("disabled"),
+      ).toBe(false),
+    );
+    expect(screen.getByText(/Couldn't reach the server/)).toBeTruthy();
+    expect(callsTo("/api/admin/events/publish")).toHaveLength(0);
+  });
+
+  it("closes the editor after a 409 so stale values are never sent again", async () => {
+    let version = 3;
+    routeFetch(200, {
+      "/api/admin/events/draft": () => json(409, { error: "Conflict" }),
+    });
+    const base = fetchMock.getMockImplementation();
+    fetchMock.mockImplementation(async (path: string, init?: RequestInit) => {
+      // After the conflict, the reload sees another admin's version 4.
+      if (path === "/api/admin/events" && version === 4) {
+        const next = adminLoad();
+        next.live.version = 4;
+        next.live.snapshot = {
+          events: [fixtureShow({ price: "35" })],
+          tbaCities: [],
+        };
+        next.draft = null;
+        return json(200, next);
+      }
+      if (path === "/api/admin/events/draft") version = 4;
+      return base?.(path, init);
+    });
+    render(<ShowsTab />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Edit Chicago, Jan 9" }),
+    );
+    fireEvent.change(screen.getByLabelText("Card tagline"), {
+      target: { value: "Back by demand" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Save to draft" }));
+
+    // Wait for the reload that follows the conflict, then check the editor.
+    await waitFor(() =>
+      expect(
+        fetchMock.mock.calls.filter(([p]) => p === "/api/admin/events"),
+      ).toHaveLength(2),
+    );
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("heading", { name: "Edit Chicago, Jan 9" }),
+      ).toBeNull(),
+    );
+    expect(screen.getByText(/nothing was saved/)).toBeTruthy();
+    expect(callsTo("/api/admin/events/draft")).toHaveLength(1);
   });
 });

@@ -79,7 +79,8 @@ export const SHOWS_TOAST = {
     `Version ${version} is published but the rebuild didn't start. Press Rebuild site.`,
   rebuildStarted: "Rebuild started",
   rebuildFailed: "The rebuild didn't start. Try again in a minute.",
-  reloaded: "Someone else published first. The list is reloaded.",
+  reloaded:
+    "Someone else changed the shows first, so nothing was saved. The list now shows their version.",
 } as const;
 
 /** Headings for each kind of pending change, in the order they are listed. */

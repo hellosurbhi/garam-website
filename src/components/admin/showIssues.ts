@@ -108,6 +108,8 @@ function describe(issue: FieldIssue, snapshot: EventsSnapshot): string {
 
 export interface ShowFormCheckInput {
   form: ShowForm;
+  /** The form as it first opened, so untouched fields keep their saved value. */
+  initial: ShowForm;
   /** The saved show being edited; undefined when adding one. */
   base: EventEntry | undefined;
   /** Where the show sits (or will sit) in the draft's events. */
@@ -127,7 +129,7 @@ export function checkShowForm(input: ShowFormCheckInput): {
   problems: FieldIssue[];
 } {
   const { form, base, index, snapshot, live } = input;
-  const entry = entryFromForm(form, base, input.nowIso);
+  const entry = entryFromForm(form, base, input.nowIso, input.initial);
   const events = base
     ? snapshot.events.map((x, i) => (i === index ? entry : x))
     : [...snapshot.events, entry];

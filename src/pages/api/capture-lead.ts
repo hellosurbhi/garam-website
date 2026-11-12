@@ -1,9 +1,15 @@
+import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
+import { SMOKE_TEST_EMAIL } from "@/lib/smokeTestIdentity";
 import type { APIRoute } from "astro";
 import { validateEmail } from "@/utils/validateEmail";
 import { addKitSubscriber, type KitSubscriberFields } from "@/lib/kit";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { issueLeadToken } from "@/lib/leadToken";
 import { alertOps } from "@/lib/opsAlert";
+import {
+  isPrefilledCitySource,
+  resolveWaitlistMarket,
+} from "@/lib/waitlistRanking";
 
 export const prerender = false;
 
@@ -13,6 +19,7 @@ interface LeadPayload {
   name?: string;
   instagram?: string;
   city?: string;
+  cityInputSource?: "entered";
   source?: string;
   sourcePage?: string;
   sourceCitySlug?: string;
@@ -32,7 +39,11 @@ interface LeadPayload {
   geoTimezone?: string;
 }
 
-type FirestoreValue = { stringValue?: string; doubleValue?: number };
+type FirestoreValue = {
+  stringValue?: string;
+  doubleValue?: number;
+  booleanValue?: boolean;
+};
 type FirestoreFields = Record<string, FirestoreValue>;
 
 function normalizedString(value: unknown, maxLength: number): string {
@@ -101,7 +112,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   // Validate email
   const email = body.email?.trim().toLowerCase();
-  if (!email || validateEmail(email)) {
+  if (!email || email === SMOKE_TEST_EMAIL || validateEmail(email)) {
     return new Response(JSON.stringify({ error: "Valid email required" }), {
       status: 400,
       headers: { "Content-Type": "application/json" },
@@ -126,6 +137,9 @@ export const POST: APIRoute = async ({ request }) => {
     createdAt: { stringValue: now },
   };
 
+  const synthetic = isSyntheticSubmission(email);
+  if (synthetic) fields.isSynthetic = { booleanValue: true };
+
   // Add optional fields. Caps mirror firestore.rules validLead: phone 50 to
   // match the apply form's format-sized ceiling (a formatted international
   // number is longer than the old 20), name/instagram for the apply form's
@@ -146,7 +160,17 @@ export const POST: APIRoute = async ({ request }) => {
   addStringField(fields, "fbclid", body.fbclid, 500);
   addStringField(fields, "gclid", body.gclid, 500);
   addStringField(fields, "posthogDistinctId", body.posthogDistinctId, 200);
-  addStringField(fields, "sourceCitySlug", body.sourceCitySlug, 100);
+  // Persist entered-city evidence using the existing market field. The marker
+  // is request-only, so old clients and deployed Firestore rules stay compatible.
+  const sourceCitySlug =
+    normalizedString(body.sourceCitySlug, 100) ||
+    (body.cityInputSource === "entered" &&
+    isPrefilledCitySource(
+      normalizedString(body.source, 50)?.toLowerCase() ?? "",
+    )
+      ? resolveWaitlistMarket("", normalizedString(body.city, 100) ?? "")
+      : undefined);
+  addStringField(fields, "sourceCitySlug", sourceCitySlug, 100);
   addStringField(fields, "geoCity", body.geoCity, 100);
   addStringField(fields, "geoRegion", body.geoRegion, 100);
   addStringField(fields, "geoCountry", body.geoCountry, 100);
@@ -199,23 +223,25 @@ export const POST: APIRoute = async ({ request }) => {
     // Extract document ID from the name field (projects/.../documents/leads/DOC_ID)
     const docId = doc.name?.split("/").pop() ?? "";
 
-    // Sync to Kit — fire-and-forget, never blocks the response
-    const kitTags: string[] = ["website-lead"];
-    if (body.city) kitTags.push(body.city.toLowerCase().replace(/\s+/g, "-"));
-    if (body.utmSource) kitTags.push(body.utmSource.toLowerCase());
-    const kitFields: KitSubscriberFields = {};
-    if (body.city) kitFields.city = body.city;
-    if (body.sourcePage) kitFields.source_page = body.sourcePage;
-    if (body.landingPage) kitFields.landing_page = body.landingPage;
-    if (body.utmSource) kitFields.utm_source = body.utmSource;
-    if (body.utmMedium) kitFields.utm_medium = body.utmMedium;
-    if (body.utmCampaign) kitFields.utm_campaign = body.utmCampaign;
-    addKitSubscriber(email, kitTags, kitFields).catch(() => {
-      // Kit errors are already logged inside addKitSubscriber
-    });
+    if (!synthetic) {
+      // Sync to Kit asynchronously without blocking the response.
+      const kitTags: string[] = ["website-lead"];
+      if (body.city) kitTags.push(body.city.toLowerCase().replace(/\s+/g, "-"));
+      if (body.utmSource) kitTags.push(body.utmSource.toLowerCase());
+      const kitFields: KitSubscriberFields = {};
+      if (body.city) kitFields.city = body.city;
+      if (body.sourcePage) kitFields.source_page = body.sourcePage;
+      if (body.landingPage) kitFields.landing_page = body.landingPage;
+      if (body.utmSource) kitFields.utm_source = body.utmSource;
+      if (body.utmMedium) kitFields.utm_medium = body.utmMedium;
+      if (body.utmCampaign) kitFields.utm_campaign = body.utmCampaign;
+      addKitSubscriber(email, kitTags, kitFields).catch(() => {
+        // Kit errors are already logged inside addKitSubscriber
+      });
 
-    // No per-signup producer email: new signups arrive in the daily digest
-    // (an email means something is broken).
+      // No per-signup producer email: new signups arrive in the daily digest
+      // (an email means something is broken).
+    }
 
     // Ownership proof for the step-2 phone update. Null while
     // LEAD_UPDATE_SECRET is unset (feature off), in which case the key is

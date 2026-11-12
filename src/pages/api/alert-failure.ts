@@ -123,10 +123,10 @@ export const POST: APIRoute = async ({ request }) => {
     await claim.release();
   }
   // WHY: a 200 here used to mean "received", even when every channel failed, so
-  // a caller could not tell a delivered page from a lost one. 502 reports the
+  // a caller could not tell a delivered page from a lost one. 503 reports the
   // truth; the browser still fires and forgets and ignores the status.
   return new Response(JSON.stringify({ ok: delivered }), {
-    status: delivered ? 200 : 502,
+    status: delivered ? 200 : 503,
     headers: { "Content-Type": "application/json" },
   });
 };

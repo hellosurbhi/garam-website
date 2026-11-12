@@ -1,0 +1,56 @@
+---
+import { PAGES } from "@/data/copy";
+import { allEvents } from "@/data/events";
+import { getListingInventory } from "@/utils/eventFilters";
+import HomeShowCards from "@/components/home/HomeShowCards.astro";
+import { getWaitlistRanking } from "@/lib/waitlistRanking.server";
+import { selectWaitlistCards } from "@/lib/waitlistRanking";
+import TicketCard from "./TicketCard.astro";
+
+interface Props {
+  todayISO: string;
+  nowISO: string;
+  scheduledCount: number;
+  sourcePage?: "tickets" | "home";
+}
+const {
+  todayISO,
+  nowISO,
+  scheduledCount,
+  sourcePage = "tickets",
+} = Astro.props;
+let cards: ReturnType<typeof selectWaitlistCards> = [];
+try {
+  // WHY: match the static ticket list snapshot. Advancing only this island
+  // can add a waitlist beneath a still-rendered purchase card for the same market.
+  cards = selectWaitlistCards(
+    await getWaitlistRanking(),
+    getListingInventory(allEvents, sourcePage),
+    todayISO,
+    new Date(nowISO),
+  );
+  Astro.response.headers.set(
+    "Cache-Control",
+    "public, max-age=0, s-maxage=3600",
+  );
+} catch (error) {
+  console.error(
+    "[waitlist-ranking] Unable to load city list",
+    error instanceof Error ? error.message : "Unknown error",
+  );
+  Astro.response.headers.set("Cache-Control", "no-store");
+}
+---
+
+{sourcePage === "home" ? (
+  <HomeShowCards events={cards} />
+) : (
+  cards.map((event, index) => (
+    <TicketCard
+      event={event}
+      index={index + scheduledCount}
+      sourcePage="tickets"
+    />
+  ))
+)}
+{cards.length === 0 && <p>{PAGES.tickets.waitlistEmpty}</p>}

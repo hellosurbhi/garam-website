@@ -93,20 +93,51 @@ async function readGeoResponse(res: Response): Promise<GeoResponse | null> {
   }
 }
 
-/** Only expose decoded geo data, even before bootstrap refreshes an old session. */
-export function getGeoCity(): string | null {
+/** Migrate completed legacy sessions before exposing a consistent geo snapshot. */
+function getCachedGeo(): GeoResponse {
+  if (safeSessionStorage.getItem(GEO_FETCHED_KEY) === "1") {
+    const city = safeSessionStorage.getItem(GEO_CITY_KEY);
+    if (city) {
+      try {
+        safeSessionStorage.setItem(GEO_CITY_KEY, decodeURIComponent(city));
+      } catch (error) {
+        if (!(error instanceof URIError)) throw error;
+        safeSessionStorage.removeItem(GEO_CITY_KEY);
+      }
+    }
+    safeSessionStorage.setItem(GEO_FETCHED_KEY, GEO_CACHE_VERSION);
+  }
   if (safeSessionStorage.getItem(GEO_FETCHED_KEY) !== GEO_CACHE_VERSION)
-    return null;
-  return safeSessionStorage.getItem(GEO_CITY_KEY);
+    return {};
+  return {
+    city: safeSessionStorage.getItem(GEO_CITY_KEY) ?? undefined,
+    region: safeSessionStorage.getItem(GEO_REGION_KEY) ?? undefined,
+    country: safeSessionStorage.getItem(GEO_COUNTRY_KEY) ?? undefined,
+    timezone: safeSessionStorage.getItem(GEO_TIMEZONE_KEY) ?? undefined,
+  };
 }
 
+/** Return a city only from a completed, migrated cache; incomplete or failed caches expose no city. */
+export function getGeoCity(): string | null {
+  return getCachedGeo().city || null;
+}
+
+/** Fetch once per session when no completed cache exists, clearing partial fields before storing a coherent response. */
 function bootstrapGeoData(): void {
-  if (safeSessionStorage.getItem(GEO_FETCHED_KEY) === GEO_CACHE_VERSION) return;
+  getCachedGeo();
+  const cacheState = safeSessionStorage.getItem(GEO_FETCHED_KEY);
+  if (cacheState === GEO_CACHE_VERSION || cacheState === "failed") return;
   if (geoFetchPromise) return; // already in-flight on this page
 
-  // Version 1 cached URL-encoded cities. Clear that value before form prefill
-  // and bypass the old HTTP response cache when fetching the decoded format.
-  safeSessionStorage.removeItem(GEO_CITY_KEY);
+  // Discard incomplete records so a partial response cannot mix two locations.
+  for (const key of [
+    GEO_CITY_KEY,
+    GEO_REGION_KEY,
+    GEO_COUNTRY_KEY,
+    GEO_TIMEZONE_KEY,
+  ]) {
+    safeSessionStorage.removeItem(key);
+  }
   geoFetchPromise = fetch("/api/geo", { cache: "no-store" })
     .then(readGeoResponse)
     .then((geo) => {
@@ -119,10 +150,13 @@ function bootstrapGeoData(): void {
           safeSessionStorage.setItem(GEO_TIMEZONE_KEY, geo.timezone);
         // lat/lon intentionally omitted (clear-text storage of precise location — CodeQL)
       }
-      safeSessionStorage.setItem(GEO_FETCHED_KEY, GEO_CACHE_VERSION);
+      safeSessionStorage.setItem(
+        GEO_FETCHED_KEY,
+        geo ? GEO_CACHE_VERSION : "failed",
+      );
     })
     .catch(() => {
-      safeSessionStorage.setItem(GEO_FETCHED_KEY, GEO_CACHE_VERSION); // prevent retry storm
+      safeSessionStorage.setItem(GEO_FETCHED_KEY, "failed"); // prevent retry storm
     })
     .finally(() => {
       geoFetchPromise = null; // release so test isolation and retry work correctly
@@ -248,18 +282,11 @@ export async function buildLeadAttribution(params: {
     attribution.sourceCitySlug = params.sourceCitySlug;
   }
 
-  // Geo data from /api/geo (cached in sessionStorage)
-  const geoCity = getGeoCity() ?? undefined;
-  if (geoCity) attribution.geoCity = geoCity;
-
-  const geoRegion = safeSessionStorage.getItem(GEO_REGION_KEY) ?? undefined;
-  if (geoRegion) attribution.geoRegion = geoRegion;
-
-  const geoCountry = safeSessionStorage.getItem(GEO_COUNTRY_KEY) ?? undefined;
-  if (geoCountry) attribution.geoCountry = geoCountry;
-
-  const geoTimezone = safeSessionStorage.getItem(GEO_TIMEZONE_KEY) ?? undefined;
-  if (geoTimezone) attribution.geoTimezone = geoTimezone;
+  const geo = getCachedGeo();
+  if (geo.city) attribution.geoCity = geo.city;
+  if (geo.region) attribution.geoRegion = geo.region;
+  if (geo.country) attribution.geoCountry = geo.country;
+  if (geo.timezone) attribution.geoTimezone = geo.timezone;
 
   return attribution;
 }

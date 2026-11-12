@@ -181,6 +181,39 @@ describe("AdminDashboard", () => {
     expect(screen.getByText("Anika")).toBeInTheDocument();
   });
 
+  it("hides reserved synthetic identities but does not hide customers with a forged flag", async () => {
+    mockGetDocs.mockResolvedValue({
+      docs: [
+        {
+          id: "test",
+          data: () =>
+            makeApp({
+              id: "test",
+              name: "Monitor Fixture",
+              email:
+                "synthetic-monitor+01234567-89ab-4cde-8fab-0123456789ab@garammasaladating.com",
+              isSynthetic: true,
+            }),
+        },
+        {
+          id: "customer",
+          data: () =>
+            makeApp({
+              id: "customer",
+              name: "Real Applicant",
+              email: "customer@example.com",
+              isSynthetic: true,
+            }),
+        },
+      ],
+    });
+    render(<AdminDashboard onLogout={onLogout} />);
+    await waitFor(() =>
+      expect(screen.getByText("Real Applicant")).toBeInTheDocument(),
+    );
+    expect(screen.queryByText("Monitor Fixture")).not.toBeInTheDocument();
+  });
+
   it("shows active count in tab badge", async () => {
     mockGetDocs.mockResolvedValue({
       docs: [{ id: "1", data: () => ({ ...makeApp({ id: "1" }) }) }],

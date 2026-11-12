@@ -19,9 +19,131 @@
 - Photos go straight to Storage over a signed URL (`/api/upload-application-photo`), any format and size. Compression is an optimization only; the original uploads if it fails, a 4MB server relay is the fallback, and a failed photo never blocks the application.
 - `firestore.rules` and `storage.rules` are now the lockdown state (admin only, no client creates). They are deployed by Surbhi once the canary is green and the digest shows 0 old-client writes for 48 hours.
 - Email: per-signup and per-application emails are gone. One daily digest (`/api/cron/daily-digest`, 12:00 UTC) lists signups, applications, unfinished drafts and problems, with tripwires for drops, missing photos and dirty env values. Failure alerts are the only instant email, with subject `APPLY FAILED: <stage>: <raw error>` and the real cause, field lengths, photo sizes and what was saved anyway. Alerts are also written to `incidents` for the digest. The alert endpoint now returns 502 when no channel delivered, and a webhook that answers 5xx no longer counts as delivered.
-- Monitoring: the fake-application synthetic monitor, the rules-drift apply check and the mocked weekly Firebase apply smoke are replaced by a production canary (`apply-canary.yml`) that overwrites one fixed `_canary` document per browser profile, never creates or deletes, and pages through its own channel.
+- Monitoring: the fake-application synthetic monitor and the mocked weekly Firebase apply smoke are replaced by a production canary (`apply-canary.yml`) that overwrites one fixed `_canary` document per browser profile, never creates or deletes, and pages through its own channel. The Notify Me and ticket redirect monitors, the rules-drift check and the cleanup ledger from the signup reliability work stay.
 - Admin: partial drafts show as `Draft` and every field render is guarded for missing data.
 - Tests rewritten from scratch: the save endpoint, draft merge fuzzing, the autosave queue, the photo pipeline, the upload endpoint, storage signing, the digest and its cron route, the form-to-server contract, the alert path, the rules tests and the apply smoke tests.
+
+## Waitlist review corrections (2026-11-11)
+
+- Remove the unused former schema filter and document the execution limits of deferred automation work.
+
+- Initialize tracking for deferred checkout links, show accurate dated-waitlist copy and limit homepage event schemas to displayed ticket cards. Make the deferred follow-up plans discoverable by the overnight queue.
+
+- Reveal ticket links when deferred presale markup arrives after sales open and correct the documented V3 cache fallback.
+
+- Snapshot city and input evidence together before asynchronous attribution and centralize homepage card fallback copy.
+
+- Bind entered-city evidence to the last input value so a delayed geo prefill after clearing the field cannot count as explicit demand.
+
+- Exclude ambiguous historical popup and Spice List city prefills from demand ranking. New edited city inputs record explicit market interest through the existing source city field without changing Firestore rules.
+- Refresh the corrected counts under the V3 cache. Retain identity-based synthetic exclusion and remove the unused synthetic flag projection.
+- Load event inventory inside the waitlist island to preserve cacheable GET requests. Keep the ticket and waitlist selection timestamps aligned.
+- Mark Notify Me bells decorative, extract homepage card styles into a CSS module and correct the roster maintenance instructions.
+
+## Five market waitlists and ticket ordering (2026-11-11)
+
+- Withdraw the Chicago December 4 and San Diego December 24 scheduled shows while keeping their history and eligibility for Notify Me.
+- Rank five markets using unique emails across leads and applications, explicit location aliases and Edison grouped under New York. Exclude active ticket markets before selecting five.
+- Show purchasable events first, then selected dated waitlists, then undated waitlists on the homepage and tickets page. Keep the existing homepage card design through a shared card component.
+- Version the aggregate cache and fix the missing gap between ticket cards and waitlist cards. Stack purchase controls below titles on small screens to avoid cramped city names.
+
+## Resolve monitoring and waitlist review findings (2026-11-11)
+
+- Retain pending synthetic checks and incident reports with GitHub’s bounded maximum queue. Skip redirect checks for superseded revisions while retaining cleanup.
+- Isolate offline smoke builds with an allowlisted child environment and empty environment-file directory.
+- Keep qualified city requests intact instead of assigning unknown qualifiers to another city.
+- Verify valid Notify Me-only pages when no tickets are available, while requiring visible checkout links and exact destinations for available shows.
+
+## California December tickets (2026-11-11)
+
+- Enable Los Angeles December 27 ticket purchases through the venue’s Eventbrite and publish its confirmed venue and Pacific show times. Remove contradictory venue-TBD and presale copy from the LA city page.
+- Correct San Francisco December 26 to 6 PM to 8 PM Pacific while retaining its existing ticket link, attribution and permanent URLs.
+
+## Monitor fixture URL checks (2026-11-11)
+
+- Match mocked GitHub and Gmail requests by exact hostname so the test harness rejects lookalike hosts.
+
+## Monitoring review corrections (2026-11-11)
+
+- Preserve custom recovery subjects, serialize upload journal updates and isolate malformed cleanup evidence.
+- Wait for deployments on each trigger, ignore superseded checks and distinguish canceled jobs from failures. Block first-party analytics in synthetic browsers and identify ticket checks with an explicit monitor user agent.
+
+## Production monitoring and test isolation (2026-11-11)
+
+- Add exact-attempt production signup checks with durable upload evidence, conditional cleanup, crash recovery and guarded retention. Exclude reserved test identities from customer views, marketing and counts.
+- Gate writes on deployed code and rules, classify monitoring failures and verify independent notification channels and external watchdog configuration.
+- Build isolated browser fixtures with nonfunctional Firebase identifiers and verify the real SDK upload metadata parser. Return an error when alert delivery fails.
+
+## Stable ticket page city exclusions (2026-11-11)
+
+- Keep the live waitlist section aligned with the dated city cards rendered at build time so a show date passing does not add a duplicate city card before the next build.
+
+## Waitlist timeout recovery (2026-11-10)
+
+- Release a canceled ranking refresh at its 15-second deadline so the next visitor can retry. Retain the last good ranking and prevent late work from clearing a newer refresh or starting cache writes.
+
+## Review reliability fixes (2026-11-10)
+
+- Exclude slash variants of show aliases from the sitemap, trigger cleanup on successful production deployment events and retain waitlist rankings across bounded refresh failures. Add explicit Redis fixture failures, a short retry delay, complete redirect failure reporting and keyboard regression coverage.
+
+## Complete review guard edge cases (2026-11-06)
+
+- Match JavaScript email trimming at the Firestore boundary, including Unicode whitespace, and verify each supported whitespace character in the emulator. Record the November 5 withdrawal directly on each canceled Texas placeholder.
+
+## Approved Claude review follow-up (2026-11-05)
+
+- Add a read-only deployed-redirect check for canonical destinations and tracking-query preservation. Run it after the matching build reaches production.
+- Retry transient Redis health failures once, preserve one older successful production deployment for rollback and use the shared canceled status for the four withdrawn Texas placeholders. Reject the reserved smoke identity at the Firestore lead-create boundary while preserving mocked browser flows and emulator-only database tests.
+
+## Live Redis health in packaged smoke tests (2026-11-05)
+
+- Add one authenticated read-only Redis PING to the packaged smoke test, using the artifact’s actual connection. Require PONG within five seconds and fail production builds on missing configuration or failed health checks. Keep allow/deny fixtures for behavior tests without changing real counters.
+
+## Integrate runtime smoke fixes from main (2026-11-05)
+
+- Resolve the overlap with PR #332 by retaining local Redis allow/deny fixtures without thrown fetch errors or external requests. Preserve main’s lint configuration, automation changes and documentation alongside this branch’s fixes.
+
+## PR review follow-up (2026-11-05)
+
+- Name the waitlist region for assistive technology, centralize its fallback copy and clarify that the highest-demand cities appear below dated shows. Strengthen failed-cache and deployment-safety regression tests and document the affected functions.
+
+## Automatic rescheduled-show redirects (2026-11-05)
+
+- Generate permanent event-page and ticket-route redirects from each show’s current and historical dates. Preserve canonical URLs, support repeated reschedules and reject ambiguous aliases. Restore old Philadelphia links and add current-date aliases for NYC, SF, LA and San Diego without duplicate sitemap entries.
+
+## Correct deployment-storage accounting (2026-11-05)
+
+- Corrected cleanup output and documentation: deleted deployments stop counting toward storage immediately, while daily usage peaks can remain visible. Recovery retention does not continue charging storage. Verified the account is Hobby and its Deployment Storage allowance is 10 GB.
+
+## Ranked city waitlists and isolated smoke tests (2026-11-05)
+
+- Removed 599 verified historical smoke-test lead records after owner approval. Exact identity, fixture contact values, source pages and unchanged document versions were checked before deletion. Post-cleanup verification found zero fixture records and all 650 non-test records unchanged.
+
+- Add Chicago December 4 as Notify Me. Below dated shows, display the ten highest waitlist cities without an upcoming tickets-page show, sorted by unique email count with alphabetical ties. Refresh counts daily on demand using a server-only aggregate cache; repeated submissions and the known smoke fixture do not inflate rankings.
+- Keep purchase links static and available independently of the waitlist lookup. Reuse the Notify Me dialog for asynchronously loaded cards.
+- Intercept lead capture and phone updates in browser smoke tests, block unmocked mutations and reject the reserved smoke email at the lead API before persistence or notifications.
+
+## Houston and Dallas waitlists (2026-11-05)
+
+- Keep Houston and Dallas as the last two tickets-page listings with Notify Me and no dates. Austin and San Antonio remain excluded.
+
+## Automatic deployment cleanup (2026-11-05)
+
+- Enabled project-level preview blocking so branches with older configuration cannot create preview deployments. Production auto-assignment remains enabled on `main`.
+
+- Added a project-scoped cleanup workflow after successful Vercel statuses and hourly. It protects the live production target, custom domains and in-flight releases. Requires the one-time `VERCEL_TOKEN` Actions secret; deleted deployments immediately stop contributing to storage usage.
+
+## Clear packaged rate-limit checks (2026-11-05)
+
+- Replaced intentionally rejected Redis calls in packaged smoke checks with local allow and deny fixtures. Configured builds must enforce a simulated denial with HTTP 429. Output explicitly distinguishes these checks from live Redis connectivity.
+
+## Tickets page Texas listings (2026-11-05)
+
+- Removed Texas show listings and their event structured data from the tickets page. Hide the sticky ticket CTA when no listed shows remain.
+
+## Preserve cached signup locations (2026-11-05)
+
+- Decode completed legacy city caches in place so offline visitors retain their location. Read city, region, country and timezone from the same completed cache. Discard incomplete records before a fresh lookup and keep failures distinct from success.
 
 ## fix(sync): bounded order sync, stuck-order cap, safe cursor, completed-show window (2026-10-21)
 

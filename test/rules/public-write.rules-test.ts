@@ -82,6 +82,41 @@ describe("firestore.rules: leads", () => {
     );
   });
 
+  it.each([
+    "smoketest@example.com",
+    "SmokeTest@Example.com",
+    "  smoketest@example.com  ",
+  ])(
+    "rejects the reserved smoke identity on direct client writes: %s",
+    async (email) => {
+      const db = testEnv.unauthenticatedContext().firestore();
+      await assertFails(
+        setDoc(doc(collection(db, "leads"), "smoke-blocked"), {
+          ...validLead,
+          email,
+        }),
+      );
+    },
+  );
+
+  it.each([
+    0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x20, 0xa0, 0x1680, 0x2000, 0x2001, 0x2002,
+    0x2003, 0x2004, 0x2005, 0x2006, 0x2007, 0x2008, 0x2009, 0x200a, 0x2028,
+    0x2029, 0x202f, 0x205f, 0x3000, 0xfeff,
+  ])(
+    "rejects the smoke identity wrapped in JS trim whitespace code point %i",
+    async (codePoint) => {
+      const space = String.fromCodePoint(codePoint);
+      const db = testEnv.unauthenticatedContext().firestore();
+      await assertFails(
+        setDoc(doc(collection(db, "leads"), "unicode-smoke-blocked"), {
+          ...validLead,
+          email: `${space}smoketest@example.com${space}`,
+        }),
+      );
+    },
+  );
+
   it("unknown fields are rejected (hasOnly allowlist)", async () => {
     const db = testEnv.unauthenticatedContext().firestore();
     await assertFails(
@@ -201,5 +236,55 @@ describe("firestore.rules: server-only collections stay closed to clients", () =
     await assertFails(
       setDoc(doc(collection(adminDb, "orders"), "x"), { total: 1 }),
     );
+  });
+});
+
+describe("synthetic marker and private cleanup ledger", () => {
+  it.each([
+    "synthetic-monitor@garammasaladating.com",
+    "synthetic-monitor+01234567-89ab-4cde-8fab-0123456789ab@garammasaladating.com",
+  ])("allows reserved production monitoring identity %s", async (email) => {
+    const db = testEnv.unauthenticatedContext().firestore();
+    await assertSucceeds(
+      setDoc(doc(db, "leads", "synthetic"), {
+        ...validLead,
+        email,
+        isSynthetic: true,
+      }),
+    );
+  });
+  it.each([
+    "customer@example.com",
+    "synthetic-monitor+not-a-uuid@garammasaladating.com",
+    "synthetic-monitor@garammasaladating.com.evil",
+  ])("rejects a synthetic flag for %s", async (email) => {
+    const db = testEnv.unauthenticatedContext().firestore();
+    await assertFails(
+      setDoc(doc(db, "leads", "forged"), {
+        ...validLead,
+        email,
+        isSynthetic: true,
+      }),
+    );
+  });
+  it("requires the marker for a reserved identity", async () => {
+    const db = testEnv.unauthenticatedContext().firestore();
+    await assertFails(
+      setDoc(doc(db, "leads", "missing-marker"), {
+        ...validLead,
+        email: "synthetic-monitor@garammasaladating.com",
+      }),
+    );
+  });
+  it("denies browser access to cleanup evidence, including admin browsers", async () => {
+    for (const context of [
+      testEnv.unauthenticatedContext(),
+      anonContext("test-uploader"),
+      adminContext(),
+    ]) {
+      const ref = doc(context.firestore(), "syntheticRuns", "attempt");
+      await assertFails(setDoc(ref, { email: validLead.email }));
+      await assertFails(getDoc(ref));
+    }
   });
 });

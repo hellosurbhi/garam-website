@@ -50,6 +50,16 @@ describe("sync-leads-to-kit handler", () => {
         JSON.stringify({
           documents: [
             {
+              name: "projects/test/databases/(default)/documents/leads/synthetic",
+              fields: {
+                email: {
+                  stringValue:
+                    "synthetic-monitor+01234567-89ab-4cde-8fab-0123456789ab@garammasaladating.com",
+                },
+                isSynthetic: { booleanValue: true },
+              },
+            },
+            {
               name: "projects/test/databases/(default)/documents/leads/lead1",
               fields: {
                 email: { stringValue: "person@example.com" },

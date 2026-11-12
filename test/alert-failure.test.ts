@@ -169,10 +169,10 @@ describe("alert-failure handler", () => {
     expect(html).toContain("&lt;script&gt;");
   });
 
-  it("reports 502, not a false 200, when the mail send fails and nothing else delivered", async () => {
+  it("returns 503 when no notification channel accepts the alert", async () => {
     mockSend.mockRejectedValue(new Error("SMTP down"));
     const res = await POST(makeContext(makeRequest(validReport)));
-    expect(res.status).toBe(502);
+    expect(res.status).toBe(503);
     expect(await res.json()).toEqual({ ok: false });
   });
 
@@ -215,8 +215,7 @@ describe("alert-failure handler", () => {
       mockRedisDel.mockResolvedValue(1);
       mockSend.mockRejectedValue(new Error("SMTP down"));
       const res = await POST(makeContext(makeRequest(validReport)));
-      // Honest status: a page that reached nobody is not a success.
-      expect(res.status).toBe(502);
+      expect(res.status).toBe(503);
       // The claim is freed so the NEXT report of this incident can page,
       // instead of an hour of suppression behind an alert that never sent.
       expect(mockRedisDel).toHaveBeenCalledTimes(1);

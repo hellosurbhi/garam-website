@@ -1,3 +1,4 @@
+import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
 export const prerender = false;
 
 import type { APIRoute } from "astro";
@@ -137,7 +138,9 @@ export const GET: APIRoute = async ({ request, url }) => {
   try {
     const accessToken = await getFirestoreAccessToken();
     const docs = await listLeads(projectId, accessToken);
-    let leads = docs.map(toLead);
+    let leads = docs
+      .map(toLead)
+      .filter((lead) => !isSyntheticSubmission(lead.email));
 
     if (cityFilter) {
       leads = leads.filter(

@@ -43,6 +43,13 @@ describe("admin/leads GET /api/admin/leads", () => {
         ok: true,
         json: async () => ({
           documents: [
+            firestoreDoc("synthetic", {
+              email:
+                "synthetic-monitor+01234567-89ab-4cde-8fab-0123456789ab@garammasaladating.com",
+              city: "Chicago",
+              source: "notify-modal",
+              createdAt: "2026-11-11T00:00:00Z",
+            }),
             firestoreDoc("1", {
               email: "a@x.com",
               phone: "+15551110000",

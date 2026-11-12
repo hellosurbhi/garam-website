@@ -32,6 +32,17 @@ function firestoreBody(fetchSpy: ReturnType<typeof vi.spyOn>, callIndex = 0) {
 }
 
 describe("capture-lead handler", () => {
+  it("rejects the reserved smoke identity before persistence or notifications", async () => {
+    const network = vi.spyOn(globalThis, "fetch");
+    const response = await POST(
+      makeContext(
+        makeRequest({ email: " SmokeTest@Example.com ", city: "Houston" }),
+      ),
+    );
+    expect(response.status).toBe(400);
+    expect(network).not.toHaveBeenCalled();
+  });
+
   beforeEach(() => {
     vi.restoreAllMocks();
     import.meta.env.PUBLIC_FIREBASE_PROJECT_ID = "test-project";
@@ -79,6 +90,7 @@ describe("capture-lead handler", () => {
 
     const { fields } = firestoreBody(fetchSpy);
     expect(fields.email.stringValue).toBe("person@example.com");
+    expect(fields).not.toHaveProperty("isSynthetic");
     expect(fields.city.stringValue).toBe("Manhattan");
     expect(fields.source.stringValue).toHaveLength(50);
     expect(fields.sourcePage.stringValue).toBe("/cities/manhattan");
@@ -272,4 +284,88 @@ describe("capture-lead handler", () => {
     expect(res.status).toBe(429);
     expect(fetchSpy).not.toHaveBeenCalled();
   });
+});
+
+describe("production test lead isolation", () => {
+  it("persists a server-derived marker without Kit or producer notifications", async () => {
+    import.meta.env.PUBLIC_FIREBASE_PROJECT_ID = "test-project";
+    import.meta.env.KIT_API_KEY = "fixture-key";
+    import.meta.env.NOTIFICATION_EMAIL = "producer@example.com";
+    const network = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          name: "projects/test-project/databases/(default)/documents/leads/test",
+        }),
+      ),
+    );
+    try {
+      const response = await POST(
+        makeContext(
+          makeRequest({
+            email:
+              "synthetic-monitor+01234567-89ab-4cde-8fab-0123456789ab@garammasaladating.com",
+            source: "notify-modal",
+            sourcePage: "/tickets",
+          }),
+        ),
+      );
+      expect(response.status).toBe(200);
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(
+        JSON.parse(String(network.mock.calls[0][1]?.body)).fields.isSynthetic,
+      ).toEqual({ booleanValue: true });
+    } finally {
+      network.mockRestore();
+      delete import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
+      delete import.meta.env.KIT_API_KEY;
+      delete import.meta.env.NOTIFICATION_EMAIL;
+    }
+  });
+});
+
+describe("entered city provenance", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.stubEnv("PUBLIC_FIREBASE_PROJECT_ID", "test-project");
+  });
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllEnvs();
+  });
+  it.each([
+    ["popup", "entered", "Edison", undefined, "manhattan"],
+    ["spice-list-tickets", "entered", "Herndon", undefined, "washington-dc"],
+    ["popup", undefined, "Chicago", undefined, undefined],
+    ["popup", "prefilled", "Chicago", undefined, undefined],
+    ["popup", "entered", "Unknown city", undefined, undefined],
+    ["popup", "entered", "Chicago", "austin", "austin"],
+    ["other-source", "entered", "Chicago", undefined, undefined],
+  ])(
+    "handles %s / %s / %s without a Firestore schema change",
+    async (source, cityInputSource, city, sourceCitySlug, expected) => {
+      const fetchSpy = vi
+        .spyOn(globalThis, "fetch")
+        .mockImplementation(async () =>
+          Response.json({
+            name: "projects/test-project/databases/(default)/documents/leads/lead123",
+          }),
+        );
+      const response = await POST(
+        makeContext(
+          makeRequest({
+            email: "person@example.com",
+            source,
+            city,
+            cityInputSource,
+            sourceCitySlug,
+          }),
+        ),
+      );
+      expect(response.status).toBe(200);
+      const fields = firestoreBody(fetchSpy).fields;
+      expect(fields.sourceCitySlug?.stringValue).toBe(expected);
+      expect(fields.cityInputSource).toBeUndefined();
+      expect(fields.city.stringValue).toBe(city);
+    },
+  );
 });

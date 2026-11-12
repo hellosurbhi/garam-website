@@ -2,6 +2,17 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    function syntheticEmail(email) {
+      return email is string && email.lower().matches('synthetic-monitor([+][0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})?@garammasaladating[.]com');
+    }
+    function validSyntheticMarker(d) {
+      return ('email' in d.keys() && syntheticEmail(d.email))
+        ? ('isSynthetic' in d.keys() && d.isSynthetic == true)
+        : (!('isSynthetic' in d.keys()) || d.isSynthetic == false);
+    }
+    // Only the monitor service account can manage cleanup evidence.
+    match /syntheticRuns/{id} { allow read, write: if false; }
+
     // WHY the odd-looking 200/400/4000 text caps here: the owner's rule is that no real person may ever
     // hit a length limit, so free-text ceilings are anti-bot-flood bounds
     // only, set far beyond human writing. Each cap is 4x the client-side
@@ -13,9 +24,14 @@ service cloud.firestore {
     // applicants (long pitch, spelled-out height, formatted phone).
     function validLead() {
       let d = request.resource.data;
-      return d.keys().hasOnly(['email', 'city', 'state', 'country', 'phone', 'name', 'instagram', 'source', 'sourcePage', 'landingPage', 'referrerHost', 'utmSource', 'utmMedium', 'utmCampaign', 'utmContent', 'utmTerm', 'fbclid', 'gclid', 'posthogDistinctId', 'sourceCitySlug', 'createdAt', 'geoCity', 'geoRegion', 'geoCountry', 'geoLatitude', 'geoLongitude', 'geoTimezone'])
+      // Match JavaScript trim(), including Unicode spaces that RE2 \s omits.
+      let trimWhitespace = '[\\x09-\\x0D\\x20\\x{A0}\\x{1680}\\x{2000}-\\x{200A}\\x{2028}\\x{2029}\\x{202F}\\x{205F}\\x{3000}\\x{FEFF}]*';
+      return d.keys().hasOnly(['email', 'city', 'state', 'country', 'phone', 'name', 'instagram', 'source', 'sourcePage', 'landingPage', 'referrerHost', 'utmSource', 'utmMedium', 'utmCampaign', 'utmContent', 'utmTerm', 'fbclid', 'gclid', 'posthogDistinctId', 'sourceCitySlug', 'createdAt', 'geoCity', 'geoRegion', 'geoCountry', 'geoLatitude', 'geoLongitude', 'geoTimezone', 'isSynthetic'])
+        && validSyntheticMarker(d)
         && d.keys().hasAll(['email', 'source', 'sourcePage', 'createdAt'])
         && d.email is string && d.email.size() > 0 && d.email.size() <= 1280
+        // Browser smoke success is mocked; real test writes belong in the emulator.
+        && !d.email.lower().matches(trimWhitespace + 'smoketest@example[.]com' + trimWhitespace)
         && d.source is string && d.source.size() > 0 && d.source.size() <= 50
         && d.sourcePage is string && d.sourcePage.size() > 0 && d.sourcePage.size() <= 200
         && d.createdAt is string && d.createdAt.size() > 0 && d.createdAt.size() <= 30

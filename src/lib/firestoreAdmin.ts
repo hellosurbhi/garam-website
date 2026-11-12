@@ -13,7 +13,10 @@ let tokenExpiresAt = 0;
  * to avoid redundant network round-trips on every request, matching the
  * same caching strategy used in verifyToken.ts.
  */
-export async function getFirestoreAccessToken(): Promise<string> {
+export async function getFirestoreAccessToken(
+  signal?: AbortSignal,
+): Promise<string> {
+  signal?.throwIfAborted();
   // Return cached token if still valid (with 60s buffer before expiry)
   if (cachedToken && Date.now() < tokenExpiresAt - 60_000) {
     return cachedToken;
@@ -52,6 +55,7 @@ export async function getFirestoreAccessToken(): Promise<string> {
 
   // Exchange JWT for access token
   const res = await fetch("https://oauth2.googleapis.com/token", {
+    signal,
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
@@ -71,6 +75,7 @@ export async function getFirestoreAccessToken(): Promise<string> {
     access_token: string;
     expires_in: number;
   };
+  signal?.throwIfAborted();
   cachedToken = data.access_token;
   tokenExpiresAt = Date.now() + data.expires_in * 1000;
 

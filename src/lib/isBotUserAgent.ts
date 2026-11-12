@@ -15,6 +15,7 @@
  * route, not blocking traffic.
  */
 const BOT_USER_AGENT_PATTERNS = [
+  /^GaramMasalaMonitor\/1[.]0$/i,
   /facebookexternalhit/i,
   /facebookcatalog/i,
   /Meta-ExternalAgent/i,

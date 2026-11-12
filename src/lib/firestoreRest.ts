@@ -60,14 +60,26 @@ function baseUrl(): string {
   return `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents`;
 }
 
+/**
+ * Every Firestore call is bounded. A caller-supplied signal (a request
+ * deadline) is passed through untouched because the caller owns that budget
+ * and its tests assert the exact signal reaches fetch; without one, the call
+ * gets a default timeout so a hung Firestore can never hold a function open.
+ */
+function withTimeout(signal: AbortSignal | undefined, ms: number): AbortSignal {
+  return signal ?? AbortSignal.timeout(ms);
+}
+
 /** Read a single document. Returns null if not found. */
 export async function fsGet(
   docPath: string,
+  signal?: AbortSignal,
 ): Promise<Record<string, unknown> | null> {
-  const token = await getFirestoreAccessToken();
+  const token = await getFirestoreAccessToken(signal);
+  signal?.throwIfAborted();
   const res = await fetch(`${baseUrl()}/${docPath}`, {
     headers: { Authorization: `Bearer ${token}` },
-    signal: AbortSignal.timeout(10_000),
+    signal: withTimeout(signal, 10_000),
   });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`fsGet ${docPath}: ${res.status}`);
@@ -207,13 +219,15 @@ export async function fsPatchIfUnchanged(
 export async function fsPatch(
   docPath: string,
   fields: Record<string, unknown>,
+  signal?: AbortSignal,
 ): Promise<void> {
-  const token = await getFirestoreAccessToken();
+  const token = await getFirestoreAccessToken(signal);
   const fieldNames = Object.keys(fields);
   const mask = fieldNames
     .map((f) => `updateMask.fieldPaths=${encodeURIComponent(f)}`)
     .join("&");
 
+  signal?.throwIfAborted();
   const res = await fetch(`${baseUrl()}/${docPath}?${mask}`, {
     method: "PATCH",
     headers: {
@@ -221,7 +235,7 @@ export async function fsPatch(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ fields: toFields(fields) }),
-    signal: AbortSignal.timeout(10_000),
+    signal: withTimeout(signal, 10_000),
   });
   if (!res.ok) {
     const body = await res.text();

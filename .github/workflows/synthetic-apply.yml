@@ -1,0 +1,173 @@
+name: Synthetic Apply Monitor
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "30 13 * * 1"
+    - cron: "30 13 * * 0,2-6"
+    - cron: "30 1,7,19 * * *"
+  workflow_dispatch:
+    inputs:
+      test_pager:
+        description: "Send a labelled notification delivery drill"
+        type: boolean
+        default: false
+permissions:
+  contents: read
+  issues: write
+jobs:
+  deployed:
+    permissions: { contents: read }
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: monitor-version-${{ github.event_name }}
+      cancel-in-progress: true
+    outputs:
+      state: ${{ steps.gate.outputs.state }}
+    steps:
+      - uses: actions/checkout@v7
+        with: { persist-credentials: false }
+      - uses: actions/setup-node@v7
+        with: { node-version: 24 }
+      - id: gate
+        run: node scripts/synthetic/deployment.mjs
+        env:
+          MONITOR_WAIT_FOR_DEPLOY: "true"
+          GITHUB_TOKEN: ${{ github.token }}
+  synthetic:
+    permissions: { contents: read }
+    needs: deployed
+    if: needs.deployed.outputs.state != 'superseded'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: synthetic-apply
+      cancel-in-progress: false
+      queue: max
+    env:
+      MONITOR_REPORTING_JOB: "true"
+      MONITOR_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+    outputs:
+      outcomes: ${{ steps.results.outputs.outcomes }}
+    steps:
+      - uses: actions/checkout@v7
+        with: { persist-credentials: false }
+      - uses: actions/setup-node@v7
+        with: { node-version: 24, cache: npm }
+      - run: npm install -g npm@11
+      - run: npm ci
+      - name: Install browser
+        id: setup
+        run: npx playwright install chromium --with-deps
+      - name: Recheck live version after queueing
+        id: preversion
+        run: node scripts/synthetic/deployment.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      # WHY first: deployed rules drift is a release configuration failure,
+      # not evidence that a customer submission failed.
+      - name: Verify deployed rules
+        id: rules
+        if: success() && steps.preversion.outputs.state == 'ready'
+        run: node scripts/check-rules-drift.mjs
+        env:
+          FIREBASE_ADMIN_CLIENT_EMAIL: ${{ secrets.FIREBASE_ADMIN_CLIENT_EMAIL }}
+          FIREBASE_ADMIN_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
+
+      - name: Test real application and Notify Me
+        id: flow
+        if: success() && steps.rules.outcome == 'success' && steps.preversion.outputs.state == 'ready'
+        run: npx playwright test --config playwright.synthetic.config.ts --grep-invert 'ticket redirects'
+        env:
+          FIREBASE_ADMIN_CLIENT_EMAIL: ${{ secrets.FIREBASE_ADMIN_CLIENT_EMAIL }}
+          FIREBASE_ADMIN_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
+          PLAYWRIGHT_BASE_URL: https://garammasaladating.com
+      - name: Verify live ticket redirects
+        id: redirects
+        if: (success() || failure()) && steps.preversion.outputs.state == 'ready'
+        run: npx playwright test --config playwright.synthetic.config.ts --grep 'ticket redirects'
+        env:
+          PLAYWRIGHT_BASE_URL: https://garammasaladating.com
+      - name: Recover and verify test cleanup
+        id: cleanup
+        if: always() && steps.setup.outcome == 'success'
+        run: node scripts/synthetic-apply-verify.mjs
+        env:
+          FIREBASE_ADMIN_CLIENT_EMAIL: ${{ secrets.FIREBASE_ADMIN_CLIENT_EMAIL }}
+          FIREBASE_ADMIN_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
+
+      - name: Detect a deployment during the checks
+        id: version
+        if: always() && steps.setup.outcome == 'success'
+        run: node scripts/synthetic/deployment.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Record phase outcomes
+        id: results
+        if: always()
+        env:
+          PHASES: ${{ toJSON(steps) }}
+        run: |
+          node --input-type=module -e 'import { appendFileSync, readFileSync, existsSync } from "node:fs"; const p=JSON.parse(process.env.PHASES); appendFileSync(process.env.GITHUB_OUTPUT, `outcomes=${JSON.stringify({...Object.fromEntries(["setup","rules","flow","redirects","cleanup","version"].map(k=>[k,p[k]?.outcome||"skipped"])), preversionState:p.preversion?.outputs?.state, versionState:p.version?.outputs?.state, cleanupEscalated:existsSync("synthetic-cleanup.json") && JSON.parse(readFileSync("synthetic-cleanup.json","utf8")).errors.some(e=>e.escalated)})}`+"\n");'
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: synthetic-cleanup
+          path: synthetic-cleanup.json
+          retention-days: 7
+          if-no-files-found: ignore
+  report:
+    needs: [deployed, synthetic]
+    if: always() && needs.deployed.result != 'cancelled'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    concurrency:
+      group: synthetic-report
+      cancel-in-progress: false
+      queue: max
+    steps:
+      - uses: actions/checkout@v7
+        id: checkout
+        with: { persist-credentials: false }
+      - uses: actions/setup-node@v7
+        with: { node-version: 24 }
+      - name: Report outcomes and check notification channels
+        id: report
+        run: node scripts/synthetic/report.mjs
+        env:
+          GATE_STATE: ${{ needs.deployed.outputs.state }}
+          CHECK_RESULT: ${{ needs.synthetic.result }}
+          GATE_RESULT: ${{ needs.deployed.result }}
+          CHECK_OUTCOMES: ${{ needs.synthetic.outputs.outcomes }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_CLIENT_ID: ${{ secrets.GMAIL_CLIENT_ID }}
+          GMAIL_CLIENT_SECRET: ${{ secrets.GMAIL_CLIENT_SECRET }}
+          GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
+          PAGER_EMAIL_TO: ${{ secrets.PAGER_EMAIL_TO }}
+          WATCHDOG_URL: ${{ secrets.MONITOR_WATCHDOG_URL }}
+          WEEKLY_WATCHDOG_URL: ${{ secrets.MONITOR_WEEKLY_WATCHDOG_URL }}
+          EVENT_NAME: ${{ github.event_name }}
+          SCHEDULE: ${{ github.event.schedule }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          TEST_PAGER: ${{ inputs.test_pager }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      - name: Independent fallback when reporting cannot start
+        if: failure() && steps.report.outcome != 'success'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const title = '[Monitor] reporting failure';
+            const body = `Monitoring could not complete its reporting. Run: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const issues = await github.paginate(github.rest.issues.listForRepo, { ...context.repo, state: 'open', per_page: 100 });
+            if (issues.some(i => !i.pull_request && i.title === '[Monitor] notification')) return;
+            const prior = issues.find(i => !i.pull_request && i.title === title);
+            if (prior) await github.rest.issues.update({ ...context.repo, issue_number: prior.number, body });
+            else await github.rest.issues.create({ ...context.repo, title, body, assignees: ['hellosurbhi'] });

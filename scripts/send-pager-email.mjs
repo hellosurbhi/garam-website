@@ -71,25 +71,32 @@ export async function sendPagerEmail(mode, env, fetchImpl) {
   const detail = env.DETAIL?.trim().slice(0, 4000) ?? "";
 
   const subject =
-    mode === "page"
-      ? `APPLY FAILED: ${
-          detail
-            .split("\n")
-            .find((l) => l.startsWith("- "))
-            ?.slice(2, 160) ?? "production canary could not file an application"
-        }`
-      : "Pager test: the Gmail alert channel works. No action needed.";
+    env.MONITOR_SUBJECT?.replace(/[\r\n]/g, " ").slice(0, 160) ||
+    (mode === "page"
+      ? detail
+        ? `APPLY FAILED: ${
+            detail
+              .split("\n")
+              .find((l) => l.startsWith("- "))
+              ?.slice(2, 160) ??
+            "production canary could not file an application"
+          }`
+        : "Website monitor needs attention"
+      : "Weekly monitoring notification test");
   const text =
     mode === "page"
       ? [
-          "The production apply canary FAILED. Real applicants may be affected.",
+          env.MONITOR_MESSAGE ||
+            (detail
+              ? "The production apply canary FAILED. Real applicants may be affected."
+              : "The production monitor did not complete. Customer impact needs investigation."),
           "",
           detail || "(the failing step printed no detail, open the run)",
           "",
           `Workflow run with full logs: ${runUrl || "(run URL unavailable)"}`,
         ].join("\n")
       : [
-          "This is a manual proof that the Gmail pager channel works end to end.",
+          "This is a labelled notification test. Receiving it confirms delivery to this inbox.",
           "",
           runUrl
             ? `Sent by workflow run: ${runUrl}`

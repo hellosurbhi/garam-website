@@ -6,8 +6,8 @@
  * Group C: Ticket / watch link integrity
  * Group D: Primary CTA sanity
  *
- * Our own /api/* calls are intercepted at the Playwright network layer, so no
- * real backend or Firebase account is needed.
+ * Form writes are intercepted before they reach either the site API or Firebase.
+ * Unmocked mutations are blocked, including when this suite targets production.
  */
 
 import { test, expect, type Page } from "@playwright/test";
@@ -59,6 +59,57 @@ async function mockApplyApi(
   );
   return saves;
 }
+
+// These tests exercise form behavior. Server persistence is covered separately.
+// A context-level backstop blocks mutations that a future form adds without a mock.
+test.beforeEach(async ({ context, page }) => {
+  await context.route("**/*", (route) =>
+    ["GET", "HEAD", "OPTIONS"].includes(route.request().method())
+      ? route.continue()
+      : route.abort("blockedbyclient"),
+  );
+  await page.route("**/api/capture-lead", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        ok: true,
+        id: "smoke-lead-local",
+        updateToken: "smoke-update-local",
+      }),
+    }),
+  );
+  await page.route("**/api/update-lead", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ ok: true }),
+    }),
+  );
+});
+
+test("form isolation: lead writes are mocked and unmocked writes are blocked", async ({
+  page,
+}) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  const capture = await page.evaluate(async () => {
+    const response = await fetch("/api/capture-lead", {
+      method: "POST",
+      body: JSON.stringify({ email: "smoketest@example.com" }),
+    });
+    return response.json();
+  });
+  expect(capture.id).toBe("smoke-lead-local");
+  const blocked = await page.evaluate(async () => {
+    try {
+      await fetch("/api/unmocked-smoke-write", { method: "POST" });
+      return false;
+    } catch {
+      return true;
+    }
+  });
+  expect(blocked).toBe(true);
+});
 
 /** Fill every required apply form field so isValid becomes true. */
 async function fillApplyForm(page: Page) {
@@ -462,4 +513,42 @@ test.describe("Primary CTAs", () => {
     const applyCta = page.locator("a.btn.btn-outline[href='/apply']").first();
     await expect(applyCta).toBeVisible();
   });
+});
+
+test("Notify Me supports native keyboard activation on existing and late cards", async ({
+  page,
+}) => {
+  await page.goto("/tickets", { waitUntil: "domcontentloaded" });
+  // A fixed native trigger keeps this regression useful even when all shows sell tickets.
+  if ((await page.locator("button[data-notify-city]").count()) === 0) {
+    await page.evaluate(() => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.dataset.notifyCity = "Chicago";
+      button.textContent = "Notify Me keyboard fixture";
+      document.body.append(button);
+    });
+  }
+  const button = page.locator("button[data-notify-city]").first();
+  await expect(button).toBeVisible();
+  const dialog = page.locator("dialog#notify-modal");
+  for (const key of ["Enter", "Space"]) {
+    await button.focus();
+    await page.keyboard.press(key);
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(dialog).not.toBeVisible();
+    await expect(button).toBeFocused();
+  }
+  await button.evaluate((element) => {
+    const clone = element.cloneNode(true) as HTMLElement;
+    clone.id = "late-notify-test";
+    element.after(clone);
+  });
+  const late = page.locator("#late-notify-test");
+  await late.focus();
+  await page.keyboard.press("Enter");
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(late).toBeFocused();
 });

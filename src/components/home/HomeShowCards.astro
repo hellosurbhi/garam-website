@@ -1,0 +1,149 @@
+---
+import { EVENTS } from "@/data/copy";
+import HomeShowCardContent from "./HomeShowCardContent.astro";
+import styles from "./HomeShowCards.module.css";
+import type { EventEntry } from "@/data/events";
+import { buildTicketUrl } from "@/utils/eventUrl";
+import { parseMonth, parseDay, formatOnSaleDate } from "@/utils/eventDate";
+import { buildTaglineMap } from "@/utils/eventTaglines";
+import { formatEventLocation } from "@/utils/eventCity";
+import { vendorFromUrl } from "@/lib/analyticsCapture";
+
+interface Props {
+  events: EventEntry[];
+}
+
+const { events } = Astro.props;
+const taglineMap = buildTaglineMap(events);
+---
+
+{events.map((event) => {
+  const isPresale =
+    Boolean(event.onSaleAt) && new Date(event.onSaleAt!) > new Date();
+  const isLive = Boolean(event.url) && event.url !== "#";
+  const isSoldOut = event.soldOut ?? false;
+  const waitlistTagline = event.isoDate
+    ? EVENTS.waitlistDatedTagline
+    : EVENTS.waitlistUndatedTagline;
+  const cityLabel = formatEventLocation(event);
+  const onSaleLabel = event.onSaleAt ? formatOnSaleDate(event.onSaleAt) : "";
+  // The tracked redirect (fires server + browser InitiateCheckout, then
+  // 302s to the real checkout): see src/pages/api/go/[slug].ts and
+  // src/lib/ticketCtaTracking.ts. Sold-out clicks skip this and link
+  // straight to the vendor URL instead: there's no checkout to
+  // initiate, so routing them through /api/go would misreport a
+  // non-purchase as checkout intent.
+  const goHref = `/api/go/${event.slug}`;
+
+  return isPresale ? (
+    <>
+      <button
+        type="button"
+        class={`${styles["show-card"]} show-card show-card--notify`}
+        data-notify-city={cityLabel}
+        data-notify-city-slug={`presale-${event.isoDate}`}
+        data-notify-on-sale-at={event.onSaleAt}
+        data-presale-notify={event.onSaleAt}
+        data-ph-capture="cta_clicked"
+        data-ph-cta="notify_me"
+        data-ph-section="shows"
+        data-ph-city={cityLabel}
+      >
+        <div class={styles["show-date-block"]}>
+          <div class={styles["month"]}>{parseMonth(event.date)}</div>
+          <div class={styles["day"]}>{parseDay(event.date)}</div>
+        </div>
+        <div class={styles["show-info"]}>
+          <h3>{cityLabel}</h3>
+          <span>On sale {onSaleLabel}</span>
+        </div>
+        <span
+          class={[styles["ticket-label"], styles["ticket-label--notify"]].join(
+            " ",
+          )}
+        >
+          Notify Me
+        </span>
+      </button>
+      <a
+        href={goHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        class={`${styles["show-card"]} show-card show-card--live`}
+        data-go-ticket
+        data-presale-live
+        hidden
+        data-event-slug={event.slug}
+        data-event-vendor={vendorFromUrl(event.url)}
+        data-cta-position="shows"
+        data-event-city={cityLabel}
+        data-event-date={event.isoDate ?? event.date}
+        data-ph-capture="cta_clicked"
+        data-ph-cta="get_tickets"
+        data-ph-section="shows"
+        data-ph-city={cityLabel}
+        data-ph-event-date={event.date}
+        data-ph-price={event.price}
+      >
+        <HomeShowCardContent
+          event={event}
+          tagline={taglineMap.get(event.url)}
+        />
+      </a>
+    </>
+  ) : isLive ? (
+    <a
+      href={isSoldOut ? buildTicketUrl(event.url, "home", "shows") : goHref}
+      target="_blank"
+      rel="noopener noreferrer"
+      class={`${styles["show-card"]} show-card show-card--live`}
+      data-go-ticket={isSoldOut ? undefined : true}
+      data-event-slug={event.slug}
+      data-event-vendor={vendorFromUrl(event.url)}
+      data-cta-position="shows"
+      data-event-city={cityLabel}
+      data-event-date={event.isoDate ?? event.date}
+      data-ph-capture="cta_clicked"
+      data-ph-cta="get_tickets"
+      data-ph-section="shows"
+      data-ph-city={cityLabel}
+      data-ph-event-date={event.date}
+      data-ph-price={event.price}
+    >
+      <HomeShowCardContent event={event} tagline={taglineMap.get(event.url)} />
+    </a>
+  ) : (
+    <button
+      type="button"
+      class={`${styles["show-card"]} show-card show-card--notify`}
+      data-notify-city={cityLabel}
+      data-notify-city-slug={event.citySlug}
+      data-ph-capture="cta_clicked"
+      data-ph-cta="notify_me"
+      data-ph-section="shows"
+      data-ph-city={cityLabel}
+    >
+      <div class={styles["show-date-block"]}>
+        {parseDay(event.date) !== "" ? (
+          <>
+            <div class={styles["month"]}>{parseMonth(event.date)}</div>
+            <div class={styles["day"]}>{parseDay(event.date)}</div>
+          </>
+        ) : (
+          <div class={[styles["day"], styles["day--tba"]].join(" ")}>TBA</div>
+        )}
+      </div>
+      <div class={styles["show-info"]}>
+        <h3>{cityLabel}</h3>
+        <span>{waitlistTagline}</span>
+      </div>
+      <span
+        class={[styles["ticket-label"], styles["ticket-label--notify"]].join(
+          " ",
+        )}
+      >
+        Notify Me
+      </span>
+    </button>
+  );
+})}

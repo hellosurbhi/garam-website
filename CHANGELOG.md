@@ -1,5 +1,9 @@
 # Changelog
 
+## fix(monitor): the ticket redirect check no longer reports a healthy page as broken (2026-11-12)
+
+- The live ticket check looked for a link with the exact path `/api/go/<show>`, but the site rewrites each checkout link to an absolute URL with an `?eid=` tag after the page loads. The check never found the link, failed on every run and paged the owner for a working page. It now matches the link path whether relative or absolute, with or without the tag, and still refuses a longer show name that only shares the same start. Verified against the live site and 95 fixture runs, including the new `?eid=` and prefix cases.
+
 ## fix(monitor): the external watchdog is optional, so a missing one no longer raises a permanent alarm (2026-11-12)
 
 - The synthetic monitor treated a missing `MONITOR_WATCHDOG_URL` or `MONITOR_WEEKLY_WATCHDOG_URL` secret as a failure, so every run opened or kept a `[Monitor] notification` issue and failed the run, which buried real alerts.

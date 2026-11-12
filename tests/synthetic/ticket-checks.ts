@@ -3,6 +3,34 @@ import type { EventEntry } from "../../src/data/events";
 import { getTicketPageUpcoming } from "../../src/utils/eventFilters";
 import { applyUtmsToUrl } from "../../src/utils/utmForwarding";
 
+interface CheckoutLink {
+  path: string;
+  search: string;
+  sameOrigin: boolean;
+}
+
+// WHY: the site script rewrites every /api/go/ link after load to an absolute
+// URL with a per-link ?eid= (Meta event dedupe), so the live href is never the
+// bare relative path. An exact-href selector reported a healthy page as broken
+// and paged, and a substring selector would pass `/wrong/api/go/<slug>`. Resolve
+// each visible link to a URL and compare its real pathname and origin. A page
+// without an http origin (a test fixture) resolves against a placeholder host.
+async function visibleCheckoutLinks(page: Page): Promise<CheckoutLink[]> {
+  const links = await page.locator("a[href]:visible").evaluateAll((anchors) =>
+    anchors.map((anchor) => {
+      const web = location.protocol.startsWith("http");
+      const base = web ? location.href : "http://placeholder.invalid";
+      const url = new URL(anchor.getAttribute("href") ?? "", base);
+      return {
+        path: url.pathname,
+        search: url.search,
+        sameOrigin: url.origin === new URL(base).origin,
+      };
+    }),
+  );
+  return links.filter((link) => link.path.startsWith("/api/go/"));
+}
+
 export async function checkTicketListings(
   page: Page,
   request: APIRequestContext,
@@ -22,20 +50,16 @@ export async function checkTicketListings(
   const past = events.filter(
     (event) => event.isoDate && event.isoDate < now.toISOString().slice(0, 10),
   );
-  const checkoutLinks = page.locator('a[href^="/api/go/"]:visible');
   if (!available.length) {
-    const hrefs = await checkoutLinks.evaluateAll((links) =>
-      links.map((link) => link.getAttribute("href")),
-    );
     // Static cards can outlive their show between deployments. Their runtime
     // redirects must return to /tickets, never to an expired vendor checkout.
-    for (const href of hrefs) {
-      const event = past.find((item) => href === `/api/go/${item.slug}`);
+    for (const link of await visibleCheckoutLinks(page)) {
+      const event = past.find((item) => link.path === `/api/go/${item.slug}`);
       expect(
-        event,
-        `Unexpected checkout in waitlist-only state: ${href}`,
-      ).toBeDefined();
-      const response = await request.get(href!, {
+        link.sameOrigin && event,
+        `Unexpected checkout in waitlist-only state: ${link.path}`,
+      ).toBeTruthy();
+      const response = await request.get(`${link.path}${link.search}`, {
         maxRedirects: 0,
         timeout: 10_000,
         headers: { "User-Agent": "GaramMasalaMonitor/1.0" },
@@ -53,9 +77,13 @@ export async function checkTicketListings(
     return;
   }
   for (const event of available) {
-    await expect(
-      page.locator(`a[href="/api/go/${event.slug}"]:visible`).first(),
-    ).toBeVisible();
+    const links = await visibleCheckoutLinks(page);
+    expect(
+      links.some(
+        (link) => link.sameOrigin && link.path === `/api/go/${event.slug}`,
+      ),
+      `No visible checkout link for ${event.slug}`,
+    ).toBe(true);
     const response = await request.get(`/api/go/${event.slug}`, {
       maxRedirects: 0,
       timeout: 10_000,

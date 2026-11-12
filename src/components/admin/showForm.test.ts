@@ -6,6 +6,7 @@ import {
   formFromEntry,
   localToIso,
   timezoneChoices,
+  withTimezone,
 } from "./showForm";
 
 // WHY the real published record: manhattan-2026-10-11 predates the timezone
@@ -18,16 +19,15 @@ describe("entryFromForm", () => {
     if (!manhattan) throw new Error("fixture show missing");
     expect(manhattan.timezone).toBeUndefined();
     const initial = formFromEntry(manhattan, events);
+    // The editor's zone picker goes through withTimezone.
     const form = {
-      ...initial,
-      timezone: "America/New_York",
+      ...withTimezone(initial, "America/New_York", manhattan),
       tagline: "All Stars, round two",
     };
     const entry = entryFromForm(
       form,
       manhattan,
       "2026-11-11T00:00:00.000Z",
-      initial,
       true,
     );
     expect(entry.onSaleAt).toBe(manhattan.onSaleAt);
@@ -46,7 +46,6 @@ describe("entryFromForm", () => {
       form,
       manhattan,
       "2026-11-11T00:00:00.000Z",
-      initial,
       true,
     );
     expect(entry.onSaleAt).toBe("2026-08-21T14:00:00.000Z");

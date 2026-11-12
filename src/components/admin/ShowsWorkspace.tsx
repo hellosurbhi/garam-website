@@ -38,8 +38,12 @@ interface ShowsWorkspaceProps {
 export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
   const [showHistory, setShowHistory] = useState(false);
   const { live, cities } = data;
+  const busy = admin.pending !== null;
+  // A rebuild leaves the draft alone, so editing may start during one.
+  const draftWriting = busy && admin.pending !== "rebuild";
   const { dialog, session, stale, error, show, close, settle } = useShowsDialog(
     live.version,
+    draftWriting,
   );
   // WHY: a draft saved on top of an older live version would undo whatever
   // was published since, so it is set aside and editing starts from live.
@@ -61,7 +65,6 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
     ...changes.changed,
     ...changes.canceled,
   ]);
-  const busy = admin.pending !== null;
   const locked = admin.lockMs > 0;
 
   return (
@@ -98,6 +101,7 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
         previews={previews}
         pendingSlugs={pendingSlugs}
         todayIso={todayIso}
+        disabled={draftWriting}
         onEdit={(slug) => show({ kind: "editor", slug })}
         onCancel={(slug) => show({ kind: "editor", slug, startCanceled: true })}
       />

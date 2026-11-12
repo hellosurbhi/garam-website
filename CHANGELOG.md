@@ -8,6 +8,7 @@
 - Offer every time zone for touring shows, accept full region names like Greater London and let a show that was never published move to a new date without a note.
 - Refuse a show start, end or on sale time that the clocks skip at spring forward, and read a time in the hour that repeats at fall back as its first occurrence in every time zone.
 - Publish only the draft the confirmation showed: a save from another tab after it opened is refused and the tab reloads. Refuse a show that ends at or before it starts, and keep a newly opened editor open when an earlier slow save finishes.
+- Keep show editors closed while a save, publish or restore is still out, so a reopened editor never undoes it. Show an untouched on sale time in a newly picked time zone so the field matches what is saved.
 
 ## Resolve monitoring and waitlist review findings (2026-11-11)
 

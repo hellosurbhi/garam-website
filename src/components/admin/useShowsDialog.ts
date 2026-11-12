@@ -14,13 +14,20 @@ interface OpenDialog {
   error: string | null;
 }
 
-export function useShowsDialog(liveVersion: number) {
+export function useShowsDialog(liveVersion: number, draftWriting: boolean) {
   const [open, setOpen] = useState<OpenDialog | null>(null);
   const opened = useRef(0);
   const session = open?.session ?? 0;
 
+  // WHY nothing opens while a draft write (save, publish, restore) is in
+  // flight: a dialog copies the draft
+  // when it opens, and the write still out is about to replace it, so
+  // saving the copy afterwards would undo it. Refusing to open (the buttons
+  // are disabled too) is simpler than marking the copy stale on arrival and
+  // never throws away anything the admin typed.
   const show = useCallback(
     (dialog: ShowsDialog) => {
+      if (draftWriting) return;
       opened.current += 1;
       setOpen({
         dialog,
@@ -29,7 +36,7 @@ export function useShowsDialog(liveVersion: number) {
         error: null,
       });
     },
-    [liveVersion],
+    [liveVersion, draftWriting],
   );
   // WHY scoped to the session that rendered it: a save or publish answer can
   // land after the admin closed that dialog and opened another one. Closing

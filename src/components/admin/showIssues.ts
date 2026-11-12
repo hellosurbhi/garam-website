@@ -146,13 +146,7 @@ export function checkShowForm(input: ShowFormCheckInput): {
     };
   }
   const published = isPublished(base, live);
-  const entry = entryFromForm(
-    form,
-    base,
-    input.nowIso,
-    input.initial,
-    published,
-  );
+  const entry = entryFromForm(form, base, input.nowIso, published);
   const events = base
     ? snapshot.events.map((x, i) => (i === index ? entry : x))
     : [...snapshot.events, entry];

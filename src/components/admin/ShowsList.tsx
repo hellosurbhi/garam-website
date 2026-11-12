@@ -10,6 +10,8 @@ interface ShowsListProps {
   /** Slugs with unpublished changes. */
   pendingSlugs: ReadonlySet<string>;
   todayIso: string;
+  /** True while a draft write is in flight (see useShowsDialog). */
+  disabled: boolean;
   onEdit: (slug: string) => void;
   onCancel: (slug: string) => void;
 }
@@ -26,6 +28,7 @@ export default function ShowsList({
   previews,
   pendingSlugs,
   todayIso,
+  disabled,
   onEdit,
   onCancel,
 }: ShowsListProps) {
@@ -57,6 +60,7 @@ export default function ShowsList({
           <button
             type="button"
             className={styles.secondaryButton}
+            disabled={disabled}
             onClick={() => onEdit(e.slug)}
             aria-label={`${SHOWS_ACTIONS.edit} ${e.city}, ${e.date}`}
           >
@@ -66,6 +70,7 @@ export default function ShowsList({
             <button
               type="button"
               className={styles.ghostButton}
+              disabled={disabled}
               onClick={() => onCancel(e.slug)}
               aria-label={`${SHOWS_ACTIONS.cancelShow} ${e.city}, ${e.date}`}
             >

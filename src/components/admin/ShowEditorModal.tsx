@@ -18,6 +18,7 @@ import {
   noteRequired,
   savedVenues,
   withCity,
+  withTimezone,
   type SetField,
   type ShowForm,
 } from "./showForm";
@@ -125,6 +126,7 @@ export default function ShowEditorModal({
           cityEditable={!base}
           cities={cities}
           onPickCity={(city) => setForm((f) => withCity(f, city, snapshot))}
+          onPickZone={(zone) => setForm((f) => withTimezone(f, zone, base))}
           venues={venues}
         />
         <ShowTicketFields form={form} set={set} errors={fields} />

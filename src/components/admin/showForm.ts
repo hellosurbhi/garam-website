@@ -205,18 +205,35 @@ export function noteRequired(
   return moved || (form.canceled && base.status !== "canceled");
 }
 
-// WHY compare with the opened form and not re-derive from the new zone:
-// a legacy show with no zone opened its on-sale time in UTC, so picking a
-// zone and re-deriving shifted the instant (19:00Z to 23:00Z) although the
-// admin never touched it. An untouched field keeps its exact saved value.
-function keepsOnSale(
-  form: ShowForm,
-  base: EventEntry | undefined,
-  initial: ShowForm | undefined,
-): boolean {
+// WHY untouched means "shows the saved instant in the current zone": a
+// legacy show with no zone opened its on-sale time in UTC, and converting
+// that clock in a newly picked zone shifted the instant (19:00Z to 23:00Z)
+// although the admin never touched it. withTimezone re-renders an untouched
+// time in the new zone, so what the field shows is what gets saved, and the
+// exact saved value (seconds and a repeated fall back hour included) is
+// kept instead of being rebuilt from the minute shown.
+function keepsOnSale(form: ShowForm, base: EventEntry | undefined): boolean {
   return Boolean(
-    base?.onSaleAt && initial && form.onSaleLocal === initial.onSaleLocal,
+    base?.onSaleAt &&
+    form.onSaleLocal === isoToLocal(base.onSaleAt, form.timezone),
   );
+}
+
+/**
+ * Pick a new zone. An untouched on-sale time keeps its instant and is shown
+ * as the new zone's clock; a typed one keeps the clock the admin typed,
+ * which is then read in the new zone like the start and end times.
+ */
+export function withTimezone(
+  form: ShowForm,
+  timezone: string,
+  base: EventEntry | undefined,
+): ShowForm {
+  const onSaleLocal =
+    base?.onSaleAt && keepsOnSale(form, base)
+      ? isoToLocal(base.onSaleAt, timezone)
+      : form.onSaleLocal;
+  return { ...form, timezone, onSaleLocal };
 }
 
 const LOCAL_PATTERN = /^(\d{4}-\d{2}-\d{2})T\d{2}:\d{2}$/;
@@ -269,7 +286,7 @@ export function formDateProblems(
     }
   }
   const local = form.onSaleLocal;
-  if (!local || keepsOnSale(form, base, initial)) return problems;
+  if (!local || keepsOnSale(form, base)) return problems;
   const day = LOCAL_PATTERN.exec(local)?.[1];
   if (!day || !isoDateSchema.safeParse(day).success) {
     problems.push({ field: "onSaleAt", message: EDITOR.badDate });
@@ -308,15 +325,13 @@ function rescheduleHistory(base: EventEntry, isoDate: string | undefined) {
 /**
  * The record the form describes. `base` is the draft entry being edited
  * (undefined for a new show); fields the form does not show are kept.
- * `initial` is the form as it first opened from `base`; `published` says
- * whether `base` is on the live list. Run formDateProblems first: an
+ * `published` says whether `base` is on the live list. Run formDateProblems first: an
  * impossible date throws here.
  */
 export function entryFromForm(
   form: ShowForm,
   base: EventEntry | undefined,
   nowIso: string,
-  initial: ShowForm | undefined,
   published: boolean,
 ): EventEntry {
   const isoDate = text(form.isoDate);
@@ -348,7 +363,7 @@ export function entryFromForm(
     url: form.url.trim(),
     eventbriteId: text(form.eventbriteId),
     price: text(form.price),
-    onSaleAt: keepsOnSale(form, base, initial)
+    onSaleAt: keepsOnSale(form, base)
       ? base?.onSaleAt
       : form.onSaleLocal
         ? localToIso(form.onSaleLocal, timezone ?? "")

@@ -415,44 +415,118 @@ describe("ShowsTab", () => {
     );
   });
 
-  it("keeps an editor opened after a slow save when that save finishes", async () => {
+  it("opens no editor while a save is still out, so it cannot undo that save", async () => {
     let finishSave: (res: Response) => void = () => {};
-    routeFetch(200, {
-      "/api/admin/events/draft": () =>
-        new Promise<Response>((resolve) => {
-          finishSave = resolve;
-        }),
+    let saved = false;
+    routeFetch();
+    const base = fetchMock.getMockImplementation();
+    fetchMock.mockImplementation(async (path: string, init?: RequestInit) => {
+      if (path === "/api/admin/events/draft" && !saved) {
+        return new Promise<Response>((resolve) => {
+          finishSave = (res) => {
+            saved = true;
+            resolve(res);
+          };
+        });
+      }
+      if (path === "/api/admin/events" && saved) {
+        const next = adminLoad();
+        if (next.draft) {
+          next.draft.snapshot = {
+            ...draft,
+            events: [fixtureShow({ price: "35" }), austin],
+          };
+        }
+        return json(200, next);
+      }
+      return base?.(path, init);
     });
     render(<ShowsTab />);
     fireEvent.click(
       await screen.findByRole("button", { name: "Edit Chicago, Jan 9" }),
     );
-    fireEvent.change(screen.getByLabelText("Card tagline"), {
-      target: { value: "Back by demand" },
+    fireEvent.change(screen.getByLabelText("Ticket price in USD"), {
+      target: { value: "35" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Save to draft" }));
     await waitFor(() =>
       expect(callsTo("/api/admin/events/draft")).toHaveLength(1),
     );
-    // The admin closes the editor while the save is still out, then opens it again.
+    // The admin closes the editor while the price save is still out.
     fireEvent.click(
       within(screen.getByRole("dialog")).getAllByRole("button", {
         name: "Close",
       })[0],
     );
-    fireEvent.click(
-      screen.getByRole("button", { name: "Edit Chicago, Jan 9" }),
-    );
-    fireEvent.change(screen.getByLabelText("Card tagline"), {
-      target: { value: "Typed in the new editor" },
-    });
+    const edit = screen.getByRole("button", { name: "Edit Chicago, Jan 9" });
+    expect((edit as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.click(edit);
+    expect(screen.queryByLabelText("Card tagline")).toBeNull();
 
     finishSave(json(200, { basedOnVersion: 3, changes: noChanges }));
-
-    await waitFor(() => expect(screen.queryByText("Draft saved")).toBeTruthy());
+    await waitFor(() =>
+      expect((edit as HTMLButtonElement).disabled).toBe(false),
+    );
+    fireEvent.click(edit);
+    fireEvent.change(screen.getByLabelText("Card tagline"), {
+      target: { value: "Back by demand" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Save to draft" }));
+    await waitFor(() =>
+      expect(callsTo("/api/admin/events/draft")).toHaveLength(2),
+    );
+    const second = callsTo("/api/admin/events/draft")[1] as {
+      snapshot: { events: Array<{ slug: string; price?: string }> };
+    };
+    // The reopened editor starts from the saved draft, so 35 stays.
     expect(
-      (screen.getByLabelText("Card tagline") as HTMLInputElement).value,
-    ).toBe("Typed in the new editor");
+      second.snapshot.events.find((e) => e.slug === "chicago-2099-01-09")
+        ?.price,
+    ).toBe("35");
+  });
+
+  it("shows an untouched on-sale time in a newly picked zone and saves it unchanged", async () => {
+    const onSaleAt = "2099-01-01T01:00:00.000Z"; // 19:00 in Chicago on Dec 31
+    routeFetch();
+    const base = fetchMock.getMockImplementation();
+    fetchMock.mockImplementation(async (path: string, init?: RequestInit) => {
+      if (path === "/api/admin/events") {
+        const next = adminLoad();
+        if (next.draft) {
+          next.draft.snapshot = {
+            ...draft,
+            events: [fixtureShow({ onSaleAt }), austin],
+          };
+        }
+        return json(200, next);
+      }
+      return base?.(path, init);
+    });
+    render(<ShowsTab />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Edit Chicago, Jan 9" }),
+    );
+    const onSale = screen.getByLabelText(
+      "Tickets go on sale (show's local time)",
+    ) as HTMLInputElement;
+    expect(onSale.value).toBe("2098-12-31T19:00");
+
+    fireEvent.change(screen.getByLabelText("Time zone"), {
+      target: { value: "America/New_York" },
+    });
+    // The same instant, shown as New York's clock, matches what is saved.
+    expect(onSale.value).toBe("2098-12-31T20:00");
+    fireEvent.click(screen.getByRole("button", { name: "Save to draft" }));
+    await waitFor(() =>
+      expect(callsTo("/api/admin/events/draft")).toHaveLength(1),
+    );
+    const sent = callsTo("/api/admin/events/draft")[0] as {
+      snapshot: { events: Array<{ slug: string; onSaleAt?: string }> };
+    };
+    expect(
+      sent.snapshot.events.find((e) => e.slug === "chicago-2099-01-09")
+        ?.onSaleAt,
+    ).toBe(onSaleAt);
   });
 
   it("shows a failed publish inside the open confirm dialog", async () => {

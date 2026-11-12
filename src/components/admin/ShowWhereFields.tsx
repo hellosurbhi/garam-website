@@ -15,6 +15,8 @@ interface Props {
   cityEditable: boolean;
   cities: AdminCityOption[];
   onPickCity: (city: AdminCityOption) => void;
+  /** A new zone also re-renders an untouched on-sale time (withTimezone). */
+  onPickZone: (timezone: string) => void;
   venues: EventVenue[];
 }
 
@@ -26,6 +28,7 @@ export default function ShowWhereFields({
   cityEditable,
   cities,
   onPickCity,
+  onPickZone,
   venues,
 }: Props) {
   return (
@@ -129,7 +132,7 @@ export default function ShowWhereFields({
           <select
             {...a}
             value={form.timezone}
-            onChange={(e) => set("timezone", e.target.value)}
+            onChange={(e) => onPickZone(e.target.value)}
           >
             <option value="">{EDITOR.pickOne}</option>
             {timezoneChoices(form.timezone).map((z) => (

@@ -440,6 +440,23 @@ for (const [name, status, startDate, location, passes] of [
     false,
   ],
   [
+    "listing whose address list names another city",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    {
+      name: venue.name,
+      address: [{ addressLocality: "Detroit", addressRegion: "MI" }],
+    },
+    false,
+  ],
+  [
+    "listing whose address list names our city",
+    200,
+    "2026-12-04T19:30:00-06:00",
+    { name: venue.name, address: [{ addressLocality: "Chicago, IL" }] },
+    true,
+  ],
+  [
     "listing whose second location is plain text",
     200,
     "2026-12-04T19:30:00-06:00",

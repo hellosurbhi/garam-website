@@ -57,18 +57,22 @@ export function extractListedEvents(html: string): ListedEvent[] {
         ];
         if (typeof place !== "object") return unreadable(place);
         const fields = place as Record<string, unknown>;
-        const address = fields.address;
-        if (address !== undefined && (!address || typeof address !== "object"))
-          return unreadable(address);
-        const parts = (address ?? {}) as Record<string, unknown>;
-        return [
-          {
-            venue: text(fields.name),
-            locality: text(parts.addressLocality),
-            region: text(parts.addressRegion),
-            text: null,
-          },
-        ];
+        // An address may itself be a list; each one is checked as a place.
+        const addresses =
+          fields.address === undefined ? [{}] : [fields.address].flat();
+        return addresses.flatMap((address): ListedPlace[] => {
+          if (!address || typeof address !== "object" || Array.isArray(address))
+            return unreadable(address);
+          const parts = address as Record<string, unknown>;
+          return [
+            {
+              venue: text(fields.name),
+              locality: text(parts.addressLocality),
+              region: text(parts.addressRegion),
+              text: null,
+            },
+          ];
+        });
       });
       found.push({ startDate: obj.startDate, places });
     }

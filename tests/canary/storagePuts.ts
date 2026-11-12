@@ -44,3 +44,25 @@ export async function blockedStoragePut(
   const reason = `${req.url()} ${req.failure()?.errorText ?? ""}`;
   return status === null ? reason : `${reason} after HTTP ${status}`;
 }
+
+/**
+ * Collects every requestfailed event of a page and, once the flow is done,
+ * resolves the blocked direct uploads among them.
+ *
+ * WHY a collector instead of judging inline: request.response() is async, so
+ * the canary's handler can only start each judgement. The assertion has to
+ * wait for every one of them, including any still pending when the flow
+ * finished, or a slow block slips past as an empty list.
+ */
+export function blockedPutCollector() {
+  const checks: Promise<string | null>[] = [];
+  return {
+    onRequestFailed(req: FailedRequest): void {
+      checks.push(blockedStoragePut(req));
+    },
+    async blocked(): Promise<string[]> {
+      const reasons = await Promise.all(checks);
+      return reasons.filter((reason): reason is string => reason !== null);
+    },
+  };
+}

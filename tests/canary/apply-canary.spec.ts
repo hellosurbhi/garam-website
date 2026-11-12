@@ -19,7 +19,7 @@ import {
   deriveDraftSecret,
   isCanaryKey,
 } from "../../src/lib/draftSecret";
-import { blockedStoragePut, isStorageHost } from "./storagePuts";
+import { blockedPutCollector, isStorageHost } from "./storagePuts";
 
 const RUN_ID = process.env.CANARY_RUN_ID ?? "local";
 
@@ -69,10 +69,8 @@ test("a phone applicant can file an application with photos on the live stack", 
       relayCalls.push(res.url());
     }
   });
-  const failedPutChecks: Promise<string | null>[] = [];
-  page.on("requestfailed", (req) => {
-    failedPutChecks.push(blockedStoragePut(req));
-  });
+  const failedPutCollector = blockedPutCollector();
+  page.on("requestfailed", (req) => failedPutCollector.onRequestFailed(req));
 
   await page.goto("/apply", { waitUntil: "domcontentloaded" });
   await page.waitForSelector("[data-testid=apply-form]", {
@@ -150,9 +148,7 @@ test("a phone applicant can file an application with photos on the live stack", 
   // Both photos went straight to the bucket from the browser: this is also the
   // live CORS and CSP check, since the browser blocks a PUT the bucket or the
   // site's policy does not allow.
-  const failedPuts = (await Promise.all(failedPutChecks)).filter(
-    (reason): reason is string => reason !== null,
-  );
+  const failedPuts = await failedPutCollector.blocked();
   expect(failedPuts, "direct upload to the bucket was blocked").toEqual([]);
   expect(relayCalls, "a photo fell back to the server relay").toEqual([]);
   expect(storagePuts.length).toBeGreaterThanOrEqual(2);

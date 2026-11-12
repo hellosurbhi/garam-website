@@ -4,7 +4,7 @@
 
 **What went wrong:** The apply canary's first live run failed Android Chrome and the Instagram browser with "direct upload to the bucket was blocked", while every photo had been filed.
 **Why:** The wrong assumption was that Playwright's `requestfailed` means the request never landed. Chromium also fires it (`net::ERR_ABORTED`) when the server already answered 200 and the page never read the empty reply body. WebKit does not, so only the Chromium profiles failed.
-**Rule:** A network check that treats `requestfailed` as a failure must first ask `request.response()`: a 2xx answer means the request landed. Only a missing answer or an error status is a real block.
+**Rule:** Only for an upload whose reply body is empty and unread (the signed Storage PUT), a check that treats `requestfailed` as a failure must first ask `request.response()`: a 2xx answer means the upload landed, and only a missing answer or an error status is a real block. A download or any request whose body matters can still fail after a 200, so it keeps treating `requestfailed` as a failure.
 
 ## A pager step inside the job it watches can never page a hung job
 

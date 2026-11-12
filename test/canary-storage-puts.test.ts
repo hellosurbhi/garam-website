@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { blockedStoragePut, isStorageHost } from "../tests/canary/storagePuts";
+import {
+  blockedPutCollector,
+  blockedStoragePut,
+  isStorageHost,
+} from "../tests/canary/storagePuts";
 
 const SIGNED =
   "https://storage.googleapis.com/bucket.firebasestorage.app/photos/x/canary-1.jpg?X-Goog-Signature=abc";
@@ -75,5 +79,34 @@ describe("isStorageHost", () => {
     expect(isStorageHost("https://storage.googleapis.com.evil.example/o")).toBe(
       false,
     );
+  });
+});
+
+describe("blockedPutCollector", () => {
+  it("waits for a judgement still pending when the flow finished", async () => {
+    const collector = blockedPutCollector();
+    let answer: (value: null) => void = () => {};
+    const slow = {
+      ...failedRequest({ errorText: "net::ERR_FAILED" }),
+      response: () =>
+        new Promise<null>((resolve) => {
+          answer = resolve;
+        }),
+    };
+    collector.onRequestFailed(slow);
+    collector.onRequestFailed(
+      failedRequest({ errorText: "net::ERR_ABORTED", status: 200 }),
+    );
+    const blocked = collector.blocked();
+    answer(null);
+    expect(await blocked).toEqual([`${SIGNED} net::ERR_FAILED`]);
+  });
+
+  it("reports nothing when every failed request was an accepted upload", async () => {
+    const collector = blockedPutCollector();
+    collector.onRequestFailed(
+      failedRequest({ errorText: "net::ERR_ABORTED", status: 200 }),
+    );
+    expect(await collector.blocked()).toEqual([]);
   });
 });

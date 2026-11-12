@@ -189,7 +189,7 @@ Closes the BUGS.md entries UNBOUNDED-SYNC-RUNTIME (both) and PERMANENT-RETRY-STA
 
 ## fix(test): runtime smoke check fails open instantly, and lint stops scanning session worktrees (2026-11-05)
 
-- `scripts/check-server-runtime.mjs` faked Upstash being offline by throwing a network error. `@upstash/redis` retries thrown fetch errors 5 times with exponential backoff, which outlasted the 1500ms ceiling in `src/lib/rateLimit.ts`, so every `postbuild` run logged "Timeout: Upstash rate limit check" instead of failing open at once. The stub now returns a 503 response, which is not retried and matches how a real outage looks. Production traffic was never affected.
+- `scripts/check-server-runtime.mjs` faked Upstash being offline by throwing a network error. `@upstash/redis` retries thrown fetch errors 5 times with exponential backoff, which outlasted the 1500ms ceiling in `src/lib/rateLimit.ts`, so every `postbuild` run logged "Timeout: Upstash rate limit check" instead of failing open at once. The stub now returns a 503 response, which is not retried and matches how a real outage looks. The log lines came from the isolated build copy (`gmd-server-runtime-*` temp directory) that `postbuild` loads, not from live requests.
 - `eslint.config.js` now ignores `.claude/worktrees`. Nested session checkouts each carry a tsconfig and made `npm run lint` fail with "multiple candidate TSConfigRootDirs", which blocked pre-push.
 - Verified: `npm run test:runtime` exits 0 with no timeout lines, `npm run lint` exits 0, Codex tier E review APPROVED.
 

@@ -153,6 +153,41 @@ test("ticket monitor rejects a blank page when only waitlists are expected", asy
   await showTicketPage(page, "<h1>Upcoming Shows</h1>");
   await expect(checkTicketListings(page, request, [], now)).rejects.toThrow();
 });
+// Cases from #403 (main), ported to this checker's served-page fixtures. The
+// ?eid= and other-host cases are covered above and by "follows the rendered
+// link with its tracking parameters".
+for (const [name, html, shows] of [
+  [
+    "a wrong path that merely contains the checkout path",
+    card(event.slug, `/wrong/api/go/${event.slug}?eid=123`),
+    [event],
+  ],
+  [
+    "a checkout path that only appears inside another link's query",
+    card(event.slug, `/tickets?next=/api/go/${event.slug}?eid=123`),
+    [event],
+  ],
+  [
+    "a longer slug that shares the show's prefix",
+    card(`${event.slug}-late`) + notifyMe,
+    [event],
+  ],
+  [
+    "a rewritten absolute checkout link in a waitlist-only state",
+    `<a href="${SITE}/api/go/unknown?eid=1">Buy Tickets</a>` + notifyMe,
+    [],
+  ],
+] as const) {
+  test(`ticket monitor rejects ${name}`, async ({ page, request }) => {
+    test.setTimeout(10000);
+    await showTicketPage(page, html);
+    await expect(
+      checkTicketListings(page, request, [...shows], now, {
+        followRedirects: false,
+      }),
+    ).rejects.toThrow();
+  });
+}
 test("ticket monitor checks the exact checkout destination", async ({
   page,
 }) => {

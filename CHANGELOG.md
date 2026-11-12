@@ -8,6 +8,18 @@
 - In the weekly and preview runs, open each vendor listing and confirm its published date and start time match the show.
 - Read only the event a listing page sells, not shows it recommends or a venue's whole calendar. Follow address links within the page, read a location given as a bare address and reject an online location.
 - Wait for the waiver form to finish loading before filling it, so the waiver smoke test stops timing out on production.
+
+## fix(monitor): the ticket redirect check no longer reports a healthy page as broken (2026-11-12)
+
+- The live ticket check looked for a link with the exact path `/api/go/<show>`, but the site rewrites each checkout link to an absolute URL with an `?eid=` tag after the page loads. The check never found the link, failed on every run and paged the owner for a working page. It now matches the link path whether relative or absolute, with or without the tag, and still refuses a longer show name that only shares the same start. Verified against the live site and 95 fixture runs, including the new `?eid=` and prefix cases.
+
+## fix(monitor): the external watchdog is optional, so a missing one no longer raises a permanent alarm (2026-11-12)
+
+- The synthetic monitor treated a missing `MONITOR_WATCHDOG_URL` or `MONITOR_WEEKLY_WATCHDOG_URL` secret as a failure, so every run opened or kept a `[Monitor] notification` issue and failed the run, which buried real alerts.
+- Real failures still email you and open their own `[Monitor]` issue. A watchdog that is configured and rejects a ping still fails the run.
+- Known gap without a watchdog: if the monitor itself stops running (GitHub Actions disabled, cron paused), nothing tells you. Adding the two secrets later turns that detection back on with no code change.
+- Tests: a missing watchdog raises no notification issue, a real failure still emails and opens an issue without one, and a rejecting configured watchdog still fails.
+
 ## fix(apply): outside review round (Codex, CodeRabbit, fresh Claude) and main merge (2026-11-12)
 
 - Merged main (#331, #361) into the branch and settled every conflict, keeping the rules-free applicant path and main's synthetic monitor.

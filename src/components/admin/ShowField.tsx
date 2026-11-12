@@ -1,6 +1,4 @@
 import type { ReactNode } from "react";
-import { X } from "lucide-react";
-import { EDITOR } from "@/data/adminShows";
 import styles from "./ShowEditorModal.module.css";
 
 /** Props every editor input spreads, so its label and error are announced. */
@@ -56,6 +54,7 @@ export default function ShowField({
 }
 
 interface ShowCheckProps {
+  id: string;
   label: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
@@ -63,63 +62,32 @@ interface ShowCheckProps {
 }
 
 /** A checkbox row with a 48px tap target and its inline error. */
-export function ShowCheck({ label, checked, onChange, error }: ShowCheckProps) {
+export function ShowCheck({
+  id,
+  label,
+  checked,
+  onChange,
+  error,
+}: ShowCheckProps) {
+  const errorId = error ? `${id}-error` : undefined;
   return (
     <>
       <label className={styles.check}>
         <input
+          id={id}
           type="checkbox"
           checked={checked}
+          aria-invalid={Boolean(error)}
+          aria-describedby={errorId}
           onChange={(e) => onChange(e.target.checked)}
         />
         {label}
       </label>
       {error && (
-        <p className={styles.fieldError} role="alert">
+        <p id={errorId} className={styles.fieldError} role="alert">
           {error}
         </p>
       )}
     </>
-  );
-}
-
-/** The summary alert under the editor: what still blocks the save. */
-export function ShowIssueSummary({ other }: { other: string[] }) {
-  return (
-    <div className={styles.errorMsg} role="alert">
-      {other.length > 0 ? EDITOR.otherShows : EDITOR.fixFirst}
-      {other.length > 0 && (
-        <ul className={styles.errorList}>
-          {other.map((line) => (
-            <li key={line}>{line}</li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
-
-/** The editor's title row with its close button. */
-export function ShowEditorHeader({
-  title,
-  onClose,
-}: {
-  title: string;
-  onClose: () => void;
-}) {
-  return (
-    <div className={styles.header}>
-      <h2 id="show-editor-title" className={styles.title}>
-        {title}
-      </h2>
-      <button
-        type="button"
-        className={styles.closeButton}
-        onClick={onClose}
-        aria-label={EDITOR.close}
-      >
-        <X size={20} aria-hidden="true" />
-      </button>
-    </div>
   );
 }

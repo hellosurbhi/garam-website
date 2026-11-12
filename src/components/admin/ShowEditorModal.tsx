@@ -4,12 +4,17 @@ import type { EventsSnapshot } from "@/data/eventsSnapshot";
 import type { AdminCityOption } from "@/lib/eventsAdmin.server";
 import { Modal } from "../ui/Modal";
 import ShowCardFields from "./ShowCardFields";
-import { ShowEditorHeader, ShowIssueSummary } from "./ShowField";
+import {
+  ShowEditorActions,
+  ShowEditorHeader,
+  ShowIssueSummary,
+} from "./ShowEditorChrome";
 import ShowTicketFields from "./ShowTicketFields";
 import ShowWhereFields from "./ShowWhereFields";
 import {
   emptyForm,
   formFromEntry,
+  isPublished,
   noteRequired,
   savedVenues,
   withCity,
@@ -17,7 +22,12 @@ import {
   type ShowForm,
 } from "./showForm";
 import { checkShowForm, splitIssues } from "./showIssues";
-import { attemptSettled, type ApiResult, type FieldIssue } from "./showsApi";
+import {
+  attemptSettled,
+  failureMessage,
+  type ApiResult,
+  type FieldIssue,
+} from "./showsApi";
 import styles from "./ShowEditorModal.module.css";
 
 interface ShowEditorModalProps {
@@ -57,16 +67,18 @@ export default function ShowEditorModal({
     canceled: initial.canceled || Boolean(startCanceled),
   }));
   const [issues, setIssues] = useState<FieldIssue[]>([]);
+  const [failure, setFailure] = useState<string | null>(null);
   const set: SetField = useCallback(
     (key, value) => setForm((f) => ({ ...f, [key]: value })),
     [],
   );
   const venues = useMemo(() => savedVenues(snapshot.events), [snapshot]);
-  const noteNeeded = noteRequired(form, base);
+  const noteNeeded = noteRequired(form, base, isPublished(base, live));
   const { fields, other } = splitIssues(issues, snapshot, index);
 
   async function submit(e: FormEvent) {
     e.preventDefault();
+    setFailure(null);
     // WHY: saving an untouched form would still stamp a new updatedAt and
     // mark the show as changed in the publish summary.
     if (JSON.stringify(form) === JSON.stringify(initial)) return onClose();
@@ -83,8 +95,12 @@ export default function ShowEditorModal({
     setIssues(problems);
     if (problems.length > 0) return;
     const res = await onSave(candidate);
-    if (attemptSettled(res)) onClose();
-    else if (res && !res.ok) setIssues(res.issues);
+    if (attemptSettled(res)) return onClose();
+    if (res && !res.ok) setIssues(res.issues);
+    // Field problems show inline; only a failure without them needs words.
+    setFailure(
+      res && !res.ok && res.issues.length > 0 ? null : failureMessage(res),
+    );
   }
 
   return (
@@ -118,23 +134,10 @@ export default function ShowEditorModal({
           errors={fields}
           noteNeeded={noteNeeded}
         />
-        {issues.length > 0 && <ShowIssueSummary other={other} />}
-        <div className={styles.actionRow}>
-          <button
-            type="button"
-            className={styles.cancelButton}
-            onClick={onClose}
-          >
-            {EDITOR.close}
-          </button>
-          <button
-            type="submit"
-            className={styles.submitButton}
-            disabled={saving}
-          >
-            {saving ? EDITOR.saving : EDITOR.save}
-          </button>
-        </div>
+        {(issues.length > 0 || failure) && (
+          <ShowIssueSummary other={other} failure={failure} />
+        )}
+        <ShowEditorActions saving={saving} onClose={onClose} />
       </form>
     </Modal>
   );

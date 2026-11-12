@@ -70,6 +70,7 @@ export default function ShowCardFields({
             {PERFORMER_IDS.map((id) => (
               <ShowCheck
                 key={id}
+                id={`show-lineup-${id}`}
                 label={PERFORMERS[id].name}
                 checked={form.lineup.includes(id)}
                 onChange={(v) => toggleLineup(id, v)}
@@ -86,11 +87,13 @@ export default function ShowCardFields({
       <fieldset className={styles.fieldset}>
         <legend className={styles.legend}>{EDITOR.sectionStatus}</legend>
         <ShowCheck
+          id="show-hidden"
           label={EDITOR.hidden}
           checked={form.hidden}
           onChange={(v) => set("hidden", v)}
         />
         <ShowCheck
+          id="show-canceled"
           label={EDITOR.canceled}
           checked={form.canceled}
           onChange={(v) => set("canceled", v)}

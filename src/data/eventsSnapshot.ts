@@ -65,7 +65,7 @@ export function shortDateFromIso(isoDate: string): string {
 }
 
 const slugSchema = z.string().regex(SLUG_PATTERN, "Use a-z, 0-9 and -");
-const isoDateSchema = z.iso.date();
+export const isoDateSchema = z.iso.date();
 const timeSchema = z.string().regex(TIME_PATTERN, "Use 24h HH:MM");
 
 export const ticketSourceSchema = z.enum([
@@ -303,7 +303,10 @@ export const eventEntryWriteSchema = z
     date: requiredText(20),
     city: requiredText(100),
     state: requiredText(100),
-    stateAbbr: requiredText(10),
+    // WHY 100 and not a short code limit: the editor fills this from the
+    // city page's addressRegion, which outside the US is a full region name
+    // ("Greater London", "North Rhine-Westphalia").
+    stateAbbr: requiredText(100),
     citySlug: slugSchema,
     description: requiredText(2000),
     lineup: z.array(z.enum(PERFORMER_IDS)).min(1),
@@ -329,7 +332,8 @@ export const eventEntryWriteSchema = z
 const tbaCityWriteSchema = z.strictObject({
   city: requiredText(100),
   state: requiredText(100),
-  stateAbbr: requiredText(10),
+  // WHY 100: the same addressRegion source as an event's stateAbbr above.
+  stateAbbr: requiredText(100),
   citySlug: slugSchema,
 });
 

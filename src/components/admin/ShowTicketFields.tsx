@@ -89,6 +89,7 @@ export default function ShowTicketFields({ form, set, errors }: Props) {
         )}
       </ShowField>
       <ShowCheck
+        id="show-sold-out"
         label={EDITOR.soldOut}
         checked={form.soldOut}
         onChange={(v) => set("soldOut", v)}

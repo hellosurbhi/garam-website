@@ -10,6 +10,8 @@ interface ConfirmNoteDialogProps {
   confirmLabel: string;
   busyLabel: string;
   busy: boolean;
+  /** Why the last attempt failed, shown inside the dialog. */
+  error: string | null;
   /** Ask for the note the version history records (publish and restore). */
   askNote: boolean;
   /** What changes, shown between the body and the note. */
@@ -25,6 +27,7 @@ export default function ConfirmNoteDialog({
   confirmLabel,
   busyLabel,
   busy,
+  error,
   askNote,
   children,
   onConfirm,
@@ -79,6 +82,11 @@ export default function ConfirmNoteDialog({
               </p>
             )}
           </div>
+        )}
+        {error && (
+          <p className={styles.errorMsg} role="alert">
+            {error}
+          </p>
         )}
         <div className={styles.actionRow}>
           <button

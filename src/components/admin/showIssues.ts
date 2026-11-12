@@ -12,7 +12,13 @@ import {
   type SnapshotIssue,
 } from "@/data/eventsSnapshot";
 import type { AdminCityOption } from "@/lib/eventsAdmin.server";
-import { entryFromForm, noteRequired, type ShowForm } from "./showForm";
+import {
+  entryFromForm,
+  formDateProblems,
+  isPublished,
+  noteRequired,
+  type ShowForm,
+} from "./showForm";
 import type { FieldIssue } from "./showsApi";
 import { showName } from "./showsView";
 
@@ -129,7 +135,24 @@ export function checkShowForm(input: ShowFormCheckInput): {
   problems: FieldIssue[];
 } {
   const { form, base, index, snapshot, live } = input;
-  const entry = entryFromForm(form, base, input.nowIso, input.initial);
+  const dateProblems = formDateProblems(form, base, input.initial);
+  if (dateProblems.length > 0) {
+    return {
+      candidate: snapshot,
+      problems: dateProblems.map((p) => ({
+        path: `events.${index}.${p.field}`,
+        message: p.message,
+      })),
+    };
+  }
+  const published = isPublished(base, live);
+  const entry = entryFromForm(
+    form,
+    base,
+    input.nowIso,
+    input.initial,
+    published,
+  );
   const events = base
     ? snapshot.events.map((x, i) => (i === index ? entry : x))
     : [...snapshot.events, entry];
@@ -138,7 +161,7 @@ export function checkShowForm(input: ShowFormCheckInput): {
     knownCitySlugs: new Set(input.cities.map((c) => c.slug)),
   });
   const problems = check.ok ? [] : toFieldIssues(check.issues);
-  if (noteRequired(form, base) && !form.note.trim()) {
+  if (noteRequired(form, base, published) && !form.note.trim()) {
     problems.push({ path: `events.${index}.note`, message: EDITOR.noteNeeded });
   }
   return { candidate, problems };

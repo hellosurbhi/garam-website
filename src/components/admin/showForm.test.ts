@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import published from "@/data/events.published.json";
 import type { EventEntry } from "@/data/eventsSnapshot";
-import { entryFromForm, formFromEntry } from "./showForm";
+import { entryFromForm, formFromEntry, timezoneChoices } from "./showForm";
 
 // WHY the real published record: manhattan-2026-10-11 predates the timezone
 // field, which is exactly the legacy shape the on-sale round trip broke on.
@@ -23,6 +23,7 @@ describe("entryFromForm", () => {
       manhattan,
       "2026-11-11T00:00:00.000Z",
       initial,
+      true,
     );
     expect(entry.onSaleAt).toBe(manhattan.onSaleAt);
     expect(entry.tagline).toBe("All Stars, round two");
@@ -41,7 +42,16 @@ describe("entryFromForm", () => {
       manhattan,
       "2026-11-11T00:00:00.000Z",
       initial,
+      true,
     );
     expect(entry.onSaleAt).toBe("2026-08-21T14:00:00.000Z");
+  });
+});
+
+describe("timezoneChoices", () => {
+  it("offers time zones outside the Americas for touring shows", () => {
+    const zones = timezoneChoices("");
+    expect(zones).toContain("Europe/London");
+    expect(zones).toContain("America/New_York");
   });
 });

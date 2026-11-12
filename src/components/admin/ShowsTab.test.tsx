@@ -5,6 +5,7 @@ import {
   screen,
   fireEvent,
   waitFor,
+  within,
 } from "@testing-library/react";
 import type { EventEntry, EventsSnapshot } from "@/data/eventsSnapshot";
 import type { EventsAdminLoad } from "@/lib/eventsAdmin.server";
@@ -339,5 +340,124 @@ describe("ShowsTab", () => {
     );
     expect(screen.getByText(/nothing was saved/)).toBeTruthy();
     expect(callsTo("/api/admin/events/draft")).toHaveLength(1);
+  });
+  it("drops an open editor when a rebuild reload brings a newer live version", async () => {
+    let finishRebuild: (res: Response) => void = () => {};
+    let version = 3;
+    routeFetch();
+    const base = fetchMock.getMockImplementation();
+    fetchMock.mockImplementation(async (path: string, init?: RequestInit) => {
+      if (path === "/api/admin/events/rebuild") {
+        return new Promise<Response>((resolve) => {
+          finishRebuild = (res) => {
+            version = 4;
+            resolve(res);
+          };
+        });
+      }
+      if (path === "/api/admin/events" && version === 4) {
+        const next = adminLoad();
+        next.live.version = 4;
+        next.draft = null;
+        return json(200, next);
+      }
+      return base?.(path, init);
+    });
+    render(<ShowsTab />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Rebuild site" }),
+    );
+    // The rebuild is still running; the show rows stay clickable.
+    fireEvent.click(
+      screen.getByRole("button", { name: "Edit Chicago, Jan 9" }),
+    );
+    fireEvent.change(screen.getByLabelText("Card tagline"), {
+      target: { value: "Typed before the reload" },
+    });
+    await waitFor(() =>
+      expect(
+        fetchMock.mock.calls.filter(([p]) => p === "/api/admin/events/rebuild"),
+      ).toHaveLength(1),
+    );
+    finishRebuild(json(200, { version: 4, rebuild: "requested" }));
+
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("heading", { name: "Edit Chicago, Jan 9" }),
+      ).toBeNull(),
+    );
+    expect(screen.getByText(/published a newer version/)).toBeTruthy();
+    expect(callsTo("/api/admin/events/draft")).toHaveLength(0);
+  });
+
+  it("shows a failed save inside the open editor", async () => {
+    routeFetch();
+    render(<ShowsTab />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Edit Chicago, Jan 9" }),
+    );
+    fireEvent.change(screen.getByLabelText("Card tagline"), {
+      target: { value: "Back by demand" },
+    });
+    tokenMock.mockRejectedValue(new Error("auth/network-request-failed"));
+    fireEvent.click(screen.getByRole("button", { name: "Save to draft" }));
+    const dialog = screen.getByRole("dialog");
+    await waitFor(() =>
+      expect(within(dialog).getByRole("alert").textContent).toMatch(
+        /Couldn't reach the server/,
+      ),
+    );
+  });
+
+  it("shows a failed publish inside the open confirm dialog", async () => {
+    routeFetch(200, {
+      "/api/admin/events/publish": () => json(500, { error: "Publish broke" }),
+    });
+    render(<ShowsTab />);
+    fireEvent.click(await screen.findByRole("button", { name: "Publish" }));
+    fireEvent.change(screen.getByLabelText("What changed and why"), {
+      target: { value: "Austin is booked" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Publish now" }));
+    const dialog = screen.getByRole("dialog");
+    await waitFor(() =>
+      expect(within(dialog).getByRole("alert").textContent).toMatch(
+        /Publish broke/,
+      ),
+    );
+  });
+
+  it("still reports a failed rebuild when no dialog is open", async () => {
+    routeFetch(200, {
+      "/api/admin/events/rebuild": () => json(500, { error: "Rebuild broke" }),
+    });
+    render(<ShowsTab />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Rebuild site" }),
+    );
+    expect(await screen.findByText("Rebuild broke")).toBeTruthy();
+  });
+
+  it("links a checkbox error to its checkbox", async () => {
+    routeFetch();
+    render(<ShowsTab />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Edit Chicago, Jan 9" }),
+    );
+    fireEvent.change(screen.getByLabelText("Ticket link"), {
+      target: { value: "" },
+    });
+    const soldOut = screen.getByLabelText("Sold out");
+    fireEvent.click(soldOut);
+    fireEvent.click(screen.getByRole("button", { name: "Save to draft" }));
+
+    await waitFor(() =>
+      expect(soldOut.getAttribute("aria-invalid")).toBe("true"),
+    );
+    const error = document.getElementById(
+      soldOut.getAttribute("aria-describedby") ?? "",
+    );
+    expect(error?.getAttribute("role")).toBe("alert");
+    expect(error?.textContent).toMatch(/sold out show needs its link/);
   });
 });

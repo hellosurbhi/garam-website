@@ -4,13 +4,14 @@ import type { SnapshotDiff } from "@/data/eventsSnapshot";
 import type { EventsAdminLoad } from "@/lib/eventsAdmin.server";
 import ComingSoonCities from "./ComingSoonCities";
 import ShowEditorModal from "./ShowEditorModal";
-import ShowsDialogs, { type ShowsDialog } from "./ShowsDialogs";
+import ShowsDialogs from "./ShowsDialogs";
 import ShowsHistory from "./ShowsHistory";
 import ShowsList from "./ShowsList";
 import ShowsStatus from "./ShowsStatus";
 import ShowsToolbar from "./ShowsToolbar";
-import { attemptSettled, type ApiResult } from "./showsApi";
+import StaleEditorNotice from "./StaleEditorNotice";
 import type { ShowsAdmin } from "./useShowsAdmin";
+import { useShowsDialog } from "./useShowsDialog";
 import {
   countChanges,
   localTodayIso,
@@ -35,9 +36,11 @@ interface ShowsWorkspaceProps {
 
 /** Everything on the Shows tab once the shows have loaded. */
 export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
-  const [dialog, setDialog] = useState<ShowsDialog | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const { live, cities } = data;
+  const { dialog, stale, error, show, close, settle } = useShowsDialog(
+    live.version,
+  );
   // WHY: a draft saved on top of an older live version would undo whatever
   // was published since, so it is set aside and editing starts from live.
   const fresh = data.draft?.basedOnVersion === live.version ? data.draft : null;
@@ -60,10 +63,6 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
   ]);
   const busy = admin.pending !== null;
   const locked = admin.lockMs > 0;
-  const close = () => setDialog(null);
-  const settle = (res: ApiResult<unknown> | null) => {
-    if (attemptSettled(res)) close();
-  };
 
   return (
     <div className={styles.dashboard}>
@@ -81,9 +80,9 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
         locked={locked}
         changeCount={changeCount}
         historyOpen={showHistory}
-        onAdd={() => setDialog({ kind: "editor" })}
-        onPublish={() => setDialog({ kind: "publish" })}
-        onDiscard={() => setDialog({ kind: "discard" })}
+        onAdd={() => show({ kind: "editor" })}
+        onPublish={() => show({ kind: "publish" })}
+        onDiscard={() => show({ kind: "discard" })}
         onToggleHistory={() => setShowHistory((v) => !v)}
       />
       {showHistory && (
@@ -91,7 +90,7 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
           history={data.history}
           liveVersion={live.version}
           disabled={busy || locked}
-          onRestore={(version) => setDialog({ kind: "restore", version })}
+          onRestore={(version) => show({ kind: "restore", version })}
         />
       )}
       <ShowsList
@@ -99,10 +98,8 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
         previews={previews}
         pendingSlugs={pendingSlugs}
         todayIso={todayIso}
-        onEdit={(slug) => setDialog({ kind: "editor", slug })}
-        onCancel={(slug) =>
-          setDialog({ kind: "editor", slug, startCanceled: true })
-        }
+        onEdit={(slug) => show({ kind: "editor", slug })}
+        onCancel={(slug) => show({ kind: "editor", slug, startCanceled: true })}
       />
       <ComingSoonCities
         snapshot={draft}
@@ -111,7 +108,8 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
         busy={busy}
         onSave={(snapshot) => admin.saveDraft(snapshot)}
       />
-      {dialog?.kind === "editor" && (
+      {stale && <StaleEditorNotice onDismiss={close} />}
+      {dialog?.kind === "editor" && !stale && (
         <ShowEditorModal
           snapshot={draft}
           live={live.snapshot}
@@ -129,6 +127,7 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
         live={live.snapshot}
         changes={changes}
         busy={busy}
+        error={error}
         onPublish={async (note) => settle(await admin.publish(note))}
         onRestore={async (version, note) =>
           settle(await admin.rollback(version, note))

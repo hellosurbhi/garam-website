@@ -7,7 +7,7 @@ import {
 } from "@/data/eventsSnapshot";
 import type { AdminCityOption } from "@/lib/eventsAdmin.server";
 import { splitIssues, toFieldIssues } from "./showIssues";
-import type { ApiResult, FieldIssue } from "./showsApi";
+import { failureMessage, type ApiResult, type FieldIssue } from "./showsApi";
 import styles from "./ShowsTab.module.css";
 
 interface ComingSoonCitiesProps {
@@ -57,7 +57,9 @@ export default function ComingSoonCities({
       return false;
     }
     const res = await onSave(candidate);
-    setProblems(res && !res.ok ? describe(res.issues) : []);
+    const failed = failureMessage(res);
+    const issues = res && !res.ok ? res.issues : [];
+    setProblems(issues.length > 0 ? describe(issues) : failed ? [failed] : []);
     return Boolean(res?.ok);
   }
 

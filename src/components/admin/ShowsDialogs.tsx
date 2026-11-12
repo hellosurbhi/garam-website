@@ -21,6 +21,8 @@ interface ShowsDialogsProps {
   live: EventsSnapshot;
   changes: SnapshotDiff;
   busy: boolean;
+  /** Why the last attempt failed. */
+  error: string | null;
   onPublish: (note: string) => void;
   onRestore: (version: number, note: string) => void;
   onDiscard: () => void;
@@ -39,7 +41,7 @@ function nameFor(slug: string, draft: EventsSnapshot, live: EventsSnapshot) {
 
 /** Publish, restore and discard confirmations. */
 export default function ShowsDialogs(props: ShowsDialogsProps) {
-  const { dialog, draft, live, changes, busy, onClose } = props;
+  const { dialog, draft, live, changes, busy, error, onClose } = props;
   if (!dialog || dialog.kind === "editor") return null;
 
   if (dialog.kind === "publish") {
@@ -53,6 +55,7 @@ export default function ShowsDialogs(props: ShowsDialogsProps) {
         confirmLabel={PUBLISH_DIALOG.confirm}
         busyLabel={PUBLISH_DIALOG.busy}
         busy={busy}
+        error={error}
         askNote
         onConfirm={props.onPublish}
         onClose={onClose}
@@ -80,6 +83,7 @@ export default function ShowsDialogs(props: ShowsDialogsProps) {
         confirmLabel={RESTORE_DIALOG.confirm(version)}
         busyLabel={RESTORE_DIALOG.busy}
         busy={busy}
+        error={error}
         askNote
         onConfirm={(note) => props.onRestore(version, note)}
         onClose={onClose}
@@ -94,6 +98,7 @@ export default function ShowsDialogs(props: ShowsDialogsProps) {
       confirmLabel={DISCARD_DIALOG.confirm}
       busyLabel={DISCARD_DIALOG.busy}
       busy={busy}
+      error={error}
       askNote={false}
       onConfirm={props.onDiscard}
       onClose={onClose}

@@ -7,6 +7,7 @@ import { SHOWS_TOAST } from "@/data/adminShows";
 import type { EventsSnapshot } from "@/data/eventsSnapshot";
 import type { EventsAdminLoad, RebuildStatus } from "@/lib/eventsAdmin.server";
 import {
+  failureMessage,
   fetchSiteVersion,
   isDenied,
   showsRequest,
@@ -127,9 +128,10 @@ export function useShowsAdmin() {
         // the old version would undo their change.
         await reload();
         setToast({ msg: SHOWS_TOAST.reloaded, ok: false });
-      } else if (res.issues.length === 0) {
-        setToast({ msg: res.error, ok: false });
       }
+      // WHY no toast for other failures: the toast sits outside the open
+      // dialog, which makes the rest of the page inert, so the admin would
+      // never see it. Each caller shows failureMessage(res) where it acts.
       setPending(null);
       return res;
     },
@@ -201,12 +203,16 @@ export function useShowsAdmin() {
       SHOWS_ROUTES.rebuild,
       undefined,
     );
+    const failed = failureMessage(res);
     if (res.ok) {
       setToast(
         res.data.rebuild === "requested"
           ? { msg: SHOWS_TOAST.rebuildStarted, ok: true }
           : { msg: SHOWS_TOAST.rebuildFailed, ok: false },
       );
+    } else if (failed) {
+      // Rebuild opens no dialog, so the toast is where the admin looks.
+      setToast({ msg: failed, ok: false });
     }
     return res;
   }, [mutate]);

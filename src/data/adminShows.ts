@@ -199,4 +199,10 @@ export const EDITOR = {
   note: "Note for the record",
   noteHint: "Needed when you cancel the show or move its date.",
   noteNeeded: "Add a note saying why.",
+  badDate: "Enter a real date with a four digit year.",
+  skippedTime:
+    "That time doesn't exist there: the clocks skip it when daylight saving starts. Pick another.",
+  stale:
+    "Someone published a newer version while the editor was open, so nothing you typed was saved. Open the show again to edit the current version.",
+  staleDismiss: "OK",
 } as const;

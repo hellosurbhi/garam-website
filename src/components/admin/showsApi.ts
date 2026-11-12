@@ -102,6 +102,17 @@ export function attemptSettled(res: ApiResult<unknown> | null): boolean {
   return Boolean(res && (res.ok || res.status === 409));
 }
 
+/**
+ * What to tell the admin after a failed attempt, or null when there is
+ * nothing to add: it worked, the tab locked (denied), or it reloaded after
+ * a conflict and says so itself. The caller shows it where the admin is
+ * looking, inside the open dialog when there is one.
+ */
+export function failureMessage(res: ApiResult<unknown> | null): string | null {
+  if (!res || res.ok || isDenied(res) || res.status === 409) return null;
+  return res.error;
+}
+
 /** The show list version the deployed website rendered, or null if unknown. */
 export async function fetchSiteVersion(): Promise<number | null> {
   try {

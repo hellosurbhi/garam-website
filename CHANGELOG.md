@@ -12,6 +12,7 @@
 - Dashboard: draft-only applications are no longer counted as customer applications.
 - Form: restored answers only fill fixed-choice fields with valid choices; validation messages moved into `src/data/copy.ts`.
 - Canary workflow: the pager now runs in its own job that fires on failure, cancel and timeout, and each step has a timeout under the job's.
+- Round 2: a refused confirm whose discard marker cannot be written keeps the stored photo; a duplicate alert counts as suppressed only when the claim says "sent"; a finalize ack for a replaced draft makes finalize re-settle instead of marking the replacement filed; a city in the link clears the saved country; the photo-removal message moved into `src/data/copy.ts`.
 
 ## fix(apply): close the review findings on the new apply form (2026-11-11)
 

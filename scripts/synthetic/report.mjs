@@ -239,7 +239,7 @@ export async function report(env = process.env, fetchImpl = fetch) {
     } catch {
       notificationFailed = true;
     }
-    if (weekly && gmail && site) {
+    if (weekly && gmail && site && env.WEEKLY_WATCHDOG_URL) {
       try {
         await ping(env.WEEKLY_WATCHDOG_URL, false, fetchImpl);
       } catch {
@@ -247,8 +247,14 @@ export async function report(env = process.env, fetchImpl = fetch) {
       }
     }
   }
-  if (!env.WATCHDOG_URL || !env.WEEKLY_WATCHDOG_URL) notificationFailed = true;
-  if (env.EVENT_NAME === "schedule") {
+  // WHY: the external watchdog (hc-ping.com) is optional. It used to be
+  // required, so a repo without the two secrets raised a permanent
+  // "[Monitor] notification" incident on every run, which buried real alerts.
+  // Real failures still email and open issues above; a watchdog only adds
+  // detection of the monitor itself going silent. Without one that silent-stop
+  // case is undetected. A configured watchdog that rejects a ping still fails
+  // loudly below.
+  if (env.EVENT_NAME === "schedule" && env.WATCHDOG_URL) {
     try {
       await ping(
         env.WATCHDOG_URL,

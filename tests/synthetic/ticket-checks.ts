@@ -287,18 +287,21 @@ function localStart(iso: string, timeZone: string): string | null {
 /** Request errors that mean the vendor's network failed, not our link. */
 // WHY "aborted": Playwright reports a connection dropped after the headers
 // arrived as "apiRequestContext.get: aborted" (then a call log), with no
-// socket code.
+// socket code. Only the first line is matched, because the call log echoes
+// response headers: a redirect loop to "location: aborted" would match.
 const TRANSIENT_REQUEST_ERROR =
-  /Timeout \d+ms exceeded|ETIMEDOUT|ECONNRESET|ECONNREFUSED|EAI_AGAIN|socket hang up|: aborted\b/;
+  /Timeout \d+ms exceeded|ETIMEDOUT|ECONNRESET|ECONNREFUSED|EAI_AGAIN|socket hang up|: aborted$/;
 
 /**
- * Interstitials that bot protection serves in place of the page, with a 200.
- * Each marker belongs to the challenge page itself, never to a normal page:
- * Cloudflare's "/cdn-cgi/challenge-platform/" script was rejected because
- * Cloudflare injects it into ordinary pages too.
+ * Cloudflare's challenge config object, defined only on the interstitial it
+ * serves with a 200 in place of the page.
  */
-const BOT_CHALLENGE =
-  /<title>Just a moment\.\.\.<\/title>|window\._cf_chl_opt|captcha-delivery\.com|_Incapsula_Resource|px-captcha/;
+// WHY only this marker: Cloudflare's "/cdn-cgi/challenge-platform/" script,
+// HUMAN's "px-captcha" and DataDome's "captcha-delivery.com" all appear on
+// ordinary pages too (injected scripts and CSP lists), so a login page that
+// carried one passed as unserved. Those vendors block with 403, which the
+// status check already notes.
+const BOT_CHALLENGE = /window\._cf_chl_opt\b/;
 
 /** Fails a listing check that needs the page, or notes it in "whenServed". */
 function listingUnavailable(
@@ -329,7 +332,7 @@ async function expectListingStart(
     // WHY only timeouts and dropped or refused connections count as unserved:
     // those are the vendor's network, while a redirect loop or a domain that
     // does not resolve is a broken link we published and must fail.
-    if (!TRANSIENT_REQUEST_ERROR.test(message))
+    if (!TRANSIENT_REQUEST_ERROR.test(message.split("\n")[0]))
       throw new Error(problem, { cause: error });
     return listingUnavailable(mode, problem);
   }

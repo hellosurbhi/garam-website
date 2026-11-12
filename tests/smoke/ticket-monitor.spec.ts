@@ -872,6 +872,10 @@ const venueCalendar = `<script type="application/ld+json">${JSON.stringify({
   Events: [{ "@type": "Event", startDate: ourStart, location: atVenue }],
 })}</script>`;
 const unknownPage = "<html><body>Checking your browser</body></html>";
+// WHY both vendors: their challenge script and CSP host also load on normal
+// pages, so neither may mark a page as a challenge.
+const loginWithBotScripts =
+  '<html><head><meta http-equiv="Content-Security-Policy" content="script-src https://ct.captcha-delivery.com"></head><body><div id="px-captcha"></div><form>Sign in</form></body></html>';
 const cloudflareChallenge =
   "<html><head><title>Just a moment...</title></head><body><script>window._cf_chl_opt={}</script></body></html>";
 // Columns: name, status, body, mode, passes, notes it as unavailable.
@@ -897,6 +901,14 @@ for (const [name, status, body, mode, passes, noted] of [
     false,
   ],
   ["a page with no event data", 200, unknownPage, "whenServed", false, false],
+  [
+    "a login page that loads HUMAN's captcha script",
+    200,
+    loginWithBotScripts,
+    "whenServed",
+    false,
+    false,
+  ],
   [
     "a login page the vendor sent us to",
     401,
@@ -974,6 +986,23 @@ test("ticket monitor fails a listing that redirects to itself", async ({
     page,
     (res) => {
       res.writeHead(302, { location: "/listing" });
+      res.end();
+    },
+    false,
+    "whenServed",
+  );
+});
+
+// WHY "aborted": Playwright's call log echoes this header, so a check that
+// read the whole error would mistake the loop for a dropped connection.
+test("ticket monitor fails a redirect loop whose target is named aborted", async ({
+  page,
+}) => {
+  test.setTimeout(10000);
+  await checkVendorResponse(
+    page,
+    (res) => {
+      res.writeHead(302, { location: "aborted" });
       res.end();
     },
     false,

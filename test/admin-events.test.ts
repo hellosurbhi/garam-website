@@ -289,10 +289,12 @@ const rollback = (
   targetVersion: number,
   expectedVersion: number,
   note = "Fixture restore",
+  expectedDraftUpdateTime: string | null = draftToken() ?? null,
 ) =>
   call(rollbackRoute.POST as Route, "POST", {
     targetVersion,
     expectedVersion,
+    expectedDraftUpdateTime,
     note,
   });
 const rebuild = () => call(rebuildRoute.POST as Route, "POST", {});
@@ -918,6 +920,27 @@ describe("rollback", () => {
     await publishFixture();
     expect((await rollback(1, 1)).status).toBe(409);
     expect(publicationCommits()).toHaveLength(1);
+  });
+
+  it("refuses a restore when the draft changed after the confirmation opened", async () => {
+    await publishFixture();
+    // The confirmation opened on this draft...
+    const shown = draftToken() ?? null;
+    // ...then another admin saved an unpublished edit.
+    const show = fixtureShow();
+    const kept = {
+      ...baseline,
+      events: [...baseline.events, { ...show, tagline: "Unpublished save" }],
+    };
+    expect((await saveDraft(kept, 2)).status).toBe(200);
+
+    const res = await rollback(1, 2, "Fixture restore", shown);
+
+    expect(res.status).toBe(409);
+    expect(publicationCommits()).toHaveLength(1);
+    expect(bySlug(draftDoc().snapshot, show.slug).tagline).toBe(
+      "Unpublished save",
+    );
   });
 });
 

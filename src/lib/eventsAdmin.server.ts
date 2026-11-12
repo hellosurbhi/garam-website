@@ -116,8 +116,16 @@ async function requireLive(): Promise<Stored<PublishedEvents>> {
  * from another tab after that would otherwise go live unseen, so publish
  * names the draft it showed, the same compare and set as expectedVersion.
  */
-function requireDraftUnchanged(expected: string, draft: Stored<EventsDraft>) {
-  if (expected !== draft.updateTime) {
+/**
+ * Refuse (409) a write built on a different draft than the one there now.
+ * `expected` is the draft's updateTime the client loaded, or null when it
+ * saw no draft; every Shows write that replaces the draft checks it.
+ */
+function requireDraftUnchanged(
+  expected: string | null,
+  draft: Stored<EventsDraft> | null,
+) {
+  if (expected !== (draft?.updateTime ?? null)) {
     throw new EventsAdminError(409, DRAFT_CONFLICT_MESSAGE);
   }
 }
@@ -322,9 +330,7 @@ export async function saveDraft(
   requireVersion(body.basedOnVersion, live);
   // WHY: the same for an older copy of the draft itself, so a save never
   // undoes a save that landed after this edit was loaded.
-  if (body.expectedDraftUpdateTime !== (draft?.updateTime ?? null)) {
-    throw new EventsAdminError(409, DRAFT_CONFLICT_MESSAGE);
-  }
+  requireDraftUnchanged(body.expectedDraftUpdateTime, draft);
   const snapshot = validateCandidate(body.snapshot, live.data.snapshot);
   const updatedAt = new Date().toISOString();
   // The precondition closes the gap between the check above and the write.
@@ -360,6 +366,12 @@ export const publishBodySchema = z.object({
 export const rollbackBodySchema = z.object({
   targetVersion: versionSchema,
   expectedVersion: versionSchema,
+  /**
+   * The draft's updateTime when the confirmation was shown, or null when
+   * there was no draft. A restore resets the draft, so without this an
+   * unpublished save made after the confirmation opened would be lost.
+   */
+  expectedDraftUpdateTime: z.string().min(1).nullable(),
   note: noteSchema,
 });
 
@@ -433,6 +445,7 @@ export async function rollbackTo(
   const [live, draft] = await Promise.all([requireLive(), readEventsDraft()]);
   requireVersion(body.expectedVersion, live);
   requireRebuildSettled(live.data, now);
+  requireDraftUnchanged(body.expectedDraftUpdateTime, draft);
   if (body.targetVersion >= live.data.version) {
     throw new EventsAdminError(400, "Pick an earlier version to restore");
   }

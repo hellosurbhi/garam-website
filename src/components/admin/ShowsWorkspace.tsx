@@ -35,10 +35,9 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
   const [showHistory, setShowHistory] = useState(false);
   const { live, cities } = data;
   const { busy, draftWriting } = admin;
-  const { dialog, session, stale, error, show, close, settle } = useShowsDialog(
-    live.version,
-    draftWriting,
-  );
+  const draftToken = data.draft?.updateTime ?? null;
+  const { dialog, session, stale, error, show, close, settle, saveFrom } =
+    useShowsDialog(live.version, draftToken, draftWriting);
   // WHY: a draft saved on top of an older live version would undo whatever
   // was published since, so it is set aside and editing starts from live.
   const fresh = data.draft?.basedOnVersion === live.version ? data.draft : null;
@@ -107,7 +106,9 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
         cities={cities}
         notifyCities={waitlist.cities}
         busy={busy}
-        onSave={(snapshot) => admin.saveDraft(snapshot)}
+        // WHY the current token: this form builds its candidate from the
+        // list on screen when it is submitted, so that list is its base.
+        onSave={(snapshot) => admin.saveDraft(snapshot, draftToken)}
       />
       {stale && <StaleEditorNotice onDismiss={close} />}
       {dialog?.kind === "editor" && !stale && (
@@ -119,7 +120,9 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
           slug={dialog.slug}
           startCanceled={dialog.startCanceled}
           saving={admin.inFlight.includes("save")}
-          onSave={(snapshot) => admin.saveDraft(snapshot)}
+          onSave={(snapshot) =>
+            saveFrom((expected) => admin.saveDraft(snapshot, expected))
+          }
           onClose={close}
         />
       )}
@@ -135,7 +138,13 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
           settle(await admin.rollback(version, note))
         }
         onDiscard={async () =>
-          settle(await admin.saveDraft(live.snapshot, SHOWS_TOAST.discarded))
+          settle(
+            await admin.saveDraft(
+              live.snapshot,
+              draftToken,
+              SHOWS_TOAST.discarded,
+            ),
+          )
         }
         onClose={close}
       />

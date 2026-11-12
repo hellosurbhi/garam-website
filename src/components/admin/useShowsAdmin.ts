@@ -101,8 +101,9 @@ export function useShowsAdmin() {
 
   const live = load.kind === "ready" ? load.data.live : null;
   const liveVersion = live?.version;
+  // The draft's lock token: null when there is no draft.
   const draftUpdateTime =
-    load.kind === "ready" ? load.data.draft?.updateTime : undefined;
+    load.kind === "ready" ? (load.data.draft?.updateTime ?? null) : null;
   const onSite = siteVersion === liveVersion;
 
   // WHY poll: a publish only asks Vercel to rebuild, and without a Vercel
@@ -165,8 +166,18 @@ export function useShowsAdmin() {
     [reload],
   );
 
+  /**
+   * Save `snapshot` as the draft. `expectedDraft` is the draft updateTime
+   * the snapshot was built from (null: no draft); the server refuses (409)
+   * the save if the draft changed since, so an old copy never overwrites a
+   * newer save. Callers pass what they built on, never just the latest.
+   */
   const saveDraft = useCallback(
-    async (snapshot: EventsSnapshot, doneMsg: string = SHOWS_TOAST.saved) => {
+    async (
+      snapshot: EventsSnapshot,
+      expectedDraft: string | null,
+      doneMsg: string = SHOWS_TOAST.saved,
+    ) => {
       if (liveVersion === undefined) return null;
       const res = await mutate(
         "save",
@@ -174,16 +185,14 @@ export function useShowsAdmin() {
         {
           snapshot,
           basedOnVersion: liveVersion,
-          // WHY: the server refuses (409) a save built on a draft that changed
-          // since this load, so a stale editor can never overwrite a newer save.
-          expectedDraftUpdateTime: draftUpdateTime ?? null,
+          expectedDraftUpdateTime: expectedDraft,
         },
         "PUT",
       );
       if (res.ok) setToast({ msg: doneMsg, ok: true });
       return res;
     },
-    [liveVersion, draftUpdateTime, mutate],
+    [liveVersion, mutate],
   );
 
   const announce = useCallback(
@@ -224,13 +233,17 @@ export function useShowsAdmin() {
         {
           targetVersion,
           expectedVersion: liveVersion,
+          // WHY: a restore resets the draft, so the server refuses (409) it
+          // if a save landed after the confirmation was shown, instead of
+          // throwing that unpublished save away.
+          expectedDraftUpdateTime: draftUpdateTime,
           note,
         },
       );
       announce(res, SHOWS_TOAST.restored);
       return res;
     },
-    [liveVersion, mutate, announce],
+    [liveVersion, draftUpdateTime, mutate, announce],
   );
 
   const rebuild = useCallback(async () => {

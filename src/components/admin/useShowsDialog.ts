@@ -9,12 +9,20 @@ interface OpenDialog {
   dialog: ShowsDialog;
   /** The live version when it opened. */
   openedOn: number;
+  /** The draft's updateTime when it opened (null: no draft). */
+  openedDraft: string | null;
+  /** True while this dialog's own draft save is out. */
+  saving: boolean;
   /** Counts every opening, so a late answer can tell it is not its own. */
   session: number;
   error: string | null;
 }
 
-export function useShowsDialog(liveVersion: number, draftWriting: boolean) {
+export function useShowsDialog(
+  liveVersion: number,
+  draftToken: string | null,
+  draftWriting: boolean,
+) {
   const [open, setOpen] = useState<OpenDialog | null>(null);
   const opened = useRef(0);
   const session = open?.session ?? 0;
@@ -32,11 +40,13 @@ export function useShowsDialog(liveVersion: number, draftWriting: boolean) {
       setOpen({
         dialog,
         openedOn: liveVersion,
+        openedDraft: draftToken,
+        saving: false,
         session: opened.current,
         error: null,
       });
     },
-    [liveVersion, draftWriting],
+    [liveVersion, draftToken, draftWriting],
   );
   // WHY scoped to the session that rendered it: a save or publish answer can
   // land after the admin closed that dialog and opened another one. Closing
@@ -56,13 +66,44 @@ export function useShowsDialog(liveVersion: number, draftWriting: boolean) {
     [close, session],
   );
 
+  /**
+   * Save the editor's copy against the draft it was opened from. WHY the
+   * token captured at open, not the latest one: a reload can bring another
+   * admin's save while the editor still shows the older values, and
+   * re-basing onto that token let a save of the old values overwrite theirs.
+   * On success the dialog closes in the same update that ends the save, so
+   * its own new draft never reads as someone else's change.
+   */
+  const saveFrom = useCallback(
+    async (
+      save: (
+        expectedDraft: string | null,
+      ) => Promise<ApiResult<unknown> | null>,
+    ) => {
+      const expected = open?.session === session ? open.openedDraft : null;
+      setOpen((o) => (o?.session === session ? { ...o, saving: true } : o));
+      const res = await save(expected);
+      setOpen((o) => {
+        if (o?.session !== session) return o;
+        return attemptSettled(res) ? null : { ...o, saving: false };
+      });
+      return res;
+    },
+    [open, session],
+  );
+
   // WHY derived here, for every reload at once: the editor copies the show
   // into its own form state when it opens, so after any reload that brings
-  // a newer live version (a rebuild, a 409, another admin's publish) its
-  // values describe a list that is gone and saving them would undo that
-  // publish. Publish, restore and discard read their content from the
-  // current props on every render, so only the editor goes stale.
-  const stale = open?.dialog.kind === "editor" && open.openedOn !== liveVersion;
+  // a newer live version (a rebuild, a 409, another admin's publish) or a
+  // draft someone else saved, its values describe a list that is gone and
+  // saving them would undo that change. Not while its own save is out: that
+  // save is what changes the draft. Publish, restore and discard read their
+  // content from the current props on every render, so only the editor
+  // goes stale.
+  const stale =
+    open?.dialog.kind === "editor" &&
+    !open.saving &&
+    (open.openedOn !== liveVersion || open.openedDraft !== draftToken);
 
   return {
     dialog: open?.dialog ?? null,
@@ -72,5 +113,6 @@ export function useShowsDialog(liveVersion: number, draftWriting: boolean) {
     show,
     close,
     settle,
+    saveFrom,
   };
 }

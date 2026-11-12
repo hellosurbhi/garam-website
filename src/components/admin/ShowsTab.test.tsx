@@ -7,7 +7,12 @@ import {
   waitFor,
   within,
 } from "@testing-library/react";
-import { COMING_SOON, SHOWS_LIST, SHOWS_TOAST } from "@/data/adminShows";
+import {
+  COMING_SOON,
+  EDITOR,
+  SHOWS_LIST,
+  SHOWS_TOAST,
+} from "@/data/adminShows";
 import type { EventEntry, EventsSnapshot } from "@/data/eventsSnapshot";
 import type { EventsAdminLoad } from "@/lib/eventsAdmin.server";
 import AdminDashboard from "./AdminDashboard";
@@ -265,7 +270,14 @@ describe("ShowsTab", () => {
     fireEvent.click(restores[restores.length - 1]);
     await waitFor(() =>
       expect(callsTo("/api/admin/events/rollback")).toEqual([
-        { targetVersion: 2, expectedVersion: 3, note: "Back to the old list" },
+        {
+          targetVersion: 2,
+          expectedVersion: 3,
+          // The draft the confirmation was shown over: a save after it
+          // opened makes the server refuse the restore instead of losing it.
+          expectedDraftUpdateTime: "2026-11-11T10:00:00.123456Z",
+          note: "Back to the old list",
+        },
       ]),
     );
   });
@@ -413,7 +425,66 @@ describe("ShowsTab", () => {
         screen.queryByRole("heading", { name: "Edit Chicago, Jan 9" }),
       ).toBeNull(),
     );
-    expect(screen.getByText(/published a newer version/)).toBeTruthy();
+    expect(screen.getByText(EDITOR.stale)).toBeTruthy();
+    expect(callsTo("/api/admin/events/draft")).toHaveLength(0);
+  });
+
+  it("drops an open editor when a reload brings a draft another admin saved", async () => {
+    let finishRebuild: (res: Response) => void = () => {};
+    let otherAdminSaved = false;
+    routeFetch();
+    const base = fetchMock.getMockImplementation();
+    fetchMock.mockImplementation(async (path: string, init?: RequestInit) => {
+      if (path === "/api/admin/events/rebuild") {
+        return new Promise<Response>((resolve) => {
+          finishRebuild = (res) => {
+            otherAdminSaved = true;
+            resolve(res);
+          };
+        });
+      }
+      if (path === "/api/admin/events" && otherAdminSaved) {
+        // Same live version, but another admin saved price 35 meanwhile.
+        const next = adminLoad();
+        if (next.draft) {
+          next.draft.snapshot = {
+            ...draft,
+            events: [fixtureShow({ price: "35" }), austin],
+          };
+          next.draft.updateTime = "2026-11-11T10:07:00.000000Z";
+        }
+        return json(200, next);
+      }
+      return base?.(path, init);
+    });
+    render(<ShowsTab />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Rebuild site" }),
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "Edit Chicago, Jan 9" }),
+    );
+    expect(screen.getByLabelText<HTMLInputElement>(EDITOR.price).value).toBe(
+      "25",
+    );
+    fireEvent.change(screen.getByLabelText("Card tagline"), {
+      target: { value: "Typed before the reload" },
+    });
+    await waitFor(() =>
+      expect(
+        fetchMock.mock.calls.filter(([p]) => p === "/api/admin/events/rebuild"),
+      ).toHaveLength(1),
+    );
+    finishRebuild(json(200, { version: 3, rebuild: "requested" }));
+
+    // The editor still holds price 25; saving it would undo the other
+    // admin's 35, so it is set aside instead of re-based on the new draft.
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("heading", { name: "Edit Chicago, Jan 9" }),
+      ).toBeNull(),
+    );
+    expect(screen.getByText(EDITOR.stale)).toBeTruthy();
     expect(callsTo("/api/admin/events/draft")).toHaveLength(0);
   });
 

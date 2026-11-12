@@ -211,6 +211,6 @@ export const EDITOR = {
   badDate: "Enter a real date with a four digit year.",
   skippedTime: SKIPPED_TIME_MESSAGE,
   stale:
-    "Someone published a newer version while the editor was open, so nothing you typed was saved. Open the show again to edit the current version.",
+    "The show list changed while the editor was open (a newer save or publish), so nothing you typed was saved. Open the show again to edit the current version.",
   staleDismiss: "OK",
 } as const;

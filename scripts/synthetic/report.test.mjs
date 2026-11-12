@@ -84,7 +84,8 @@ function reportFixture() {
   const fetcher = vi.fn(async (url, init) => {
     calls.push({ url, init });
     if (url.includes("issues?")) return new Response("[]");
-    if (new URL(url).hostname === "api.github.com") return new Response('{"number":1}');
+    if (new URL(url).hostname === "api.github.com")
+      return new Response('{"number":1}');
     if (url.includes("oauth2"))
       return new Response('{"access_token":"fixture"}');
     if (new URL(url).hostname === "gmail.googleapis.com")
@@ -98,7 +99,9 @@ function reportFixture() {
 it("does not notify on an ordinary successful run", async () => {
   const { env, fetcher, calls } = reportFixture();
   await report(env, fetcher);
-  expect(calls.some((c) => new URL(c.url).hostname === "gmail.googleapis.com")).toBe(false);
+  expect(
+    calls.some((c) => new URL(c.url).hostname === "gmail.googleapis.com"),
+  ).toBe(false);
   expect(calls.filter((c) => c.url.includes("hc-ping"))).toHaveLength(1);
 });
 it("weekly heartbeat uses the scheduled slot even if execution is delayed", async () => {
@@ -128,6 +131,51 @@ it("a failed Gmail channel invokes the independent site fallback and creates a n
     calls.some((c) => c.init?.body?.includes("[Monitor] notification")),
   ).toBe(true);
   expect(calls.some((c) => c.url.endsWith("/fail"))).toBe(true);
+});
+it("a missing external watchdog does not raise a notification incident or fail the run", async () => {
+  const { env, fetcher, calls } = reportFixture();
+  delete env.WATCHDOG_URL;
+  delete env.WEEKLY_WATCHDOG_URL;
+  await report(env, fetcher);
+  expect(calls.some((c) => c.url.includes("hc-ping"))).toBe(false);
+  expect(
+    calls.some((c) => c.init?.body?.includes("[Monitor] notification")),
+  ).toBe(false);
+});
+it("the weekly notification drill succeeds without watchdog secrets and pings nothing", async () => {
+  const { env, fetcher, calls } = reportFixture();
+  delete env.WATCHDOG_URL;
+  delete env.WEEKLY_WATCHDOG_URL;
+  env.SCHEDULE = "30 13 * * 1";
+  await report(env, fetcher);
+  expect(
+    calls.filter((c) => new URL(c.url).hostname === "gmail.googleapis.com"),
+  ).toHaveLength(1);
+  expect(calls.some((c) => c.url.includes("hc-ping"))).toBe(false);
+});
+it("a real failure still emails and opens an incident without a watchdog", async () => {
+  const { env, fetcher, calls } = reportFixture();
+  delete env.WATCHDOG_URL;
+  delete env.WEEKLY_WATCHDOG_URL;
+  env.CHECK_OUTCOMES = env.CHECK_OUTCOMES.replace(
+    '"flow":"success"',
+    '"flow":"failure"',
+  );
+  await report(env, fetcher);
+  expect(
+    calls.some((c) => new URL(c.url).hostname === "gmail.googleapis.com"),
+  ).toBe(true);
+  expect(calls.some((c) => c.init?.body?.includes("[Monitor] flow"))).toBe(
+    true,
+  );
+});
+it("a configured watchdog that rejects the ping still fails the run", async () => {
+  const { env, fetcher } = reportFixture();
+  const rejecting = async (url, init) =>
+    url.includes("hc-ping") ? new Response("nope") : fetcher(url, init);
+  await expect(report(env, rejecting)).rejects.toThrow(
+    "Notification verification incomplete",
+  );
 });
 it("does not close a form incident when deployment gating skipped the form", async () => {
   const { env, fetcher, calls } = reportFixture();

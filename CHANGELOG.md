@@ -1,5 +1,12 @@
 # Changelog
 
+## fix(monitor): the external watchdog is optional, so a missing one no longer raises a permanent alarm (2026-11-12)
+
+- The synthetic monitor treated a missing `MONITOR_WATCHDOG_URL` or `MONITOR_WEEKLY_WATCHDOG_URL` secret as a failure, so every run opened or kept a `[Monitor] notification` issue and failed the run, which buried real alerts.
+- Real failures still email you and open their own `[Monitor]` issue. A watchdog that is configured and rejects a ping still fails the run.
+- Known gap without a watchdog: if the monitor itself stops running (GitHub Actions disabled, cron paused), nothing tells you. Adding the two secrets later turns that detection back on with no code change.
+- Tests: a missing watchdog raises no notification issue, a real failure still emails and opens an issue without one, and a rejecting configured watchdog still fails.
+
 ## fix(apply): outside review round (Codex, CodeRabbit, fresh Claude) and main merge (2026-11-12)
 
 - Merged main (#331, #361) into the branch and settled every conflict, keeping the rules-free applicant path and main's synthetic monitor.

@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import publishedJson from "../src/data/events.published.json";
+import publishedJson from "../src/data/events.published.json" with { type: "json" };
 import type { EventEntry, EventsSnapshot } from "../src/data/eventsSnapshot";
 import type {
   FsDocument,

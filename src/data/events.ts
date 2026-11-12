@@ -13,7 +13,7 @@
 // validates it with the schemas in ./eventsSnapshot (see below). Never delete a record
 // from it (src/data/CLAUDE.md); cancel or hide instead.
 import { DEFAULT_LINEUP } from "./lineup";
-import publishedJson from "./events.published.json";
+import publishedJson from "./events.published.json" with { type: "json" };
 import { buildEventSlug } from "./eventSlug";
 import type {
   EventEntry,

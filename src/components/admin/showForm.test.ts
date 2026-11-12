@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import published from "@/data/events.published.json";
+import published from "@/data/events.published.json" with { type: "json" };
 import type { EventEntry } from "@/data/eventsSnapshot";
 import {
   entryFromForm,

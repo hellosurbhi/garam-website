@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { cities } from "../src/data/cities";
 import { publishedSnapshot } from "../src/data/events";
-import publishedJson from "../src/data/events.published.json";
+import publishedJson from "../src/data/events.published.json" with { type: "json" };
 import {
   buildEventSlug,
   buildRollbackSnapshot,

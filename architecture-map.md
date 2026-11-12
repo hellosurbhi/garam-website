@@ -80,17 +80,17 @@ Stack: Astro 5 (SSG + on-demand server routes via `@astrojs/vercel`) · React is
 
 ## 3. Firestore collections
 
-| Collection                 | Written by                          | Read by                                          | Client rules (`firestore.rules`)                                                         |
-| -------------------------- | ----------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------- |
-| `leads`                    | `capture-lead` (REST), client SDK   | `analytics`, `sync-leads-to-kit`                 | `create: validLead()`; `update: validPhoneUpdate() or auth`; `read,delete: auth != null` |
-| `applications`             | apply form (client SDK, anon auth)  | admin dashboard (client SDK), crons, cal webhook | `create: auth && validApplication()`; `read,update,delete: auth != null`                 |
-| `applications/{id}/events` | admin actions, crons, webhook       | admin                                            | `create/read/update/delete: auth != null`                                                |
-| `orders`                   | `sync-orders` (service acct)        | `analytics`                                      | `read: auth`; `write: false`                                                             |
-| `syncMeta`                 | `sync-orders`                       | `analytics`                                      | `read: auth`; `write: false`                                                             |
-| `systemConfig`             | crons                               | crons/admin                                      | `read,write: auth != null`                                                               |
-| `invites`                  | `create-invite` (REST service acct) | portal-state, claim endpoints                    | **not in rules → client default deny** (server REST only)                                |
-| `contestants`              | claim endpoints (REST)              | portal-state, post-show cron                     | **not in rules → client default deny**                                                   |
-| `stage_waivers`            | `stage-waiver` (REST)               | —                                                | **not in rules → client default deny**                                                   |
+| Collection                 | Written by                                         | Read by                                          | Client rules (`firestore.rules`)                                                            |
+| -------------------------- | -------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| `leads`                    | `capture-lead` (REST), client SDK                  | `analytics`, `sync-leads-to-kit`                 | `create: validLead()`; `update: validPhoneUpdate() or auth`; `read,delete: auth != null`    |
+| `applications`             | /api/save-application (server, signed draft token) | admin dashboard (client SDK), crons, cal webhook | `create: admin only`; `read,update,delete: admin only` (applicant path never touches rules) |
+| `applications/{id}/events` | admin actions, crons, webhook                      | admin                                            | `create/read/update/delete: auth != null`                                                   |
+| `orders`                   | `sync-orders` (service acct)                       | `analytics`                                      | `read: auth`; `write: false`                                                                |
+| `syncMeta`                 | `sync-orders`                                      | `analytics`                                      | `read: auth`; `write: false`                                                                |
+| `systemConfig`             | crons                                              | crons/admin                                      | `read,write: auth != null`                                                                  |
+| `invites`                  | `create-invite` (REST service acct)                | portal-state, claim endpoints                    | **not in rules → client default deny** (server REST only)                                   |
+| `contestants`              | claim endpoints (REST)                             | portal-state, post-show cron                     | **not in rules → client default deny**                                                      |
+| `stage_waivers`            | `stage-waiver` (REST)                              | —                                                | **not in rules → client default deny**                                                      |
 
 Storage (`storage.rules`): `photos/{photoId}` — read/write require `auth != null`; write capped 15 MB; contentType allowlist jpeg/png/webp/heic.
 

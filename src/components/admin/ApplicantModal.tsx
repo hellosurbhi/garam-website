@@ -18,7 +18,11 @@ import {
   STATUS_COLORS,
   STATUS_ORDER,
 } from "@/types/application";
-import { formatLocation } from "@/utils/locationDisplay";
+import {
+  applicantHandle,
+  applicantName,
+  applicantSummary,
+} from "@/utils/applicantDisplay";
 import { useApplicantPhotos } from "@/components/admin/useApplicantPhotos";
 import { Modal } from "@/components/ui/Modal";
 import Spinner from "@/components/ui/Spinner";
@@ -116,7 +120,7 @@ export default function ApplicantModal({
   const [noteText, setNoteText] = useState("");
   const [noteSaving, setNoteSaving] = useState(false);
   const [noteError, setNoteError] = useState("");
-  const handle = app.instagram.replace(/^@/, "");
+  const handle = applicantHandle(app);
   const isDeleted = !!app.deletedAt;
   const isNomination = app.applicationType === "Nomination";
 
@@ -291,7 +295,7 @@ export default function ApplicantModal({
         {currentPhoto ? (
           <img
             src={currentPhoto}
-            alt={`${app.name} photo ${selectedPhotoIndex + 1}`}
+            alt={`${applicantName(app)} photo ${selectedPhotoIndex + 1}`}
             className={styles.image}
             loading="lazy"
           />
@@ -331,7 +335,7 @@ export default function ApplicantModal({
             >
               <img
                 src={url}
-                alt={`${app.name} photo ${i + 1}`}
+                alt={`${applicantName(app)} photo ${i + 1}`}
                 loading="lazy"
               />
             </button>
@@ -343,7 +347,7 @@ export default function ApplicantModal({
         <div className={styles.lightbox} onClick={() => setLightbox(false)}>
           <img
             src={currentPhoto}
-            alt={app.name}
+            alt={applicantName(app)}
             className={styles.lightboxImage}
           />
         </div>
@@ -364,9 +368,7 @@ export default function ApplicantModal({
         </div>
 
         {/* ── Identity summary ────────────────────────────── */}
-        <p className={styles.identitySummary}>
-          {app.age} · {app.gender} · {formatLocation(app)}
-        </p>
+        <p className={styles.identitySummary}>{applicantSummary(app)}</p>
 
         <div className={styles.appTypePill} data-nomination={isNomination}>
           {isNomination ? "Nomination" : "Self"}

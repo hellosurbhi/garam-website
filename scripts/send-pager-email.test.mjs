@@ -150,6 +150,20 @@ describe("sendPagerEmail", () => {
     expect(decodeSentMessage()).toContain(env.RUN_URL);
   });
 
+  it("page mode puts the exact failure reason in the subject and body", async () => {
+    const detail =
+      "CANARY VERIFY FAILED:\n- iphone-safari: saved but photoPaths is empty.";
+    const { subject } = await sendPagerEmail(
+      "page",
+      { ...env, DETAIL: detail },
+      mockFetch,
+    );
+    expect(subject).toBe(
+      "APPLY FAILED: iphone-safari: saved but photoPaths is empty.",
+    );
+    expect(decodeSentMessage()).toContain("photoPaths is empty");
+  });
+
   it("preserves the custom recovery subject without allowing new headers", async () => {
     const { subject } = await sendPagerEmail(
       "page",

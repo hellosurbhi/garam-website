@@ -14,10 +14,11 @@ import StickyCTA from "@/components/StickyCTA.astro";
 
 const TITLE = "Tickets & Upcoming Shows";
 const DESC =
-  "Get tickets to Garam Masala Dating shows in New York and beyond. America's #1 live desi comedy dating show and South Asian singles mixer. Now touring LA, SF, and San Diego.";
+  "Get tickets to Garam Masala Dating shows in New York and beyond. America's #1 live desi comedy dating show and South Asian singles mixer. Find upcoming shows and join the waitlist for your city.";
 
-const today = new Date().toISOString().slice(0, 10);
-const upcomingEvents = getTicketPageUpcoming(allEvents, today);
+const now = new Date();
+const today = now.toISOString().slice(0, 10);
+const upcomingEvents = getTicketPageUpcoming(allEvents, today, now);
 
 const taglineMap = buildTaglineMap(upcomingEvents);
 
@@ -125,12 +126,11 @@ const eventSeriesJsonLd = JSON.stringify({
       >
         <WaitlistCities
           server:defer
-          scheduledCitySlugs={upcomingEvents.flatMap((event) =>
-            event.citySlug ? [event.citySlug] : [],
-          )}
+          todayISO={today}
+          nowISO={now.toISOString()}
           scheduledCount={upcomingEvents.length}
         >
-          <p slot="fallback">Loading waitlist cities…</p>
+          <p slot="fallback">{PAGES.tickets.waitlistLoading}</p>
         </WaitlistCities>
       </div>
 
@@ -286,10 +286,18 @@ const eventSeriesJsonLd = JSON.stringify({
 
   /* ─── Event Cards ────────────────────────────────────── */
 
+  #waitlist-cities {
+    margin-top: var(--ticket-list-gap);
+  }
+
+  .tickets-container {
+    --ticket-list-gap: 12px;
+  }
+
   .tickets-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--ticket-list-gap);
   }
 
   /* ─── Empty State ────────────────────────────────────── */

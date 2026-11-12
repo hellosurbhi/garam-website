@@ -1,19 +1,23 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-// vi.hoisted ensures mockSend is evaluated before vi.mock hoisting
+// vi.hoisted ensures the mocks exist before vi.mock hoisting
 const mockSend = vi.hoisted(() => vi.fn());
+const mockAlert = vi.hoisted(() => vi.fn());
 
-// Mock zohoMailer — notify-application switched from Resend to Zoho SMTP (R12)
-vi.mock("@/lib/zohoMailer", () => ({
-  sendMail: mockSend,
-}));
+vi.mock("@/lib/zohoMailer", () => ({ sendMail: mockSend }));
+vi.mock("@/lib/opsAlert", () => ({ alertOps: mockAlert }));
+vi.mock("@/lib/rateLimit", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/rateLimit")>();
+  return { ...actual, enforceRateLimit: vi.fn(async () => null) };
+});
 
-// Import handler after mocking
 const { POST } = await import("@/pages/api/notify-application");
+const { enforceRateLimit } = await import("@/lib/rateLimit");
 
 function makeRequest(
   body: unknown,
-  origin = "https://garammasaladating.com",
+  origin: string | null = "https://garammasaladating.com",
+  raw?: string,
 ): Request {
   return new Request("https://garammasaladating.com/api/notify-application", {
     method: "POST",
@@ -21,7 +25,7 @@ function makeRequest(
       "Content-Type": "application/json",
       ...(origin ? { origin } : {}),
     },
-    body: JSON.stringify(body),
+    body: raw ?? JSON.stringify(body),
   });
 }
 
@@ -29,301 +33,93 @@ function makeContext(request: Request) {
   return { request } as Parameters<typeof POST>[0];
 }
 
-const validBody = {
+/** What a stale tab (pre-autosave script) still posts: the full old payload. */
+const legacyBody = {
   name: "Priya Sharma",
   age: 27,
   gender: "Female",
-  orientation: "Straight",
   city: "New York",
   state: "NY",
-  country: "USA",
   email: "priya@example.com",
   instagram: "applicant_fixture_1",
-  community: "Hindu",
-  income: "$50k–$100k",
-  applicationType: "Self",
-  referrerName: "",
   pitch: "I love masala chai and long walks.",
   photoPaths: ["photos/0f8b3a52-1c9e-4a7d-9b21-6de84c3f5a10.jpg"],
 };
 
-describe("notify-application handler", () => {
+describe("notify-application (legacy receipt-only endpoint)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    import.meta.env.NOTIFICATION_EMAIL = "admin@example.com";
+    vi.mocked(enforceRateLimit).mockResolvedValue(null);
     mockSend.mockResolvedValue({ id: "email-id" });
   });
 
-  it("returns 500 when NOTIFICATION_EMAIL is missing", async () => {
-    delete import.meta.env.NOTIFICATION_EMAIL;
-    const res = await POST(makeContext(makeRequest(validBody)));
-    expect(res.status).toBe(500);
-  });
-
-  it("returns 400 when name is missing", async () => {
-    const res = await POST(
-      makeContext(makeRequest({ ...validBody, name: "" })),
-    );
-    expect(res.status).toBe(400);
-    const body = await res.json();
-    expect(body.error).toBe("Invalid request body");
-  });
-
-  it("returns 400 when instagram is missing", async () => {
-    const res = await POST(
-      makeContext(makeRequest({ ...validBody, instagram: "" })),
-    );
-    expect(res.status).toBe(400);
-  });
-
-  it("returns 400 when email is missing", async () => {
-    const res = await POST(
-      makeContext(makeRequest({ ...validBody, email: "" })),
-    );
-    expect(res.status).toBe(400);
-    const body = await res.json();
-    expect(body.error).toBe("Invalid request body");
-  });
-
-  it("returns 400 when email is malformed", async () => {
-    const res = await POST(
-      makeContext(makeRequest({ ...validBody, email: "notanemail" })),
-    );
-    expect(res.status).toBe(400);
-    const body = await res.json();
-    expect(body.error).toBe("Invalid request body");
-  });
-
-  it("returns 200 and sends email for valid self-application", async () => {
-    const res = await POST(makeContext(makeRequest(validBody)));
+  it("sends exactly one email: the receipt to the applicant", async () => {
+    const res = await POST(makeContext(makeRequest(legacyBody)));
     expect(res.status).toBe(200);
-    const body = await res.json();
-    expect(body.sent).toBe(true);
-    // sendMail is called twice: admin notification + applicant welcome email
-    expect(mockSend).toHaveBeenCalledTimes(2);
+    expect(mockSend).toHaveBeenCalledTimes(1);
+    expect(mockSend.mock.calls[0][0].to).toBe("priya@example.com");
   });
 
-  it("sends email with correct subject for self-application", async () => {
-    await POST(makeContext(makeRequest(validBody)));
-    const callArgs = mockSend.mock.calls[0][0];
-    expect(callArgs.subject).toContain("Priya Sharma");
-    expect(callArgs.subject).toContain("Self");
+  it("never emails the producer per application (the daily digest does that)", async () => {
+    await POST(makeContext(makeRequest(legacyBody)));
+    const recipients = mockSend.mock.calls.map((c) => c[0].to);
+    expect(recipients).toEqual(["priya@example.com"]);
   });
 
-  it("sends email with correct subject for nomination", async () => {
-    await POST(
-      makeContext(
-        makeRequest({
-          ...validBody,
-          applicationType: "Nomination",
-          referrerName: "Rahul Gupta",
-        }),
-      ),
-    );
-    const callArgs = mockSend.mock.calls[0][0];
-    expect(callArgs.subject).toContain("Nomination");
+  it("accepts under-18 and absurd ages: nothing rejects on content", async () => {
+    for (const age of [7, 17, 200, "abc"]) {
+      const res = await POST(makeContext(makeRequest({ ...legacyBody, age })));
+      expect(res.status).toBe(200);
+    }
+    expect(mockSend).toHaveBeenCalledTimes(4);
   });
 
-  it("sends email to the configured NOTIFICATION_EMAIL address", async () => {
-    await POST(makeContext(makeRequest(validBody)));
-    const callArgs = mockSend.mock.calls[0][0];
-    expect(callArgs.to).toBe("admin@example.com");
-  });
-
-  it("email HTML includes the applicant's name", async () => {
-    await POST(makeContext(makeRequest(validBody)));
-    const html: string = mockSend.mock.calls[0][0].html;
-    expect(html).toContain("Priya Sharma");
-  });
-
-  it("email HTML includes the instagram handle", async () => {
-    await POST(makeContext(makeRequest(validBody)));
-    const html: string = mockSend.mock.calls[0][0].html;
-    expect(html).toContain("applicant_fixture_1");
-    expect(html).toContain("instagram.com/applicant_fixture_1");
-  });
-
-  it("email HTML escapes HTML special characters in name", async () => {
-    await POST(
-      makeContext(
-        makeRequest({
-          ...validBody,
-          name: "<script>alert('xss')</script>",
-        }),
-      ),
-    );
-    const html: string = mockSend.mock.calls[0][0].html;
-    expect(html).not.toContain("<script>");
-    expect(html).toContain("&lt;script&gt;");
-  });
-
-  it("email HTML includes pitch section when pitch is provided", async () => {
-    await POST(
-      makeContext(
-        makeRequest({
-          ...validBody,
-          pitch: "I am passionate about South Asian culture.",
-        }),
-      ),
-    );
-    const html: string = mockSend.mock.calls[0][0].html;
-    expect(html).toContain("Pitch");
-    expect(html).toContain("I am passionate about South Asian culture.");
-  });
-
-  it("email HTML omits pitch section when pitch is empty", async () => {
-    await POST(makeContext(makeRequest({ ...validBody, pitch: "" })));
-    const html: string = mockSend.mock.calls[0][0].html;
-    expect(html).not.toContain("<h3");
-  });
-
-  it("email HTML shows 'Nomination' heading for nominations", async () => {
-    await POST(
-      makeContext(
-        makeRequest({
-          ...validBody,
-          applicationType: "Nomination",
-          referrerName: "Rahul Gupta",
-        }),
-      ),
-    );
-    const html: string = mockSend.mock.calls[0][0].html;
-    expect(html).toContain("New Nomination");
-    expect(html).not.toContain("Self-Application");
-  });
-
-  it("email HTML shows 'Self-Application' heading for self applications", async () => {
-    await POST(makeContext(makeRequest(validBody)));
-    const html: string = mockSend.mock.calls[0][0].html;
-    expect(html).toContain("New Self-Application");
-  });
-
-  it("email HTML includes 'Nominated by' row for nominations", async () => {
-    await POST(
-      makeContext(
-        makeRequest({
-          ...validBody,
-          applicationType: "Nomination",
-          referrerName: "Rahul Gupta",
-        }),
-      ),
-    );
-    const html: string = mockSend.mock.calls[0][0].html;
-    expect(html).toContain("Nominated by");
-    expect(html).toContain("Rahul Gupta");
-  });
-
-  it("email HTML omits 'Nominated by' row for self-applications", async () => {
-    await POST(makeContext(makeRequest(validBody)));
-    const html: string = mockSend.mock.calls[0][0].html;
-    expect(html).not.toContain("Nominated by");
-  });
-
-  it("email HTML links to the admin dashboard for photos, never raw URLs", async () => {
-    await POST(makeContext(makeRequest(validBody)));
-    const html: string = mockSend.mock.calls[0][0].html;
-    expect(html).toContain("View 1 photo in the admin dashboard");
-    expect(html).toContain("https://garammasaladating.com/admin");
-    // Photo reads are admin-only; a tokened URL in email would bypass that.
-    expect(html).not.toContain("photos/0f8b3a52");
-  });
-
-  it("email HTML includes location built from city, state, country", async () => {
-    await POST(makeContext(makeRequest(validBody)));
-    const html: string = mockSend.mock.calls[0][0].html;
-    expect(html).toContain("New York");
-    expect(html).toContain("NY");
-    expect(html).toContain("USA");
-  });
-
-  it("returns 400 when photoPaths escape the photos/ prefix", async () => {
+  it("accepts a payload with only the three receipt fields", async () => {
     const res = await POST(
-      makeContext(
-        makeRequest({
-          ...validBody,
-          photoPaths: ["../secrets/config.json"],
-        }),
-      ),
-    );
-    expect(res.status).toBe(400);
-  });
-
-  it("returns 400 when photoPaths is a URL instead of a path", async () => {
-    const res = await POST(
-      makeContext(
-        makeRequest({
-          ...validBody,
-          photoPaths: ["https://example.com/photo.jpg"],
-        }),
-      ),
-    );
-    expect(res.status).toBe(400);
-  });
-
-  it("skips all emails for the synthetic monitor submission", async () => {
-    const res = await POST(
-      makeContext(
-        makeRequest({
-          ...validBody,
-          email: "synthetic-monitor@garammasaladating.com",
-        }),
-      ),
+      makeContext(makeRequest({ name: "A", email: "a@example.com" })),
     );
     expect(res.status).toBe(200);
-    const body = await res.json();
-    expect(body.synthetic).toBe(true);
+  });
+
+  it("returns 400 when the receipt cannot be addressed (no email)", async () => {
+    const res = await POST(
+      makeContext(makeRequest({ ...legacyBody, email: "" })),
+    );
+    expect(res.status).toBe(400);
     expect(mockSend).not.toHaveBeenCalled();
   });
 
-  it("ignores a client-supplied isSynthetic flag: a real email still notifies", async () => {
-    const res = await POST(
-      makeContext(makeRequest({ ...validBody, isSynthetic: true })),
-    );
-    expect(res.status).toBe(200);
-    const body = await res.json();
-    expect(body.synthetic).toBeUndefined();
-    expect(mockSend).toHaveBeenCalled();
+  it("returns 400 on malformed JSON", async () => {
+    const res = await POST(makeContext(makeRequest(null, undefined, "{nope")));
+    expect(res.status).toBe(400);
   });
 
-  it("accepts a phone number and pitch above the old stale caps but within FIELD_LIMITS", async () => {
+  it("returns 403 for a foreign origin", async () => {
     const res = await POST(
-      makeContext(
-        makeRequest({
-          ...validBody,
-          // 38 chars: over the old 30-char cap, well under FIELD_LIMITS.phone (50)
-          phone: "+1 (555) 010-0000 (WhatsApp preferred)",
-          // over the old 5000-char cap, well under FIELD_LIMITS.pitch (50,000)
-          pitch: "I love masala chai and long walks. ".repeat(200),
-        }),
-      ),
+      makeContext(makeRequest(legacyBody, "https://evil.example.com")),
     );
-    expect(res.status).toBe(200);
-    const body = await res.json();
-    expect(body.sent).toBe(true);
-    expect(mockSend).toHaveBeenCalled();
+    expect(res.status).toBe(403);
+    expect(mockSend).not.toHaveBeenCalled();
   });
 
-  it("returns 500 when sendMail throws an error", async () => {
-    mockSend.mockRejectedValue(new Error("Network failure"));
-    const res = await POST(makeContext(makeRequest(validBody)));
+  it("returns the limiter's response when rate limited", async () => {
+    vi.mocked(enforceRateLimit).mockResolvedValueOnce(
+      new Response("slow down", { status: 429 }),
+    );
+    const res = await POST(makeContext(makeRequest(legacyBody)));
+    expect(res.status).toBe(429);
+    expect(mockSend).not.toHaveBeenCalled();
+  });
+
+  it("on mail failure: 500 and an alert naming the stage and the raw error", async () => {
+    mockSend.mockRejectedValueOnce(new Error("SMTP 535 auth failed"));
+    const res = await POST(makeContext(makeRequest(legacyBody)));
     expect(res.status).toBe(500);
-    const body = await res.json();
-    expect(body.error).toBe("Failed to send notification");
-  });
-
-  it("returns 403 when Origin header is absent", async () => {
-    const res = await POST(makeContext(makeRequest(validBody, "")));
-    expect(res.status).toBe(403);
-    const body = await res.json();
-    expect(body.error).toBe("Forbidden");
-  });
-
-  it("returns 403 when Origin is not in the allowlist", async () => {
-    const res = await POST(
-      makeContext(makeRequest(validBody, "https://evil.com")),
-    );
-    expect(res.status).toBe(403);
-    const body = await res.json();
-    expect(body.error).toBe("Forbidden");
+    expect(mockAlert).toHaveBeenCalledTimes(1);
+    expect(mockAlert.mock.calls[0][0]).toMatchObject({
+      flow: "apply",
+      stage: "welcome_email_legacy",
+      errorMessage: "SMTP 535 auth failed",
+    });
   });
 });

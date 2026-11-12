@@ -1,5 +1,39 @@
 # Lessons
 
+## A pager step inside the job it watches can never page a hung job
+
+**What went wrong:** The canary workflow paged from `failure()` steps in the same job as the browser run. A job that timed out or was cancelled skips every remaining step, so the one case a hung production site produces paged nobody.
+**Why:** The wrong assumption was that a step after the failing one always runs. Job-level timeouts and cancellation stop the whole job.
+**Rule:** Alarms live in a separate job that `needs` the monitored job and runs on `always()`. The monitored job's steps carry their own shorter timeouts so evidence still uploads.
+
+## Never put form validation in the database rules
+
+**What went wrong:** The apply form failed with "Missing or insufficient permissions" in July, August and again in November, each time for different applicants, and the synthetic monitor stayed green.
+**Why:** The wrong assumption was that rules are a safe place to decide what a valid application looks like. Rules, Storage rules and anonymous login are three separate things a real phone can fail, they are deployed by hand, and the error they produce names no field and no cause. A monitor with one clean desktop browser cannot reproduce a strict-rule rejection of an unusual real submission.
+**Rule:** Public forms post to our server, which accepts everything, files it and flags what looks wrong. Rules stay admin-only and are never in the applicant's path. Every failure alert names the stage and the raw error, and a monitor overwrites one fixed document instead of creating and deleting fake ones.
+
+## Review the complete feedback before declaring merge readiness
+
+Use the actual overnight queue format with file paths when deferring work; a prose heading is not a runnable queue entry.
+
+CI and resolved inline threads do not establish independent review approval. Audit full review bodies and general comments, record each disposition and obtain the requested Claude and Codex verdicts on the final code. When markup moves into server islands, verify that scripts also initialize asynchronously inserted content.
+
+## Finish the review loop before claiming readiness
+
+A pushed draft and passing local tests are not a ready PR. Inspect review threads, address each with evidence, verify required checks on the latest commit and confirm draft status is cleared before reporting ready to merge. A completed CodeRabbit check does not mean its findings are resolved.
+
+## Stored city is not proof of entered location
+
+Snapshot the field and its provenance together before awaiting attribution so later edits cannot change the meaning of an already submitted value.
+
+An edit flag alone is insufficient when asynchronous code can refill a cleared input. Bind entry evidence to the last value produced by an input event and test delayed programmatic updates.
+
+Trace each capture path before ranking its location field. Popup and Spice List inputs can contain programmatic IP prefills. Record explicit input evidence through the existing market field and exclude historical records whose origin cannot be established.
+
+## Separate scheduled shows from market demand
+
+Removing a scheduled show does not remove its city from Notify Me eligibility. Confirm the ranking population from the underlying records: a cached waitlist-only count is not the number of unique emails across leads and applications. Normalize explicit metro aliases before deduplication and distinguish entered locations from inferred IP geography.
+
 ## Test real SDK protocol selection
 
 Calling uploadBytesResumable does not guarantee a resumable HTTP request for a small file. Firebase uses multipart uploads below its threshold. Observe both formats and assert upload evidence in the test body so an unused route assertion cannot create false confidence.

@@ -6,9 +6,10 @@ import { addKitSubscriber, type KitSubscriberFields } from "@/lib/kit";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { issueLeadToken } from "@/lib/leadToken";
 import { alertOps } from "@/lib/opsAlert";
-import { sendMail } from "@/lib/zohoMailer";
-import { producerLeadNotification } from "@/data/emails";
-import { readTrimmedEnv } from "@/lib/env";
+import {
+  isPrefilledCitySource,
+  resolveWaitlistMarket,
+} from "@/lib/waitlistRanking";
 
 export const prerender = false;
 
@@ -18,6 +19,7 @@ interface LeadPayload {
   name?: string;
   instagram?: string;
   city?: string;
+  cityInputSource?: "entered";
   source?: string;
   sourcePage?: string;
   sourceCitySlug?: string;
@@ -158,7 +160,17 @@ export const POST: APIRoute = async ({ request }) => {
   addStringField(fields, "fbclid", body.fbclid, 500);
   addStringField(fields, "gclid", body.gclid, 500);
   addStringField(fields, "posthogDistinctId", body.posthogDistinctId, 200);
-  addStringField(fields, "sourceCitySlug", body.sourceCitySlug, 100);
+  // Persist entered-city evidence using the existing market field. The marker
+  // is request-only, so old clients and deployed Firestore rules stay compatible.
+  const sourceCitySlug =
+    normalizedString(body.sourceCitySlug, 100) ||
+    (body.cityInputSource === "entered" &&
+    isPrefilledCitySource(
+      normalizedString(body.source, 50)?.toLowerCase() ?? "",
+    )
+      ? resolveWaitlistMarket("", normalizedString(body.city, 100) ?? "")
+      : undefined);
+  addStringField(fields, "sourceCitySlug", sourceCitySlug, 100);
   addStringField(fields, "geoCity", body.geoCity, 100);
   addStringField(fields, "geoRegion", body.geoRegion, 100);
   addStringField(fields, "geoCountry", body.geoCountry, 100);
@@ -227,38 +239,8 @@ export const POST: APIRoute = async ({ request }) => {
         // Kit errors are already logged inside addKitSubscriber
       });
 
-      // Notify the producer of the new signup. Awaited, not fire-and-forget:
-      // a detached promise can be dropped if the serverless function freezes
-      // right after the response is returned.
-      const notificationEmail = readTrimmedEnv(
-        import.meta.env.NOTIFICATION_EMAIL,
-      );
-      if (notificationEmail) {
-        const notifyCity = normalizedString(body.city, 100);
-        const notifyPhone = normalizedString(body.phone, 20);
-        const notifySource = normalizedString(
-          body.source ?? "lead-capture",
-          50,
-        );
-        const notifySourcePage = normalizedString(body.sourcePage ?? "/", 200);
-        try {
-          const template = producerLeadNotification({
-            email,
-            city: notifyCity || undefined,
-            phone: notifyPhone || undefined,
-            source: notifySource || undefined,
-            sourcePage: notifySourcePage || undefined,
-          });
-          await sendMail({ to: notificationEmail, ...template });
-        } catch (err) {
-          await alertOps({
-            flow: "lead",
-            stage: "success_email",
-            errorMessage: err instanceof Error ? err.message : String(err),
-            context: { email, city: notifyCity },
-          });
-        }
-      }
+      // No per-signup producer email: new signups arrive in the daily digest
+      // (an email means something is broken).
     }
 
     // Ownership proof for the step-2 phone update. Null while

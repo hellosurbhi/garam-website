@@ -7,6 +7,7 @@ export interface LeadSubmissionPayload {
   name?: string;
   instagram?: string;
   city?: string;
+  cityInputSource?: "entered";
   source?: string;
   sourcePage?: string;
   landingPage?: string;

@@ -1,6 +1,7 @@
 import { sendMail } from "@/lib/zohoMailer";
 import { escapeHtml } from "@/data/emails";
 import { readTrimmedEnv } from "@/lib/env";
+import { fsAdd } from "@/lib/firestoreRest";
 
 /**
  * Server-side real-time paging for critical failures.
@@ -26,43 +27,84 @@ export interface OpsAlertReport {
   flow: AlertFlow;
   /** Where in the flow it failed, e.g. "submit", "firestore_write", "receipt_email". */
   stage: string;
+  /** The raw error text, verbatim. Never replaced with a canned sentence. */
   errorMessage: string;
-  /** Whatever helps recovery: contact fields, doc ids, page URL, user agent. */
+  /** Who to contact to recover the applicant: name, email, phone, instagram, doc ids. */
   context?: Record<string, string | undefined>;
+  /**
+   * What the failure looked like: failing field, every field's length, photo
+   * count and sizes, what was saved anyway. Plain facts, never secrets.
+   */
+  details?: Record<string, string | undefined>;
+  /** Low-signal diagnostics (browser, page URL), rendered last and small. */
+  footer?: Record<string, string | undefined>;
 }
 
-function contextEntries(report: OpsAlertReport): [string, string][] {
-  return Object.entries(report.context ?? {}).filter(
+function entries(
+  record: Record<string, string | undefined> | undefined,
+): [string, string][] {
+  return Object.entries(record ?? {}).filter(
     (entry): entry is [string, string] => Boolean(entry[1]?.trim()),
   );
 }
 
+const FLOW_LABEL: Record<AlertFlow, string> = {
+  apply: "APPLY",
+  waiver: "WAIVER",
+  portal: "PORTAL",
+  lead: "LEAD",
+  ops: "OPS",
+};
+
+/**
+ * Subject that names the real cause so one glance at the inbox says what
+ * broke, e.g. `APPLY FAILED: photo_put: HTTP 403: SignatureDoesNotMatch`.
+ * Built from the stage plus the first line of the raw error, never a fixed
+ * phrase.
+ */
+export function buildAlertSubject(report: OpsAlertReport): string {
+  const firstLine = report.errorMessage.split("\n")[0].trim();
+  const reason = `${report.stage}: ${firstLine || "no error text captured"}`;
+  return `${FLOW_LABEL[report.flow]} FAILED: ${reason}`.slice(0, 200);
+}
+
 export function buildAlertText(report: OpsAlertReport): string {
-  const lines = [
-    `Failure in ${report.flow}/${report.stage}`,
+  const section = (title: string, rows: [string, string][]) =>
+    rows.length > 0
+      ? ["", title, ...rows.map(([key, value]) => `  ${key}: ${value}`)]
+      : [];
+  return [
+    buildAlertSubject(report),
+    ...section("WHO TO CONTACT", entries(report.context)),
     "",
+    `STAGE: ${report.flow}/${report.stage}`,
+    "",
+    "ERROR (verbatim):",
     report.errorMessage,
-    "",
-    ...contextEntries(report).map(([key, value]) => `${key}: ${value}`),
-  ];
-  return lines.join("\n");
+    ...section("WHAT WE KNOW", entries(report.details)),
+    ...section("DIAGNOSTICS", entries(report.footer)),
+  ].join("\n");
 }
 
 function buildAlertHtml(report: OpsAlertReport): string {
-  const rows = contextEntries(report)
-    .map(
-      ([key, value]) =>
-        `<tr>
-          <td style="padding:6px 12px;font-weight:600;white-space:nowrap;">${escapeHtml(key)}</td>
-          <td style="padding:6px 12px;">${escapeHtml(value)}</td>
-        </tr>`,
-    )
-    .join("");
+  const table = (title: string, rows: [string, string][], small = false) =>
+    rows.length === 0
+      ? ""
+      : `<h3 style="margin:20px 0 6px;font-size:${small ? 12 : 14}px;color:${small ? "#6b6b6b" : "#1A1A1A"};">${escapeHtml(title)}</h3>
+    <table style="border-collapse:collapse;font-size:${small ? 12 : 14}px;">${rows
+      .map(
+        ([key, value]) =>
+          `<tr><td style="padding:4px 12px 4px 0;font-weight:600;white-space:nowrap;vertical-align:top;">${escapeHtml(key)}</td><td style="padding:4px 0;word-break:break-word;">${escapeHtml(value)}</td></tr>`,
+      )
+      .join("")}</table>`;
 
-  return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
-    <h2 style="color:#DC2626;margin:0 0 8px;">Failure: ${escapeHtml(report.flow)}/${escapeHtml(report.stage)}</h2>
-    <p style="margin:0 0 16px;padding:12px;background:#fef2f2;border-radius:8px;color:#7f1d1d;">${escapeHtml(report.errorMessage)}</p>
-    ${rows ? `<table style="border-collapse:collapse;">${rows}</table>` : ""}
+  return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:640px;margin:0 auto;padding:20px;">
+    <h2 style="color:#DC2626;margin:0 0 12px;font-size:18px;">${escapeHtml(buildAlertSubject(report))}</h2>
+    ${table("Who to contact", entries(report.context))}
+    <h3 style="margin:20px 0 6px;font-size:14px;">Error (verbatim)</h3>
+    <p style="margin:0;padding:12px;background:#fef2f2;border-radius:8px;color:#7f1d1d;white-space:pre-wrap;word-break:break-word;">${escapeHtml(report.errorMessage)}</p>
+    ${table("What we know", entries(report.details))}
+    ${table("Diagnostics", entries(report.footer), true)}
   </div>`;
 }
 
@@ -154,7 +196,7 @@ export function buildWebhookBody(report: OpsAlertReport): string {
     0,
     MAX_ERROR_CHARS,
   );
-  return `Failure in ${report.flow}/${report.stage}\n\n${message}\n\nDetails in the alert email.`;
+  return `${buildAlertSubject({ ...report, errorMessage: message })}\n\n${message}\n\nFull details in the alert email.`;
 }
 
 async function pushWebhook(report: OpsAlertReport): Promise<void> {
@@ -165,17 +207,26 @@ async function pushWebhook(report: OpsAlertReport): Promise<void> {
   // the full context still reaches the producer through the email path. The 5s
   // deadline keeps a stalled webhook host from delaying every failure response
   // that awaits alertOps.
-  await fetch(url, {
+  const res = await fetch(url, {
     method: "POST",
     headers: {
-      Title: `FAILURE ${report.flow}/${report.stage}`,
+      Title: buildAlertSubject({
+        ...report,
+        errorMessage: redactEmails(report.errorMessage),
+      }),
       Priority: "urgent",
       Tags: "rotating_light",
     },
     body: buildWebhookBody(report),
     signal: AbortSignal.timeout(5000),
   });
+  // WHY: fetch resolves on a 4xx or 5xx, so without this a rejected push counted
+  // as delivered and alertOps could report a page that never reached anyone.
+  if (!res.ok) throw new Error(`alert webhook responded HTTP ${res.status}`);
 }
+
+/** How long a finished alert waits for its incident record before returning. */
+const INCIDENT_RECORD_WAIT_MS = 2000;
 
 /**
  * Page the producer. Never throws; safe to call from any catch block.
@@ -194,11 +245,25 @@ export async function alertOps(rawReport: OpsAlertReport): Promise<boolean> {
   const webhookConfigured = Boolean(
     readTrimmedEnv(import.meta.env.ALERT_WEBHOOK_URL),
   );
+  // WHY started first but awaited last: the digest counts problems from this
+  // collection, so an alert that fails to email still shows up the next
+  // morning. But a slow Firestore must never delay the page itself, so the
+  // write runs alongside the channels and is only awaited, bounded and
+  // best-effort, after delivery is settled.
+  const persisted = fsAdd("incidents", {
+    flow: report.flow,
+    stage: report.stage,
+    subject: buildAlertSubject(report),
+    errorMessage: report.errorMessage,
+    createdAt: new Date(),
+  }).catch((error: unknown) => {
+    console.error("[ops-alert] incident record failed:", error);
+  });
   const [mailResult, webhookResult] = await Promise.allSettled([
     notificationEmail
       ? sendMail({
           to: notificationEmail,
-          subject: `FAILURE [${report.flow}/${report.stage}]`,
+          subject: buildAlertSubject(report),
           text: buildAlertText(report),
           html: buildAlertHtml(report),
         })
@@ -207,6 +272,14 @@ export async function alertOps(rawReport: OpsAlertReport): Promise<boolean> {
     // truncates.
     pushWebhook(rawReport),
   ]);
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  await Promise.race([
+    persisted,
+    new Promise<void>((resolve) => {
+      timer = setTimeout(resolve, INCIDENT_RECORD_WAIT_MS);
+    }),
+  ]);
+  clearTimeout(timer);
   return (
     (Boolean(notificationEmail) && mailResult.status === "fulfilled") ||
     (webhookConfigured && webhookResult.status === "fulfilled")

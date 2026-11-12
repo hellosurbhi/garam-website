@@ -15,7 +15,8 @@ describe("STATUS_COLORS", () => {
   });
 
   it("has entries for every current pipeline status", () => {
-    expect(Object.keys(STATUS_COLORS)).toHaveLength(11);
+    expect(STATUS_COLORS).toHaveProperty("Draft");
+    expect(Object.keys(STATUS_COLORS)).toHaveLength(12);
     expect(STATUS_COLORS).toHaveProperty("Responded");
     expect(STATUS_COLORS).toHaveProperty("Said Not Now");
     expect(STATUS_COLORS).toHaveProperty("No Response");

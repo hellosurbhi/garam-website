@@ -129,6 +129,7 @@ function ApplyPageInner() {
   const {
     form,
     photoPreviews,
+    photoStatus,
     errors,
     submitting,
     submitted,
@@ -711,6 +712,7 @@ function ApplyPageInner() {
 
                   <PhotoUploadField
                     photoPreviews={photoPreviews}
+                    photoStatus={photoStatus}
                     error={errors.photo}
                     onAddPhotos={handleAddPhotos}
                     onRemovePhoto={handleRemovePhoto}

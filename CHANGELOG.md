@@ -8,6 +8,66 @@
 - In the weekly and preview runs, open each vendor listing and confirm its published date and start time match the show.
 - Read only the event a listing page sells, not shows it recommends or a venue's whole calendar. Follow address links within the page, read a location given as a bare address and reject an online location.
 - Wait for the waiver form to finish loading before filling it, so the waiver smoke test stops timing out on production.
+## fix(apply): outside review round (Codex, CodeRabbit, fresh Claude) and main merge (2026-11-12)
+
+- Merged main (#331, #361) into the branch and settled every conflict, keeping the rules-free applicant path and main's synthetic monitor.
+- Autosave: an acknowledgement for a draft that was replaced mid-request no longer undoes the replacement.
+- Alerts: a duplicate failure alert that arrives while the first is still sending is no longer reported as delivered; the claim moves from "sending" to "sent" only after delivery.
+- Firestore REST: the token exchange runs on the same deadline as the request it serves. An unreachable incident log can no longer delay or fail the page (2 second wait, then moves on).
+- Draft writes: the predicted post-write document follows Firestore's field-mask rules exactly, so the photo caps are checked against what is really stored.
+- Daily digest: with no cursor, a retry hours later covers the same window; the health line states when the lockdown rules ship.
+- Photos: a path discarded by a refused confirm can never be attached later; a signing failure no longer burns one of the 40 reservation slots.
+- Dashboard: draft-only applications are no longer counted as customer applications.
+- Form: restored answers only fill fixed-choice fields with valid choices; validation messages moved into `src/data/copy.ts`.
+- Canary workflow: the pager now runs in its own job that fires on failure, cancel and timeout, and each step has a timeout under the job's.
+- Round 2: a refused confirm whose discard marker cannot be written keeps the stored photo; a duplicate alert counts as suppressed only when the claim says "sent"; a finalize ack for a replaced draft makes finalize re-settle instead of marking the replacement filed; a city in the link clears the saved country; the photo-removal message moved into `src/data/copy.ts`.
+
+## fix(apply): close the review findings on the new apply form (2026-11-11)
+
+- Revisions and drafts: the autosave revision is persisted before each request, the server's highest revision is adopted and stale fields are resent, so a reload mid-request can no longer lose a newer answer. A draft the server refuses over the text budget keeps that text queued and says so, and the server no longer marks dropped text as stored or finalizes over it.
+- Expired tokens: a 401 now replaces the draft and re-files every answer and every photo under the new one. Finalize re-settles photos and loops until the draft it finalizes is the one the photos belong to.
+- Photos: one reservation is reused across retries (retries used to exhaust the 40 reservation cap); a finalized draft refuses further photo and save calls (the canary is exempt); rate limits raised for show nights.
+- Email: server-side failure alerts are deduplicated per flow, stage and error class for an hour (`src/lib/alertDedupe.ts`), releasing the claim when no channel delivered, so one database blip no longer floods the inbox.
+- Firestore REST: a failed precondition reported as HTTP 400 is treated as a write conflict and retried; every call has a 10 second timeout.
+- Photo quotas: the reservation cap, the 100MB byte cap and the 10 photo cap are all decided inside the conditional write, so requests racing on one draft can no longer slip past them; a file refused by the quota is deleted from the bucket (a relay whose write response was lost keeps its file); the size counted at confirm is the size given back on remove; the upload loop stops at once on a quota refusal instead of re-reserving and re-uploading.
+- Submit and photos: a photo removed while uploading is detached before submit finalizes; no new draft is minted after the application is filed; an age too large to store is dropped instead of failing every save; the 10 photo cap is checked inside the confirm write and removed photos give their bytes back.
+- Email: a welcome email whose first send never finished is resent on the retried finalize; the daily digest lists an application on the day it was finished, not the day it was started.
+- Canary: requires direct bucket uploads (no relay), restamps `finalizedAt` each run and verifies `finalizedAt` and every photo were written after the run started, so a stale document can no longer read green.
+
+## fix(apply): the form no longer depends on database rules, saves as people type and never rejects a photo (2026-11-10)
+
+- Root cause of the recurring "Missing or insufficient permissions": the browser wrote straight to Firestore and Storage, so two rule books, hand deploys and anonymous phone login all sat between an applicant and a successful submit. All three are removed from the applicant path.
+- New `/api/save-application` files every field as it is typed (debounced, retried, resumed after reload, flushed on page hide) under a signed draft token. The server never rejects on content: no age upper bound, long text is trimmed only at flood scale, under 18 is saved and flagged `ageUnder18`.
+- Photos go straight to Storage over a signed URL (`/api/upload-application-photo`), any format and size. Compression is an optimization only; the original uploads if it fails, a 4MB server relay is the fallback, and a failed photo never blocks the application.
+- `firestore.rules` and `storage.rules` are now the lockdown state (admin only, no client creates). They are deployed by Surbhi once the canary is green and the digest shows 0 old-client writes for 48 hours.
+- Email: per-signup and per-application emails are gone. One daily digest (`/api/cron/daily-digest`, 12:00 UTC) lists signups, applications, unfinished drafts and problems, with tripwires for drops, missing photos and dirty env values. Failure alerts are the only instant email, with subject `APPLY FAILED: <stage>: <raw error>` and the real cause, field lengths, photo sizes and what was saved anyway. Alerts are also written to `incidents` for the digest. The alert endpoint now returns 502 when no channel delivered, and a webhook that answers 5xx no longer counts as delivered.
+- Monitoring: the fake-application synthetic monitor and the mocked weekly Firebase apply smoke are replaced by a production canary (`apply-canary.yml`) that overwrites one fixed `_canary` document per browser profile, never creates or deletes, and pages through its own channel. The Notify Me and ticket redirect monitors, the rules-drift check and the cleanup ledger from the signup reliability work stay.
+- Admin: partial drafts show as `Draft` and every field render is guarded for missing data.
+- Tests rewritten from scratch: the save endpoint, draft merge fuzzing, the autosave queue, the photo pipeline, the upload endpoint, storage signing, the digest and its cron route, the form-to-server contract, the alert path, the rules tests and the apply smoke tests.
+
+## Waitlist review corrections (2026-11-11)
+
+- Remove the unused former schema filter and document the execution limits of deferred automation work.
+
+- Initialize tracking for deferred checkout links, show accurate dated-waitlist copy and limit homepage event schemas to displayed ticket cards. Make the deferred follow-up plans discoverable by the overnight queue.
+
+- Reveal ticket links when deferred presale markup arrives after sales open and correct the documented V3 cache fallback.
+
+- Snapshot city and input evidence together before asynchronous attribution and centralize homepage card fallback copy.
+
+- Bind entered-city evidence to the last input value so a delayed geo prefill after clearing the field cannot count as explicit demand.
+
+- Exclude ambiguous historical popup and Spice List city prefills from demand ranking. New edited city inputs record explicit market interest through the existing source city field without changing Firestore rules.
+- Refresh the corrected counts under the V3 cache. Retain identity-based synthetic exclusion and remove the unused synthetic flag projection.
+- Load event inventory inside the waitlist island to preserve cacheable GET requests. Keep the ticket and waitlist selection timestamps aligned.
+- Mark Notify Me bells decorative, extract homepage card styles into a CSS module and correct the roster maintenance instructions.
+
+## Five market waitlists and ticket ordering (2026-11-11)
+
+- Withdraw the Chicago December 4 and San Diego December 24 scheduled shows while keeping their history and eligibility for Notify Me.
+- Rank five markets using unique emails across leads and applications, explicit location aliases and Edison grouped under New York. Exclude active ticket markets before selecting five.
+- Show purchasable events first, then selected dated waitlists, then undated waitlists on the homepage and tickets page. Keep the existing homepage card design through a shared card component.
+- Version the aggregate cache and fix the missing gap between ticket cards and waitlist cards. Stack purchase controls below titles on small screens to avoid cramped city names.
 
 ## Resolve monitoring and waitlist review findings (2026-11-11)
 

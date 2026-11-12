@@ -44,7 +44,9 @@ jobs:
     # rebuild inside its 25 minute test timeout (it never retries), on top of
     # about 15 for setup, signup and cleanup. A job that hits this limit is
     # cancelled, and report.mjs treats a cancelled check as superseded, so the
-    # limit must exceed the worst case.
+    # limit must exceed the worst case. Cleanup of a large backlog of old
+    # test records has no time bound yet and can still outrun this; that is
+    # tracked in https://github.com/hellosurbhi/garam-website/issues/407.
     timeout-minutes: 45
     concurrency:
       group: synthetic-apply

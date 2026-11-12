@@ -6,8 +6,8 @@
  * fixed `_canary/<id>` document with the service account and requires:
  *   - the document name contains THIS run's CANARY_RUN_ID (not a stale write)
  *   - status is "New" and finalizedAt is newer than this run's start
- *   - at least one photoPath, each of which exists in the Storage bucket and
- *     was stored after this run's start
+ *   - exactly the two photos the canary attaches, each of which exists in the
+ *     Storage bucket and was stored after this run's start
  * CANARY_STARTED_AT is the ISO time the workflow job began.
  * Nothing is created or deleted here: the canary overwrites the same document
  * and photo slots every run, so there is no growth and no cleanup to get wrong.
@@ -18,6 +18,11 @@
  */
 import { createHash } from "node:crypto";
 import { SignJWT, importPKCS8 } from "jose";
+
+/** The canary attaches a JPEG and a HEIC-shaped file. */
+const EXPECTED_PHOTOS = 2;
+/** Every external call has a deadline so a stall fails fast and the page goes out. */
+const REQUEST_TIMEOUT_MS = 20_000;
 
 const PROFILES = ["iphone-safari", "android-chrome", "instagram-webview"];
 
@@ -80,6 +85,7 @@ async function getAccessToken() {
       grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
       assertion: jwt,
     }),
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
   if (!res.ok) throw new Error(`Token exchange failed: ${await res.text()}`);
   return (await res.json()).access_token;
@@ -88,7 +94,10 @@ async function getAccessToken() {
 async function readDoc(token, id) {
   const res = await fetch(
     `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/_canary/${id}`,
-    { headers: { Authorization: `Bearer ${token}` } },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    },
   );
   if (res.status === 404) return null;
   if (!res.ok)
@@ -98,13 +107,23 @@ async function readDoc(token, id) {
   return (await res.json()).fields ?? {};
 }
 
-/** The object's metadata, or null when it is missing from the bucket. */
+/** The object's metadata, or null only when Storage says it does not exist. */
 async function objectMeta(token, path) {
   const res = await fetch(
     `https://storage.googleapis.com/storage/v1/b/${bucket}/o/${encodeURIComponent(path)}`,
-    { headers: { Authorization: `Bearer ${token}` } },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    },
   );
-  return res.ok ? await res.json() : null;
+  if (res.status === 404) return null;
+  // WHY not null: a 401, 403 or 5xx is a broken check, not a missing photo,
+  // and reporting "file missing" would send the producer chasing the wrong cause.
+  if (!res.ok)
+    throw new Error(
+      `Storage lookup failed (${res.status}): ${await res.text()}`,
+    );
+  return await res.json();
 }
 
 const token = await getAccessToken();
@@ -143,9 +162,9 @@ for (const profile of PROFILES) {
   const paths = (fields.photoPaths?.arrayValue?.values ?? []).map(
     (v) => v.stringValue,
   );
-  if (paths.length === 0) {
+  if (paths.length !== EXPECTED_PHOTOS) {
     failures.push(
-      `${profile}: saved but photoPaths is empty. Photos were not recorded on the application.`,
+      `${profile}: expected ${EXPECTED_PHOTOS} photos recorded on the application but found ${paths.length}.`,
     );
     continue;
   }

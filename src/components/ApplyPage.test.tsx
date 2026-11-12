@@ -76,6 +76,9 @@ const FINAL_SUBMIT_RETRY_WAIT = { timeout: 10_000 };
 describe("ApplyPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // The form now restores the saved draft, so one test's answers would
+    // otherwise be the next test's starting state.
+    localStorage.clear();
     failFinalize = false;
     vi.spyOn(globalThis, "fetch").mockImplementation(((
       input: RequestInfo | URL,

@@ -108,6 +108,20 @@ describe("daily digest cron route", () => {
     );
   });
 
+  it("with no cursor, a retry hours later still covers the same window", async () => {
+    mocks.fsListAll.mockImplementation(async (col: string) =>
+      col === "leads"
+        ? [{ email: "early@x.com", createdAt: "2026-11-09T13:00:00.000Z" }]
+        : [],
+    );
+    mocks.sendMail.mockRejectedValueOnce(new Error("535"));
+    await call("Bearer cron-secret");
+    vi.setSystemTime(new Date("2026-11-10T16:00:00Z"));
+    await call("Bearer cron-secret");
+    expect(mocks.sendMail).toHaveBeenCalledTimes(2);
+    expect(mocks.sendMail.mock.calls[1][0].text).toContain("early@x.com");
+  });
+
   it("a dead database login pages instead of sending an empty digest", async () => {
     mocks.fsGet.mockRejectedValue(
       new Error("invalid_grant: Invalid JWT Signature"),

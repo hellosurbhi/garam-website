@@ -4,8 +4,11 @@ import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
  * A Firestore call that never answers must fail fast, not hold a serverless
  * function until the platform kills it with no message to the applicant.
  */
+const getToken = vi.hoisted(() =>
+  vi.fn<(signal?: AbortSignal) => Promise<string>>(async () => "token"),
+);
 vi.mock("@/lib/firestoreAdmin", () => ({
-  getFirestoreAccessToken: vi.fn(async () => "token"),
+  getFirestoreAccessToken: getToken,
 }));
 
 const { fsGet, fsAdd, fsPatch, fsQuery } = await import("@/lib/firestoreRest");
@@ -60,6 +63,23 @@ describe("firestoreRest: no call can hang forever", () => {
     );
     await vi.waitFor(() => expect(controllers.length).toBeGreaterThan(0));
     expect(timeouts).toContain(10_000);
+    controllers[0].abort(new DOMException("timed out", "TimeoutError"));
+    expect(await settled).toBe("rejected");
+  });
+
+  it("the token exchange runs on the same deadline as the request", async () => {
+    vi.stubGlobal("fetch", hangUntilAborted());
+    const settled = fsAdd("applications", { a: 1 }).then(
+      () => "resolved",
+      () => "rejected",
+    );
+    await vi.waitFor(() => expect(getToken).toHaveBeenCalled());
+    const tokenSignal = getToken.mock.calls[0][0];
+    const fetchSignal = (
+      (globalThis.fetch as unknown as ReturnType<typeof vi.fn>).mock
+        .calls[0][1] as RequestInit
+    ).signal;
+    expect(tokenSignal).toBe(fetchSignal);
     controllers[0].abort(new DOMException("timed out", "TimeoutError"));
     expect(await settled).toBe("rejected");
   });

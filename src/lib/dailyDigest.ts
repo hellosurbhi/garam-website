@@ -60,6 +60,9 @@ function plural(n: number, word: string): string {
   return `${n} ${word}${n === 1 ? "" : "s"}`;
 }
 
+/** Stage of the weekly monitor notification test (scripts/synthetic/report.mjs). */
+const DRILL_STAGE = "monitor_heartbeat";
+
 /** Applications are "finished" once status moved past Draft. */
 function isFinished(row: Row): boolean {
   return str(row.status) !== "Draft";
@@ -88,8 +91,11 @@ export function buildDailyDigest(input: DigestInput): DigestResult {
     (r) => !isFinished(r) && inWindow(r.submittedAt, from, to),
   );
   const apps = [...finished, ...unfinished];
-  const problems = input.incidents.filter((r) =>
-    inWindow(r.createdAt, from, to),
+  // WHY the drill is excluded: the weekly monitor test posts a labelled alert
+  // through the real alert path to prove delivery works. Counting it would flip
+  // every Monday digest to ATTENTION over a failure that never happened.
+  const problems = input.incidents.filter(
+    (r) => inWindow(r.createdAt, from, to) && str(r.stage) !== DRILL_STAGE,
   );
   const legacyWrites = apps.filter(
     (r) => typeof r.clientVersion !== "number",
@@ -117,9 +123,13 @@ export function buildDailyDigest(input: DigestInput): DigestResult {
   // (about a one in three chance of zero at 1 a day), and a tripwire that cries
   // wolf trains the owner to ignore it. At 3+ finished or 4+ started a day a
   // zero is under about 5% by chance, so a warning there means something broke.
-  if (dailyDrafts >= 4 && apps.length / windowDays < dailyDrafts * 0.25) {
+  // WHY started is counted by start time on its own: `apps` also holds
+  // applications started earlier and finished today, which would hide a dead
+  // form behind yesterday's drafts.
+  const started = live.filter((r) => inWindow(r.submittedAt, from, to)).length;
+  if (dailyDrafts >= 4 && started / windowDays < dailyDrafts * 0.25) {
     warnings.push(
-      `Applications started dropped to ${apps.length} (trailing 7 day average is ${dailyDrafts.toFixed(1)} a day). The form may be failing silently.`,
+      `Applications started dropped to ${started} (trailing 7 day average is ${dailyDrafts.toFixed(1)} a day). The form may be failing silently.`,
     );
   }
   if (dailyFinished >= 3 && finished.length === 0) {
@@ -182,7 +192,7 @@ export function buildDailyDigest(input: DigestInput): DigestResult {
   lines.push(
     "HEALTH",
     `- Database login and mail send worked (you are reading this).`,
-    `- Applications still written by old cached tabs: ${legacyWrites}${legacyWrites === 0 ? "" : " (the rules lockdown waits until this stays at 0 for 48 hours)"}`,
+    `- Applications still written by old cached tabs: ${legacyWrites}${legacyWrites === 0 ? "" : " (the owner deploys the lockdown rules only after this stays at 0 for 48 hours)"}`,
     `- Under 18 flagged: ${underEighteen.length}`,
   );
 

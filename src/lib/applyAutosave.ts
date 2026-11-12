@@ -163,6 +163,11 @@ export class AutosaveController {
     }
   }
 
+  /** Every answer filed or queued so far, so a reload can refill the form. */
+  get savedFields(): FieldMap {
+    return { ...this.latest };
+  }
+
   get hasDraft(): boolean {
     return this.token !== null;
   }
@@ -308,6 +313,7 @@ export class AutosaveController {
     }
     const snapshot = { ...this.pending };
     const sentToken = this.token;
+    const sentEpoch = this.draftEpoch;
     this.rev += 1;
     const rev = this.rev;
     // WHY persisted before the send: a lost response or a reload mid-request
@@ -381,6 +387,11 @@ export class AutosaveController {
         data.detail ?? data.error ?? `unexpected response (${res.statusText})`,
       );
     }
+
+    // WHY: resetDraft() can replace the draft while this request is in flight.
+    // Adopting this ack would put the OLD draft's token back and clear queued
+    // fields the replacement draft still owes, silently losing them.
+    if (this.draftEpoch !== sentEpoch || this.token !== sentToken) return data;
 
     if (data.token) this.token = data.token;
     if (data.draftId) this.draftId = data.draftId;

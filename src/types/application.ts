@@ -47,7 +47,7 @@ export interface Application {
   photoUrls?: string[]; // legacy multi-photo tokened URLs (pre July 2026 docs)
   photoPaths?: string[]; // canonical: Storage paths, resolved by admin session (getBlob)
   photoUploadFailed?: boolean; // application saved but one or more photo uploads failed; chase the applicant for photos
-  isSynthetic?: boolean; // true only for the daily synthetic monitor submission
+  isSynthetic?: boolean; // true only for the synthetic monitor submission (legacy ledger records; the apply form is no longer synthetically submitted)
   castEventId?: string; // composite key "{isoDate}__{citySlug}" when status = Cast
   deletedAt?: Timestamp | null;
   status: ApplicantStatus;

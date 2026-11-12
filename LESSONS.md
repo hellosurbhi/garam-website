@@ -1,5 +1,11 @@
 # Lessons
 
+## A pager step inside the job it watches can never page a hung job
+
+**What went wrong:** The canary workflow paged from `failure()` steps in the same job as the browser run. A job that timed out or was cancelled skips every remaining step, so the one case a hung production site produces paged nobody.
+**Why:** The wrong assumption was that a step after the failing one always runs. Job-level timeouts and cancellation stop the whole job.
+**Rule:** Alarms live in a separate job that `needs` the monitored job and runs on `always()`. The monitored job's steps carry their own shorter timeouts so evidence still uploads.
+
 ## Never put form validation in the database rules
 
 **What went wrong:** The apply form failed with "Missing or insufficient permissions" in July, August and again in November, each time for different applicants, and the synthetic monitor stayed green.

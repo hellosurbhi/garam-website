@@ -225,6 +225,9 @@ async function pushWebhook(report: OpsAlertReport): Promise<void> {
   if (!res.ok) throw new Error(`alert webhook responded HTTP ${res.status}`);
 }
 
+/** How long a finished alert waits for its incident record before returning. */
+const INCIDENT_RECORD_WAIT_MS = 2000;
+
 /**
  * Page the producer. Never throws; safe to call from any catch block.
  *
@@ -242,17 +245,21 @@ export async function alertOps(rawReport: OpsAlertReport): Promise<boolean> {
   const webhookConfigured = Boolean(
     readTrimmedEnv(import.meta.env.ALERT_WEBHOOK_URL),
   );
-  const [, mailResult, webhookResult] = await Promise.allSettled([
-    // WHY: the daily digest counts problems from this collection, so an alert
-    // that fails to email still shows up the next morning. A failed write must
-    // never block or fail the page itself, hence allSettled and no await chain.
-    fsAdd("incidents", {
-      flow: report.flow,
-      stage: report.stage,
-      subject: buildAlertSubject(report),
-      errorMessage: report.errorMessage,
-      createdAt: new Date(),
-    }),
+  // WHY started first but awaited last: the digest counts problems from this
+  // collection, so an alert that fails to email still shows up the next
+  // morning. But a slow Firestore must never delay the page itself, so the
+  // write runs alongside the channels and is only awaited, bounded and
+  // best-effort, after delivery is settled.
+  const persisted = fsAdd("incidents", {
+    flow: report.flow,
+    stage: report.stage,
+    subject: buildAlertSubject(report),
+    errorMessage: report.errorMessage,
+    createdAt: new Date(),
+  }).catch((error: unknown) => {
+    console.error("[ops-alert] incident record failed:", error);
+  });
+  const [mailResult, webhookResult] = await Promise.allSettled([
     notificationEmail
       ? sendMail({
           to: notificationEmail,
@@ -265,6 +272,14 @@ export async function alertOps(rawReport: OpsAlertReport): Promise<boolean> {
     // truncates.
     pushWebhook(rawReport),
   ]);
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  await Promise.race([
+    persisted,
+    new Promise<void>((resolve) => {
+      timer = setTimeout(resolve, INCIDENT_RECORD_WAIT_MS);
+    }),
+  ]);
+  clearTimeout(timer);
   return (
     (Boolean(notificationEmail) && mailResult.status === "fulfilled") ||
     (webhookConfigured && webhookResult.status === "fulfilled")

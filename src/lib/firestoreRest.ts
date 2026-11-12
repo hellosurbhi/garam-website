@@ -75,11 +75,12 @@ export async function fsGet(
   docPath: string,
   signal?: AbortSignal,
 ): Promise<Record<string, unknown> | null> {
-  const token = await getFirestoreAccessToken(signal);
+  const deadline = withTimeout(signal, 10_000);
+  const token = await getFirestoreAccessToken(deadline);
   signal?.throwIfAborted();
   const res = await fetch(`${baseUrl()}/${docPath}`, {
     headers: { Authorization: `Bearer ${token}` },
-    signal: withTimeout(signal, 10_000),
+    signal: deadline,
   });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`fsGet ${docPath}: ${res.status}`);
@@ -121,10 +122,13 @@ export interface FsDocMeta {
 
 /** Read one document plus its updateTime. Returns null if not found. */
 export async function fsGetMeta(docPath: string): Promise<FsDocMeta | null> {
-  const token = await getFirestoreAccessToken();
+  // WHY one deadline: the token exchange is a network call too; a separate
+  // clock for it let one operation outlive its budget.
+  const deadline = AbortSignal.timeout(10_000);
+  const token = await getFirestoreAccessToken(deadline);
   const res = await fetch(`${baseUrl()}/${docPath}`, {
     headers: { Authorization: `Bearer ${token}` },
-    signal: AbortSignal.timeout(10_000),
+    signal: deadline,
   });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`fsGetMeta ${docPath}: ${res.status}`);
@@ -150,7 +154,10 @@ export async function fsCreateWithId(
   docId: string,
   fields: Record<string, unknown>,
 ): Promise<void> {
-  const token = await getFirestoreAccessToken();
+  // WHY one deadline: the token exchange is a network call too; a separate
+  // clock for it let one operation outlive its budget.
+  const deadline = AbortSignal.timeout(10_000);
+  const token = await getFirestoreAccessToken(deadline);
   const res = await fetch(
     `${baseUrl()}/${collectionPath}?documentId=${encodeURIComponent(docId)}`,
     {
@@ -160,7 +167,7 @@ export async function fsCreateWithId(
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ fields: toFields(expandDottedKeys(fields)) }),
-      signal: AbortSignal.timeout(10_000),
+      signal: deadline,
     },
   );
   if (res.status === 409) {
@@ -183,7 +190,10 @@ export async function fsPatchIfUnchanged(
   fields: Record<string, unknown>,
   updateTime: string,
 ): Promise<void> {
-  const token = await getFirestoreAccessToken();
+  // WHY one deadline: the token exchange is a network call too; a separate
+  // clock for it let one operation outlive its budget.
+  const deadline = AbortSignal.timeout(10_000);
+  const token = await getFirestoreAccessToken(deadline);
   const params = [
     ...Object.keys(fields).map(
       (f) => `updateMask.fieldPaths=${encodeURIComponent(f)}`,
@@ -197,7 +207,7 @@ export async function fsPatchIfUnchanged(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ fields: toFields(expandDottedKeys(fields)) }),
-    signal: AbortSignal.timeout(10_000),
+    signal: deadline,
   });
   if (res.status === 409 || res.status === 412) {
     throw new FsConflictError(docPath);
@@ -221,7 +231,8 @@ export async function fsPatch(
   fields: Record<string, unknown>,
   signal?: AbortSignal,
 ): Promise<void> {
-  const token = await getFirestoreAccessToken(signal);
+  const deadline = withTimeout(signal, 10_000);
+  const token = await getFirestoreAccessToken(deadline);
   const fieldNames = Object.keys(fields);
   const mask = fieldNames
     .map((f) => `updateMask.fieldPaths=${encodeURIComponent(f)}`)
@@ -235,7 +246,7 @@ export async function fsPatch(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ fields: toFields(fields) }),
-    signal: withTimeout(signal, 10_000),
+    signal: deadline,
   });
   if (!res.ok) {
     const body = await res.text();
@@ -248,7 +259,10 @@ export async function fsAdd(
   collectionPath: string,
   fields: Record<string, unknown>,
 ): Promise<string> {
-  const token = await getFirestoreAccessToken();
+  // WHY one deadline: the token exchange is a network call too; a separate
+  // clock for it let one operation outlive its budget.
+  const deadline = AbortSignal.timeout(10_000);
+  const token = await getFirestoreAccessToken(deadline);
   const res = await fetch(`${baseUrl()}/${collectionPath}`, {
     method: "POST",
     headers: {
@@ -256,7 +270,7 @@ export async function fsAdd(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ fields: toFields(fields) }),
-    signal: AbortSignal.timeout(10_000),
+    signal: deadline,
   });
   if (!res.ok) {
     const body = await res.text();
@@ -277,7 +291,10 @@ export async function fsQuery(
   filterValue: unknown,
   orderField = "submittedAt",
 ): Promise<Array<Record<string, unknown>>> {
-  const token = await getFirestoreAccessToken();
+  // WHY one deadline: the token exchange is a network call too; a separate
+  // clock for it let one operation outlive its budget.
+  const deadline = AbortSignal.timeout(10_000);
+  const token = await getFirestoreAccessToken(deadline);
   const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
   const queryUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents:runQuery`;
 
@@ -307,7 +324,7 @@ export async function fsQuery(
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
-    signal: AbortSignal.timeout(10_000),
+    signal: deadline,
   });
   if (!res.ok) {
     const text = await res.text();
@@ -339,7 +356,10 @@ export async function fsQuery(
 export async function fsListAll(
   collectionId: string,
 ): Promise<Array<Record<string, unknown>>> {
-  const token = await getFirestoreAccessToken();
+  // WHY one deadline: the token exchange is a network call too; a separate
+  // clock for it let one operation outlive its budget.
+  const deadline = AbortSignal.timeout(15_000);
+  const token = await getFirestoreAccessToken(deadline);
   const results: Array<Record<string, unknown>> = [];
   let pageToken: string | undefined;
 
@@ -350,7 +370,7 @@ export async function fsListAll(
 
     const res = await fetch(url.toString(), {
       headers: { Authorization: `Bearer ${token}` },
-      signal: AbortSignal.timeout(15_000),
+      signal: deadline,
     });
     if (!res.ok) {
       const text = await res.text();
@@ -379,7 +399,10 @@ export async function fsDeleteFields(
   docPath: string,
   fieldNames: string[],
 ): Promise<void> {
-  const token = await getFirestoreAccessToken();
+  // WHY one deadline: the token exchange is a network call too; a separate
+  // clock for it let one operation outlive its budget.
+  const deadline = AbortSignal.timeout(10_000);
+  const token = await getFirestoreAccessToken(deadline);
   const mask = fieldNames
     .map((f) => `updateMask.fieldPaths=${encodeURIComponent(f)}`)
     .join("&");
@@ -392,7 +415,7 @@ export async function fsDeleteFields(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ fields: {} }),
-    signal: AbortSignal.timeout(10_000),
+    signal: deadline,
   });
   if (!res.ok) {
     const body = await res.text();

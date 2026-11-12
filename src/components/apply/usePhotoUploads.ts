@@ -40,6 +40,10 @@ export function usePhotoUploads(
   const inFlight = useRef(new Set<Promise<void>>());
   const running = useRef(new Set<number>());
   const removed = useRef(new Set<number>());
+  // Removals the server has not confirmed yet, path to the draft generation it
+  // was filed under. WHY: a removal that fails (flaky connection) used to be
+  // swallowed, so the photo the applicant deleted stayed on the application.
+  const pendingRemovals = useRef(new Map<string, number | undefined>());
   const itemsRef = useRef<PhotoItem[]>([]);
   useEffect(() => {
     itemsRef.current = items;
@@ -50,6 +54,19 @@ export function usePhotoUploads(
       prev.map((item) => (item.id === id ? { ...item, ...change } : item)),
     );
   }, []);
+
+  const removeStored = useCallback(
+    (path: string, epoch: number | undefined) =>
+      removeApplicationPhoto(controller, path).then(
+        () => {
+          pendingRemovals.current.delete(path);
+        },
+        () => {
+          pendingRemovals.current.set(path, epoch);
+        },
+      ),
+    [controller],
+  );
 
   const upload = useCallback(
     (item: PhotoItem) => {
@@ -66,9 +83,7 @@ export function usePhotoUploads(
             // and the server attached it; take it off again.
             // Returned, so settleForSubmit waits for it: a submit that raced
             // ahead would finalize first and the removal would be refused.
-            return removeApplicationPhoto(controller, result.path).catch(
-              () => {},
-            );
+            return removeStored(result.path, result.epoch);
           }
           patch(item.id, {
             status: "saved",
@@ -88,7 +103,7 @@ export function usePhotoUploads(
         });
       inFlight.current.add(run);
     },
-    [controller, onUploadFailed, patch],
+    [controller, onUploadFailed, patch, removeStored],
   );
 
   // WHY: when the draft is replaced (token expired or rotated) the photos
@@ -126,21 +141,24 @@ export function usePhotoUploads(
     removed.current.add(id);
     setItems((prev) => prev.filter((p) => p.id !== id));
     if (item.path) {
-      // Best effort: the stored file is kept either way. Tracked so a quick
-      // submit waits for it instead of finalizing with the photo attached.
-      const removal: Promise<void> = removeApplicationPhoto(
-        controller,
+      // Tracked so a quick submit waits for it instead of finalizing with the
+      // photo attached; a failure stays pending and is retried at submit.
+      const removal: Promise<void> = removeStored(
         item.path,
-      )
-        .catch(() => {})
-        .finally(() => inFlight.current.delete(removal));
+        item.epoch,
+      ).finally(() => inFlight.current.delete(removal));
       inFlight.current.add(removal);
     }
   }
 
-  /** Wait for uploads in flight, then retry every failed one once. */
+  /**
+   * Wait for uploads in flight, retry every failed removal and upload once.
+   * Throws when a removed photo is still on the draft, so the application is
+   * never filed with a photo the applicant took off.
+   */
   async function settleForSubmit(): Promise<PhotoItem[]> {
     await Promise.allSettled([...inFlight.current]);
+    await retryPendingRemovals();
     // Re-read after a tick so a status that just landed is seen before refiling.
     await new Promise((r) => setTimeout(r, 0));
     itemsRef.current.filter((p) => p.status === "failed").forEach(upload);
@@ -151,7 +169,26 @@ export function usePhotoUploads(
     return itemsRef.current;
   }
 
+  async function retryPendingRemovals(): Promise<void> {
+    const retries: Promise<void>[] = [];
+    for (const [path, epoch] of pendingRemovals.current) {
+      // A photo filed under a replaced draft is not on the new one.
+      if (epoch !== undefined && epoch !== controller.epoch) {
+        pendingRemovals.current.delete(path);
+      } else {
+        retries.push(removeStored(path, epoch));
+      }
+    }
+    await Promise.all(retries);
+    if (pendingRemovals.current.size > 0) {
+      throw new Error(
+        "A photo you removed could not be taken off your application. Check your connection and try again.",
+      );
+    }
+  }
+
   function reset() {
+    pendingRemovals.current.clear();
     itemsRef.current.forEach((p) => URL.revokeObjectURL(p.preview));
     setItems([]);
   }

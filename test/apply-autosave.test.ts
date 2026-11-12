@@ -560,6 +560,31 @@ describe("AutosaveController: a rejected token replaces the draft", () => {
     expect(fresh[1].body.fields).toEqual({ name: "A" });
   });
 
+  it("an ack for a draft replaced mid-request does not undo the replacement", async () => {
+    let release: () => void = () => {};
+    const gate = new Promise<void>((r) => (release = r));
+    const { calls, fetchImpl } = harness(async (call, n) => {
+      if (n === 2) await gate;
+      return ok({ token: n === 2 ? "tok-old-ack" : "tok-1" });
+    });
+    const c = new AutosaveController({ fetchImpl });
+    c.setField("name", "A");
+    await vi.advanceTimersByTimeAsync(900);
+    c.setField("pitch", "typed during the request");
+    await vi.advanceTimersByTimeAsync(900);
+    expect(calls).toHaveLength(2);
+    c.resetDraft("tok-1");
+    release();
+    await vi.advanceTimersByTimeAsync(10);
+    expect(c.draftToken).not.toBe("tok-old-ack");
+    const last = calls[calls.length - 1];
+    expect(last.body.token).toBeUndefined();
+    expect(last.body.fields).toMatchObject({
+      name: "A",
+      pitch: "typed during the request",
+    });
+  });
+
   it("tells listeners after a 401 recovery so photos can be filed again", async () => {
     const { fetchImpl } = harness((call, n) =>
       call.body.token === "tok-1"

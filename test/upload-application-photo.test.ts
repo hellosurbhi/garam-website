@@ -343,6 +343,41 @@ describe("upload-application-photo: a finished application is closed", () => {
     expect(stored.photoPaths).toEqual([]);
   });
 
+  it("a finalize committing after the handler's read still closes reserve, confirm, remove and relay", async () => {
+    const { fsGet } = await import("@/lib/firestoreRest");
+    const { id, token } = seedDraft({ finalizedAt: new Date() });
+    const path = `photos/${id}/1-aaaa.jpg`;
+    mocks.state.objects.set(path, { size: 10, contentType: "image/jpeg" });
+    const bodies = [
+      { action: "reserve", filename: "a.jpg" },
+      { action: "confirm", path },
+      { action: "remove", path },
+    ];
+    for (const body of bodies) {
+      // The top-of-request read sees the draft as still open; only the
+      // conditional write sees the finalize that landed in between.
+      vi.mocked(fsGet).mockImplementationOnce(async () => ({
+        status: "Draft",
+        photoPaths: [],
+      }));
+      const res = await call(token, body);
+      expect(res.status).toBe(409);
+      expect(await json(res)).toMatchObject({ error: "finalized" });
+    }
+    vi.mocked(fsGet).mockImplementationOnce(async () => ({
+      status: "Draft",
+      photoPaths: [],
+    }));
+    const relay = await call(token, null, {
+      relay: true,
+      raw: new Uint8Array([1, 2, 3]),
+    });
+    expect(relay.status).toBe(409);
+    const stored = mocks.state.docs.get(`applications/${id}`)!.fields;
+    expect(stored.photoPaths).toEqual([]);
+    expect(stored.photoReservations).toBeUndefined();
+  });
+
   it("the canary document is reused every run, so finalizedAt never blocks it", async () => {
     const { canarySignature, canaryDraftId } =
       await import("@/lib/draftSecret");
@@ -586,15 +621,21 @@ describe("upload-application-photo: quotas hold under concurrent requests", () =
     });
     const path = `photos/${id}/1-gggg.jpg`;
     mocks.state.objects.set(path, { size: MB, contentType: "image/jpeg" });
-    const { fsGet } = await import("@/lib/firestoreRest");
-    const real = vi.mocked(fsGet).getMockImplementation()!;
+    const { fsGetMeta } = await import("@/lib/firestoreRest");
+    const real = vi.mocked(fsGetMeta).getMockImplementation()!;
     let reads = 0;
-    // Read 1 is the handler's pre-read; read 2 is the cleanup guard's, by which
-    // time a retried confirm has recorded this path.
-    vi.mocked(fsGet).mockImplementation(async (docPath: string) => {
+    // Read 1 is the confirm's own write; the cleanup's conditional write reads
+    // next, by which time a retried confirm has recorded this path.
+    vi.mocked(fsGetMeta).mockImplementation(async (docPath: string) => {
       const doc = await real(docPath);
-      return ++reads === 2 && doc
-        ? { ...doc, photoPaths: [...(doc.photoPaths as string[]), path] }
+      return ++reads >= 2 && doc
+        ? {
+            ...doc,
+            fields: {
+              ...doc.fields,
+              photoPaths: [...(doc.fields.photoPaths as string[]), path],
+            },
+          }
         : doc;
     });
     try {
@@ -602,8 +643,39 @@ describe("upload-application-photo: quotas hold under concurrent requests", () =
       expect(res.status).toBe(409);
       expect(mocks.state.objects.has(path)).toBe(true);
     } finally {
-      vi.mocked(fsGet).mockImplementation(real);
+      vi.mocked(fsGetMeta).mockImplementation(real);
     }
+  });
+
+  it("a signing failure does not consume a reservation slot", async () => {
+    const { id, token } = seedDraft({ photoReservations: 3 });
+    const { signUploadUrl } = await import("@/lib/storageAdmin");
+    vi.mocked(signUploadUrl).mockImplementationOnce(() => {
+      throw new Error("no signing key");
+    });
+    const res = await call(token, {
+      action: "reserve",
+      contentType: "image/jpeg",
+    });
+    expect(res.status).toBe(500);
+    expect(
+      mocks.state.docs.get(`applications/${id}`)?.fields.photoReservations,
+    ).toBe(3);
+  });
+
+  it("a path discarded by a refused confirm can never be attached afterwards", async () => {
+    const { id, token } = seedDraft({ photoBytes: 99 * MB });
+    const path = `photos/${id}/1-hhhh.jpg`;
+    mocks.state.objects.set(path, { size: 5 * MB, contentType: "image/jpeg" });
+    await call(token, { action: "confirm", path });
+    expect(mocks.state.objects.has(path)).toBe(false);
+    // A twin confirm lands later, after room was freed: it must not list a
+    // photo whose file is gone.
+    mocks.state.docs.get(`applications/${id}`)!.fields.photoBytes = 0;
+    mocks.state.objects.set(path, { size: MB, contentType: "image/jpeg" });
+    const res = await call(token, { action: "confirm", path });
+    expect(res.status).toBe(409);
+    expect(photoPaths(id)).not.toContain(path);
   });
 
   it("remove gives back the size counted at confirm, not the bucket's current size", async () => {

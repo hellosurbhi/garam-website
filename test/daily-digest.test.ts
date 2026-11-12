@@ -173,6 +173,38 @@ describe("daily digest: tripwires", () => {
     expect(d.subject.startsWith("ATTENTION ")).toBe(true);
   });
 
+  it("does not let applications started earlier and finished today hide a dead form", () => {
+    const apps = weekOfApps(8);
+    for (let i = 0; i < 5; i++) {
+      apps.push({
+        name: `old${i}`,
+        status: "New",
+        submittedAt: at(3 * DAY),
+        finalizedAt: at(DAY / 3),
+        photoPaths: ["p"],
+        clientVersion: 2,
+      });
+    }
+    const d = build({ applications: apps });
+    expect(d.warnings.join("\n")).toMatch(/Applications started dropped to 0/);
+  });
+
+  it("does not count the weekly monitor test alert as a failure", () => {
+    const d = build({
+      incidents: [
+        {
+          createdAt: at(1000),
+          flow: "ops",
+          stage: "monitor_heartbeat",
+          errorMessage: "Labelled monitoring notification test.",
+        },
+      ],
+    });
+    expect(d.warnings).toEqual([]);
+    expect(d.subject).not.toContain("ATTENTION");
+    expect(d.subject).toContain("0 problems");
+  });
+
   it("warns when drafts flow but none are finished", () => {
     const apps = weekOfApps(8);
     for (let i = 0; i < 6; i++) {
@@ -259,7 +291,9 @@ describe("daily digest: tripwires", () => {
         },
       ],
     });
-    expect(d.text).toContain("old cached tabs: 1 (the rules lockdown waits");
+    expect(d.text).toContain(
+      "old cached tabs: 1 (the owner deploys the lockdown rules only after",
+    );
     const clean = build({
       applications: [
         {

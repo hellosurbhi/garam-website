@@ -94,6 +94,14 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const claim = await claimAlertKey(alertKey(report));
+  if (claim.duplicate && claim.inFlight) {
+    // WHY 503: the first reporter has not confirmed delivery and may still
+    // release its claim. Answering "suppressed" would lose the incident.
+    return new Response(JSON.stringify({ ok: false, inFlight: true }), {
+      status: 503,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
   if (claim.duplicate) {
     // Logged, never mailed: the first alert of the incident already paged.
     console.log(
@@ -121,6 +129,8 @@ export const POST: APIRoute = async ({ request }) => {
       `[alert-failure] delivery failed on every channel for ${report.flow}/${report.stage}; releasing dedupe claim`,
     );
     await claim.release();
+  } else {
+    await claim.confirm();
   }
   // WHY: a 200 here used to mean "received", even when every channel failed, so
   // a caller could not tell a delivered page from a lost one. 503 reports the

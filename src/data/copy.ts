@@ -174,6 +174,21 @@ export const APPLY_PAGE = {
     `I am submitting this on behalf of ${friendName ?? "someone I know"}, with their permission. They will not be shocked to hear from us.`,
   nominationContactNote: (friendName?: string): string =>
     `All contact info below is ${friendName ? `${friendName}'s` : "your friend's"}, not yours. Double-check every detail. If we cannot reach them, they will never hear from us.`,
+  fieldErrors: {
+    required: "Required",
+    underage: "Must be 18 or older",
+    photoRequired: "A photo is required",
+    marketingUnanswered: "Please select Yes or No.",
+    marketingDeclined: (isNomination: boolean, friendName?: string): string =>
+      isNomination
+        ? `${friendName ?? "Your friend"} must select Yes to apply.`
+        : "You must select Yes to apply.",
+    nominationConsent: (friendName?: string): string =>
+      friendName
+        ? `Please confirm you have permission to nominate ${friendName}`
+        : "Please confirm you have permission to nominate this person",
+    termsAgreed: "You must agree to the Terms & Conditions",
+  },
   headingSelf: "Applying for yourself",
   headingNomination: "Nominating a friend",
   photosFailedTitle: "One thing: your photos did not come through",

@@ -63,8 +63,14 @@ const run: APIRoute = async ({ request }) => {
     typeof cursor?.lastSentAt === "string"
       ? Date.parse(cursor.lastSentAt)
       : NaN;
+  // WHY anchored to the New York date, not `now - 24h`: with no cursor yet, a
+  // failed send retried later the same day would slide the window forward and
+  // drop the earliest hours. The date's UTC midnight minus a day is stable for
+  // every retry of that date and only ever widens the window.
   const since = new Date(
-    Number.isNaN(lastSent) ? now.getTime() - DAY_MS : lastSent,
+    Number.isNaN(lastSent)
+      ? Date.parse(`${dateKey}T00:00:00Z`) - DAY_MS
+      : lastSent,
   );
 
   const [leads, applications, incidents] = await Promise.all([

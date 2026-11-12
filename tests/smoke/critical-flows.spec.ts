@@ -54,8 +54,18 @@ async function mockApplyApi(
       ),
     });
   });
+  // The page is cross-origin to this host, so the browser sends a preflight
+  // and rejects the PUT unless both answers carry the CORS headers.
   await page.route("https://storage.example.com/**", (route) =>
-    route.fulfill({ status: 200, body: "" }),
+    route.fulfill({
+      status: 200,
+      body: "",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "PUT, OPTIONS",
+        "Access-Control-Allow-Headers": "*",
+      },
+    }),
   );
   return saves;
 }

@@ -9,6 +9,7 @@ const controller = vi.hoisted(() => ({
   flushOnExit: vi.fn(),
   onDraftReset: vi.fn(() => () => {}),
   epoch: 0,
+  saved: {} as Record<string, string | boolean>,
 }));
 const settleForSubmit = vi.hoisted(() => vi.fn());
 const buildLeadAttribution = vi.hoisted(() => vi.fn());
@@ -23,6 +24,9 @@ vi.mock("@/lib/applyAutosave", async (importOriginal) => ({
     flushOnExit = controller.flushOnExit;
     onDraftReset = controller.onDraftReset;
     epoch = 0;
+    get savedFields() {
+      return controller.saved;
+    }
   },
 }));
 vi.mock("@/components/apply/usePhotoUploads", () => ({
@@ -51,6 +55,7 @@ vi.mock("@/lib/leadAttribution", () => ({ buildLeadAttribution }));
 vi.mock("@/lib/failureAlert", () => ({ reportFailure }));
 
 import { useApplyForm } from "@/components/apply/useApplyForm";
+import { identifyLead, trackLeadEvent } from "@/lib/analytics";
 
 const submitEvent = {
   preventDefault: () => {},
@@ -61,6 +66,7 @@ beforeEach(() => {
   settleForSubmit.mockResolvedValue([]);
   buildLeadAttribution.mockResolvedValue({});
   controller.finalize.mockResolvedValue({ ok: true });
+  controller.saved = {};
   window.scrollTo = vi.fn();
 });
 
@@ -99,6 +105,48 @@ describe("useApplyForm: submit", () => {
     expect(result.current.submitted).toBe(true);
     expect(result.current.toast).toBeNull();
     expect(reportFailure).not.toHaveBeenCalled();
+  });
+
+  it("a reload refills the form from the saved answers instead of starting blank", () => {
+    controller.saved = {
+      name: "Priya",
+      pitch: "Saved earlier",
+      city: "Austin",
+      state: "TX",
+      termsAgreed: true,
+      photoUploadFailed: false,
+    };
+    const { result } = renderHook(() => useApplyForm());
+    expect(result.current.form.name).toBe("Priya");
+    expect(result.current.form.pitch).toBe("Saved earlier");
+    expect(result.current.cityInput).toBe("Austin, TX");
+    expect(result.current.termsAgreed).toBe(true);
+    expect(result.current.nominationConsent).toBe(false);
+  });
+
+  it("a real applicant is identified and counted in the funnel", async () => {
+    const { result } = renderHook(() => useApplyForm());
+    act(() => result.current.set("email", "priya@example.com"));
+    await act(async () => result.current.handleSubmit(submitEvent));
+    expect(identifyLead).toHaveBeenCalledTimes(1);
+    expect(trackLeadEvent).toHaveBeenCalledWith(
+      "apply_submitted",
+      expect.anything(),
+    );
+  });
+
+  it("the synthetic canary identity never reaches analytics but still succeeds", async () => {
+    const { result } = renderHook(() => useApplyForm());
+    act(() =>
+      result.current.set("email", "synthetic-monitor@garammasaladating.com"),
+    );
+    await act(async () => result.current.handleSubmit(submitEvent));
+    expect(result.current.submitted).toBe(true);
+    expect(identifyLead).not.toHaveBeenCalled();
+    expect(trackLeadEvent).not.toHaveBeenCalledWith(
+      "apply_submitted",
+      expect.anything(),
+    );
   });
 
   it("a failed finalize shows the cause, alerts and leaves the form open", async () => {

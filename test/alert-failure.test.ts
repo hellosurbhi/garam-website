@@ -5,6 +5,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 const mockSend = vi.hoisted(() => vi.fn());
 const mockRedisSet = vi.hoisted(() => vi.fn());
 const mockRedisDel = vi.hoisted(() => vi.fn());
+const mockRedisGet = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/zohoMailer", () => ({
   sendMail: mockSend,
@@ -18,6 +19,7 @@ vi.mock("@upstash/redis", () => ({
   Redis: class {
     set = mockRedisSet;
     del = mockRedisDel;
+    get = mockRedisGet;
   },
 }));
 
@@ -202,7 +204,7 @@ describe("alert-failure handler", () => {
         .digest("hex");
       expect(mockRedisSet).toHaveBeenCalledWith(
         `alert:apply:submit:${reasonHash(validReport.errorMessage)}:${digest}`,
-        "1",
+        "sending",
         {
           nx: true,
           ex: 3600,
@@ -234,8 +236,17 @@ describe("alert-failure handler", () => {
       expect(mockRedisDel).not.toHaveBeenCalled();
     });
 
+    it("a retry while the first send is still in flight is not called suppressed", async () => {
+      mockRedisSet.mockResolvedValue(null);
+      mockRedisGet.mockResolvedValue("sending");
+      const res = await POST(makeContext(makeRequest(validReport)));
+      expect(res.status).toBe(503);
+      expect(mockSend).not.toHaveBeenCalled();
+    });
+
     it("a retry inside the window is suppressed, not mailed (Dua's four duplicate pages)", async () => {
       mockRedisSet.mockResolvedValue(null);
+      mockRedisGet.mockResolvedValue("sent");
       const res = await POST(makeContext(makeRequest(validReport)));
       expect(res.status).toBe(200);
       const body = (await res.json()) as { ok: boolean; suppressed?: boolean };

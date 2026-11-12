@@ -1,3 +1,4 @@
+import { APPLY_PAGE } from "@/data/copy";
 import { validateEmail } from "@/utils/validateEmail";
 import { getFriendFirstName } from "@/utils/nomination";
 import type { FieldMap } from "@/lib/applyAutosave";
@@ -71,37 +72,35 @@ export function getFieldErrors(
   nominationConsent: boolean,
 ): FormErrors {
   const errs: FormErrors = {};
-  if (!form.name.trim()) errs.name = "Required";
+  const msg = APPLY_PAGE.fieldErrors;
+  if (!form.name.trim()) errs.name = msg.required;
   const ageNum = parseInt(form.age, 10);
-  if (!form.age || Number.isNaN(ageNum) || ageNum < 18)
-    errs.age = "Must be 18 or older";
-  if (!form.gender) errs.gender = "Required";
-  if (!form.orientation) errs.orientation = "Required";
-  if (!form.city.trim()) errs.city = "Required";
+  if (!form.age || Number.isNaN(ageNum) || ageNum < 18) errs.age = msg.underage;
+  if (!form.gender) errs.gender = msg.required;
+  if (!form.orientation) errs.orientation = msg.required;
+  if (!form.city.trim()) errs.city = msg.required;
   const emailErr = validateEmail(form.email);
   if (emailErr) errs.email = emailErr;
-  if (!form.instagram.trim().replace(/^@/, "")) errs.instagram = "Required";
-  if (photoCount === 0) errs.photo = "A photo is required";
+  if (!form.instagram.trim().replace(/^@/, "")) errs.instagram = msg.required;
+  if (photoCount === 0) errs.photo = msg.photoRequired;
   const isNomination = form.applicationType === "Nomination";
   const friendFirstName = isNomination
     ? getFriendFirstName(form.name)
     : undefined;
   if (isNomination) {
-    if (!form.referrerName.trim()) errs.referrerName = "Required";
+    if (!form.referrerName.trim()) errs.referrerName = msg.required;
     if (!nominationConsent)
-      errs.nominationConsent = friendFirstName
-        ? `Please confirm you have permission to nominate ${friendFirstName}`
-        : "Please confirm you have permission to nominate this person";
+      errs.nominationConsent = msg.nominationConsent(friendFirstName);
   }
   if (!form.marketingConsent) {
-    errs.marketingConsent = "Please select Yes or No.";
+    errs.marketingConsent = msg.marketingUnanswered;
   } else if (form.marketingConsent === "no") {
-    errs.marketingConsent = isNomination
-      ? `${friendFirstName ?? "Your friend"} must select Yes to apply.`
-      : "You must select Yes to apply.";
+    errs.marketingConsent = msg.marketingDeclined(
+      isNomination,
+      friendFirstName,
+    );
   }
-  if (!termsAgreed)
-    errs.termsAgreed = "You must agree to the Terms & Conditions";
+  if (!termsAgreed) errs.termsAgreed = msg.termsAgreed;
   return errs;
 }
 
@@ -120,6 +119,35 @@ export function toDraftFields(
     nominationConsent,
     termsAgreed,
     photoUploadFailed,
+  };
+}
+
+/** The form, consents included, rebuilt from the answers autosave kept. */
+export function restoredForm(saved: FieldMap): {
+  form: FormState;
+  termsAgreed: boolean;
+  nominationConsent: boolean;
+} {
+  // WHY the choice check: three fields only hold fixed values, and a stale or
+  // hand-edited draft must not put a value the form cannot render into them.
+  const choices: Partial<Record<keyof FormState, readonly string[]>> = {
+    applicationType: ["Self", "Nomination"],
+    marketingConsent: ["yes", "no", ""],
+    seenShowBefore: ["yes", "no", ""],
+  };
+  const answers: Record<string, string> = {};
+  for (const key of Object.keys(INITIAL) as (keyof FormState)[]) {
+    const value = saved[key];
+    if (typeof value !== "string") continue;
+    const allowed = choices[key];
+    if (allowed && !allowed.includes(value)) continue;
+    answers[key] = value;
+  }
+  const form = { ...INITIAL, ...answers } as FormState;
+  return {
+    form,
+    termsAgreed: saved.termsAgreed === true,
+    nominationConsent: saved.nominationConsent === true,
   };
 }
 

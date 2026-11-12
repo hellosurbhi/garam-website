@@ -1,5 +1,4 @@
 import {
-  expandDottedKeys,
   fsCreateWithId,
   fsGetMeta,
   fsPatchIfUnchanged,
@@ -36,27 +35,33 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
   );
 }
 
-function deepMerge(
-  base: Record<string, unknown>,
-  overlay: Record<string, unknown>,
-): Record<string, unknown> {
-  const out: Record<string, unknown> = { ...base };
-  for (const [key, value] of Object.entries(overlay)) {
-    const current = out[key];
-    out[key] =
-      isPlainObject(current) && isPlainObject(value)
-        ? deepMerge(current, value)
-        : value;
-  }
-  return out;
-}
-
-/** Apply a dotted-key patch to a document, the way Firestore's updateMask does. */
+/**
+ * Apply a patch the way Firestore's updateMask does: every patch KEY is a mask
+ * path. A dotted key sets that one nested field; a plain key whose value is a
+ * map REPLACES the whole map at that path.
+ * WHY not a deep merge of the expanded patch: `{ photos: { a: 1 } }` and
+ * `{ "photos.a": 1 }` expand to the same object, so a merge kept the old
+ * siblings of a replaced map that Firestore would have dropped, and the
+ * predicted `after` diverged from what was stored.
+ */
 export function applyPatch(
   before: Record<string, unknown> | null,
   patch: Record<string, unknown>,
 ): Record<string, unknown> {
-  return deepMerge(before ?? {}, expandDottedKeys(patch));
+  const out = structuredClone(before ?? {}) as Record<string, unknown>;
+  for (const [path, value] of Object.entries(patch)) {
+    const parts = path.split(".");
+    let cursor = out;
+    for (const part of parts.slice(0, -1)) {
+      const next = cursor[part];
+      cursor = (isPlainObject(next) ? next : (cursor[part] = {})) as Record<
+        string,
+        unknown
+      >;
+    }
+    cursor[parts[parts.length - 1]] = value;
+  }
+  return out;
 }
 
 /**

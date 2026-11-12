@@ -94,7 +94,8 @@ function objectName(
  * the count read the same `before`, and upsertDoc re-runs on a lost race.
  * `reservation` also takes a reservation slot (the relay has no reserve step).
  */
-type QuotaRefusal = "photos" | "bytes" | "reservations";
+type QuotaRefusal =
+  "photos" | "bytes" | "reservations" | "finalized" | "discarded";
 
 /**
  * WHY every cap is decided inside the conditional write, not from the draft
@@ -117,7 +118,15 @@ async function recordPhoto(
     const current = stringArray(before?.photoPaths);
     if (current.includes(path)) return {};
     if (!auth.canaryKey) {
-      if (current.length >= MAX_PHOTOS_PER_DRAFT) refused = "photos";
+      // WHY: deleteUnlessKept marked this path discarded in its own conditional
+      // write before deleting the file; recording it now would list a photo
+      // that no longer exists.
+      if (stringArray(before?.discardedPhotoPaths).includes(path))
+        refused = "discarded";
+      // WHY here too: the handler's finalized check runs before this write, so
+      // a finalize committing in between would otherwise be edited afterwards.
+      else if (before?.finalizedAt) refused = "finalized";
+      else if (current.length >= MAX_PHOTOS_PER_DRAFT) refused = "photos";
       else if ((Number(before?.photoBytes) || 0) + size > MAX_TOTAL_BYTES)
         refused = "bytes";
       else if (
@@ -147,23 +156,56 @@ async function recordPhoto(
 
 /**
  * Best-effort delete of a stored file the draft is not supposed to keep.
- * WHY the re-read: a refused confirm can be retried and recorded after room is
- * freed, and a write can commit while its response is lost; deleting without
- * checking then leaves the draft listing a photo that no longer exists. Delete
- * only when the draft provably does not hold the path. If the draft cannot be
- * read the file stays (an orphan is recoverable, a lost photo is not).
+ * WHY the decision is a conditional write: a plain read-then-delete let a
+ * concurrent confirm of the same path attach it between the read and the
+ * delete, leaving the draft listing a photo that no longer exists. Here "the
+ * draft does not hold this path" and "mark the path discarded" are ONE
+ * upsertDoc write, and recordPhoto refuses discarded paths, so after the mark
+ * commits nothing can attach the file and the delete is safe. If the draft
+ * cannot be read or written the file stays (an orphan is recoverable, a lost
+ * photo is not).
  */
 async function deleteUnlessKept(auth: DraftAuth, path: string): Promise<void> {
-  const draft = await fsGet(`${auth.collection}/${auth.draftId}`).catch(
-    () => null,
-  );
-  if (draft && !stringArray(draft.photoPaths).includes(path)) {
-    await deleteObject(path).catch(() => {});
+  let discard = false;
+  try {
+    await upsertDoc(auth.collection, auth.draftId, (before) => {
+      discard = false;
+      // No document means there is nothing to compare against; refuse rather
+      // than let upsertDoc create an empty draft here.
+      if (!before) throw new MissingDraftError();
+      if (stringArray(before.photoPaths).includes(path)) return {};
+      discard = true;
+      const marked = stringArray(before.discardedPhotoPaths);
+      return marked.includes(path)
+        ? {}
+        : { discardedPhotoPaths: [...marked, path] };
+    });
+  } catch (err) {
+    if (err instanceof MissingDraftError) return;
+    // The marker could not be written (Firestore is failing). Fall back to a
+    // plain read: the file goes only if the draft provably does not hold it, so
+    // a relay whose write was lost still cleans up and a committed one is kept.
+    const draft = await fsGet(`${auth.collection}/${auth.draftId}`).catch(
+      () => null,
+    );
+    if (draft && !stringArray(draft.photoPaths).includes(path)) {
+      await deleteObject(path).catch(() => {});
+    }
+    return;
   }
+  if (discard) await deleteObject(path).catch(() => {});
 }
+
+class MissingDraftError extends Error {}
 
 /** The 409 the client already understands, for whichever cap was hit. */
 function quotaResponse(refusal: QuotaRefusal, kept: number): Response {
+  if (refusal === "finalized") {
+    return jsonResponse(
+      { error: "finalized", reason: "already_submitted" },
+      409,
+    );
+  }
   return jsonResponse(
     refusal === "bytes"
       ? { error: "photo_quota", reason: "bytes" }
@@ -246,6 +288,10 @@ export const POST: APIRoute = async ({ request, url }) => {
       // racing reserves never share an object name.
       let seq = 0;
       let refusal: QuotaRefusal | null = null;
+      const contentType = safeContentType(body.contentType);
+      let name = "";
+      // WHY the cast: assigned inside the callback, so TS would narrow it to never.
+      let signed = null as ReturnType<typeof signUploadUrl> | null;
       const claimed = await upsertDoc(
         auth.collection,
         auth.draftId,
@@ -253,13 +299,21 @@ export const POST: APIRoute = async ({ request, url }) => {
           refusal = null;
           const taken = Number(before?.photoReservations) || 0;
           if (!auth.canaryKey) {
-            if (stringArray(before?.photoPaths).length >= MAX_PHOTOS_PER_DRAFT)
+            if (before?.finalizedAt) refusal = "finalized";
+            else if (
+              stringArray(before?.photoPaths).length >= MAX_PHOTOS_PER_DRAFT
+            )
               refusal = "photos";
             else if (taken >= MAX_RESERVATIONS_PER_DRAFT)
               refusal = "reservations";
             if (refusal) return {};
           }
           seq = taken + 1;
+          // WHY signed inside the write: a signing failure (missing key, bad
+          // config) after the reservation committed permanently consumed one of
+          // the 40 slots per attempt. Thrown here, nothing is written.
+          name = objectName(auth, seq, body.filename, body.index);
+          signed = signUploadUrl(name, contentType);
           return { photoReservations: seq };
         },
       );
@@ -269,9 +323,7 @@ export const POST: APIRoute = async ({ request, url }) => {
           stringArray(claimed.after.photoPaths).length,
         );
       }
-      const contentType = safeContentType(body.contentType);
-      const name = objectName(auth, seq, body.filename, body.index);
-      const signed = signUploadUrl(name, contentType);
+      if (!signed) throw new Error("reserve committed without a signed URL");
       return jsonResponse({
         ok: true,
         path: name,
@@ -319,7 +371,10 @@ export const POST: APIRoute = async ({ request, url }) => {
       const removedSize = isPhotoPathForDraft(path, auth.draftId)
         ? ((await headObject(path as string))?.size ?? 0)
         : 0;
+      let closed = false;
       await upsertDoc(auth.collection, auth.draftId, (before) => {
+        closed = !auth.canaryKey && Boolean(before?.finalizedAt);
+        if (closed) return {};
         const current = stringArray(before?.photoPaths);
         const at = current.indexOf(path as string);
         const sizes = alignedSizes(before, current.length);
@@ -340,6 +395,7 @@ export const POST: APIRoute = async ({ request, url }) => {
           updatedAt: new Date(),
         };
       });
+      if (closed) return quotaResponse("finalized", kept.length);
       return jsonResponse({ ok: true });
     }
 

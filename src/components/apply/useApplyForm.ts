@@ -9,6 +9,7 @@ import {
 } from "react";
 import { trackError, trackLeadEvent, identifyLead } from "@/lib/analytics";
 import { buildLeadAttribution } from "@/lib/leadAttribution";
+import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
 import { reportFailure } from "@/lib/failureAlert";
 import { APPLY_PAGE } from "@/data/copy";
 import {
@@ -21,6 +22,7 @@ import {
   contactOf,
   fieldLengthDetails,
   getFieldErrors,
+  restoredForm,
   toDraftFields,
   type FormErrors,
   type FormState,
@@ -53,16 +55,24 @@ function describeError(err: unknown): {
 }
 
 export function useApplyForm() {
+  const [autosave] = useState(() => new AutosaveController());
+  // WHY the saved answers seed the form: autosave restores them after a reload
+  // but the inputs used to start empty, and the submit resends every field, so
+  // an optional answer filed earlier was overwritten with a blank. A city in
+  // the URL still wins because the link was an explicit choice.
+  const [saved] = useState(() => restoredForm(autosave.savedFields));
   const [form, setForm] = useState<FormState>(() => {
     const urlParams = getUrlCityParams();
-    if (!urlParams) return INITIAL;
-    return { ...INITIAL, city: urlParams.city, state: urlParams.state };
+    if (!urlParams) return saved.form;
+    return { ...saved.form, city: urlParams.city, state: urlParams.state };
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [termsAgreed, setTermsAgreed] = useState(false);
-  const [nominationConsent, setNominationConsent] = useState(false);
+  const [termsAgreed, setTermsAgreed] = useState(saved.termsAgreed);
+  const [nominationConsent, setNominationConsent] = useState(
+    saved.nominationConsent,
+  );
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [canGoBack] = useState(
     () => typeof window !== "undefined" && window.history.length > 1,
@@ -76,7 +86,11 @@ export function useApplyForm() {
   const turnstileWidgetIdRef = useRef<string | undefined>(undefined);
   const [cityInput, setCityInput] = useState(() => {
     const urlParams = getUrlCityParams();
-    if (!urlParams) return "";
+    if (!urlParams) {
+      return saved.form.state
+        ? `${saved.form.city}, ${saved.form.state}`
+        : saved.form.city;
+    }
     return urlParams.state
       ? `${urlParams.city}, ${urlParams.state}`
       : urlParams.city;
@@ -92,7 +106,6 @@ export function useApplyForm() {
     formRef.current = form;
   }, [form]);
 
-  const [autosave] = useState(() => new AutosaveController());
   useEffect(() => {
     autosave.setOnPersistentFailure((error, attempts) => {
       reportFailure({
@@ -275,6 +288,10 @@ export function useApplyForm() {
   }
 
   async function trackSubmitted() {
+    // WHY: the production canary submits as the reserved synthetic identity;
+    // without this guard every canary run would identify a fake lead and count
+    // an apply_submitted in the real funnel.
+    if (isSyntheticSubmission(form.email)) return;
     const attribution = await buildLeadAttribution({ source: "apply" });
     const igHandle = form.instagram.trim().replace(/^@/, "");
     const identifier = form.email.trim();

@@ -13,6 +13,7 @@
  * profile's write can never mask a failure.
  */
 import { test, expect } from "@playwright/test";
+import { SYNTHETIC_MONITOR_EMAIL } from "../../src/lib/syntheticMonitor";
 import {
   canarySignature,
   deriveDraftSecret,
@@ -94,7 +95,7 @@ test("a phone applicant can file an application with photos on the live stack", 
   await page.selectOption("#field-gender", "Woman");
   await page.selectOption("#field-orientation", "Straight");
   await page.fill("#geo-place", "New York");
-  await page.fill("#field-email", `canary-${profile}@garammasaladating.com`);
+  await page.fill("#field-email", SYNTHETIC_MONITOR_EMAIL);
   await page.fill("#field-instagram", "garammasaladating");
   await page.fill("#field-height", "5 feet 8 inches (172cm)");
   await page.fill("#field-phone", "+1 (555) 010-0000 (WhatsApp preferred)");
@@ -114,21 +115,31 @@ test("a phone applicant can file an application with photos on the live stack", 
     canvas.width = 3000;
     canvas.height = 4000;
     const ctx = canvas.getContext("2d")!;
-    for (let i = 0; i < 400; i++) {
-      ctx.fillStyle = `hsl(${(i * 37) % 360} 70% 50%)`;
-      ctx.fillRect((i * 97) % 3000, (i * 53) % 4000, 600, 600);
+    // Random 8px blocks: solid shapes compress to a few KB, which would skip
+    // the multi-megabyte path this canary exists to exercise.
+    for (let y = 0; y < 4000; y += 8) {
+      for (let x = 0; x < 3000; x += 8) {
+        ctx.fillStyle = `rgb(${Math.random() * 256}, ${Math.random() * 256}, ${Math.random() * 256})`;
+        ctx.fillRect(x, y, 8, 8);
+      }
     }
     const blob: Blob = await new Promise((resolve) =>
       canvas.toBlob((b) => resolve(b!), "image/jpeg", 0.95),
     );
     return Array.from(new Uint8Array(await blob.arrayBuffer()));
   });
+  expect(
+    jpeg.length,
+    "the JPEG fixture must be large enough to reach compression",
+  ).toBeGreaterThan(1_000_000);
   // WHY: a HEIC the browser cannot decode must still upload as the original.
-  // The "ftypheic" brand header is what iPhones produce.
+  // The "ftypheic" brand header is what iPhones produce. It is above
+  // compressImage's 400 KiB early return, otherwise the decode failure and its
+  // fall back to the original file would never run.
   const heic = Buffer.concat([
     Buffer.from([0, 0, 0, 24]),
     Buffer.from("ftypheic", "ascii"),
-    Buffer.alloc(300_000, 7),
+    Buffer.alloc(600_000, 7),
   ]);
 
   await page.setInputFiles("#photo-input", [

@@ -1,5 +1,18 @@
 # Changelog
 
+## fix(apply): outside review round (Codex, CodeRabbit, fresh Claude) and main merge (2026-11-12)
+
+- Merged main (#331, #361) into the branch and settled every conflict, keeping the rules-free applicant path and main's synthetic monitor.
+- Autosave: an acknowledgement for a draft that was replaced mid-request no longer undoes the replacement.
+- Alerts: a duplicate failure alert that arrives while the first is still sending is no longer reported as delivered; the claim moves from "sending" to "sent" only after delivery.
+- Firestore REST: the token exchange runs on the same deadline as the request it serves. An unreachable incident log can no longer delay or fail the page (2 second wait, then moves on).
+- Draft writes: the predicted post-write document follows Firestore's field-mask rules exactly, so the photo caps are checked against what is really stored.
+- Daily digest: with no cursor, a retry hours later covers the same window; the health line states when the lockdown rules ship.
+- Photos: a path discarded by a refused confirm can never be attached later; a signing failure no longer burns one of the 40 reservation slots.
+- Dashboard: draft-only applications are no longer counted as customer applications.
+- Form: restored answers only fill fixed-choice fields with valid choices; validation messages moved into `src/data/copy.ts`.
+- Canary workflow: the pager now runs in its own job that fires on failure, cancel and timeout, and each step has a timeout under the job's.
+
 ## fix(apply): close the review findings on the new apply form (2026-11-11)
 
 - Revisions and drafts: the autosave revision is persisted before each request, the server's highest revision is adopted and stale fields are resent, so a reload mid-request can no longer lose a newer answer. A draft the server refuses over the text budget keeps that text queued and says so, and the server no longer marks dropped text as stored or finalizes over it.

@@ -39,7 +39,11 @@ export async function getFirestoreAccessToken(
 
   // Create a signed JWT for the service account
   const jwt = await new SignJWT({
-    scope: "https://www.googleapis.com/auth/datastore",
+    // Storage scope is here because the apply flow signs and verifies photo
+    // uploads server-side (src/lib/storageAdmin.ts); one cached token serves
+    // both Firestore and GCS so a second mint never adds a failure point.
+    scope:
+      "https://www.googleapis.com/auth/datastore https://www.googleapis.com/auth/devstorage.read_write",
   })
     .setProtectedHeader({ alg: "RS256" })
     .setIssuer(email)

@@ -591,8 +591,12 @@ export const GET: APIRoute = async ({ request, url }) => {
     const byStatus: Record<string, number> = {};
     const byCity: Record<string, number> = {};
 
+    // WHY Draft is excluded: every autosave now creates a Draft document the
+    // moment a person types, so counting drafts as applications would inflate
+    // the total with people who never submitted.
     const customerApplications = applicationDocs.filter(
       (doc) =>
+        getStringField(doc.fields ?? {}, "status") !== "Draft" &&
         !isSyntheticSubmission(getStringField(doc.fields ?? {}, "email")),
     );
     for (const doc of customerApplications) {

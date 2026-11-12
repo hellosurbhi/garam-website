@@ -1,6 +1,10 @@
 import { Trash2, ArchiveRestore, CheckCircle } from "lucide-react";
 import { type Application, STATUS_COLORS } from "@/types/application";
-import { formatLocation } from "@/utils/locationDisplay";
+import {
+  applicantHandle,
+  applicantName,
+  applicantSummary,
+} from "@/utils/applicantDisplay";
 import { useApplicantPhotos } from "@/components/admin/useApplicantPhotos";
 import Spinner from "../ui/Spinner";
 
@@ -56,7 +60,7 @@ function PhotosFailedPill() {
   );
 }
 
-function AppTypePill({ applicationType }: { applicationType: string }) {
+function AppTypePill({ applicationType }: { applicationType?: string }) {
   const isNomination = applicationType === "Nomination";
   return (
     <span
@@ -88,7 +92,7 @@ export default function ApplicantCard({
   pendingAction,
   actionsDisabled,
 }: ApplicantCardProps) {
-  const handle = app.instagram.replace(/^@/, "");
+  const handle = applicantHandle(app);
   const { photos, count: photoCount } = useApplicantPhotos(app, 1);
   const firstPhoto = photos[0];
   const isNomination = app.applicationType === "Nomination";
@@ -222,7 +226,7 @@ export default function ApplicantCard({
       }}
       tabIndex={0}
       role="button"
-      aria-label={`View application from ${app.name}`}
+      aria-label={`View application from ${applicantName(app)}`}
       style={{
         background: "#fff",
         borderRadius: "12px",
@@ -273,7 +277,7 @@ export default function ApplicantCard({
         {firstPhoto ? (
           <img
             src={firstPhoto}
-            alt={app.name}
+            alt={applicantName(app)}
             loading="lazy"
             style={{
               width: "100%",
@@ -342,7 +346,7 @@ export default function ApplicantCard({
             marginBottom: "6px",
           }}
         >
-          {app.age} · {app.gender} · {formatLocation(app)}
+          {applicantSummary(app)}
         </p>
 
         <div

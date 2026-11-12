@@ -1,155 +1,34 @@
-import { ADMIN_DASHBOARD_URL } from "@/data/brand";
 import type { APIRoute } from "astro";
 import { z } from "zod";
 import { sendMail } from "@/lib/zohoMailer";
-import { applicationReceived, escapeHtml, subjectSafe } from "@/data/emails";
+import { applicationReceived } from "@/data/emails";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { isAllowedOrigin } from "@/lib/allowedOrigin";
-import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
 import { alertOps } from "@/lib/opsAlert";
-import { FIELD_LIMITS } from "@/lib/applicationFieldLimits";
 
 export const prerender = false;
 
-// WHY these mirror @/lib/applicationFieldLimits instead of the client's own
-// numbers: this schema drifted from FIELD_LIMITS after the 2026-08-31 "no
-// human hits a length limit" sweep (PR #244) raised the client/rules caps
-// but missed this file, so a real applicant with e.g. a formatted phone
-// number over the old 30-char cap saved to Firestore fine but silently
-// never triggered the admin email. Importing the shared constants instead
-// of duplicating numbers makes that drift structurally impossible to repeat.
-const ApplicationSchema = z.object({
-  name: z.string().min(1).max(FIELD_LIMITS.freeText),
-  age: z.number().int().min(18).max(120),
-  gender: z.string().min(1).max(100),
-  orientation: z.string().min(1).max(100),
-  city: z.string().min(1).max(FIELD_LIMITS.freeText),
-  state: z.string().max(100).default(""),
-  country: z.string().max(100).default(""),
-  email: z.string().email().max(FIELD_LIMITS.email),
-  instagram: z.string().min(1).max(FIELD_LIMITS.instagram),
-  community: z.string().max(100).default(""),
-  income: z.string().max(100).default(""),
-  applicationType: z.enum(["Self", "Nomination"]),
-  referrerName: z.string().max(FIELD_LIMITS.freeText).default(""),
-  nominationConsent: z.boolean().optional(),
-  pitch: z.string().max(FIELD_LIMITS.pitch).default(""),
-  phone: z.string().max(FIELD_LIMITS.phone).optional(),
-  height: z.string().max(FIELD_LIMITS.freeText).optional(),
-  type: z.string().max(FIELD_LIMITS.freeText).optional(),
-  seenShowBefore: z.boolean().optional(),
-  // Storage paths, not URLs: photo reads are admin-only, so the email links
-  // to the dashboard instead of exposing tokened photo URLs.
-  photoPaths: z
-    .array(z.string().regex(/^photos\/[A-Za-z0-9._-]+$/))
-    .min(1)
-    .max(10),
+/**
+ * LEGACY endpoint for stale browser tabs only.
+ *
+ * Before the autosave rewrite the apply page wrote the application straight to
+ * Firestore and then called this route to email the applicant a receipt (and
+ * the producer a per-application notice). The current page files everything
+ * through /api/save-application, which sends the receipt itself on finalize.
+ * A tab loaded before the deploy still runs the old script, so this route keeps
+ * accepting its payload and sends ONLY the applicant receipt. The per-
+ * application producer email is gone on purpose: new applications reach the
+ * producer in the daily digest, and an email means something is broken.
+ *
+ * WHY only the three fields the receipt needs: the old schema rejected under-18
+ * and over-limit payloads with a 400, which silently dropped the receipt for a
+ * real applicant. Nothing here may reject on content.
+ */
+const ReceiptSchema = z.object({
+  name: z.string().min(1),
+  city: z.string().default(""),
+  email: z.string().min(1),
 });
-
-type ApplicationNotification = z.infer<typeof ApplicationSchema>;
-
-// escapeHtml is imported from @/data/emails: one escaper for every email surface.
-// The local copy that used to live here had drifted (no single-quote escaping).
-
-function buildAdminEmailHtml(data: ApplicationNotification): string {
-  const isNomination = data.applicationType === "Nomination";
-  const location = [data.city, data.state, data.country]
-    .filter(Boolean)
-    .map(escapeHtml)
-    .join(", ");
-
-  const rows: [string, string][] = [
-    ["Name", escapeHtml(data.name)],
-    ["Age", String(data.age)],
-    ["Gender", escapeHtml(data.gender)],
-    ["Orientation", escapeHtml(data.orientation)],
-    ["Location", location],
-    [
-      "Email",
-      data.email
-        ? `<a href="mailto:${escapeHtml(data.email)}" style="color:#DC2626;">${escapeHtml(data.email)}</a>`
-        : "",
-    ],
-    [
-      "Instagram",
-      `<a href="https://instagram.com/${escapeHtml(data.instagram)}" style="color:#DC2626;">@${escapeHtml(data.instagram)}</a>`,
-    ],
-    ["Community", escapeHtml(data.community)],
-    ["Income", escapeHtml(data.income)],
-  ];
-
-  if (data.phone) {
-    rows.push(["Phone", escapeHtml(data.phone)]);
-  }
-
-  if (isNomination && data.referrerName) {
-    rows.push(["Nominated by", escapeHtml(data.referrerName)]);
-  }
-
-  if (isNomination) {
-    rows.push([
-      "Nominator consent",
-      data.nominationConsent ? "Confirmed" : "Not confirmed",
-    ]);
-  }
-
-  const tableRows = rows
-    .map(
-      ([label, value]) =>
-        `<tr>
-          <td style="padding:8px 12px;font-weight:600;color:#1A1A1A;border-bottom:1px solid #eee;white-space:nowrap;">${label}</td>
-          <td style="padding:8px 12px;color:#333;border-bottom:1px solid #eee;">${value}</td>
-        </tr>`,
-    )
-    .join("");
-
-  const pitchSection = data.pitch
-    ? `<div style="margin-top:16px;">
-        <h3 style="margin:0 0 8px;font-size:16px;color:#1A1A1A;">Pitch</h3>
-        <p style="margin:0;padding:12px;background:#f9f5f0;border-radius:8px;color:#333;line-height:1.5;">${escapeHtml(data.pitch)}</p>
-      </div>`
-    : "";
-
-  const photoSection = `<div style="margin-top:12px;">
-      <a href="${ADMIN_DASHBOARD_URL}" style="color:#DC2626;">View ${data.photoPaths.length} photo${data.photoPaths.length === 1 ? "" : "s"} in the admin dashboard</a>
-    </div>`;
-
-  return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
-    <h2 style="color:#DC2626;margin:0 0 16px;">New ${isNomination ? "Nomination" : "Self-Application"}</h2>
-    <table style="width:100%;border-collapse:collapse;">${tableRows}</table>
-    ${pitchSection}
-    ${photoSection}
-    <hr style="border:none;border-top:1px solid #eee;margin:24px 0 12px;" />
-    <p style="color:#999;font-size:12px;margin:0;">
-      View all applications in the <a href="${ADMIN_DASHBOARD_URL}" style="color:#DC2626;">admin dashboard</a>.
-    </p>
-  </div>`;
-}
-
-function buildAdminEmailText(data: ApplicationNotification): string {
-  const isNomination = data.applicationType === "Nomination";
-  const location = [data.city, data.state, data.country]
-    .filter(Boolean)
-    .join(", ");
-  const lines = [
-    `New ${isNomination ? "Nomination" : "Self-Application"}: ${data.name}`,
-    "",
-    `Age: ${data.age}`,
-    `Gender: ${data.gender}`,
-    `Orientation: ${data.orientation}`,
-    `Location: ${location}`,
-    `Email: ${data.email}`,
-    `Instagram: @${data.instagram}`,
-    `Community: ${data.community}`,
-    `Income: ${data.income}`,
-  ];
-  if (data.phone) lines.push(`Phone: ${data.phone}`);
-  if (isNomination && data.referrerName)
-    lines.push(`Nominated by: ${data.referrerName}`);
-  if (data.pitch) lines.push("", `Pitch: ${data.pitch}`);
-  lines.push("", ADMIN_DASHBOARD_URL);
-  return lines.join("\n");
-}
 
 export const POST: APIRoute = async ({ request }) => {
   const limited = await enforceRateLimit(
@@ -158,26 +37,16 @@ export const POST: APIRoute = async ({ request }) => {
   );
   if (limited) return limited;
 
-  const origin = request.headers.get("origin");
-  if (!isAllowedOrigin(origin)) {
+  if (!isAllowedOrigin(request.headers.get("origin"))) {
     return new Response(JSON.stringify({ error: "Forbidden" }), {
       status: 403,
       headers: { "Content-Type": "application/json" },
     });
   }
 
-  const notificationEmail = import.meta.env.NOTIFICATION_EMAIL;
-  if (!notificationEmail) {
-    return new Response(JSON.stringify({ error: "Server misconfigured" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  let body: ApplicationNotification;
+  let body: z.infer<typeof ReceiptSchema>;
   try {
-    const raw: unknown = await request.json();
-    const result = ApplicationSchema.safeParse(raw);
+    const result = ReceiptSchema.safeParse(await request.json());
     if (!result.success) {
       return new Response(JSON.stringify({ error: "Invalid request body" }), {
         status: 400,
@@ -192,58 +61,26 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  // The daily synthetic monitor exercises the full production flow; its
-  // submission must not email the producer or "welcome" a robot.
-  // WHY: derived from the server-verified email only, never a request-body
-  // flag: a client-supplied boolean would let any caller suppress the admin
-  // notification for a real application already written to Firestore.
-  if (isSyntheticSubmission(body.email)) {
-    return new Response(JSON.stringify({ sent: false, synthetic: true }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  const isNomination = body.applicationType === "Nomination";
-
   try {
-    // Notify Surbhi
     await sendMail({
-      to: notificationEmail,
-      subject: `New Application: ${subjectSafe(body.name)} (${isNomination ? "Nomination" : "Self"})`,
-      text: buildAdminEmailText(body),
-      html: buildAdminEmailHtml(body),
+      to: body.email,
+      ...applicationReceived(body.name, body.city),
     });
-
-    // Welcome email to applicant — non-fatal if it fails, but awaited so the
-    // serverless function doesn't exit before the send attempt completes.
-    const welcome = applicationReceived(body.name, body.city);
-    await Promise.allSettled([sendMail({ to: body.email, ...welcome })]);
-
     return new Response(JSON.stringify({ sent: true }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (err) {
-    // The application IS saved in Firestore at this point; a dead mailer
-    // means an invisible applicant. alertOps' email may fail for the same
-    // reason, which is exactly what the ALERT_WEBHOOK_URL channel is for.
+    // The application is saved; only the applicant's receipt failed.
     await alertOps({
       flow: "apply",
-      stage: "admin_email",
+      stage: "welcome_email_legacy",
       errorMessage: err instanceof Error ? err.message : String(err),
-      context: {
-        name: body.name,
-        email: body.email,
-        instagram: body.instagram,
-      },
+      context: { name: body.name, email: body.email },
     });
-    return new Response(
-      JSON.stringify({ error: "Failed to send notification" }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
+    return new Response(JSON.stringify({ error: "Failed to send receipt" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 };

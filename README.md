@@ -61,17 +61,17 @@ scripts/          # Build-time scripts (prerender, data migration)
 
 ## Pages
 
-| Route                      | What it does                                                  |
-| -------------------------- | ------------------------------------------------------------- |
-| `/`                        | Landing page — hero, next show, social proof, FAQ, newsletter |
-| `/links`                   | Linktree replacement for Instagram bio                        |
-| `/apply`                   | Contestant application form (writes to Firestore)             |
-| `/admin`                   | Protected dashboard to review applications (Firebase Auth)    |
-| `/contestant-prep`         | Password-protected prep guide for selected contestants        |
-| `/faq`                     | Frequently asked questions                                    |
-| `/cities`                  | Events directory by city                                      |
-| `/journal`                 | Blog / articles                                               |
-| `/south-asian-dating-tips` | Dating tips content hub                                       |
+| Route                      | What it does                                                      |
+| -------------------------- | ----------------------------------------------------------------- |
+| `/`                        | Landing page — hero, next show, social proof, FAQ, newsletter     |
+| `/links`                   | Linktree replacement for Instagram bio                            |
+| `/apply`                   | Contestant application form (autosaves via /api/save-application) |
+| `/admin`                   | Protected dashboard to review applications (Firebase Auth)        |
+| `/contestant-prep`         | Password-protected prep guide for selected contestants            |
+| `/faq`                     | Frequently asked questions                                        |
+| `/cities`                  | Events directory by city                                          |
+| `/journal`                 | Blog / articles                                                   |
+| `/south-asian-dating-tips` | Dating tips content hub                                           |
 
 ## Scripts
 

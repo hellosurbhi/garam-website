@@ -60,25 +60,41 @@ export function extractListedEvents(html: string): ListedEvent[] {
     }
   }
 
-  // A node may stand in for another by "@id" alone (an address kept once in
-  // @graph and pointed at from the venue), so every full node is indexed.
+  // A node may be described in pieces across the page and pointed at by
+  // "@id" (an address kept once in @graph and linked from the venue), so
+  // every piece with the same id is merged. A field two pieces disagree on
+  // becomes a list, which the place check then can't read and fails.
   const byId = new Map<string, Node>();
   const index = (value: unknown): void => {
     if (Array.isArray(value)) return value.forEach(index);
     if (!isNode(value)) return;
     const id = value["@id"];
-    if (typeof id === "string" && Object.keys(value).length > 1)
-      if (!byId.has(id)) byId.set(id, value);
+    if (typeof id === "string") {
+      const merged = byId.get(id) ?? {};
+      for (const [key, field] of Object.entries(value)) {
+        const known = merged[key];
+        merged[key] =
+          known === undefined || JSON.stringify(known) === JSON.stringify(field)
+            ? field
+            : [known, field].flat();
+      }
+      byId.set(id, merged);
+    }
     Object.values(value).forEach(index);
   };
   blocks.forEach(index);
-  // A bare reference resolves to its node; one that names nothing on the
-  // page is undefined, which callers treat as unreadable.
+  // A node with an id stands for everything the page says about that id; a
+  // bare reference to an id never described is undefined, which callers
+  // treat as unreadable.
   const resolve = (value: unknown): unknown => {
-    if (!isNode(value) || Object.keys(value).length !== 1) return value;
-    const id = value["@id"];
-    return typeof id === "string" ? byId.get(id) : value;
+    if (!isNode(value) || typeof value["@id"] !== "string") return value;
+    const node = byId.get(value["@id"]);
+    return node && Object.keys(node).length > 1 ? node : undefined;
   };
+  const isEvent = (node: unknown): node is Node & { startDate: string } =>
+    isNode(node) &&
+    typesOf(node).some((t) => t.endsWith("Event")) &&
+    typeof node.startDate === "string";
 
   const placesOf = (location: unknown): ListedPlace[] =>
     [location].flat().flatMap((raw): ListedPlace[] => {
@@ -145,13 +161,21 @@ export function extractListedEvents(html: string): ListedEvent[] {
         ? [root, ...[root["@graph"]].flat()]
         : [root],
     );
-  return topLevel.flatMap((node): ListedEvent[] =>
-    isNode(node) &&
-    typesOf(node).some((t) => t.endsWith("Event")) &&
-    typeof node.startDate === "string"
-      ? [{ startDate: node.startDate, places: placesOf(node.location) }]
-      : [],
-  );
+  // A page that names an event as its mainEntity has said which show it
+  // sells; any other event beside it is a recommendation (a graph whose
+  // WebPage pointed at the wrong show passed on a separate event of ours).
+  // Other main entities, like an FAQPage's questions, don't decide this.
+  const mainEvents = topLevel
+    .flatMap((node) => (isNode(node) ? [node.mainEntity].flat() : []))
+    .map(resolve)
+    .filter(isEvent);
+  const sold = mainEvents.length
+    ? mainEvents
+    : topLevel.map(resolve).filter(isEvent);
+  return sold.map((node) => ({
+    startDate: node.startDate,
+    places: placesOf(node.location),
+  }));
 }
 
 const comparable = (value: string) =>

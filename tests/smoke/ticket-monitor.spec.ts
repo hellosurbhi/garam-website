@@ -641,6 +641,86 @@ for (const [name, body, passes] of [
     true,
   ],
   [
+    "listing whose typed address link points at another city",
+    {
+      "@graph": [
+        {
+          "@type": "Event",
+          startDate: ourStart,
+          location: {
+            name: venue.name,
+            address: { "@id": "#addr", "@type": "PostalAddress" },
+          },
+        },
+        { "@id": "#addr", addressLocality: "Detroit", addressRegion: "MI" },
+      ],
+    },
+    false,
+  ],
+  [
+    "listing whose address is described twice with different cities",
+    {
+      "@graph": [
+        {
+          "@type": "Event",
+          startDate: ourStart,
+          location: {
+            name: venue.name,
+            address: {
+              "@id": "#addr",
+              addressLocality: "Chicago",
+              addressRegion: "IL",
+            },
+          },
+        },
+        { "@id": "#addr", addressLocality: "Detroit", addressRegion: "MI" },
+      ],
+    },
+    false,
+  ],
+  [
+    "page whose main event is another show beside ours",
+    {
+      "@graph": [
+        { "@type": "WebPage", mainEntity: { "@id": "#main" } },
+        {
+          "@id": "#main",
+          "@type": "Event",
+          startDate: "2026-12-11T19:30:00-06:00",
+          location: atVenue,
+        },
+        { "@type": "Event", startDate: ourStart, location: atVenue },
+      ],
+    },
+    false,
+  ],
+  [
+    "page whose main event is our show",
+    {
+      "@graph": [
+        { "@type": "WebPage", mainEntity: { "@id": "#main" } },
+        {
+          "@id": "#main",
+          "@type": "Event",
+          startDate: ourStart,
+          location: atVenue,
+        },
+      ],
+    },
+    true,
+  ],
+  [
+    "page with an FAQ beside our show, the way Eventbrite publishes it",
+    [
+      { "@type": "Event", startDate: ourStart, location: atVenue },
+      {
+        "@type": "FAQPage",
+        mainEntity: [{ "@type": "Question", name: "Is there parking?" }],
+      },
+    ],
+    true,
+  ],
+  [
     "listing whose location points at nothing on the page",
     {
       "@type": "Event",

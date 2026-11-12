@@ -871,18 +871,36 @@ const venueCalendar = `<script type="application/ld+json">${JSON.stringify({
   ...atVenue,
   Events: [{ "@type": "Event", startDate: ourStart, location: atVenue }],
 })}</script>`;
-const challenge = "<html><body>Checking your browser</body></html>";
+const unknownPage = "<html><body>Checking your browser</body></html>";
+const cloudflareChallenge =
+  "<html><head><title>Just a moment...</title></head><body><script>window._cf_chl_opt={}</script></body></html>";
 // Columns: name, status, body, mode, passes, notes it as unavailable.
 for (const [name, status, body, mode, passes, noted] of [
   ["our listing", 200, ourListing, "whenServed", true, false],
   ["a blocked runner", 403, ourListing, "whenServed", true, true],
   ["a rate limited runner", 429, ourListing, "whenServed", true, true],
   ["a vendor outage", 503, ourListing, "whenServed", true, true],
-  ["a bot challenge page", 200, challenge, "whenServed", false, false],
+  [
+    "a Cloudflare challenge page",
+    200,
+    cloudflareChallenge,
+    "whenServed",
+    true,
+    true,
+  ],
+  [
+    "a Cloudflare challenge page when required",
+    200,
+    cloudflareChallenge,
+    "required",
+    false,
+    false,
+  ],
+  ["a page with no event data", 200, unknownPage, "whenServed", false, false],
   [
     "a login page the vendor sent us to",
     401,
-    challenge,
+    unknownPage,
     "whenServed",
     false,
     false,
@@ -918,6 +936,28 @@ test("ticket monitor notes a vendor that drops the connection", async ({
   await checkVendorResponse(
     page,
     (res) => res.socket?.destroy(),
+    true,
+    "whenServed",
+  );
+  expect(
+    test.info().annotations.filter((a) => a.type === "listing unavailable"),
+  ).toHaveLength(1);
+});
+
+test("ticket monitor notes a vendor that drops the connection mid page", async ({
+  page,
+}) => {
+  test.setTimeout(10000);
+  await checkVendorResponse(
+    page,
+    (res) => {
+      res.writeHead(200, {
+        "content-type": "text/html",
+        "content-length": 5000,
+      });
+      res.write("<html><body>");
+      setTimeout(() => res.socket?.destroy(), 50);
+    },
     true,
     "whenServed",
   );

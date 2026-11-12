@@ -23,8 +23,8 @@ export interface TicketCheckOptions {
    * events.ts passes every redirect assertion, because the redirect reads the
    * same data. "required" fails when a vendor won't serve the page, so the
    * weekly and preview smoke runs surface a lasting block. "whenServed" notes
-   * a page the vendor would not serve (403, 429, 5xx, a timeout or a dropped
-   * connection) and checks the rest, so the frequent monitor pages only for
+   * a page the vendor would not serve (403, 429, 5xx, a timeout, a dropped
+   * connection or a recognized bot challenge) and checks the rest, so the frequent monitor pages only for
    * a page that loads without naming this show, or for a dead link.
    */
   verifyListings?: false | "required" | "whenServed";
@@ -285,8 +285,20 @@ function localStart(iso: string, timeZone: string): string | null {
 }
 
 /** Request errors that mean the vendor's network failed, not our link. */
+// WHY "aborted": Playwright reports a connection dropped after the headers
+// arrived as "apiRequestContext.get: aborted" (then a call log), with no
+// socket code.
 const TRANSIENT_REQUEST_ERROR =
-  /Timeout \d+ms exceeded|ETIMEDOUT|ECONNRESET|ECONNREFUSED|EAI_AGAIN|socket hang up/;
+  /Timeout \d+ms exceeded|ETIMEDOUT|ECONNRESET|ECONNREFUSED|EAI_AGAIN|socket hang up|: aborted\b/;
+
+/**
+ * Interstitials that bot protection serves in place of the page, with a 200.
+ * Each marker belongs to the challenge page itself, never to a normal page:
+ * Cloudflare's "/cdn-cgi/challenge-platform/" script was rejected because
+ * Cloudflare injects it into ordinary pages too.
+ */
+const BOT_CHALLENGE =
+  /<title>Just a moment\.\.\.<\/title>|window\._cf_chl_opt|captcha-delivery\.com|_Incapsula_Resource|px-captcha/;
 
 /** Fails a listing check that needs the page, or notes it in "whenServed". */
 function listingUnavailable(
@@ -331,10 +343,16 @@ async function expectListingStart(
       throw new Error(problem);
     return listingUnavailable(mode, problem);
   }
-  // WHY every 200 must match, even one with no structured data: a homepage,
-  // search page, login redirect or script shell also loads fine, so a page
-  // the monitor cannot read is a wrong link until it names this show.
+  // WHY every other 200 must match, even one with no structured data: a
+  // homepage, search page, login redirect or script shell also loads fine,
+  // so a page the monitor cannot read is a wrong link until it names this
+  // show. Only a recognized bot challenge with no event data is unserved.
   const html = await response.text();
+  if (BOT_CHALLENGE.test(html) && !/application\/ld\+json/i.test(html))
+    return listingUnavailable(
+      mode,
+      `${event.slug}: ${url} served a bot challenge instead of the page`,
+    );
   const listed = extractListedEvents(html);
   const expectedStart = event.startTime
     ? `${event.isoDate} ${event.startTime}`

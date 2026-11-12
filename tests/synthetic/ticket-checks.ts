@@ -287,10 +287,19 @@ function localStart(iso: string, timeZone: string): string | null {
 /** Request errors that mean the vendor's network failed, not our link. */
 // WHY "aborted": Playwright reports a connection dropped after the headers
 // arrived as "apiRequestContext.get: aborted" (then a call log), with no
-// socket code. Only the first line is matched, because the call log echoes
-// response headers: a redirect loop to "location: aborted" would match.
+// socket code.
 const TRANSIENT_REQUEST_ERROR =
   /Timeout \d+ms exceeded|ETIMEDOUT|ECONNRESET|ECONNREFUSED|EAI_AGAIN|socket hang up|: aborted$/;
+
+/** True when a request error means the vendor's network failed, not our link. */
+// WHY everything before "Call log:": a host with IPv6 and IPv4 addresses
+// fails with one line per address ("connect ENETUNREACH ...", then "connect
+// ECONNREFUSED ..."), so matching only the first line missed real outages.
+// The call log is cut off because it echoes response headers: a redirect
+// loop to "location: aborted" would otherwise look like a dropped connection.
+export function isTransientRequestError(message: string): boolean {
+  return TRANSIENT_REQUEST_ERROR.test(message.split("\nCall log:")[0]);
+}
 
 /**
  * Cloudflare's challenge config object, defined only on the interstitial it
@@ -332,7 +341,7 @@ async function expectListingStart(
     // WHY only timeouts and dropped or refused connections count as unserved:
     // those are the vendor's network, while a redirect loop or a domain that
     // does not resolve is a broken link we published and must fail.
-    if (!TRANSIENT_REQUEST_ERROR.test(message.split("\n")[0]))
+    if (!isTransientRequestError(message))
       throw new Error(problem, { cause: error });
     return listingUnavailable(mode, problem);
   }

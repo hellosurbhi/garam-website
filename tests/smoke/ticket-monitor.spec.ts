@@ -10,7 +10,10 @@ import {
   type RequestListener,
   type ServerResponse,
 } from "node:http";
-import { checkTicketListings } from "../synthetic/ticket-checks";
+import {
+  checkTicketListings,
+  isTransientRequestError,
+} from "../synthetic/ticket-checks";
 import type { EventEntry } from "../../src/data/events";
 import { goRedirectDestination } from "../../src/utils/utmForwarding";
 
@@ -1008,6 +1011,22 @@ test("ticket monitor fails a redirect loop whose target is named aborted", async
     false,
     "whenServed",
   );
+});
+
+// WHY a literal message: an unreachable IPv6 address cannot be staged on a
+// test machine. This is the shape Playwright 1.64 reports for a host whose
+// addresses fail one after another, one line per address.
+test("ticket monitor treats a later address's refused connection as transient", () => {
+  expect(
+    isTransientRequestError(
+      "apiRequestContext.get: connect ENETUNREACH 2001:db8::1:443\nconnect ECONNREFUSED 192.0.2.1:443\nCall log:\n  - → GET https://vendor.example/listing\n",
+    ),
+  ).toBe(true);
+  expect(
+    isTransientRequestError(
+      "apiRequestContext.get: Max redirect count exceeded\nCall log:\n  - ← 302 Found\n    - location: aborted",
+    ),
+  ).toBe(false);
 });
 
 test("ticket monitor follows the rendered link with its tracking parameters", async ({

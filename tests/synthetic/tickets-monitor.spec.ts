@@ -17,5 +17,11 @@ test("live ticket redirects use their configured checkout destinations", async (
   await page.route("**/ingest/**", (route) => route.abort());
   await page.route("**/_vercel/insights/**", (route) => route.abort());
   await page.goto("/tickets");
-  await checkTicketListings(page, request, allEvents);
+  // WHY verify listings here too, not only in the weekly smoke run: a deploy
+  // is exactly when a wrong checkout URL ships, and a week is too late to
+  // learn a show links to someone else's event. Vendors served these pages
+  // to GitHub runners on all five smoke projects (run 43155247049).
+  await checkTicketListings(page, request, allEvents, new Date(), {
+    verifyListings: true,
+  });
 });

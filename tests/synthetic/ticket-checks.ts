@@ -165,6 +165,11 @@ export function extractListedEvents(html: string): ListedEvent[] {
   // sells; any other event beside it is a recommendation (a graph whose
   // WebPage pointed at the wrong show passed on a separate event of ours).
   // Other main entities, like an FAQPage's questions, don't decide this.
+  // WHY page nodes only: an Article's or other block's mainEntity is what
+  // that block is about, not what the page sells. Reading every top-level
+  // node rejected our correct show page because an Article beside it named
+  // another event. WebPage and its subtypes (ItemPage, FAQPage...) all end
+  // in "Page".
   // WHY fail closed below: a page naming two different main events, or a
   // main event with no readable start, can't prove which show it sells.
   // Taking the union passed a wrong show's page that also had a WebPage
@@ -173,7 +178,12 @@ export function extractListedEvents(html: string): ListedEvent[] {
   const mainEvents = [
     ...new Map(
       topLevel
-        .flatMap((node) => (isNode(node) ? [node.mainEntity].flat() : []))
+        .map(resolve)
+        .filter(
+          (node): node is Node =>
+            isNode(node) && typesOf(node).some((t) => t.endsWith("Page")),
+        )
+        .flatMap((node) => [node.mainEntity].flat())
         .map(resolve)
         .filter(isEventTyped)
         .map((node) => [JSON.stringify(node), node] as const),

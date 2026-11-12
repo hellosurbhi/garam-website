@@ -77,11 +77,14 @@ async function withSite(
   if (!address || typeof address === "string")
     throw new Error("Missing fixture server port");
   const origin = `http://127.0.0.1:${address.port}`;
-  const client = await api.newContext({ baseURL: origin });
   try {
-    await run(origin, client);
+    const client = await api.newContext({ baseURL: origin });
+    try {
+      await run(origin, client);
+    } finally {
+      await client.dispose();
+    }
   } finally {
-    await client.dispose();
     // WHY: WebKit preconnects to this origin even though /tickets is routed,
     // and holds that socket (no request on it, so Node never counts it idle)
     // until the page fixture closes after this test body returns. close()
@@ -754,6 +757,29 @@ for (const [name, body, passes] of [
       ],
     },
     false,
+  ],
+  [
+    "page whose main event is ours, beside an article about another show",
+    {
+      "@graph": [
+        { "@type": "WebPage", mainEntity: { "@id": "#main" } },
+        {
+          "@id": "#main",
+          "@type": "Event",
+          startDate: ourStart,
+          location: atVenue,
+        },
+        {
+          "@type": "Article",
+          mainEntity: {
+            "@type": "Event",
+            startDate: "2026-12-11T19:30:00-06:00",
+            location: atVenue,
+          },
+        },
+      ],
+    },
+    true,
   ],
   [
     "page with an FAQ beside our show, the way Eventbrite publishes it",

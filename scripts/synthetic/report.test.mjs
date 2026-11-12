@@ -142,6 +142,17 @@ it("a missing external watchdog does not raise a notification incident or fail t
     calls.some((c) => c.init?.body?.includes("[Monitor] notification")),
   ).toBe(false);
 });
+it("the weekly notification drill succeeds without watchdog secrets and pings nothing", async () => {
+  const { env, fetcher, calls } = reportFixture();
+  delete env.WATCHDOG_URL;
+  delete env.WEEKLY_WATCHDOG_URL;
+  env.SCHEDULE = "30 13 * * 1";
+  await report(env, fetcher);
+  expect(
+    calls.filter((c) => new URL(c.url).hostname === "gmail.googleapis.com"),
+  ).toHaveLength(1);
+  expect(calls.some((c) => c.url.includes("hc-ping"))).toBe(false);
+});
 it("a real failure still emails and opens an incident without a watchdog", async () => {
   const { env, fetcher, calls } = reportFixture();
   delete env.WATCHDOG_URL;

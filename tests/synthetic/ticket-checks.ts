@@ -91,10 +91,10 @@ export function extractListedEvents(html: string): ListedEvent[] {
     const node = byId.get(value["@id"]);
     return node && Object.keys(node).length > 1 ? node : undefined;
   };
+  const isEventTyped = (node: unknown): node is Node =>
+    isNode(node) && typesOf(node).some((t) => t.endsWith("Event"));
   const isEvent = (node: unknown): node is Node & { startDate: string } =>
-    isNode(node) &&
-    typesOf(node).some((t) => t.endsWith("Event")) &&
-    typeof node.startDate === "string";
+    isEventTyped(node) && typeof node.startDate === "string";
 
   const placesOf = (location: unknown): ListedPlace[] =>
     [location].flat().flatMap((raw): ListedPlace[] => {
@@ -165,12 +165,23 @@ export function extractListedEvents(html: string): ListedEvent[] {
   // sells; any other event beside it is a recommendation (a graph whose
   // WebPage pointed at the wrong show passed on a separate event of ours).
   // Other main entities, like an FAQPage's questions, don't decide this.
-  const mainEvents = topLevel
-    .flatMap((node) => (isNode(node) ? [node.mainEntity].flat() : []))
-    .map(resolve)
-    .filter(isEvent);
+  // WHY fail closed below: a page naming two different main events, or a
+  // main event with no readable start, can't prove which show it sells.
+  // Taking the union passed a wrong show's page that also had a WebPage
+  // pointing at ours, and falling back to the other events let a
+  // recommendation of ours stand in for a main event with conflicting dates.
+  const mainEvents = [
+    ...new Map(
+      topLevel
+        .flatMap((node) => (isNode(node) ? [node.mainEntity].flat() : []))
+        .map(resolve)
+        .filter(isEventTyped)
+        .map((node) => [JSON.stringify(node), node] as const),
+    ).values(),
+  ];
+  if (mainEvents.length > 1) return [];
   const sold = mainEvents.length
-    ? mainEvents
+    ? mainEvents.filter(isEvent)
     : topLevel.map(resolve).filter(isEvent);
   return sold.map((node) => ({
     startDate: node.startDate,

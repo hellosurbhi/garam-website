@@ -710,6 +710,46 @@ for (const [name, body, passes] of [
     true,
   ],
   [
+    "page whose main event is another show, with a second page naming ours",
+    {
+      "@graph": [
+        { "@type": "WebPage", mainEntity: { "@id": "#main" } },
+        {
+          "@id": "#main",
+          "@type": "Event",
+          startDate: "2026-12-11T19:30:00-06:00",
+          location: atVenue,
+        },
+        {
+          "@type": "WebPage",
+          mainEntity: {
+            "@type": "Event",
+            startDate: ourStart,
+            location: atVenue,
+          },
+        },
+      ],
+    },
+    false,
+  ],
+  [
+    "page whose main event has conflicting dates, beside ours",
+    {
+      "@graph": [
+        { "@type": "WebPage", mainEntity: { "@id": "#main" } },
+        {
+          "@id": "#main",
+          "@type": "Event",
+          startDate: ourStart,
+          location: atVenue,
+        },
+        { "@id": "#main", startDate: "2026-12-11T19:30:00-06:00" },
+        { "@type": "Event", startDate: ourStart, location: atVenue },
+      ],
+    },
+    false,
+  ],
+  [
     "page with an FAQ beside our show, the way Eventbrite publishes it",
     [
       { "@type": "Event", startDate: ourStart, location: atVenue },

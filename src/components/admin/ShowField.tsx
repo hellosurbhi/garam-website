@@ -59,6 +59,8 @@ interface ShowCheckProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
   error?: string;
+  /** The id of a group error shown once for several checkboxes. */
+  groupErrorId?: string;
 }
 
 /** A checkbox row with a 48px tap target and its inline error. */
@@ -68,8 +70,9 @@ export function ShowCheck({
   checked,
   onChange,
   error,
+  groupErrorId,
 }: ShowCheckProps) {
-  const errorId = error ? `${id}-error` : undefined;
+  const errorId = error ? `${id}-error` : groupErrorId;
   return (
     <>
       <label className={styles.check}>
@@ -77,7 +80,7 @@ export function ShowCheck({
           id={id}
           type="checkbox"
           checked={checked}
-          aria-invalid={Boolean(error)}
+          aria-invalid={Boolean(errorId)}
           aria-describedby={errorId}
           onChange={(e) => onChange(e.target.checked)}
         />

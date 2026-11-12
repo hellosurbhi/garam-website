@@ -87,6 +87,7 @@ function adminLoad(): EventsAdminLoad {
       basedOnVersion: 3,
       updatedAt: "2026-11-11T10:00:00.000Z",
       updatedBy: "owner@example.test",
+      updateTime: "2026-11-11T10:00:00.123456Z",
       changes: { ...noChanges, added: [austin.slug] },
     },
     history: [3, 2].map((version) => ({
@@ -115,7 +116,7 @@ function json(status: number, body: unknown): Response {
 
 function routeFetch(
   loadStatus = 200,
-  writes: Record<string, () => Response> = {},
+  writes: Record<string, () => Response | Promise<Response>> = {},
 ) {
   fetchMock.mockImplementation(async (path: string) => {
     if (path === "/api/version") return json(200, { eventsVersion: 3 });
@@ -194,7 +195,12 @@ describe("ShowsTab", () => {
     fireEvent.click(screen.getByRole("button", { name: "Publish now" }));
     await waitFor(() =>
       expect(callsTo("/api/admin/events/publish")).toEqual([
-        { expectedVersion: 3, note: "Austin is booked" },
+        {
+          expectedVersion: 3,
+          // Names the draft the confirmation showed, so a later save is refused.
+          expectedDraftUpdateTime: "2026-11-11T10:00:00.123456Z",
+          note: "Austin is booked",
+        },
       ]),
     );
   });
@@ -409,6 +415,46 @@ describe("ShowsTab", () => {
     );
   });
 
+  it("keeps an editor opened after a slow save when that save finishes", async () => {
+    let finishSave: (res: Response) => void = () => {};
+    routeFetch(200, {
+      "/api/admin/events/draft": () =>
+        new Promise<Response>((resolve) => {
+          finishSave = resolve;
+        }),
+    });
+    render(<ShowsTab />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Edit Chicago, Jan 9" }),
+    );
+    fireEvent.change(screen.getByLabelText("Card tagline"), {
+      target: { value: "Back by demand" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Save to draft" }));
+    await waitFor(() =>
+      expect(callsTo("/api/admin/events/draft")).toHaveLength(1),
+    );
+    // The admin closes the editor while the save is still out, then opens it again.
+    fireEvent.click(
+      within(screen.getByRole("dialog")).getAllByRole("button", {
+        name: "Close",
+      })[0],
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "Edit Chicago, Jan 9" }),
+    );
+    fireEvent.change(screen.getByLabelText("Card tagline"), {
+      target: { value: "Typed in the new editor" },
+    });
+
+    finishSave(json(200, { basedOnVersion: 3, changes: noChanges }));
+
+    await waitFor(() => expect(screen.queryByText("Draft saved")).toBeTruthy());
+    expect(
+      (screen.getByLabelText("Card tagline") as HTMLInputElement).value,
+    ).toBe("Typed in the new editor");
+  });
+
   it("shows a failed publish inside the open confirm dialog", async () => {
     routeFetch(200, {
       "/api/admin/events/publish": () => json(500, { error: "Publish broke" }),
@@ -459,5 +505,32 @@ describe("ShowsTab", () => {
     );
     expect(error?.getAttribute("role")).toBe("alert");
     expect(error?.textContent).toMatch(/sold out show needs its link/);
+  });
+
+  it("links the lineup error to its group and both checkboxes", async () => {
+    routeFetch();
+    render(<ShowsTab />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Edit Chicago, Jan 9" }),
+    );
+    const boxes = [
+      screen.getByLabelText("Surbhi"),
+      screen.getByLabelText("Wyatt Feegrado"),
+    ];
+    for (const box of boxes) fireEvent.click(box);
+    fireEvent.click(screen.getByRole("button", { name: "Save to draft" }));
+
+    const group = await screen.findByRole("group", { name: "On stage" });
+    await waitFor(() =>
+      expect(group.getAttribute("aria-describedby")).toBeTruthy(),
+    );
+    const errorId = group.getAttribute("aria-describedby") ?? "";
+    expect(document.getElementById(errorId)?.getAttribute("role")).toBe(
+      "alert",
+    );
+    for (const box of boxes) {
+      expect(box.getAttribute("aria-invalid")).toBe("true");
+      expect(box.getAttribute("aria-describedby")).toBe(errorId);
+    }
   });
 });

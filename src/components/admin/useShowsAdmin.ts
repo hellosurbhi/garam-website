@@ -79,6 +79,8 @@ export function useShowsAdmin() {
 
   const live = load.kind === "ready" ? load.data.live : null;
   const liveVersion = live?.version;
+  const draftUpdateTime =
+    load.kind === "ready" ? load.data.draft?.updateTime : undefined;
   const onSite = siteVersion === liveVersion;
 
   // WHY poll: a publish only asks Vercel to rebuild, and without a Vercel
@@ -168,15 +170,18 @@ export function useShowsAdmin() {
 
   const publish = useCallback(
     async (note: string) => {
-      if (liveVersion === undefined) return null;
+      if (liveVersion === undefined || !draftUpdateTime) return null;
+      // WHY the draft token: the confirmation lists this loaded draft's
+      // changes, so the server refuses (409) if a save landed since.
       const res = await mutate<PublishResult>("publish", SHOWS_ROUTES.publish, {
         expectedVersion: liveVersion,
+        expectedDraftUpdateTime: draftUpdateTime,
         note,
       });
       announce(res, SHOWS_TOAST.published);
       return res;
     },
-    [liveVersion, mutate, announce],
+    [liveVersion, draftUpdateTime, mutate, announce],
   );
 
   const rollback = useCallback(

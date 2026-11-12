@@ -38,7 +38,7 @@ interface ShowsWorkspaceProps {
 export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
   const [showHistory, setShowHistory] = useState(false);
   const { live, cities } = data;
-  const { dialog, stale, error, show, close, settle } = useShowsDialog(
+  const { dialog, session, stale, error, show, close, settle } = useShowsDialog(
     live.version,
   );
   // WHY: a draft saved on top of an older live version would undo whatever
@@ -111,6 +111,7 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
       {stale && <StaleEditorNotice onDismiss={close} />}
       {dialog?.kind === "editor" && !stale && (
         <ShowEditorModal
+          key={session}
           snapshot={draft}
           live={live.snapshot}
           cities={cities}

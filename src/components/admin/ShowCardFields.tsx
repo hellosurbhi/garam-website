@@ -30,6 +30,8 @@ export default function ShowCardFields({
     );
   }
 
+  const lineupErrorId = errors.lineup ? "show-lineup-error" : undefined;
+
   return (
     <>
       <fieldset className={styles.fieldset}>
@@ -63,6 +65,7 @@ export default function ShowCardFields({
         <div
           role="group"
           aria-label={EDITOR.lineup}
+          aria-describedby={lineupErrorId}
           className={styles.formGroup}
         >
           <span className={styles.formLabel}>{EDITOR.lineup}</span>
@@ -74,11 +77,12 @@ export default function ShowCardFields({
                 label={PERFORMERS[id].name}
                 checked={form.lineup.includes(id)}
                 onChange={(v) => toggleLineup(id, v)}
+                groupErrorId={lineupErrorId}
               />
             ))}
           </div>
           {errors.lineup && (
-            <p className={styles.fieldError} role="alert">
+            <p id={lineupErrorId} className={styles.fieldError} role="alert">
               {errors.lineup}
             </p>
           )}

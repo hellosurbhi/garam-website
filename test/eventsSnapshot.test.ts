@@ -195,6 +195,19 @@ describe("write tier", () => {
     );
   });
 
+  it("requires a show to end after it starts on its date", () => {
+    // One isoDate holds both times, so the schema's endDate shares that day.
+    expect(
+      issuesFor(newShow({ startTime: "19:00", endTime: "18:00" })),
+    ).toContain("endTime");
+    expect(
+      issuesFor(newShow({ startTime: "19:00", endTime: "19:00" })),
+    ).toContain("endTime");
+    expect(
+      issuesFor(newShow({ startTime: "19:00", endTime: "19:01" })),
+    ).toEqual([]);
+  });
+
   it("requires a note on a canceled show", () => {
     expect(issuesFor(newShow({ status: "canceled" }))).toContain("note");
   });

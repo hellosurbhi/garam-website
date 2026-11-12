@@ -130,6 +130,19 @@ describe("checkShowForm", () => {
     });
   });
 
+  it("shows an end time before the start time inline on the end time", () => {
+    const draft = { events: [nyc], tbaCities: [] };
+    const { problems } = check(draft, draft, 0, (f) => ({
+      ...f,
+      startTime: "19:00",
+      endTime: "18:00",
+    }));
+    expect(problems).toContainEqual({
+      path: "events.0.endTime",
+      message: "The show must end after it starts",
+    });
+  });
+
   it("rejects a show end time the clocks skip on spring forward night", () => {
     const draft = { events: [nyc], tbaCities: [] };
     const { problems } = check(draft, draft, 0, (f) => ({

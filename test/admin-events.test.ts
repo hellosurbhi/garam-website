@@ -241,8 +241,18 @@ async function call(
 
 const saveDraft = (snapshot: unknown, basedOnVersion: number) =>
   call(draftRoute.PUT as Route, "PUT", { snapshot, basedOnVersion });
-const publish = (expectedVersion: number, note = "Fixture publish") =>
-  call(publishRoute.POST as Route, "POST", { expectedVersion, note });
+/** The draft's lock token as GET /api/admin/events reports it. */
+const draftToken = () => store.get("eventsDraft/current")?.updateTime;
+const publish = (
+  expectedVersion: number,
+  note = "Fixture publish",
+  expectedDraftUpdateTime = draftToken(),
+) =>
+  call(publishRoute.POST as Route, "POST", {
+    expectedVersion,
+    expectedDraftUpdateTime,
+    note,
+  });
 const rollback = (
   targetVersion: number,
   expectedVersion: number,
@@ -439,6 +449,38 @@ describe("publish", () => {
     expect(res.json.error).toBe("The live version changed, reload");
     expect(mocks.fsCommit).not.toHaveBeenCalled();
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("refuses with 409 when the draft changed after the confirmation loaded", async () => {
+    const chicago = fixtureShow();
+    await saveDraft({ ...baseline, events: [...baseline.events, chicago] }, 1);
+    const shown = draftToken();
+    // Another tab saves an edit after this admin opened the confirmation.
+    const edited = { ...chicago, description: "Saved from another tab." };
+    expect(
+      (
+        await saveDraft(
+          { ...baseline, events: [...baseline.events, edited] },
+          1,
+        )
+      ).status,
+    ).toBe(200);
+
+    const res = await publish(1, "Chicago only", shown);
+
+    expect(res.status).toBe(409);
+    expect(res.json.error).toBe("The draft changed, reload");
+    expect(mocks.fsCommit).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("reports the draft's lock token on load", async () => {
+    await saveDraft(
+      { ...baseline, events: [...baseline.events, fixtureShow()] },
+      1,
+    );
+    const res = await call(index.GET as Route, "GET");
+    expect(res.json.draft).toMatchObject({ updateTime: draftToken() });
   });
 
   it("returns 409 when another publish lands between read and commit", async () => {

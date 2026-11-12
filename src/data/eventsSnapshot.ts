@@ -261,6 +261,15 @@ function checkWriteRules(e: WriteEntry, ctx: z.RefinementCtx): void {
     if (!e.endTime) issue("endTime", "Add the end time");
   }
 
+  // WHY refuse rather than roll the end to the next day: an entry has one
+  // isoDate and buildEventSchemas emits endDate on it, and every show so far
+  // ends the same evening. An end at or before the start is far likelier a
+  // typo than a show past midnight, and guessing would publish a wrong end.
+  // Times are zero padded HH:MM, so string order is clock order.
+  if (e.startTime && e.endTime && e.endTime <= e.startTime) {
+    issue("endTime", "The show must end after it starts");
+  }
+
   const urlIssue = ticketUrlIssue(e.ticketSource, e.url);
   if (urlIssue) issue("url", urlIssue);
 

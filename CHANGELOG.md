@@ -7,6 +7,7 @@
 - Lock publishing and restoring for a minute after a rebuild starts and show whether the website has caught up with the live version.
 - Offer every time zone for touring shows, accept full region names like Greater London and let a show that was never published move to a new date without a note.
 - Refuse a show start, end or on sale time that the clocks skip at spring forward, and read a time in the hour that repeats at fall back as its first occurrence in every time zone.
+- Publish only the draft the confirmation showed: a save from another tab after it opened is refused and the tab reloads. Refuse a show that ends at or before it starts, and keep a newly opened editor open when an earlier slow save finishes.
 
 ## Resolve monitoring and waitlist review findings (2026-11-11)
 

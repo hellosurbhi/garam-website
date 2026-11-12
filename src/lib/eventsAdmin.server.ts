@@ -28,6 +28,7 @@ import {
   readPublishedEvents,
   recordRebuildRequest,
   saveEventsDraft,
+  type EventsDraft,
   type PublicationKind,
   type PublishedEvents,
   type Stored,
@@ -42,6 +43,7 @@ import { verifyAdminIdentity, type AdminIdentity } from "./verifyToken";
 const DEPLOY_HOOK_TIMEOUT_MS = 5_000;
 
 const CONFLICT_MESSAGE = "The live version changed, reload";
+const DRAFT_CONFLICT_MESSAGE = "The draft changed, reload";
 
 /** A refusal the admin UI shows as is; never paged. */
 export class EventsAdminError extends Error {
@@ -102,6 +104,17 @@ async function requireLive(): Promise<Stored<PublishedEvents>> {
     throw new EventsAdminError(503, "Shows are not set up yet");
   }
   return live;
+}
+
+/**
+ * WHY: the publish confirmation lists the draft's changes as loaded. A save
+ * from another tab after that would otherwise go live unseen, so publish
+ * names the draft it showed, the same compare and set as expectedVersion.
+ */
+function requireDraftUnchanged(expected: string, draft: Stored<EventsDraft>) {
+  if (expected !== draft.updateTime) {
+    throw new EventsAdminError(409, DRAFT_CONFLICT_MESSAGE);
+  }
 }
 
 function requireVersion(expected: number, live: Stored<PublishedEvents>) {
@@ -218,6 +231,8 @@ export async function loadEventsAdmin() {
     draft: draft
       ? {
           ...draft.data,
+          // The lock token publish sends back to prove which draft it showed.
+          updateTime: draft.updateTime,
           changes: diffSnapshots(live.data.snapshot, draft.data.snapshot),
         }
       : null,
@@ -263,6 +278,8 @@ const versionSchema = z.number().int().min(1);
 
 export const publishBodySchema = z.object({
   expectedVersion: versionSchema,
+  /** The draft's updateTime from the load the confirmation was built on. */
+  expectedDraftUpdateTime: z.string().min(1),
   note: noteSchema,
 });
 
@@ -318,6 +335,7 @@ export async function publishDraft(
   requireVersion(body.expectedVersion, live);
   requireRebuildSettled(live.data, now);
   if (!draft) throw new EventsAdminError(409, "There is no draft to publish");
+  requireDraftUnchanged(body.expectedDraftUpdateTime, draft);
   requireVersion(draft.data.basedOnVersion, live);
   const snapshot = validateCandidate(draft.data.snapshot, live.data.snapshot);
   return publishSnapshot({

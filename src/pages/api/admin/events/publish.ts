@@ -8,7 +8,7 @@ import {
 } from "@/lib/eventsAdmin.server";
 
 // Publish the shared draft as the next live version, then rebuild the site
-// (issue 337). Body: { expectedVersion, note }.
+// (issue 337). Body: { expectedVersion, expectedDraftUpdateTime, note }.
 export const POST: APIRoute = adminJsonRoute(
   "events_publish",
   publishBodySchema,

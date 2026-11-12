@@ -1,7 +1,7 @@
 /**
  * Which Shows dialog is open, and what went wrong in it (issue 337).
  */
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import type { ShowsDialog } from "./ShowsDialogs";
 import { attemptSettled, failureMessage, type ApiResult } from "./showsApi";
 
@@ -9,30 +9,44 @@ interface OpenDialog {
   dialog: ShowsDialog;
   /** The live version when it opened. */
   openedOn: number;
+  /** Counts every opening, so a late answer can tell it is not its own. */
+  session: number;
+  error: string | null;
 }
 
 export function useShowsDialog(liveVersion: number) {
   const [open, setOpen] = useState<OpenDialog | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const opened = useRef(0);
+  const session = open?.session ?? 0;
 
   const show = useCallback(
     (dialog: ShowsDialog) => {
-      setError(null);
-      setOpen({ dialog, openedOn: liveVersion });
+      opened.current += 1;
+      setOpen({
+        dialog,
+        openedOn: liveVersion,
+        session: opened.current,
+        error: null,
+      });
     },
     [liveVersion],
   );
-  const close = useCallback(() => {
-    setError(null);
-    setOpen(null);
-  }, []);
+  // WHY scoped to the session that rendered it: a save or publish answer can
+  // land after the admin closed that dialog and opened another one. Closing
+  // or erroring "whatever is open" then would shut the new dialog and throw
+  // away what was typed in it, so each callback only touches its own session.
+  const close = useCallback(
+    () => setOpen((o) => (o?.session === session ? null : o)),
+    [session],
+  );
   /** After a publish, restore or discard: close, or say why it failed. */
   const settle = useCallback(
     (res: ApiResult<unknown> | null) => {
-      if (attemptSettled(res)) close();
-      else setError(failureMessage(res));
+      if (attemptSettled(res)) return close();
+      const error = failureMessage(res);
+      setOpen((o) => (o?.session === session ? { ...o, error } : o));
     },
-    [close],
+    [close, session],
   );
 
   // WHY derived here, for every reload at once: the editor copies the show
@@ -43,5 +57,13 @@ export function useShowsDialog(liveVersion: number) {
   // current props on every render, so only the editor goes stale.
   const stale = open?.dialog.kind === "editor" && open.openedOn !== liveVersion;
 
-  return { dialog: open?.dialog ?? null, stale, error, show, close, settle };
+  return {
+    dialog: open?.dialog ?? null,
+    session,
+    stale,
+    error: open?.error ?? null,
+    show,
+    close,
+    settle,
+  };
 }

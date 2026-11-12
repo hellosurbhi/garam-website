@@ -1,0 +1,294 @@
+/* Shows editor and confirm dialogs (issue 337). Dialog pattern from
+   ContestantInviteModal.module.css. */
+
+.dialog {
+  background: var(--white);
+  border-radius: 16px;
+  max-width: 560px;
+  width: 100%;
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+  animation: modal-in 0.2s ease-out both;
+}
+
+.dialogNarrow {
+  composes: dialog;
+  max-width: 480px;
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 24px 0;
+}
+
+.title {
+  font-family: var(--font-playfair);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  border-radius: 100px;
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light);
+  transition: color 0.15s;
+}
+
+.closeButton:hover {
+  color: var(--text);
+}
+
+.body {
+  padding: 20px 24px 24px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.legend {
+  font-family: var(--font-playfair);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  padding: 0;
+  margin-bottom: 14px;
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.formLabel {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-light);
+}
+
+.input {
+  width: 100%;
+  min-height: var(--touch-target);
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--text);
+}
+
+textarea.input {
+  min-height: 96px;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.input[aria-invalid="true"] {
+  border-color: var(--brand-red);
+}
+
+.input:focus-visible,
+.closeButton:focus-visible,
+.check input:focus-visible {
+  outline: 2px solid var(--brand-red);
+  outline-offset: 2px;
+}
+
+.readOnly {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  min-height: var(--touch-target);
+  display: flex;
+  align-items: center;
+}
+
+.hint {
+  font-size: 13px;
+  color: var(--text-light);
+  margin: 0;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--touch-target);
+  font-size: 16px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.check input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--brand-red);
+  margin: 0;
+}
+
+.checkGroup {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 24px;
+}
+
+.fieldError,
+.errorMsg {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--brand-red);
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(var(--brand-red-rgb), 0.06);
+  margin: 0;
+}
+
+.errorList {
+  margin: 6px 0 0;
+  padding-left: 18px;
+}
+
+.bodyText {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text);
+  margin: 0 0 16px;
+}
+
+.changeGroup {
+  margin: 0 0 12px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: var(--cream);
+}
+
+.changeHeading {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-light);
+  margin: 0 0 4px;
+}
+
+.changeItems {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 15px;
+  color: var(--text);
+}
+
+.actionRow {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 10px;
+  padding-top: 8px;
+}
+
+@media (min-width: 701px) {
+  .actionRow {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+}
+
+.cancelButton,
+.submitButton {
+  min-height: var(--touch-target);
+  padding: 10px 20px;
+  border-radius: 100px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s,
+    transform 0.1s;
+}
+
+.cancelButton {
+  border: 1px solid var(--border);
+  background: transparent;
+  font-weight: 500;
+  color: var(--text-light);
+}
+
+.cancelButton:hover {
+  border-color: var(--text-light);
+  color: var(--text);
+}
+
+.submitButton {
+  border: none;
+  background: var(--brand-red);
+  font-weight: 600;
+  color: var(--white);
+}
+
+.submitButton:hover:not(:disabled) {
+  background: var(--brand-red-dark);
+}
+
+.cancelButton:active,
+.submitButton:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cancelButton:focus-visible,
+.submitButton:focus-visible {
+  outline: 2px solid var(--brand-red);
+  outline-offset: 2px;
+}

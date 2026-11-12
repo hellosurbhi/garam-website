@@ -19,10 +19,17 @@ function gitPreview(deployment) {
   );
 }
 
-export function mergedPreviewLookup(github, repository) {
+/**
+ * replacedHeads(pullNumber) lists the heads a force-push replaced. GitHub's
+ * /pulls/N/commits shows only the current series, so without it a preview
+ * built for a rebased-away commit could never be proven merged and would
+ * hold storage forever.
+ */
+export function mergedPreviewLookup(github, repository, replacedHeads) {
   const [owner, repo] = repository.split("/");
   const pullLists = new Map();
   const commits = new Map();
+  const replacedCommits = new Map();
   const readAll = async (path) => {
     const entries = [];
     for (let page = 1; ; page++) {
@@ -82,6 +89,19 @@ export function mergedPreviewLookup(github, repository) {
         );
       }
       if (commits.get(pull.number).has(githubCommitSha)) return true;
+      if (!replacedHeads) continue;
+      if (!replacedCommits.has(pull.number)) {
+        const shas = new Set();
+        for (const head of await replacedHeads(pull.number)) {
+          assert.ok(/^[a-f0-9]{40}$/i.test(head), "Invalid replaced head");
+          // A null compare means the replaced series was garbage collected:
+          // nothing proves the preview belonged to this PR, so it is kept.
+          const compare = await github(`/compare/${pull.base.sha}...${head}`);
+          for (const commit of compare?.commits ?? []) shas.add(commit.sha);
+        }
+        replacedCommits.set(pull.number, shas);
+      }
+      if (replacedCommits.get(pull.number).has(githubCommitSha)) return true;
     }
     return false;
   };
@@ -252,25 +272,59 @@ if (
       return response.status === 204 ? {} : response.json();
     };
     const { GITHUB_TOKEN, GITHUB_REPOSITORY } = process.env;
+    const githubHeaders = {
+      Authorization: `Bearer ${GITHUB_TOKEN}`,
+      Accept: "application/vnd.github+json",
+    };
+    // REST timeline events carry only the new head; GraphQL keeps the
+    // replaced one (beforeCommit), which is what proves the old preview.
+    const forcePushedHeads = async (number) => {
+      const [owner, name] = GITHUB_REPOSITORY.split("/");
+      const heads = [];
+      for (let after = null; ;) {
+        const response = await fetch("https://api.github.com/graphql", {
+          method: "POST",
+          headers: githubHeaders,
+          signal: AbortSignal.timeout(30_000),
+          body: JSON.stringify({
+            query: `query($owner:String!,$name:String!,$number:Int!,$after:String){repository(owner:$owner,name:$name){pullRequest(number:$number){timelineItems(first:100,after:$after,itemTypes:[HEAD_REF_FORCE_PUSHED_EVENT]){pageInfo{hasNextPage endCursor} nodes{... on HeadRefForcePushedEvent{beforeCommit{oid}}}}}}}`,
+            variables: { owner, name, number, after },
+          }),
+        });
+        assert.ok(
+          response.ok,
+          `GitHub force-push lookup returned ${response.status}`,
+        );
+        const body = await response.json();
+        const items = body?.data?.repository?.pullRequest?.timelineItems;
+        assert.ok(items && !body.errors, "Invalid GitHub force-push lookup");
+        for (const node of items.nodes) {
+          if (node?.beforeCommit?.oid) heads.push(node.beforeCommit.oid);
+        }
+        if (!items.pageInfo.hasNextPage) return heads;
+        assert.ok(items.pageInfo.endCursor !== after, "Repeated GitHub cursor");
+        after = items.pageInfo.endCursor;
+      }
+    };
     const canPrunePreview =
       GITHUB_TOKEN && GITHUB_REPOSITORY
-        ? mergedPreviewLookup(async (path) => {
-            const response = await fetch(
-              `https://api.github.com/repos/${GITHUB_REPOSITORY}${path}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${GITHUB_TOKEN}`,
-                  Accept: "application/vnd.github+json",
-                },
-                signal: AbortSignal.timeout(30_000),
-              },
-            );
-            assert.ok(
-              response.ok,
-              `GitHub preview ownership lookup returned ${response.status}`,
-            );
-            return response.json();
-          }, GITHUB_REPOSITORY)
+        ? mergedPreviewLookup(
+            async (path) => {
+              const response = await fetch(
+                `https://api.github.com/repos/${GITHUB_REPOSITORY}${path}`,
+                { headers: githubHeaders, signal: AbortSignal.timeout(30_000) },
+              );
+              if (response.status === 404 && path.startsWith("/compare/"))
+                return null;
+              assert.ok(
+                response.ok,
+                `GitHub preview ownership lookup returned ${response.status}`,
+              );
+              return response.json();
+            },
+            GITHUB_REPOSITORY,
+            (number) => forcePushedHeads(number),
+          )
         : undefined;
     await pruneDeployments(api, {
       apply: process.argv.includes("--apply"),

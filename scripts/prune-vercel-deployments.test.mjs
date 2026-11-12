@@ -151,6 +151,62 @@ describe("deployment cleanup safeguards", () => {
     );
   });
 
+  it.each([
+    ["the replaced head", "c"],
+    ["an earlier commit of the replaced series", "a"],
+  ])(
+    "deletes a merged PR's preview of %s after a force-push",
+    async (_case, letter) => {
+      const sha = letter.repeat(40);
+      const replaced = "c".repeat(40);
+      const pull = { ...mergedPull, base: { sha: "d".repeat(40) } };
+      const github = vi.fn(async (path) => {
+        if (path.startsWith("/pulls?")) return [pull];
+        if (path.startsWith("/pulls/12/commits")) return [];
+        if (path === `/compare/${pull.base.sha}...${replaced}`)
+          return { commits: [{ sha: "a".repeat(40) }, { sha: replaced }] };
+        throw new Error(`unexpected ${path}`);
+      });
+      const replacedHeads = vi.fn(async () => [replaced]);
+      const candidate = {
+        ...preview,
+        meta: { ...preview.meta, githubCommitSha: sha },
+      };
+      expect(
+        await mergedPreviewLookup(github, repository, replacedHeads)(candidate),
+      ).toBe(true);
+      expect(replacedHeads).toHaveBeenCalledWith(12);
+    },
+  );
+
+  it.each([
+    ["no force-push", [], null],
+    ["a replaced series that no longer exists", ["c".repeat(40)], null],
+    [
+      "a replaced series without the commit",
+      ["c".repeat(40)],
+      { commits: [{ sha: "c".repeat(40) }] },
+    ],
+  ])(
+    "preserves a merged PR's preview after %s",
+    async (_case, heads, compare) => {
+      const pull = { ...mergedPull, base: { sha: "d".repeat(40) } };
+      const github = vi.fn(async (path) => {
+        if (path.startsWith("/pulls?")) return [pull];
+        if (path.startsWith("/pulls/12/commits")) return [];
+        if (path.startsWith("/compare/")) return compare;
+        throw new Error(`unexpected ${path}`);
+      });
+      expect(
+        await mergedPreviewLookup(
+          github,
+          repository,
+          async () => heads,
+        )(preview),
+      ).toBe(false);
+    },
+  );
+
   it("keeps a preview if its branch is reused by an open PR before deletion", async () => {
     const base = fixture();
     const api = vi.fn(async (path, method) => {

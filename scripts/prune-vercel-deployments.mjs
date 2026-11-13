@@ -94,16 +94,27 @@ export function mergedPreviewLookup(github, repository, replacedHeads) {
         !(created < Date.parse(pull.merged_at))
       )
         continue;
-      // A reused branch: a preview built before an earlier PR on this branch
-      // closed may be that PR's, even when this PR's history contains it.
+      // A reused branch: commit ancestry cannot say which PR a preview was
+      // built for, so only time can. Every other PR on the branch must have
+      // finished strictly before this one opened or opened strictly after it
+      // merged, and the preview must be built inside this PR's own life.
+      // Anything equal, overlapping or missing a timestamp keeps the preview.
       const opened = Date.parse(pull.created_at);
+      const merged = Date.parse(pull.merged_at);
       assert.ok(Number.isFinite(opened), "Invalid pull request creation time");
-      const earlierClosed = pulls
-        .filter(
-          (other) => other !== pull && Date.parse(other.created_at) < opened,
+      const others = pulls.filter((other) => other !== pull);
+      if (
+        others.length &&
+        !(
+          created > opened &&
+          others.every(
+            (other) =>
+              Date.parse(other.closed_at) < opened ||
+              Date.parse(other.created_at) > merged,
+          )
         )
-        .map((other) => Date.parse(other.closed_at));
-      if (!earlierClosed.every((closed) => created > closed)) continue;
+      )
+        continue;
 
       if (!heads.has(pull.number)) {
         assert.ok(

@@ -234,35 +234,67 @@ describe("deployment cleanup safeguards", () => {
     ).rejects.toThrow("Invalid GitHub compare");
   });
 
-  it.each([
-    ["before the earlier pull request closed", 95, false],
-    ["after the earlier pull request closed", 97, true],
-  ])(
-    "on a reused branch deletes a preview built %s only if it is the later PR's",
-    async (_case, created, expected) => {
-      const earlier = {
-        ...mergedPull,
-        number: 11,
-        merged_at: null,
-        created_at: new Date(1).toISOString(),
-        closed_at: new Date(96).toISOString(),
-        head: { ...mergedPull.head, sha: a },
-      };
-      const later = {
-        ...mergedPull,
-        created_at: new Date(90).toISOString(),
-        merged_at: new Date(100).toISOString(),
-      };
+  describe("on a reused branch", () => {
+    const at = (ms) => new Date(ms).toISOString();
+    const pullAt = (number, created, closed, merged = null) => ({
+      ...mergedPull,
+      number,
+      created_at: at(created),
+      closed_at: closed === null ? null : at(closed),
+      merged_at: merged === null ? null : at(merged),
+      head: { ...mergedPull.head, sha: number === 12 ? b : a },
+    });
+    // PR 12 lives from 90 to 100 and merged; the preview is built at 97.
+    const later = pullAt(12, 90, 100, 100);
+    const lookup = async (pulls, created = 97) => {
       const github = vi.fn(async (path) =>
         path.startsWith("/pulls?")
-          ? [earlier, later]
+          ? pulls
           : compareStatus({ [`${a}...${b}`]: { status: "ahead" } })(path),
       );
-      expect(
-        await mergedPreviewLookup(github, repository)({ ...preview, created }),
-      ).toBe(expected);
-    },
-  );
+      return mergedPreviewLookup(github, repository)({ ...preview, created });
+    };
+    it.each(
+      [
+        [
+          "an earlier PR closed before this one opened",
+          [pullAt(11, 1, 80)],
+          97,
+        ],
+        [
+          "a later PR opened after this one merged",
+          [pullAt(13, 150, null)],
+          97,
+        ],
+      ].map(([name, others, created]) => [name, others, created]),
+    )("deletes when %s", async (_case, others, created) => {
+      expect(await lookup([...others, later], created)).toBe(true);
+    });
+    it.each([
+      ["built before the earlier PR closed", [pullAt(11, 1, 96)], 95],
+      ["built before this PR opened", [pullAt(11, 1, 80)], 89],
+      ["built at the instant this PR opened", [pullAt(11, 1, 80)], 90],
+      [
+        "an earlier PR closing at the instant this one opened",
+        [pullAt(11, 1, 90)],
+        97,
+      ],
+      ["an unmerged PR created at the same instant", [pullAt(11, 90, 95)], 97],
+      [
+        "an unmerged PR created later, before the merge",
+        [pullAt(11, 95, 99)],
+        97,
+      ],
+      ["an earlier PR with no close time", [pullAt(11, 1, null)], 97],
+      [
+        "a later PR opened at the instant of the merge",
+        [pullAt(13, 100, null)],
+        97,
+      ],
+    ])("keeps the preview when %s", async (_case, others, created) => {
+      expect(await lookup([...others, later], created)).toBe(false);
+    });
+  });
 
   it("keeps a preview if its branch is reused by an open PR before deletion", async () => {
     const base = fixture();

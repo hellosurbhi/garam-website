@@ -1,5 +1,12 @@
 # Changelog
 
+## fix(admin): every applicant is visible, drafts stop burying them, and "New" means complete (2026-11-12)
+
+- The admin loaded only the newest 50 records behind a small unstyled "Load more" button, so with unfinished drafts at the top most real applicants looked missing. It now loads the whole roster (a few hundred records) with no button. Nothing was deleted: a live count showed 147 active, 15 participated and 16 soft-deleted.
+- Draft is now the last section and starts collapsed, so New applicants show first.
+- The server finalize step now keeps a draft as Draft unless name, a valid email, Instagram and the terms agreement are present. It still never rejects the applicant. Previously any finalize became New, so a card with no email or Instagram could look submitted.
+- Tests: incomplete finalizes for each missing field stay Draft, a complete one becomes New, and a draft completed later is promoted. Existing finalize tests now use complete applications.
+
 ## fix(monitor): the ticket redirect check no longer reports a healthy page as broken (2026-11-12)
 
 - The live ticket check looked for a link with the exact path `/api/go/<show>`, but the site rewrites each checkout link to an absolute URL with an `?eid=` tag after the page loads. The check never found the link, failed on every run and paged the owner for a working page. It now matches the link path whether relative or absolute, with or without the tag, and still refuses a longer show name that only shares the same start. Verified against the live site and 95 fixture runs, including the new `?eid=` and prefix cases.

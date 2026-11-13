@@ -90,7 +90,6 @@ export const STATUS_COLORS: Record<ApplicantStatus, string> = {
 
 /** Pipeline order for admin dashboard sections. Participated and Deleted are handled separately. */
 export const STATUS_ORDER: readonly ApplicantStatus[] = [
-  "Draft",
   "New",
   "Contacted",
   "Responded",
@@ -101,11 +100,14 @@ export const STATUS_ORDER: readonly ApplicantStatus[] = [
   "Not Interested",
   "Rejected",
   "Bailed",
+  // WHY last and collapsed: drafts are unfinished autosaves, not applications.
+  // Listed first they buried the real applicants (Nov 2026).
+  "Draft",
 ];
 
 /** Whether each section starts expanded (true) or collapsed (false). */
 export const STATUS_SECTION_DEFAULTS: Record<ApplicantStatus, boolean> = {
-  Draft: true,
+  Draft: false,
   New: true,
   Contacted: true,
   Responded: true,

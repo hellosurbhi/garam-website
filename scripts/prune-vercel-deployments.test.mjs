@@ -1,7 +1,48 @@
 import { describe, expect, it, vi } from "vitest";
-import { pruneDeployments } from "./prune-vercel-deployments.mjs";
+import {
+  githubClients,
+  mergedPreviewLookup,
+  pruneDeployments,
+} from "./prune-vercel-deployments.mjs";
 
 const projectId = "prj_9ByFOoPnfaBp2DKY30DcWI8TDeJq";
+const repository = "hellosurbhi/garam-website";
+const preview = {
+  uid: "dpl_mergedPreview",
+  state: "READY",
+  target: null,
+  source: "git",
+  created: 95,
+  meta: {
+    githubOrg: "hellosurbhi",
+    githubRepo: "garam-website",
+    githubCommitRef: "fix/example",
+    githubCommitSha: "a".repeat(40),
+  },
+};
+const mergedPull = {
+  number: 12,
+  state: "closed",
+  created_at: new Date(10).toISOString(),
+  closed_at: new Date(100).toISOString(),
+  merged_at: new Date(100).toISOString(),
+  head: {
+    repo: { full_name: repository },
+    ref: "fix/example",
+    sha: "b".repeat(40),
+  },
+};
+// GitHub compare answers by "<sha>...<head>"; anything unlisted is diverged.
+const compareStatus =
+  (statuses = {}) =>
+  (path) => {
+    const range = path.match(/^\/compare\/([^?]+)\?per_page=1$/)?.[1];
+    if (range === undefined) throw new Error(`unexpected ${path}`);
+    return range in statuses ? statuses[range] : { status: "diverged" };
+  };
+const a = "a".repeat(40);
+const b = "b".repeat(40);
+const c = "c".repeat(40);
 function fixture({ ready = true, domain = true, changes = false } = {}) {
   let projectReads = 0;
   const api = vi.fn(async (path, method) => {
@@ -31,15 +72,36 @@ function fixture({ ready = true, domain = true, changes = false } = {}) {
             created: 80,
             target: "production",
           },
-          { uid: "dpl_building", state: "BUILDING", created: 90 },
-          { uid: "dpl_newer", state: "READY", created: 110 },
-          { uid: "dpl_failed", state: "ERROR", created: 110 },
-          { uid: "dpl_custom", state: "READY", created: 50 },
+          {
+            uid: "dpl_building",
+            state: "BUILDING",
+            created: 90,
+            target: "production",
+          },
+          {
+            uid: "dpl_newer",
+            state: "READY",
+            created: 110,
+            target: "production",
+          },
+          {
+            uid: "dpl_failed",
+            state: "ERROR",
+            created: 110,
+            target: "production",
+          },
+          {
+            uid: "dpl_custom",
+            state: "READY",
+            created: 50,
+            target: "production",
+          },
         ],
         pagination: { next: null },
       };
     return {
       projectId,
+      target: "production",
       alias: path.endsWith("dpl_custom")
         ? ["special.example.com"]
         : ["old.vercel.app"],
@@ -49,7 +111,218 @@ function fixture({ ready = true, domain = true, changes = false } = {}) {
 }
 
 describe("deployment cleanup safeguards", () => {
-  it("deletes only older terminal deployments without custom domains", async () => {
+  it("deletes the proven merged preview even when production has not changed", async () => {
+    const base = fixture();
+    const api = vi.fn(async (path, method) => {
+      if (method !== "DELETE" && path.endsWith(preview.uid)) {
+        return {
+          ...preview,
+          id: preview.uid,
+          projectId,
+          readyState: "READY",
+          alias: [],
+        };
+      }
+      const result = await base(path, method);
+      if (path.startsWith("/v6/")) result.deployments.push(preview);
+      return result;
+    });
+    const github = vi.fn(async (path) =>
+      path.startsWith("/pulls?")
+        ? [mergedPull]
+        : compareStatus({ [`${a}...${b}`]: { status: "ahead" } })(path),
+    );
+    await pruneDeployments(api, {
+      apply: true,
+      log: vi.fn(),
+      canPrunePreview: mergedPreviewLookup(github, repository),
+    });
+    expect(api.mock.calls).toContainEqual([
+      `/v13/deployments/${preview.uid}`,
+      "DELETE",
+    ]);
+    expect(
+      github.mock.calls.filter(([path]) => path.startsWith("/pulls?")),
+    ).toHaveLength(2);
+  });
+
+  it.each([
+    ["open PR", [mergedPull, { ...mergedPull, state: "open" }], preview],
+    ["closed without merge", [{ ...mergedPull, merged_at: null }], preview],
+    ["new deployment after merge", [mergedPull], { ...preview, created: 101 }],
+    [
+      "fork metadata",
+      [mergedPull],
+      { ...preview, meta: { ...preview.meta, githubOrg: "fork" } },
+    ],
+    ["unrelated commit", [mergedPull], preview],
+  ])("preserves previews with %s", async (_case, pulls, candidate) => {
+    const github = vi.fn(async (path) =>
+      path.startsWith("/pulls?") ? pulls : compareStatus()(path),
+    );
+    expect(await mergedPreviewLookup(github, repository)(candidate)).toBe(
+      false,
+    );
+  });
+
+  it.each([
+    ["the replaced head", c, {}],
+    [
+      "an earlier commit of the replaced series",
+      a,
+      { [`${a}...${c}`]: { status: "ahead" } },
+    ],
+  ])(
+    "deletes a merged PR's preview of %s after a force-push",
+    async (_case, sha, statuses) => {
+      const github = vi.fn(async (path) =>
+        path.startsWith("/pulls?")
+          ? [mergedPull]
+          : compareStatus(statuses)(path),
+      );
+      const replacedHeads = vi.fn(async () => [c]);
+      const candidate = {
+        ...preview,
+        meta: { ...preview.meta, githubCommitSha: sha },
+      };
+      expect(
+        await mergedPreviewLookup(github, repository, replacedHeads)(candidate),
+      ).toBe(true);
+      expect(replacedHeads).toHaveBeenCalledWith(12);
+    },
+  );
+
+  it.each([
+    ["no force-push", [], { status: "diverged" }],
+    ["a replaced series that no longer exists", [c], null],
+    ["a replaced series without the commit", [c], { status: "diverged" }],
+    ["a commit ahead of the replaced head", [c], { status: "behind" }],
+  ])(
+    "preserves a merged PR's preview after %s",
+    async (_case, heads, compare) => {
+      const github = vi.fn(async (path) =>
+        path.startsWith("/pulls?") ? [mergedPull] : compare,
+      );
+      expect(
+        await mergedPreviewLookup(
+          github,
+          repository,
+          async () => heads,
+        )(preview),
+      ).toBe(false);
+    },
+  );
+
+  it("proves ownership from ancestry without the capped commit list", async () => {
+    const github = vi.fn(async (path) =>
+      path.startsWith("/pulls?")
+        ? [mergedPull]
+        : compareStatus({ [`${a}...${b}`]: { status: "identical" } })(path),
+    );
+    expect(await mergedPreviewLookup(github, repository)(preview)).toBe(true);
+    expect(github.mock.calls.some(([path]) => path.includes("/commits"))).toBe(
+      false,
+    );
+  });
+
+  it("rejects a compare answer that is not a status", async () => {
+    const github = vi.fn(async (path) =>
+      path.startsWith("/pulls?") ? [mergedPull] : { commits: [] },
+    );
+    await expect(
+      mergedPreviewLookup(github, repository)(preview),
+    ).rejects.toThrow("Invalid GitHub compare");
+  });
+
+  describe("on a reused branch", () => {
+    const at = (ms) => new Date(ms).toISOString();
+    const pullAt = (number, created, closed, merged = null) => ({
+      ...mergedPull,
+      number,
+      created_at: at(created),
+      closed_at: closed === null ? null : at(closed),
+      merged_at: merged === null ? null : at(merged),
+      head: { ...mergedPull.head, sha: number === 12 ? b : a },
+    });
+    // PR 12 lives from 90 to 100 and merged; the preview is built at 97.
+    const later = pullAt(12, 90, 100, 100);
+    const lookup = async (pulls, created = 97) => {
+      const github = vi.fn(async (path) =>
+        path.startsWith("/pulls?")
+          ? pulls
+          : compareStatus({ [`${a}...${b}`]: { status: "ahead" } })(path),
+      );
+      return mergedPreviewLookup(github, repository)({ ...preview, created });
+    };
+    it.each(
+      [
+        [
+          "an earlier PR closed before this one opened",
+          [pullAt(11, 1, 80)],
+          97,
+        ],
+        [
+          "a later PR opened after this one merged",
+          [pullAt(13, 150, null)],
+          97,
+        ],
+      ].map(([name, others, created]) => [name, others, created]),
+    )("deletes when %s", async (_case, others, created) => {
+      expect(await lookup([...others, later], created)).toBe(true);
+    });
+    it.each([
+      ["built before the earlier PR closed", [pullAt(11, 1, 96)], 95],
+      ["built before this PR opened", [pullAt(11, 1, 80)], 89],
+      ["built at the instant this PR opened", [pullAt(11, 1, 80)], 90],
+      [
+        "an earlier PR closing at the instant this one opened",
+        [pullAt(11, 1, 90)],
+        97,
+      ],
+      ["an unmerged PR created at the same instant", [pullAt(11, 90, 95)], 97],
+      [
+        "an unmerged PR created later, before the merge",
+        [pullAt(11, 95, 99)],
+        97,
+      ],
+      ["an earlier PR with no close time", [pullAt(11, 1, null)], 97],
+      [
+        "a later PR opened at the instant of the merge",
+        [pullAt(13, 100, null)],
+        97,
+      ],
+    ])("keeps the preview when %s", async (_case, others, created) => {
+      expect(await lookup([...others, later], created)).toBe(false);
+    });
+  });
+
+  it("keeps a preview if its branch is reused by an open PR before deletion", async () => {
+    const base = fixture();
+    const api = vi.fn(async (path, method) => {
+      if (method !== "DELETE" && path.endsWith(preview.uid)) {
+        return {
+          ...preview,
+          id: preview.uid,
+          projectId,
+          readyState: "READY",
+          alias: [],
+        };
+      }
+      const result = await base(path, method);
+      if (path.startsWith("/v6/")) result.deployments.push(preview);
+      return result;
+    });
+    const canPrunePreview = vi
+      .fn()
+      .mockResolvedValueOnce(true)
+      .mockResolvedValueOnce(false);
+    await pruneDeployments(api, { apply: true, log: vi.fn(), canPrunePreview });
+    expect(api.mock.calls).not.toContainEqual([
+      `/v13/deployments/${preview.uid}`,
+      "DELETE",
+    ]);
+  });
+  it("deletes only obsolete terminal production deployments without custom domains", async () => {
     const api = fixture();
     expect(await pruneDeployments(api, { apply: true, log: vi.fn() })).toBe(2);
     expect(api.mock.calls.filter(([, method]) => method === "DELETE")).toEqual([
@@ -57,7 +330,7 @@ describe("deployment cleanup safeguards", () => {
       ["/v13/deployments/dpl_failed", "DELETE"],
     ]);
   });
-  it("protects only the newest older READY production build, not a newer preview", async () => {
+  it("keeps previews when a newer production deployment goes live", async () => {
     const base = fixture();
     const api = vi.fn(async (path, method) => {
       const result = await base(path, method);
@@ -67,6 +340,12 @@ describe("deployment cleanup safeguards", () => {
             uid: "dpl_preview",
             state: "READY",
             created: 95,
+            target: "preview",
+          },
+          {
+            uid: "dpl_preview_error",
+            state: "ERROR",
+            created: 99,
             target: "preview",
           },
           {
@@ -84,8 +363,44 @@ describe("deployment cleanup safeguards", () => {
       .map(([path]) => path);
     expect(deleted).not.toContain("/v13/deployments/dpl_rollback");
     expect(deleted).toContain("/v13/deployments/dpl_old");
-    expect(deleted).toContain("/v13/deployments/dpl_preview");
+    expect(deleted).not.toContain("/v13/deployments/dpl_preview");
+    expect(deleted).not.toContain("/v13/deployments/dpl_preview_error");
     expect(deleted).toContain("/v13/deployments/dpl_failedprod");
+  });
+  it("keeps the sole Vercel rollback candidate when a newer staged build exists", async () => {
+    const base = fixture();
+    const api = vi.fn(async (path, method) => {
+      const result = await base(path, method);
+      if (path.startsWith("/v6/"))
+        result.deployments.push({
+          uid: "dpl_candidate",
+          state: "READY",
+          created: 40,
+          target: "production",
+          isRollbackCandidate: true,
+        });
+      return result;
+    });
+    await pruneDeployments(api, { apply: true, log: vi.fn() });
+    const deleted = api.mock.calls
+      .filter(([, method]) => method === "DELETE")
+      .map(([path]) => path);
+    expect(deleted).not.toContain("/v13/deployments/dpl_candidate");
+    expect(deleted).toContain("/v13/deployments/dpl_old");
+  });
+  it("keeps a deployment whose details report it as the rollback candidate", async () => {
+    const base = fixture();
+    const api = vi.fn(async (path, method) => {
+      const result = await base(path, method);
+      return path.endsWith("dpl_old")
+        ? { ...result, isRollbackCandidate: true }
+        : result;
+    });
+    await pruneDeployments(api, { apply: true, log: vi.fn() });
+    expect(api.mock.calls).not.toContainEqual([
+      "/v13/deployments/dpl_old",
+      "DELETE",
+    ]);
   });
   it("defaults to a dry run", async () => {
     const api = fixture();
@@ -126,6 +441,23 @@ describe("deployment cleanup safeguards", () => {
       false,
     );
   });
+  it.each(["preview", null, undefined])(
+    "refuses a candidate whose details report target %s",
+    async (target) => {
+      const base = fixture();
+      const api = vi.fn(async (path, method) =>
+        path.startsWith("/v13/")
+          ? { projectId, target, alias: [] }
+          : base(path, method),
+      );
+      await expect(
+        pruneDeployments(api, { apply: true, log: vi.fn() }),
+      ).rejects.toThrow("Deployment is not confirmed as production");
+      expect(api.mock.calls.some(([, method]) => method === "DELETE")).toBe(
+        false,
+      );
+    },
+  );
   it("reads later pages before selecting old deployments", async () => {
     const base = fixture();
     const api = vi.fn(async (path, method) => {
@@ -178,5 +510,78 @@ describe("deployment cleanup safeguards", () => {
     expect(api.mock.calls.some(([, method]) => method === "DELETE")).toBe(
       false,
     );
+  });
+});
+
+describe("GitHub readers for preview ownership", () => {
+  const respond = (status, body) => ({
+    ok: status >= 200 && status < 300,
+    status,
+    json: async () => body,
+  });
+  const graphPage = (oids, hasNextPage, endCursor) =>
+    respond(200, {
+      data: {
+        repository: {
+          pullRequest: {
+            timelineItems: {
+              pageInfo: { hasNextPage, endCursor },
+              nodes: oids.map((oid) => ({ beforeCommit: oid && { oid } })),
+            },
+          },
+        },
+      },
+    });
+
+  it("returns null only for a missing compare", async () => {
+    const fetchImpl = vi.fn(async () => respond(404, {}));
+    const { rest } = githubClients(fetchImpl, repository, "token");
+    expect(await rest("/compare/a...b?per_page=1")).toBeNull();
+    await expect(rest("/pulls/12/commits")).rejects.toThrow("returned 404");
+  });
+
+  it("fails on a GitHub error instead of guessing", async () => {
+    const { rest } = githubClients(
+      vi.fn(async () => respond(500, {})),
+      repository,
+      "token",
+    );
+    await expect(rest("/compare/a...b")).rejects.toThrow("returned 500");
+  });
+
+  it("reads every force-push page and skips replaced heads GitHub lost", async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(graphPage(["c".repeat(40), null], true, "next"))
+      .mockResolvedValueOnce(graphPage(["f".repeat(40)], false, null));
+    const { forcePushedHeads } = githubClients(fetchImpl, repository, "token");
+    expect(await forcePushedHeads(12)).toEqual([
+      "c".repeat(40),
+      "f".repeat(40),
+    ]);
+    const second = JSON.parse(fetchImpl.mock.calls[1][1].body);
+    expect(second.variables).toEqual({
+      owner: "hellosurbhi",
+      name: "garam-website",
+      number: 12,
+      after: "next",
+    });
+  });
+
+  it.each([
+    ["an HTTP failure", respond(502, {}), "returned 502"],
+    [
+      "a GraphQL error",
+      respond(200, { errors: [{ message: "nope" }], data: null }),
+      "Invalid GitHub force-push lookup",
+    ],
+    ["a repeated cursor", graphPage([], true, null), "Repeated GitHub cursor"],
+  ])("fails on %s", async (_case, response, message) => {
+    const { forcePushedHeads } = githubClients(
+      vi.fn(async () => response),
+      repository,
+      "token",
+    );
+    await expect(forcePushedHeads(12)).rejects.toThrow(message);
   });
 });

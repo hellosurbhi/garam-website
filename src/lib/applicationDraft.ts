@@ -1,3 +1,5 @@
+import { validateEmail } from "@/utils/validateEmail";
+
 /**
  * Pure logic for the apply-form save endpoint (src/pages/api/save-application.ts):
  * which fields a client may write, how raw form input becomes a document, and
@@ -246,4 +248,25 @@ export function fieldLengths(
     if (typeof v === "string") out[k] = v.length;
   }
   return out;
+}
+
+/**
+ * Required answers a document must hold before it counts as a submitted
+ * application. Returns the missing keys (empty means complete).
+ * WHY: the browser disables Submit until these exist, but that gate is bypassable
+ * (stale cached tab, bot, a finalize racing a lost autosave), and finalize used
+ * to promote any draft to "New". Incomplete drafts now stay "Draft" instead of
+ * being refused, so the "never reject an applicant" rule still holds and the
+ * admin never shows a "New" card with no email or Instagram. Photo is not
+ * checked: a failed upload is filed with photoUploadFailed, never refused.
+ */
+export function missingRequiredAnswers(doc: Record<string, unknown>): string[] {
+  const text = (key: string) =>
+    typeof doc[key] === "string" ? (doc[key] as string).trim() : "";
+  const missing: string[] = [];
+  if (!text("name")) missing.push("name");
+  if (validateEmail(text("email"))) missing.push("email");
+  if (!text("instagram")) missing.push("instagram");
+  if (!doc.termsAgreedAt) missing.push("termsAgreed");
+  return missing;
 }

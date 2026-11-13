@@ -11,10 +11,6 @@ import {
   serverTimestamp,
   query,
   orderBy,
-  limit,
-  startAfter,
-  type QueryDocumentSnapshot,
-  type DocumentData,
 } from "firebase/firestore";
 import { ChevronRight, ChevronDown, Search, X } from "lucide-react";
 import Select from "react-select";
@@ -141,8 +137,6 @@ const INBOX_EXCLUDED_STATUSES: ApplicantStatus[] = [
   "Participated",
 ];
 
-const PAGE_SIZE = 50;
-
 // A card action whose Firestore write is in flight. Tracked one at a time.
 export type PendingAdminAction = {
   id: string;
@@ -167,11 +161,6 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     null,
   );
 
-  const [lastDoc, setLastDoc] =
-    useState<QueryDocumentSnapshot<DocumentData> | null>(null);
-  const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-
   const [genderFilter, setGenderFilter] = useState<readonly FilterOption[]>([]);
   const [orientationFilter, setOrientationFilter] = useState<
     readonly FilterOption[]
@@ -191,48 +180,26 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     setToast({ msg, ok });
   }
 
-  const fetchApps = useCallback(
-    async (after?: QueryDocumentSnapshot<DocumentData> | null) => {
-      if (after) {
-        setLoadingMore(true);
-      } else {
-        setLoading(true);
-      }
-      setFetchError(false);
-      try {
-        const colRef = collection(await getFirebaseDb(), "applications");
-        const q = after
-          ? query(
-              colRef,
-              orderBy("submittedAt", "desc"),
-              startAfter(after),
-              limit(PAGE_SIZE),
-            )
-          : query(colRef, orderBy("submittedAt", "desc"), limit(PAGE_SIZE));
-        const snap = await getDocs(q);
-        const docs = snap.docs
+  // WHY no paging: the roster is a few hundred documents. A 50 row page hid
+  // most applicants behind an unstyled "Load more" button and the status
+  // counts read as if the rest did not exist (Nov 2026 "applicants missing").
+  const fetchApps = useCallback(async () => {
+    setLoading(true);
+    setFetchError(false);
+    try {
+      const colRef = collection(await getFirebaseDb(), "applications");
+      const snap = await getDocs(query(colRef, orderBy("submittedAt", "desc")));
+      setApplications(
+        snap.docs
           .map((d) => ({ id: d.id, ...d.data() }) as Application)
-          .filter((a) => !isSyntheticSubmission(a.email));
-        setHasMore(snap.docs.length === PAGE_SIZE);
-        setLastDoc(snap.docs[snap.docs.length - 1] ?? null);
-        if (after) {
-          setApplications((prev) => [...prev, ...docs]);
-        } else {
-          setApplications(docs);
-        }
-      } catch {
-        if (after) {
-          setToast({ msg: "Failed to load more applications", ok: false });
-        } else {
-          setFetchError(true);
-        }
-      } finally {
-        setLoading(false);
-        setLoadingMore(false);
-      }
-    },
-    [],
-  );
+          .filter((a) => !isSyntheticSubmission(a.email)),
+      );
+    } catch {
+      setFetchError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -774,18 +741,6 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           }
           actionsDisabled={pendingAction !== null}
         />
-      )}
-
-      {activeTab === "applicants" && hasMore && !loading && !fetchError && (
-        <div className={styles.loadMoreRow}>
-          <button
-            className={styles.loadMoreBtn}
-            onClick={() => void fetchApps(lastDoc)}
-            disabled={loadingMore}
-          >
-            {loadingMore ? "Loading..." : "Load more"}
-          </button>
-        </div>
       )}
 
       {toast && (

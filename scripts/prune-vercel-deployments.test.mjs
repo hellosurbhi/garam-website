@@ -23,6 +23,8 @@ const preview = {
 const mergedPull = {
   number: 12,
   state: "closed",
+  created_at: new Date(10).toISOString(),
+  closed_at: new Date(100).toISOString(),
   merged_at: new Date(100).toISOString(),
   head: {
     repo: { full_name: repository },
@@ -30,6 +32,17 @@ const mergedPull = {
     sha: "b".repeat(40),
   },
 };
+// GitHub compare answers by "<sha>...<head>"; anything unlisted is diverged.
+const compareStatus =
+  (statuses = {}) =>
+  (path) => {
+    const range = path.match(/^\/compare\/([^?]+)\?per_page=1$/)?.[1];
+    if (range === undefined) throw new Error(`unexpected ${path}`);
+    return range in statuses ? statuses[range] : { status: "diverged" };
+  };
+const a = "a".repeat(40);
+const b = "b".repeat(40);
+const c = "c".repeat(40);
 function fixture({ ready = true, domain = true, changes = false } = {}) {
   let projectReads = 0;
   const api = vi.fn(async (path, method) => {
@@ -117,7 +130,7 @@ describe("deployment cleanup safeguards", () => {
     const github = vi.fn(async (path) =>
       path.startsWith("/pulls?")
         ? [mergedPull]
-        : [{ sha: preview.meta.githubCommitSha }],
+        : compareStatus({ [`${a}...${b}`]: { status: "ahead" } })(path),
     );
     await pruneDeployments(api, {
       apply: true,
@@ -145,7 +158,7 @@ describe("deployment cleanup safeguards", () => {
     ["unrelated commit", [mergedPull], preview],
   ])("preserves previews with %s", async (_case, pulls, candidate) => {
     const github = vi.fn(async (path) =>
-      path.startsWith("/pulls?") ? pulls : [],
+      path.startsWith("/pulls?") ? pulls : compareStatus()(path),
     );
     expect(await mergedPreviewLookup(github, repository)(candidate)).toBe(
       false,
@@ -153,25 +166,21 @@ describe("deployment cleanup safeguards", () => {
   });
 
   it.each([
-    ["the replaced head", "c"],
-    ["an earlier commit of the replaced series", "a"],
+    ["the replaced head", c, {}],
+    [
+      "an earlier commit of the replaced series",
+      a,
+      { [`${a}...${c}`]: { status: "ahead" } },
+    ],
   ])(
     "deletes a merged PR's preview of %s after a force-push",
-    async (_case, letter) => {
-      const sha = letter.repeat(40);
-      const replaced = "c".repeat(40);
-      const pull = { ...mergedPull, base: { sha: "d".repeat(40) } };
-      const github = vi.fn(async (path) => {
-        if (path.startsWith("/pulls?")) return [pull];
-        if (path.startsWith("/pulls/12/commits")) return [];
-        if (path.startsWith(`/compare/${pull.base.sha}...${replaced}?`))
-          return {
-            total_commits: 2,
-            commits: [{ sha: "a".repeat(40) }, { sha: replaced }],
-          };
-        throw new Error(`unexpected ${path}`);
-      });
-      const replacedHeads = vi.fn(async () => [replaced]);
+    async (_case, sha, statuses) => {
+      const github = vi.fn(async (path) =>
+        path.startsWith("/pulls?")
+          ? [mergedPull]
+          : compareStatus(statuses)(path),
+      );
+      const replacedHeads = vi.fn(async () => [c]);
       const candidate = {
         ...preview,
         meta: { ...preview.meta, githubCommitSha: sha },
@@ -184,23 +193,16 @@ describe("deployment cleanup safeguards", () => {
   );
 
   it.each([
-    ["no force-push", [], null],
-    ["a replaced series that no longer exists", ["c".repeat(40)], null],
-    [
-      "a replaced series without the commit",
-      ["c".repeat(40)],
-      { total_commits: 1, commits: [{ sha: "c".repeat(40) }] },
-    ],
+    ["no force-push", [], { status: "diverged" }],
+    ["a replaced series that no longer exists", [c], null],
+    ["a replaced series without the commit", [c], { status: "diverged" }],
+    ["a commit ahead of the replaced head", [c], { status: "behind" }],
   ])(
     "preserves a merged PR's preview after %s",
     async (_case, heads, compare) => {
-      const pull = { ...mergedPull, base: { sha: "d".repeat(40) } };
-      const github = vi.fn(async (path) => {
-        if (path.startsWith("/pulls?")) return [pull];
-        if (path.startsWith("/pulls/12/commits")) return [];
-        if (path.startsWith("/compare/")) return compare;
-        throw new Error(`unexpected ${path}`);
-      });
+      const github = vi.fn(async (path) =>
+        path.startsWith("/pulls?") ? [mergedPull] : compare,
+      );
       expect(
         await mergedPreviewLookup(
           github,
@@ -211,45 +213,56 @@ describe("deployment cleanup safeguards", () => {
     },
   );
 
-  it("reads every page of a replaced series longer than one page", async () => {
-    const pull = { ...mergedPull, base: { sha: "d".repeat(40) } };
-    const pageOne = Array.from({ length: 100 }, (_, i) => ({
-      sha: i.toString(16).padStart(40, "e"),
-    }));
-    const github = vi.fn(async (path) => {
-      if (path.startsWith("/pulls?")) return [pull];
-      if (path.startsWith("/pulls/12/commits")) return [];
-      if (path.endsWith("page=1"))
-        return { total_commits: 101, commits: pageOne };
-      if (path.endsWith("page=2"))
-        return { total_commits: 101, commits: [{ sha: "a".repeat(40) }] };
-      throw new Error(`unexpected ${path}`);
-    });
-    expect(
-      await mergedPreviewLookup(github, repository, async () => [
-        "c".repeat(40),
-      ])(preview),
-    ).toBe(true);
-    expect(
-      github.mock.calls.filter(([path]) => path.startsWith("/compare/")),
-    ).toHaveLength(2);
+  it("proves ownership from ancestry without the capped commit list", async () => {
+    const github = vi.fn(async (path) =>
+      path.startsWith("/pulls?")
+        ? [mergedPull]
+        : compareStatus({ [`${a}...${b}`]: { status: "identical" } })(path),
+    );
+    expect(await mergedPreviewLookup(github, repository)(preview)).toBe(true);
+    expect(github.mock.calls.some(([path]) => path.includes("/commits"))).toBe(
+      false,
+    );
   });
 
-  it("deletes the preview of a replaced head the base later reached", async () => {
-    const pull = { ...mergedPull, base: { sha: "d".repeat(40) } };
-    const github = vi.fn(async (path) => {
-      if (path.startsWith("/pulls?")) return [pull];
-      if (path.startsWith("/pulls/12/commits")) return [];
-      if (path.startsWith("/compare/"))
-        return { total_commits: 0, commits: [] };
-      throw new Error(`unexpected ${path}`);
-    });
-    expect(
-      await mergedPreviewLookup(github, repository, async () => [
-        preview.meta.githubCommitSha,
-      ])(preview),
-    ).toBe(true);
+  it("rejects a compare answer that is not a status", async () => {
+    const github = vi.fn(async (path) =>
+      path.startsWith("/pulls?") ? [mergedPull] : { commits: [] },
+    );
+    await expect(
+      mergedPreviewLookup(github, repository)(preview),
+    ).rejects.toThrow("Invalid GitHub compare");
   });
+
+  it.each([
+    ["before the earlier pull request closed", 95, false],
+    ["after the earlier pull request closed", 97, true],
+  ])(
+    "on a reused branch deletes a preview built %s only if it is the later PR's",
+    async (_case, created, expected) => {
+      const earlier = {
+        ...mergedPull,
+        number: 11,
+        merged_at: null,
+        created_at: new Date(1).toISOString(),
+        closed_at: new Date(96).toISOString(),
+        head: { ...mergedPull.head, sha: a },
+      };
+      const later = {
+        ...mergedPull,
+        created_at: new Date(90).toISOString(),
+        merged_at: new Date(100).toISOString(),
+      };
+      const github = vi.fn(async (path) =>
+        path.startsWith("/pulls?")
+          ? [earlier, later]
+          : compareStatus({ [`${a}...${b}`]: { status: "ahead" } })(path),
+      );
+      expect(
+        await mergedPreviewLookup(github, repository)({ ...preview, created }),
+      ).toBe(expected);
+    },
+  );
 
   it("keeps a preview if its branch is reused by an open PR before deletion", async () => {
     const base = fixture();
@@ -321,6 +334,41 @@ describe("deployment cleanup safeguards", () => {
     expect(deleted).not.toContain("/v13/deployments/dpl_preview");
     expect(deleted).not.toContain("/v13/deployments/dpl_preview_error");
     expect(deleted).toContain("/v13/deployments/dpl_failedprod");
+  });
+  it("keeps the sole Vercel rollback candidate when a newer staged build exists", async () => {
+    const base = fixture();
+    const api = vi.fn(async (path, method) => {
+      const result = await base(path, method);
+      if (path.startsWith("/v6/"))
+        result.deployments.push({
+          uid: "dpl_candidate",
+          state: "READY",
+          created: 40,
+          target: "production",
+          isRollbackCandidate: true,
+        });
+      return result;
+    });
+    await pruneDeployments(api, { apply: true, log: vi.fn() });
+    const deleted = api.mock.calls
+      .filter(([, method]) => method === "DELETE")
+      .map(([path]) => path);
+    expect(deleted).not.toContain("/v13/deployments/dpl_candidate");
+    expect(deleted).toContain("/v13/deployments/dpl_old");
+  });
+  it("keeps a deployment whose details report it as the rollback candidate", async () => {
+    const base = fixture();
+    const api = vi.fn(async (path, method) => {
+      const result = await base(path, method);
+      return path.endsWith("dpl_old")
+        ? { ...result, isRollbackCandidate: true }
+        : result;
+    });
+    await pruneDeployments(api, { apply: true, log: vi.fn() });
+    expect(api.mock.calls).not.toContainEqual([
+      "/v13/deployments/dpl_old",
+      "DELETE",
+    ]);
   });
   it("defaults to a dry run", async () => {
     const api = fixture();
@@ -456,7 +504,7 @@ describe("GitHub readers for preview ownership", () => {
   it("returns null only for a missing compare", async () => {
     const fetchImpl = vi.fn(async () => respond(404, {}));
     const { rest } = githubClients(fetchImpl, repository, "token");
-    expect(await rest("/compare/a...b?per_page=100&page=1")).toBeNull();
+    expect(await rest("/compare/a...b?per_page=1")).toBeNull();
     await expect(rest("/pulls/12/commits")).rejects.toThrow("returned 404");
   });
 

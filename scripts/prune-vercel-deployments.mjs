@@ -20,16 +20,19 @@ function gitPreview(deployment) {
 }
 
 /**
- * replacedHeads(pullNumber) lists the heads a force-push replaced. GitHub's
- * /pulls/N/commits shows only the current series, so without it a preview
- * built for a rebased-away commit could never be proven merged and would
- * hold storage forever.
+ * A preview belongs to a merged PR when its commit is an ancestor of (or
+ * equal to) the PR's final head or a head a force-push replaced.
+ * replacedHeads(pullNumber) lists those replaced heads: GitHub's
+ * /pulls/N/commits shows only the current series (capped at 250), so without
+ * them a preview of a rebased-away commit could never be proven merged and
+ * would hold storage forever. Ancestry is read from compare status, which has
+ * no commit cap and still holds when the base later reached the commit.
  */
 export function mergedPreviewLookup(github, repository, replacedHeads) {
   const [owner, repo] = repository.split("/");
   const pullLists = new Map();
-  const commits = new Map();
-  const replacedCommits = new Map();
+  const heads = new Map();
+  const ancestry = new Map();
   const readAll = async (path) => {
     const entries = [];
     for (let page = 1; ; page++) {
@@ -43,6 +46,24 @@ export function mergedPreviewLookup(github, repository, replacedHeads) {
       entries.push(...batch);
       if (batch.length < 100) return entries;
     }
+  };
+  const reaches = async (sha, head) => {
+    if (sha === head) return true;
+    const range = `${sha}...${head}`;
+    if (!ancestry.has(range)) {
+      // "ahead" or "identical" means sha is an ancestor of head. A null
+      // compare means GitHub no longer has one of them, which proves nothing.
+      const compare = await github(`/compare/${range}?per_page=1`);
+      assert.ok(
+        compare === null || typeof compare?.status === "string",
+        "Invalid GitHub compare",
+      );
+      ancestry.set(
+        range,
+        compare?.status === "ahead" || compare?.status === "identical",
+      );
+    }
+    return ancestry.get(range);
   };
 
   return async (deployment, { refresh = false } = {}) => {
@@ -73,52 +94,34 @@ export function mergedPreviewLookup(github, repository, replacedHeads) {
         !(created < Date.parse(pull.merged_at))
       )
         continue;
-      if (pull.head.sha === githubCommitSha) return true;
-      if (!commits.has(pull.number)) {
+      // A reused branch: a preview built before an earlier PR on this branch
+      // closed may be that PR's, even when this PR's history contains it.
+      const opened = Date.parse(pull.created_at);
+      assert.ok(Number.isFinite(opened), "Invalid pull request creation time");
+      const earlierClosed = pulls
+        .filter(
+          (other) => other !== pull && Date.parse(other.created_at) < opened,
+        )
+        .map((other) => Date.parse(other.closed_at));
+      if (!earlierClosed.every((closed) => created > closed)) continue;
+
+      if (!heads.has(pull.number)) {
         assert.ok(
           Number.isSafeInteger(pull.number) && pull.number > 0,
           "Invalid pull request number",
         );
-        commits.set(
-          pull.number,
-          new Set(
-            (await readAll(`/pulls/${pull.number}/commits`)).map(
-              (commit) => commit.sha,
-            ),
-          ),
-        );
+        const known = [pull.head.sha];
+        if (replacedHeads) known.push(...(await replacedHeads(pull.number)));
+        for (const head of known)
+          assert.ok(
+            /^[a-f0-9]{40}$/i.test(head ?? ""),
+            "Invalid pull request head",
+          );
+        heads.set(pull.number, known);
       }
-      if (commits.get(pull.number).has(githubCommitSha)) return true;
-      if (!replacedHeads) continue;
-      if (!replacedCommits.has(pull.number)) {
-        const shas = new Set();
-        for (const head of await replacedHeads(pull.number)) {
-          assert.ok(/^[a-f0-9]{40}$/i.test(head), "Invalid replaced head");
-          // GitHub witnessed this commit as the PR's head, so it counts even
-          // when the base later reached it and the compare below omits it.
-          shas.add(head);
-          for (let page = 1, seen = 0; ; page++) {
-            // A null compare means the replaced series was garbage collected:
-            // nothing proves its other commits belonged to this PR.
-            const compare = await github(
-              `/compare/${pull.base.sha}...${head}?per_page=100&page=${page}`,
-            );
-            if (compare === null) break;
-            assert.ok(
-              Array.isArray(compare?.commits) &&
-                compare.commits.length <= 100 &&
-                Number.isSafeInteger(compare.total_commits),
-              "Invalid GitHub compare",
-            );
-            for (const commit of compare.commits) shas.add(commit.sha);
-            seen += compare.commits.length;
-            if (compare.commits.length < 100 || seen >= compare.total_commits)
-              break;
-          }
-        }
-        replacedCommits.set(pull.number, shas);
+      for (const head of heads.get(pull.number)) {
+        if (await reaches(githubCommitSha, head)) return true;
       }
-      if (replacedCommits.get(pull.number).has(githubCommitSha)) return true;
     }
     return false;
   };
@@ -255,9 +258,12 @@ export async function pruneDeployments(
       continue;
     const production = deployment.target === "production";
     if (production) {
+      // Vercel's own rollback target can be older than the newest older
+      // READY build (a staged build that never served traffic), so the
+      // flag is honored on its own.
       if (
-        deployment.state === "READY" &&
-        deployment.created > current.createdAt
+        deployment.isRollbackCandidate ||
+        (deployment.state === "READY" && deployment.created > current.createdAt)
       )
         continue;
     } else if (
@@ -279,6 +285,7 @@ export async function pruneDeployments(
         "production",
         "Deployment is not confirmed as production; refusing cleanup",
       );
+      if (detail.isRollbackCandidate) continue;
     } else if (
       detail.id !== deployment.uid ||
       !TERMINAL_STATES.has(detail.readyState) ||

@@ -5,6 +5,7 @@
 - Restore preview builds. Clean up deployments tied to a merged pull request after merge and retry hourly. Protect previews under review and keep the existing production safeguards.
 - Add a dry run option to the manual cleanup run so it can be checked against the real Vercel account before it deletes anything.
 - Clean up previews of commits a force-push replaced. GitHub lists only a pull request's current commits, so a preview of a rebased-away commit was never proven merged and kept using storage.
+- Prove preview ownership from commit ancestry rather than the capped commit list, keep an earlier closed pull request's preview when a branch name is reused, and never delete the build Vercel marks as the rollback candidate.
 
 ## fix(monitor): the ticket redirect check no longer reports a healthy page as broken (2026-11-12)
 

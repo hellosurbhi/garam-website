@@ -129,6 +129,7 @@ async function fillApplyForm(page: Page) {
   await page.selectOption("#field-orientation", "Straight");
   await page.fill("#geo-place", "New York");
   await page.fill("#field-email", "smoketest@example.com");
+  await page.fill("#field-phone", "5551230100");
   await page.fill("#field-instagram", "smoketester");
 
   // Photo upload — required for submission.

@@ -96,6 +96,7 @@ test("a phone applicant can file an application with photos on the live stack", 
   await page.selectOption("#field-orientation", "Straight");
   await page.fill("#geo-place", "New York");
   await page.fill("#field-email", SYNTHETIC_MONITOR_EMAIL);
+  await page.fill("#field-phone", "5551230100");
   await page.fill("#field-instagram", "garammasaladating");
   await page.fill("#field-height", "5 feet 8 inches (172cm)");
   await page.fill("#field-phone", "+1 (555) 010-0000 (WhatsApp preferred)");

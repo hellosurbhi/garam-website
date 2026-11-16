@@ -5,6 +5,7 @@ import { alertOpsOnce } from "@/lib/alertDedupe";
 import {
   docFieldsFor,
   mergeDraft,
+  missingRequiredAnswers,
   sanitizeFields,
 } from "@/lib/applicationDraft";
 import { resolveDraftAuth } from "@/lib/draftAuth";
@@ -129,6 +130,8 @@ export const POST: APIRoute = async ({ request }) => {
   // A plain save that only triggered a welcome resend still answers "finalized".
   let refuseAfterWelcome = false;
   let stale: string[] = [];
+  // Required answers missing at finalize; the draft stays "Draft" until filled.
+  let incomplete: string[] = [];
   let storedMaxRev = 0;
 
   try {
@@ -208,7 +211,16 @@ export const POST: APIRoute = async ({ request }) => {
       // (see the finalized guard above) with those answers missing; the client
       // resends them with a higher revision and finalizes then. The same holds
       // for text dropped over the size budget.
+      incomplete = [];
       if (finalize && merged.stale.length === 0 && !capped) {
+        incomplete = missingRequiredAnswers(projected);
+      }
+      if (
+        finalize &&
+        merged.stale.length === 0 &&
+        !capped &&
+        incomplete.length === 0
+      ) {
         if (!before || before.status === "Draft") patch.status = "New";
         // WHY the canary restamps: its one document is reused every run, so a
         // first-run-only timestamp let the read-back mistake an old run's
@@ -277,6 +289,7 @@ export const POST: APIRoute = async ({ request }) => {
       maxRev: Math.max(storedMaxRev, rev),
       status,
       stale,
+      incomplete,
       capped,
     });
   } catch (err) {

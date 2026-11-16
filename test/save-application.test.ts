@@ -118,6 +118,7 @@ const ORIGIN = "https://garammasaladating.com";
 const COMPLETE = {
   name: "P",
   email: "p@example.com",
+  phone: "5551230100",
   instagram: "p",
   termsAgreed: true,
 };
@@ -368,6 +369,7 @@ describe("save-application: finalize completeness gate", () => {
   const complete = {
     name: "Priya",
     email: "p@example.com",
+    phone: "5551230100",
     instagram: "priya",
     termsAgreed: true,
   };
@@ -376,6 +378,7 @@ describe("save-application: finalize completeness gate", () => {
     ["name", { ...complete, name: "" }],
     ["email", { ...complete, email: "" }],
     ["a malformed email", { ...complete, email: "not-an-email" }],
+    ["phone", { ...complete, phone: " " }],
     ["instagram", { ...complete, instagram: "@" }],
     ["terms", { ...complete, termsAgreed: false }],
   ])(

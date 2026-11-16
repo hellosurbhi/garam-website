@@ -553,7 +553,8 @@ function ApplyPageInner() {
                     </FieldGroup>
 
                     <FieldGroup
-                      label="Phone Number (optional)"
+                      label="Phone Number"
+                      required
                       error={errors.phone}
                       htmlFor="field-phone"
                     >
@@ -569,6 +570,7 @@ function ApplyPageInner() {
                             : "+1 (555) 000-0000"
                         }
                         className={styles.input}
+                        required
                         autoComplete="tel"
                         inputMode="tel"
                         aria-invalid={!!errors.phone}

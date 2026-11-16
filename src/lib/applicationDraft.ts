@@ -266,6 +266,7 @@ export function missingRequiredAnswers(doc: Record<string, unknown>): string[] {
   const missing: string[] = [];
   if (!text("name")) missing.push("name");
   if (validateEmail(text("email"))) missing.push("email");
+  if (!text("phone")) missing.push("phone");
   if (!text("instagram")) missing.push("instagram");
   if (!doc.termsAgreedAt) missing.push("termsAgreed");
   return missing;

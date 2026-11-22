@@ -134,6 +134,8 @@ const { buildAllEvents } = await import("../src/data/events");
 // ── Fixtures ───────────────────────────────────────────────────────────────
 
 const baseline = publishedJson.snapshot as EventsSnapshot;
+/** A real show in the committed file, edited by the first-use tests. */
+const LIVE_SHOW = "los-angeles-2026-11-13";
 const HOOK_URL = "https://api.vercel.com/v1/integrations/deploy/fixture";
 const ADMIN = { uid: "admin-uid", email: "admin@example.test" };
 const T0 = new Date("2026-11-11T20:00:00.000Z");
@@ -231,6 +233,9 @@ function replaceEntry(
   slug: string,
   edit: (e: EventEntry) => EventEntry,
 ): EventsSnapshot {
+  if (!snapshot.events.some((e) => e.slug === slug)) {
+    throw new Error(`replaceEntry: no show ${slug} in the snapshot`);
+  }
   return {
     ...snapshot,
     events: snapshot.events.map((e) => (e.slug === slug ? edit(e) : e)),
@@ -837,6 +842,22 @@ describe("draft save", () => {
     expect(res.status).toBe(409);
   });
 
+  it("saves and publishes an edit to one show while legacy records stay untouched", async () => {
+    // edison-tba is a committed legacy record (ticket source, empty url). Only
+    // a record that is itself edited is held to the write rules.
+    const edited = replaceEntry(baseline, LIVE_SHOW, (e) => ({
+      ...e,
+      tagline: "Selling fast",
+    }));
+    expect((await saveDraft(edited, 1)).status).toBe(200);
+    const res = await publish(1);
+    expect(res.status).toBe(200);
+    expect(res.json).toMatchObject({ version: 2 });
+    expect(bySlug(liveDoc().snapshot, "edison-tba")).toEqual(
+      bySlug(baseline, "edison-tba"),
+    );
+  });
+
   it("refuses a save built on a draft that changed since it was loaded", async () => {
     const loaded = draftToken() ?? null;
     const show = fixtureShow();
@@ -913,6 +934,34 @@ describe("rollback", () => {
       updatedBy: ADMIN.email,
     });
     expect(draftDoc().snapshot).toEqual(live.snapshot);
+  });
+
+  it("restores the committed baseline byte for byte after an unrelated edit", async () => {
+    // First real use of the screen: v1 is the committed file the seed writes
+    // (legacy records such as edison-tba, which has a ticket source but no
+    // url, included). v2 edits one other show; v3 restores v1.
+    const legacy = baseline.events.find((e) => e.slug === "edison-tba");
+    expect(legacy).toMatchObject({ ticketSource: "our-eventbrite", url: "" });
+
+    expect(
+      (
+        await saveDraft(
+          replaceEntry(baseline, LIVE_SHOW, (e) => ({
+            ...e,
+            tagline: "Selling fast",
+          })),
+          1,
+        )
+      ).status,
+    ).toBe(200);
+    expect((await publish(1)).json.version).toBe(2);
+    afterDebounce();
+
+    const res = await rollback(1, 2);
+
+    expect(res.status).toBe(200);
+    expect(res.json).toMatchObject({ version: 3, rebuild: "requested" });
+    expect(liveDoc().snapshot).toEqual(baseline);
   });
 
   it("notes a restored date on an entry that had no note (R14)", async () => {

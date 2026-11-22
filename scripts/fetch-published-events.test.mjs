@@ -1,9 +1,11 @@
 // @vitest-environment node
+import { readFileSync } from "node:fs";
 import { describe, expect, it, vi } from "vitest";
 import {
   ATTEMPTS,
   OUTPUT_PATH,
   publishedDocUrl,
+  requiresLiveEventsRead,
   run,
   toEnvelope,
 } from "./fetch-published-events.mjs";
@@ -259,5 +261,84 @@ describe("toEnvelope", () => {
     ],
   ])("rejects %j", (doc, missing) => {
     expect(() => toEnvelope(doc)).toThrow(missing);
+  });
+});
+
+// WHY one matrix: the prebuild and the postbuild runtime check must make the
+// same Firestore-or-baseline call for every build kind. Each row runs the
+// real prebuild and asks the runtime check's rule, and both must agree.
+describe("prebuild and runtime check share one rule", () => {
+  const ID = "demo-test";
+  const rows = [
+    {
+      name: "production with project id",
+      env: {
+        VERCEL: "1",
+        VERCEL_ENV: "production",
+        PUBLIC_FIREBASE_PROJECT_ID: ID,
+      },
+      reads: true,
+    },
+    {
+      name: "production without project id (fails loudly)",
+      env: { VERCEL: "1", VERCEL_ENV: "production" },
+      reads: "error",
+    },
+    {
+      name: "preview with project id",
+      env: {
+        VERCEL: "1",
+        VERCEL_ENV: "preview",
+        PUBLIC_FIREBASE_PROJECT_ID: ID,
+      },
+      reads: true,
+    },
+    {
+      name: "preview without project id (baseline)",
+      env: { VERCEL: "1", VERCEL_ENV: "preview" },
+      reads: false,
+    },
+    {
+      name: "local build (baseline)",
+      env: { PUBLIC_FIREBASE_PROJECT_ID: ID },
+      reads: false,
+    },
+  ];
+
+  it.each(rows)("$name", async ({ env, reads }) => {
+    const fetch = vi.fn(async () => publishedDoc());
+    const t = setup({ env, fetch });
+    const exit = await t.go();
+    if (reads === "error") {
+      expect(exit).toBe(1);
+      expect(t.write).not.toHaveBeenCalled();
+      expect(() => requiresLiveEventsRead(env)).toThrow(
+        /PUBLIC_FIREBASE_PROJECT_ID/,
+      );
+      return;
+    }
+    expect(exit).toBe(0);
+    // Reads Firestore exactly when the runtime check requires a live read.
+    expect(t.write).toHaveBeenCalledTimes(reads ? 1 : 0);
+    expect(requiresLiveEventsRead(env)).toBe(reads);
+  });
+
+  it("production with project id fails the build on a missing document", async () => {
+    const env = rows[0].env;
+    const t = setup({
+      env,
+      fetch: vi.fn(async () => new Response("", { status: 404 })),
+    });
+    expect(await t.go()).toBe(1);
+    expect(requiresLiveEventsRead(env)).toBe(true);
+  });
+
+  it("the runtime check asks the shared rule and keeps no rule of its own", () => {
+    const source = readFileSync(
+      new URL("./check-server-runtime.mjs", import.meta.url),
+      "utf8",
+    );
+    expect(source).toContain("requiresLiveEventsRead(process.env)");
+    expect(source).not.toMatch(/VERCEL\s*===\s*"1"/);
   });
 });

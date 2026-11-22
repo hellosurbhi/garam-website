@@ -12,6 +12,7 @@ import { join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { checkRedisHealth } from "./check-redis-health.mjs";
+import { requiresLiveEventsRead } from "./fetch-published-events.mjs";
 
 const script = fileURLToPath(import.meta.url);
 
@@ -210,7 +211,7 @@ if (process.argv[2] === "--worker") {
   } else {
     // WHY not a failure on its own: Astro inlines PUBLIC_FIREBASE_PROJECT_ID
     // at build time, and builds without it (CI) cannot read Firestore at all.
-    // Vercel builds always carry it, so there the live read is required.
+    // The shared rule (requiresLiveEventsRead) says when it is required.
     assert.ok(
       !requireLiveEventsRead,
       "The packaged server never read the published show list",
@@ -366,7 +367,9 @@ if (process.argv[2] === "--worker") {
         ticketLinks,
         requireRedisHealth: process.env.VERCEL_ENV === "production",
         liveEvents: publishedEventsFixture(),
-        requireLiveEventsRead: process.env.VERCEL === "1",
+        // WHY the shared rule: the prebuild decides whether this build reads
+        // Firestore; requiring a read the prebuild skipped failed previews.
+        requireLiveEventsRead: requiresLiveEventsRead(process.env),
         eventsVersion: JSON.parse(
           readFileSync("src/data/events.published.json", "utf8"),
         ).version,

@@ -148,6 +148,57 @@ async function pageOps(errorMessage, fetch) {
 }
 
 /**
+ * The ONE rule for "does this build read Firestore or use the committed
+ * baseline". The prebuild (run, below) and the postbuild runtime check
+ * (check-server-runtime.mjs, through requiresLiveEventsRead) both call it,
+ * so they cannot disagree again: a preview without a project id used the
+ * baseline here while the runtime check still demanded a live read and
+ * failed the build.
+ *
+ *   not a Vercel build, not --pull        -> baseline
+ *   no project id, production or --pull   -> error (fail loudly, never
+ *                                            ship the baseline silently)
+ *   no project id, any other Vercel build -> baseline
+ *   project id present                    -> firestore
+ */
+export function eventsSource(env, { pull = false } = {}) {
+  // WHY not fetch in CI and local builds: the output is a tracked file, and
+  // a build that rewrites it leaves a diff nobody asked for. CI has no
+  // project id anyway. `npm run events:pull` is the deliberate refresh.
+  if (!pull && !env.VERCEL) {
+    return {
+      source: "baseline",
+      reason: "Not a Vercel build (run npm run events:pull to refresh)",
+    };
+  }
+  const projectId = env.PUBLIC_FIREBASE_PROJECT_ID?.trim();
+  if (!projectId) {
+    // WHY fail closed only in production: see the failure policy above.
+    if (env.VERCEL_ENV === "production" || pull) {
+      return {
+        source: "error",
+        reason: "PUBLIC_FIREBASE_PROJECT_ID is not set",
+      };
+    }
+    return {
+      source: "baseline",
+      reason: "No PUBLIC_FIREBASE_PROJECT_ID in this build",
+    };
+  }
+  return { source: "firestore", projectId };
+}
+
+/**
+ * Whether the packaged server must have read Firestore at runtime. Throws
+ * when the build should already have stopped (production, no project id).
+ */
+export function requiresLiveEventsRead(env) {
+  const decision = eventsSource(env);
+  if (decision.source === "error") throw new Error(decision.reason);
+  return decision.source === "firestore";
+}
+
+/**
  * Run the prebuild or pull and return the process exit code. Fetch
  * problems become an exit code; only a failed file write throws.
  * Every side effect is injectable for tests.
@@ -166,15 +217,7 @@ export async function run({
   const keepBaseline = (reason) =>
     log(`[events] ${reason}. Building from the committed show list.`);
 
-  // WHY not fetch in CI and local builds: the output is a tracked file, and
-  // a build that rewrites it leaves a diff nobody asked for. CI has no
-  // project id anyway. `npm run events:pull` is the deliberate refresh.
-  if (!pull && !env.VERCEL) {
-    keepBaseline("Not a Vercel build (run npm run events:pull to refresh)");
-    return 0;
-  }
-
-  const projectId = env.PUBLIC_FIREBASE_PROJECT_ID?.trim();
+  const decision = eventsSource(env, { pull });
   const fail = async (message) => {
     error(`[events] ${message}`);
     if (production) {
@@ -185,15 +228,12 @@ export async function run({
     }
     return 1;
   };
-
-  if (!projectId) {
-    // WHY fail closed only in production: see the failure policy below.
-    if (production || pull) {
-      return fail("PUBLIC_FIREBASE_PROJECT_ID is not set");
-    }
-    keepBaseline("No PUBLIC_FIREBASE_PROJECT_ID in this build");
+  if (decision.source === "baseline") {
+    keepBaseline(decision.reason);
     return 0;
   }
+  if (decision.source === "error") return fail(decision.reason);
+  const { projectId } = decision;
 
   let envelope;
   try {

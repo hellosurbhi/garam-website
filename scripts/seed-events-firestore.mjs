@@ -129,12 +129,17 @@ export async function readBaseline(path = BASELINE_PATH) {
 export async function main(
   argv = process.argv.slice(2),
   env = process.env,
-  { fetchImpl = fetch, log = console.log, now = () => new Date() } = {},
+  {
+    fetchImpl = fetch,
+    log = console.log,
+    now = () => new Date(),
+    baselinePath = BASELINE_PATH,
+  } = {},
 ) {
   const execute = argv.includes("--execute");
   const projectId = env.PUBLIC_FIREBASE_PROJECT_ID?.trim();
   const root = documentsRoot(projectId);
-  const { snapshot } = await readBaseline();
+  const { snapshot } = await readBaseline(baselinePath);
   const body = seedCommitBody(root, snapshot, now());
   log(
     `[seed] ${execute ? "Writing" : "Dry run, would write"} version 1 to ${projectId}: ${snapshot.events.length} shows, ${snapshot.tbaCities.length} cities, documents ${body.writes.map((w) => w.update.name.slice(root.length + 1)).join(", ")}.`,

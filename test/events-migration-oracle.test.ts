@@ -1,12 +1,17 @@
 import { describe, it, expect } from "vitest";
 import fixture from "./fixtures/events-pre-migration.json";
-import {
-  buildAllEvents,
-  comingSoonEvents,
-  events,
-  publishedSnapshot,
-  TBA_CITY_SLUGS,
-} from "../src/data/events";
+import baseline from "./fixtures/events-migration-baseline.json";
+import { buildAllEvents, tbaCityToEvent } from "../src/data/eventPages";
+import type { EventsSnapshot } from "../src/data/eventsSnapshot";
+
+// WHY the frozen baseline and not src/data/events: that module reads
+// events.published.json, which `npm run events:pull` and every publish move
+// forward. This oracle compares the MIGRATION's output with the pre-migration
+// code, so it runs on the frozen version 1 snapshot and never changes.
+const publishedSnapshot = baseline.snapshot as EventsSnapshot;
+const events = publishedSnapshot.events;
+const comingSoonEvents = publishedSnapshot.tbaCities.map(tbaCityToEvent);
+const TBA_CITY_SLUGS = publishedSnapshot.tbaCities.map((c) => c.citySlug);
 
 // WHY strip updatedAt: it is the one field the migration added to each
 // record (plan R17); everything else must match the output of the OLD

@@ -1,6 +1,9 @@
 // @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import publishedJson from "../src/data/events.published.json" with { type: "json" };
+// WHY the frozen migration baseline and not src/data/events.published.json: this
+// suite relies on specific committed records (legacy ones included), and the live
+// file moves forward with every publish and `npm run events:pull`.
+import publishedJson from "./fixtures/events-migration-baseline.json" with { type: "json" };
 import type { EventEntry, EventsSnapshot } from "../src/data/eventsSnapshot";
 import type {
   FsDocument,

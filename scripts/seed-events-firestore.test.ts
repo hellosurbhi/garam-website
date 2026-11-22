@@ -1,6 +1,8 @@
 // @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { fileURLToPath } from "node:url";
+
 import type { EventsSnapshot } from "../src/data/eventsSnapshot";
 import {
   SEED_AUTHOR,
@@ -38,6 +40,15 @@ vi.mock("jose", () => ({
   },
 }));
 
+// WHY the frozen fixture, never src/data/events.published.json: the seed is a
+// one-time version 1 import, but that live file moves on with every publish
+// and `npm run events:pull`, and readBaseline refuses anything but version 1.
+// The fixture is the version 1 snapshot the seed will write and must never be
+// refreshed.
+const BASELINE = fileURLToPath(
+  new URL("../test/fixtures/events-migration-baseline.json", import.meta.url),
+);
+
 const PROJECT = "demo-test";
 const ROOT = `projects/${PROJECT}/databases/(default)/documents`;
 const NOW = new Date("2026-11-12T09:00:00.000Z");
@@ -64,7 +75,7 @@ function publishedDoc(version: number, snapshot: EventsSnapshot): Response {
 
 let snapshot: EventsSnapshot;
 beforeEach(async () => {
-  ({ snapshot } = await readBaseline());
+  ({ snapshot } = await readBaseline(BASELINE));
 });
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -131,7 +142,7 @@ describe("main", () => {
     const fetchImpl = vi.fn();
     const log = vi.fn();
     await expect(
-      main([], ENV, { fetchImpl, log, now: () => NOW }),
+      main([], ENV, { fetchImpl, log, now: () => NOW, baselinePath: BASELINE }),
     ).resolves.toBe(0);
     expect(fetchImpl).not.toHaveBeenCalled();
     expect(log.mock.calls.join("\n")).toMatch(/Dry run.*Nothing written/s);
@@ -145,7 +156,12 @@ describe("main", () => {
       .mockResolvedValueOnce(publishedDoc(1, snapshot));
     const log = vi.fn();
     await expect(
-      main(["--execute"], ENV, { fetchImpl, log, now: () => NOW }),
+      main(["--execute"], ENV, {
+        fetchImpl,
+        log,
+        now: () => NOW,
+        baselinePath: BASELINE,
+      }),
     ).resolves.toBe(0);
     expect(JSON.parse(fetchImpl.mock.calls[1][1].body)).toEqual(
       seedCommitBody(ROOT, snapshot, NOW),
@@ -165,7 +181,12 @@ describe("main", () => {
         ),
       );
     await expect(
-      main(["--execute"], ENV, { fetchImpl, log: vi.fn(), now: () => NOW }),
+      main(["--execute"], ENV, {
+        fetchImpl,
+        log: vi.fn(),
+        now: () => NOW,
+        baselinePath: BASELINE,
+      }),
     ).rejects.toThrow(/Already seeded/);
     expect(fetchImpl).toHaveBeenCalledTimes(2);
   });
@@ -178,7 +199,12 @@ describe("main", () => {
       .mockResolvedValueOnce(Response.json({ writeResults: [] }))
       .mockResolvedValueOnce(publishedDoc(1, other));
     await expect(
-      main(["--execute"], ENV, { fetchImpl, log: vi.fn(), now: () => NOW }),
+      main(["--execute"], ENV, {
+        fetchImpl,
+        log: vi.fn(),
+        now: () => NOW,
+        baselinePath: BASELINE,
+      }),
     ).rejects.toThrow(/public read did not return version 1/);
   });
 
@@ -187,7 +213,12 @@ describe("main", () => {
       main(
         ["--execute"],
         { PUBLIC_FIREBASE_PROJECT_ID: PROJECT },
-        { fetchImpl: vi.fn(), log: vi.fn(), now: () => NOW },
+        {
+          fetchImpl: vi.fn(),
+          log: vi.fn(),
+          now: () => NOW,
+          baselinePath: BASELINE,
+        },
       ),
     ).rejects.toThrow(/is not set/);
   });

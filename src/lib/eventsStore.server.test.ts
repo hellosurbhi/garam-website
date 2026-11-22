@@ -1,6 +1,8 @@
 // @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import published from "../data/events.published.json" with { type: "json" };
+// WHY the frozen migration baseline: the live file moves forward with every
+// publish and `npm run events:pull`.
+import published from "../../test/fixtures/events-migration-baseline.json" with { type: "json" };
 import { diffSnapshots, type EventsSnapshot } from "../data/eventsSnapshot";
 import type { FsDocument } from "./firestoreRest";
 

@@ -1,8 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { cities } from "../src/data/cities";
-import { buildAllEvents, publishedSnapshot } from "../src/data/events";
+import { buildAllEvents } from "../src/data/eventPages";
 import { buildEventRedirects } from "../src/utils/eventRedirects";
-import publishedJson from "../src/data/events.published.json" with { type: "json" };
+import baselineJson from "./fixtures/events-migration-baseline.json" with { type: "json" };
+import liveJson from "../src/data/events.published.json" with { type: "json" };
 import {
   buildEventSlug,
   buildRollbackSnapshot,
@@ -62,7 +63,9 @@ function messages(result: ReturnType<typeof validateSnapshotAgainstLive>) {
   return result.ok ? [] : result.issues.map((i) => i.message);
 }
 
-const live = publishedSnapshot;
+// WHY the frozen baseline: these cases name specific committed records. Only
+// the schema guard below reads the live file, on purpose.
+const live = baselineJson.snapshot as EventsSnapshot;
 const liveLa = live.events.find((e) => e.slug === "los-angeles-2026-11-13");
 if (!liveLa) throw new Error("fixture show los-angeles-2026-11-13 missing");
 
@@ -81,7 +84,7 @@ describe("helpers", () => {
 
 describe("shape tier", () => {
   it("accepts the committed published envelope", () => {
-    expect(() => publishedEnvelopeSchema.parse(publishedJson)).not.toThrow();
+    expect(() => publishedEnvelopeSchema.parse(liveJson)).not.toThrow();
   });
 
   it("accepts every record in the published snapshot", () => {

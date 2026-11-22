@@ -488,6 +488,140 @@ describe("ShowsTab", () => {
     expect(callsTo("/api/admin/events/draft")).toHaveLength(0);
   });
 
+  describe("a reload that lands while a confirmation is open", () => {
+    const OLD_TOKEN = "2026-11-11T10:00:00.123456Z";
+    const NEW_TOKEN = "2026-11-11T10:09:00.000000Z";
+
+    /** Opens the confirmation, then a reload brings another admin's save. */
+    async function openThenReload(open: () => void) {
+      let reloaded = false;
+      routeFetch();
+      const base = fetchMock.getMockImplementation();
+      fetchMock.mockImplementation(async (path: string, init?: RequestInit) => {
+        if (path === "/api/admin/events" && reloaded) {
+          const next = adminLoad();
+          if (next.draft) next.draft.updateTime = NEW_TOKEN;
+          return json(200, next);
+        }
+        return base?.(path, init);
+      });
+      render(<ShowsTab />);
+      await screen.findByRole("button", { name: "Rebuild site" });
+      open();
+      reloaded = true;
+      fireEvent.click(screen.getByRole("button", { name: "Rebuild site" }));
+      await waitFor(() =>
+        expect(
+          fetchMock.mock.calls.filter(([p]) => p === "/api/admin/events"),
+        ).toHaveLength(2),
+      );
+      // Let the reload settle so the new token is the latest one.
+      await waitFor(() =>
+        expect(
+          screen.getByRole("button", { name: "Rebuild site" }),
+        ).toHaveProperty("disabled", false),
+      );
+    }
+
+    it("discard sends the token the confirmation opened on, so the other save conflicts", async () => {
+      await openThenReload(() =>
+        fireEvent.click(screen.getByRole("button", { name: /Discard/ })),
+      );
+      const confirm = screen.getAllByRole("button", { name: /Discard/ });
+      fireEvent.click(confirm[confirm.length - 1]);
+      await waitFor(() =>
+        expect(callsTo("/api/admin/events/draft")).toHaveLength(1),
+      );
+      expect(callsTo("/api/admin/events/draft")[0]).toMatchObject({
+        basedOnVersion: 3,
+        expectedDraftUpdateTime: OLD_TOKEN,
+      });
+    });
+
+    it("restore sends the token the confirmation opened on", async () => {
+      await openThenReload(() => {
+        fireEvent.click(
+          screen.getByRole("button", { name: "Version history" }),
+        );
+        fireEvent.click(
+          screen.getByRole("button", { name: "Restore version 2" }),
+        );
+      });
+      fireEvent.change(screen.getByLabelText("What changed and why"), {
+        target: { value: "Back to the old list" },
+      });
+      const confirm = screen.getAllByRole("button", {
+        name: "Restore version 2",
+      });
+      fireEvent.click(confirm[confirm.length - 1]);
+      await waitFor(() =>
+        expect(callsTo("/api/admin/events/rollback")).toHaveLength(1),
+      );
+      expect(callsTo("/api/admin/events/rollback")[0]).toMatchObject({
+        expectedVersion: 3,
+        expectedDraftUpdateTime: OLD_TOKEN,
+      });
+    });
+
+    it("publish sends the token the confirmation opened on", async () => {
+      await openThenReload(() =>
+        fireEvent.click(screen.getByRole("button", { name: /^Publish/ })),
+      );
+      fireEvent.change(screen.getByLabelText("What changed and why"), {
+        target: { value: "Austin is booked" },
+      });
+      fireEvent.click(screen.getByRole("button", { name: "Publish now" }));
+      await waitFor(() =>
+        expect(callsTo("/api/admin/events/publish")).toHaveLength(1),
+      );
+      expect(callsTo("/api/admin/events/publish")[0]).toMatchObject({
+        expectedVersion: 3,
+        expectedDraftUpdateTime: OLD_TOKEN,
+      });
+    });
+  });
+
+  it("a silent day-change refetch never rewrites an open editor and its save is not sent", async () => {
+    // WHY only Date is faked: waitFor and the fetch promises need real timers.
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-11-11T12:00:00.000Z"));
+    try {
+      let otherAdminSaved = false;
+      routeFetch();
+      const base = fetchMock.getMockImplementation();
+      fetchMock.mockImplementation(async (path: string, init?: RequestInit) => {
+        if (path === "/api/admin/events" && otherAdminSaved) {
+          const next = adminLoad();
+          if (next.draft) {
+            next.draft.snapshot = {
+              ...draft,
+              events: [fixtureShow({ price: "35" }), austin],
+            };
+            next.draft.updateTime = "2026-11-12T00:07:00.000000Z";
+          }
+          return json(200, next);
+        }
+        return base?.(path, init);
+      });
+      render(<ShowsTab />);
+      fireEvent.click(
+        await screen.findByRole("button", { name: "Edit Chicago, Jan 9" }),
+      );
+      fireEvent.change(screen.getByLabelText("Card tagline"), {
+        target: { value: "Typed before midnight" },
+      });
+      // Midnight passes and another admin saved: the silent refetch runs.
+      otherAdminSaved = true;
+      vi.setSystemTime(new Date("2026-11-12T00:05:00.000Z"));
+      document.dispatchEvent(new Event("visibilitychange"));
+      await waitFor(() => expect(screen.getByText(EDITOR.stale)).toBeTruthy());
+      // Set aside with a message, never saved over the other admin's work.
+      expect(callsTo("/api/admin/events/draft")).toHaveLength(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("shows a failed save inside the open editor", async () => {
     routeFetch();
     render(<ShowsTab />);

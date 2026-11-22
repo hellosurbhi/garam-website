@@ -114,9 +114,6 @@ export function useShowsAdmin() {
 
   const live = load.kind === "ready" ? load.data.live : null;
   const liveVersion = live?.version;
-  // The draft's lock token: null when there is no draft.
-  const draftUpdateTime =
-    load.kind === "ready" ? (load.data.draft?.updateTime ?? null) : null;
   const onSite = siteVersion === liveVersion;
 
   // WHY poll: a publish only asks Vercel to rebuild, and without a Vercel
@@ -227,32 +224,35 @@ export function useShowsAdmin() {
   );
 
   /**
-   * Save `snapshot` as the draft. `expectedDraft` is the draft updateTime
-   * the snapshot was built from (null: no draft); the server refuses (409)
-   * the save if the draft changed since, so an old copy never overwrites a
-   * newer save. Callers pass what they built on, never just the latest.
+   * Save `snapshot` as the draft. `base` is the live version and draft
+   * updateTime (null: no draft) the caller built the snapshot from; the
+   * server refuses (409) the save if either moved since, so an old copy
+   * never overwrites a newer save.
+   * WHY the caller passes it, never read from the latest load here: a silent
+   * refetch (day change) can land between opening a dialog and pressing its
+   * button, and re-basing onto that load let the button overwrite the work
+   * the admin never saw.
    */
   const saveDraft = useCallback(
     async (
       snapshot: EventsSnapshot,
-      expectedDraft: string | null,
+      base: ShowsBase,
       doneMsg: string = SHOWS_TOAST.saved,
     ) => {
-      if (liveVersion === undefined) return null;
       const res = await mutate(
         "save",
         SHOWS_ROUTES.draft,
         {
           snapshot,
-          basedOnVersion: liveVersion,
-          expectedDraftUpdateTime: expectedDraft,
+          basedOnVersion: base.version,
+          expectedDraftUpdateTime: base.draft,
         },
         "PUT",
       );
       if (res.ok) setToast({ msg: doneMsg, ok: true });
       return res;
     },
-    [liveVersion, mutate],
+    [mutate],
   );
 
   const announce = useCallback(
@@ -269,41 +269,40 @@ export function useShowsAdmin() {
   );
 
   const publish = useCallback(
-    async (note: string) => {
-      if (liveVersion === undefined || !draftUpdateTime) return null;
-      // WHY the draft token: the confirmation lists this loaded draft's
-      // changes, so the server refuses (409) if a save landed since.
+    async (note: string, base: ShowsBase) => {
+      if (!base.draft) return null;
+      // WHY the draft token: the confirmation lists the draft as it was
+      // when it opened, so the server refuses (409) if a save landed since.
       const res = await mutate<PublishResult>("publish", SHOWS_ROUTES.publish, {
-        expectedVersion: liveVersion,
-        expectedDraftUpdateTime: draftUpdateTime,
+        expectedVersion: base.version,
+        expectedDraftUpdateTime: base.draft,
         note,
       });
       announce(res, SHOWS_TOAST.published);
       return res;
     },
-    [liveVersion, draftUpdateTime, mutate, announce],
+    [mutate, announce],
   );
 
   const rollback = useCallback(
-    async (targetVersion: number, note: string) => {
-      if (liveVersion === undefined) return null;
+    async (targetVersion: number, note: string, base: ShowsBase) => {
       const res = await mutate<PublishResult>(
         "rollback",
         SHOWS_ROUTES.rollback,
         {
           targetVersion,
-          expectedVersion: liveVersion,
+          expectedVersion: base.version,
           // WHY: a restore resets the draft, so the server refuses (409) it
           // if a save landed after the confirmation was shown, instead of
           // throwing that unpublished save away.
-          expectedDraftUpdateTime: draftUpdateTime,
+          expectedDraftUpdateTime: base.draft,
           note,
         },
       );
       announce(res, SHOWS_TOAST.restored);
       return res;
     },
-    [liveVersion, draftUpdateTime, mutate, announce],
+    [mutate, announce],
   );
 
   const rebuild = useCallback(async () => {
@@ -344,6 +343,12 @@ export function useShowsAdmin() {
     rollback,
     rebuild,
   };
+}
+
+/** The live version and draft token an action was started from. */
+export interface ShowsBase {
+  version: number;
+  draft: string | null;
 }
 
 export type ShowsAdmin = ReturnType<typeof useShowsAdmin>;

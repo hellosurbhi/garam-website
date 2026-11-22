@@ -36,7 +36,7 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
   const { live, cities } = data;
   const { busy, draftWriting } = admin;
   const draftToken = data.draft?.updateTime ?? null;
-  const { dialog, session, stale, error, show, close, settle, saveFrom } =
+  const { dialog, base, session, stale, error, show, close, settle, saveFrom } =
     useShowsDialog(live.version, draftToken, draftWriting);
   // WHY: a draft saved on top of an older live version would undo whatever
   // was published since, so it is set aside and editing starts from live.
@@ -108,7 +108,12 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
         busy={busy}
         // WHY the current token: this form builds its candidate from the
         // list on screen when it is submitted, so that list is its base.
-        onSave={(snapshot) => admin.saveDraft(snapshot, draftToken)}
+        onSave={(snapshot) =>
+          admin.saveDraft(snapshot, {
+            version: live.version,
+            draft: draftToken,
+          })
+        }
       />
       {stale && <StaleEditorNotice onDismiss={close} />}
       {dialog?.kind === "editor" && !stale && (
@@ -121,7 +126,7 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
           startCanceled={dialog.startCanceled}
           saving={admin.inFlight.includes("save")}
           onSave={(snapshot) =>
-            saveFrom((expected) => admin.saveDraft(snapshot, expected))
+            saveFrom((base) => admin.saveDraft(snapshot, base))
           }
           onClose={close}
         />
@@ -133,17 +138,21 @@ export default function ShowsWorkspace({ admin, data }: ShowsWorkspaceProps) {
         changes={changes}
         busy={busy}
         error={error}
-        onPublish={async (note) => settle(await admin.publish(note))}
+        onPublish={async (note) =>
+          settle(base ? await admin.publish(note, base) : null)
+        }
         onRestore={async (version, note) =>
-          settle(await admin.rollback(version, note))
+          settle(base ? await admin.rollback(version, note, base) : null)
         }
         onDiscard={async () =>
           settle(
-            await admin.saveDraft(
-              live.snapshot,
-              draftToken,
-              SHOWS_TOAST.discarded,
-            ),
+            base
+              ? await admin.saveDraft(
+                  live.snapshot,
+                  base,
+                  SHOWS_TOAST.discarded,
+                )
+              : null,
           )
         }
         onClose={close}

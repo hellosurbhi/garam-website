@@ -3,6 +3,7 @@
  */
 import { useCallback, useRef, useState } from "react";
 import type { ShowsDialog } from "./ShowsDialogs";
+import type { ShowsBase } from "./useShowsAdmin";
 import { attemptSettled, failureMessage, type ApiResult } from "./showsApi";
 
 interface OpenDialog {
@@ -75,12 +76,9 @@ export function useShowsDialog(
    * its own new draft never reads as someone else's change.
    */
   const saveFrom = useCallback(
-    async (
-      save: (
-        expectedDraft: string | null,
-      ) => Promise<ApiResult<unknown> | null>,
-    ) => {
-      const expected = open?.session === session ? open.openedDraft : null;
+    async (save: (base: ShowsBase) => Promise<ApiResult<unknown> | null>) => {
+      if (open?.session !== session) return null;
+      const expected = { version: open.openedOn, draft: open.openedDraft };
       setOpen((o) => (o?.session === session ? { ...o, saving: true } : o));
       const res = await save(expected);
       setOpen((o) => {
@@ -105,8 +103,19 @@ export function useShowsDialog(
     !open.saving &&
     (open.openedOn !== liveVersion || open.openedDraft !== draftToken);
 
+  /**
+   * The live version and draft token the open dialog was shown over.
+   * WHY: publish, restore and discard send these, not the latest load. A
+   * silent refetch can bring another admin's save while the confirmation is
+   * open, and sending the new token would let the button erase it.
+   */
+  const base = open
+    ? { version: open.openedOn, draft: open.openedDraft }
+    : null;
+
   return {
     dialog: open?.dialog ?? null,
+    base,
     session,
     stale,
     error: open?.error ?? null,

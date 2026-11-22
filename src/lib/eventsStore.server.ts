@@ -274,6 +274,102 @@ export async function recordRebuildRequest(
   }
 }
 
+export type RebuildReservation =
+  | { status: "reserved"; previous: RebuildRequest | null }
+  | { status: "busy"; rebuild: RebuildRequest }
+  | { status: "superseded" };
+
+/**
+ * Claim the rebuild window for `version` BEFORE the deploy hook is called.
+ * WHY: the check ("no rebuild in the last 60 s") and the claim used to be two
+ * steps with the hook between them, so two tabs could both pass the check
+ * and fire two deployments. The claim is one commit guarded by the pointer's
+ * updateTime: of two concurrent callers exactly one commit lands, and the
+ * loser re-reads, sees the winner's claim inside the window and gets "busy".
+ * Do not move the claim after the hook call: the hook cannot be undone.
+ */
+export async function reserveRebuild(
+  version: number,
+  now: Date,
+  debounceMs: number,
+  signal?: AbortSignal,
+): Promise<RebuildReservation> {
+  for (let attempt = 1; ; attempt++) {
+    const live = await readPublishedEvents(signal);
+    if (!live || live.data.version !== version) return { status: "superseded" };
+    const held = live.data.rebuild;
+    if (held && Date.parse(held.requestedAt) + debounceMs > now.getTime()) {
+      return { status: "busy", rebuild: held };
+    }
+    try {
+      await fsCommit(
+        [
+          {
+            docPath: EVENTS_PUBLISHED_PATH,
+            // The job id is filled in by recordRebuildRequest once known.
+            fields: {
+              rebuild: { requestedAt: now.toISOString(), jobId: "", version },
+            },
+            merge: true,
+            precondition: { updateTime: live.updateTime },
+          },
+        ],
+        signal,
+      );
+      return { status: "reserved", previous: held };
+    } catch (err) {
+      if (
+        !(err instanceof FsConflictError) ||
+        attempt >= REBUILD_RECORD_ATTEMPTS
+      )
+        throw err;
+    }
+  }
+}
+
+/**
+ * Undo a reservation whose hook call failed, so the admin can retry at once.
+ * Only touches the pointer while it still holds OUR claim (same version and
+ * requestedAt); a newer publish or another claim is left alone. Restores the
+ * record that was there before.
+ */
+export async function releaseRebuild(
+  reserved: RebuildRequest,
+  previous: RebuildRequest | null,
+  signal?: AbortSignal,
+): Promise<void> {
+  for (let attempt = 1; ; attempt++) {
+    const live = await readPublishedEvents(signal);
+    if (
+      !live ||
+      live.data.version !== reserved.version ||
+      live.data.rebuild?.requestedAt !== reserved.requestedAt
+    ) {
+      return;
+    }
+    try {
+      await fsCommit(
+        [
+          {
+            docPath: EVENTS_PUBLISHED_PATH,
+            fields: { rebuild: previous },
+            merge: true,
+            precondition: { updateTime: live.updateTime },
+          },
+        ],
+        signal,
+      );
+      return;
+    } catch (err) {
+      if (
+        !(err instanceof FsConflictError) ||
+        attempt >= REBUILD_RECORD_ATTEMPTS
+      )
+        throw err;
+    }
+  }
+}
+
 export type PublicationKind =
   | { kind: "migration" }
   | { kind: "publish" }

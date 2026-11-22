@@ -648,6 +648,17 @@ describe("publish", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it("fires one hook when two tabs publish the same draft at once", async () => {
+    await saveDraft(
+      { ...baseline, events: [...baseline.events, fixtureShow()] },
+      1,
+    );
+    const [a, b] = await Promise.all([publish(1), publish(1)]);
+    expect([a.status, b.status].sort()).toEqual([200, 409]);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(liveDoc().version).toBe(2);
+  });
+
   it("publishes twice in a row once the debounce has passed (R2)", async () => {
     const first = [...baseline.events, fixtureShow()];
     await saveDraft({ ...baseline, events: first }, 1);
@@ -1108,6 +1119,9 @@ describe("rebuild", () => {
     );
     const slow = rebuild();
     await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    // WHY: the claim is taken before the hook, so a publish inside the
+    // window is refused (next test); this one is made after it passed.
+    afterDebounce();
 
     const show = fixtureShow();
     await saveDraft({ ...baseline, events: [...baseline.events, show] }, 1);
@@ -1123,6 +1137,58 @@ describe("rebuild", () => {
 
     expect(liveDoc().rebuild).toEqual(v2Rebuild);
     expect(mocks.alertOps).not.toHaveBeenCalled();
+  });
+
+  it("fires one hook when two tabs rebuild at once and answers the other like the cooldown", async () => {
+    const [a, b] = await Promise.all([rebuild(), rebuild()]);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const statuses = [a.status, b.status].sort();
+    expect(statuses).toEqual([200, 429]);
+    const loser = a.status === 429 ? a : b;
+    expect(loser.json.retryAfterSeconds).toBeGreaterThan(0);
+    expect(liveDoc().rebuild).toMatchObject({ version: 1, jobId: "job-1" });
+  });
+
+  it("holds the claim while the hook is out, so a second tab never fires", async () => {
+    let answerSlow: (r: Response) => void = () => {};
+    fetchMock.mockImplementationOnce(
+      () => new Promise<Response>((resolve) => (answerSlow = resolve)),
+    );
+    const slow = rebuild();
+    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    expect((await rebuild()).status).toBe(429);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    answerSlow(Response.json({ job: { id: "job-1", state: "PENDING" } }));
+    expect((await slow).json).toMatchObject({ rebuild: "requested" });
+  });
+
+  it("releases the claim when the hook fails, restoring the earlier record", async () => {
+    await rebuild();
+    const earlier = liveDoc().rebuild;
+    afterDebounce();
+    fetchMock.mockResolvedValueOnce(new Response("down", { status: 502 }));
+    expect((await rebuild()).json.rebuild).toBe("failed");
+    expect(liveDoc().rebuild).toEqual(earlier);
+    // Immediate retry is allowed, not locked out for the cooldown.
+    expect((await rebuild()).json.rebuild).toBe("requested");
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+  });
+
+  it("refuses a publish while a rebuild is in flight instead of firing a second hook", async () => {
+    let answerSlow: (r: Response) => void = () => {};
+    fetchMock.mockImplementationOnce(
+      () => new Promise<Response>((resolve) => (answerSlow = resolve)),
+    );
+    const slow = rebuild();
+    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    await saveDraft(
+      { ...baseline, events: [...baseline.events, fixtureShow()] },
+      1,
+    );
+    expect((await publish(1)).status).toBe(429);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    answerSlow(Response.json({ job: { id: "job-1", state: "PENDING" } }));
+    await slow;
   });
 
   it("refuses within 60 s of the last request, then allows it", async () => {

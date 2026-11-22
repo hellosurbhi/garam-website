@@ -28,6 +28,8 @@ import {
   readEventsDraft,
   readPublishedEvents,
   recordRebuildRequest,
+  releaseRebuild,
+  reserveRebuild,
   saveEventsDraft,
   type EventsDraft,
   type PublicationKind,
@@ -139,7 +141,10 @@ function requireVersion(expected: number, live: Stored<PublishedEvents>) {
 }
 
 /** Refuse while a rebuild was requested under 60 s ago (R15). */
-function requireRebuildSettled(live: PublishedEvents, now: Date): void {
+function requireRebuildSettled(
+  live: Pick<PublishedEvents, "rebuild">,
+  now: Date,
+): void {
   if (!live.rebuild) return;
   const waitMs =
     Date.parse(live.rebuild.requestedAt) + REBUILD_DEBOUNCE_MS - now.getTime();
@@ -155,15 +160,49 @@ const deployHookResponseSchema = z.object({
 });
 
 /**
- * POST the Vercel deploy hook for `version` and record it on the live
- * pointer. Never throws: a failed rebuild must not undo a publish whose data
- * is already live for /api/go (plan section 5, step 3), so it pages instead
- * and the admin offers the Rebuild button.
+ * Reserve the rebuild window for `version`, POST the Vercel deploy hook, then
+ * record the job id. Returns "failed" instead of throwing when the hook
+ * fails: a failed rebuild must not undo a publish whose data is already live
+ * for /api/go (plan section 5, step 3), so it pages instead and the admin
+ * offers the Rebuild button.
+ *
+ * WHY reserve first: a check before and a record after the hook let two
+ * callers both fire it. The reservation is one guarded write (see
+ * reserveRebuild), so a second caller inside the window never reaches the
+ * hook. It is released if the hook fails, so a failed try never locks the
+ * admin out. `manual` callers get the 429 answer when the window is taken;
+ * publish and rollback treat it as done, since the claim holder's hook
+ * builds the live data.
  */
 export async function requestRebuild(
   version: number,
   now: Date,
+  manual = false,
 ): Promise<RebuildStatus> {
+  let held: Awaited<ReturnType<typeof reserveRebuild>>;
+  try {
+    held = await reserveRebuild(version, now, REBUILD_DEBOUNCE_MS);
+  } catch (err) {
+    // WHY no hook call: without the claim a second caller could fire too.
+    await alertOps({
+      flow: "ops",
+      stage: "events_rebuild",
+      errorMessage: `Shows v${version} is live but the site rebuild was not requested: could not reserve it: ${errorText(err)}`,
+    });
+    return "failed";
+  }
+  if (held.status === "busy") {
+    // The window is open, so this throws the same 429 the cooldown gives.
+    if (manual) requireRebuildSettled({ rebuild: held.rebuild }, now);
+    return "requested";
+  }
+  // A newer version went live meanwhile; its own publish requests its build.
+  if (held.status === "superseded") return "requested";
+  const claim = {
+    requestedAt: now.toISOString(),
+    jobId: "",
+    version,
+  };
   const hookUrl = readTrimmedEnv(import.meta.env.VERCEL_DEPLOY_HOOK);
   let jobId: string;
   try {
@@ -178,6 +217,11 @@ export async function requestRebuild(
     // is queued; the id only labels it.
     jobId = body.success ? body.data.job.id : "";
   } catch (err) {
+    try {
+      await releaseRebuild(claim, held.previous);
+    } catch {
+      // The claim expires on its own after the cooldown.
+    }
     await alertOps({
       flow: "ops",
       stage: "events_rebuild",
@@ -186,13 +230,9 @@ export async function requestRebuild(
     return "failed";
   }
   try {
-    await recordRebuildRequest({
-      requestedAt: now.toISOString(),
-      jobId,
-      version,
-    });
+    await recordRebuildRequest({ ...claim, jobId });
   } catch (err) {
-    // The build is queued either way; only the 60 s debounce record is lost.
+    // The build is queued either way; only the job id label is lost.
     await alertOps({
       flow: "ops",
       stage: "events_rebuild_record",
@@ -480,7 +520,7 @@ export async function rebuildLive() {
   const now = new Date();
   const live = await requireLive();
   requireRebuildSettled(live.data, now);
-  const rebuild = await requestRebuild(live.data.version, now);
+  const rebuild = await requestRebuild(live.data.version, now, true);
   return { version: live.data.version, rebuild };
 }
 

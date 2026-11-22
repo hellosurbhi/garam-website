@@ -7,7 +7,9 @@ import {
   entryFromForm,
   formFromEntry,
   timezoneChoices,
+  withCity,
   withTimezone,
+  emptyForm,
 } from "./showForm";
 import { localToIso } from "@/utils/timezone";
 
@@ -73,5 +75,37 @@ describe("localToIso", () => {
     expect(localToIso("2027-10-31T01:30", "Europe/London")).toBe(
       "2027-10-31T00:30:00.000Z",
     );
+  });
+});
+
+describe("withCity", () => {
+  const chicago = { slug: "chicago", name: "Chicago", region: "IL" };
+  const tour = { slug: "boise", name: "Boise", region: "ID" };
+  const snapshot = {
+    events: [
+      {
+        ...(events[0] as EventEntry),
+        citySlug: "chicago",
+        stateAbbr: "IL",
+        state: "Illinois",
+        timezone: "America/Chicago",
+      },
+    ],
+    tbaCities: [],
+  };
+
+  it("fills the state and zone from saved records for the city", () => {
+    const form = withCity(emptyForm(), chicago, snapshot);
+    expect(form.state).toBe("Illinois");
+    expect(form.timezone).toBe("America/Chicago");
+  });
+
+  it("clears the previous city's state and zone when the new city has none", () => {
+    const first = withCity(emptyForm(), chicago, snapshot);
+    const next = withCity(first, tour, snapshot);
+    expect(next.citySlug).toBe("boise");
+    expect(next.stateAbbr).toBe("ID");
+    expect(next.state).toBe("");
+    expect(next.timezone).toBe("");
   });
 });

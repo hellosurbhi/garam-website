@@ -345,7 +345,8 @@ export function entryFromForm(
 /**
  * The form after picking a city for a new show: name and state code from
  * the city page, the full state name and time zone from any show or coming
- * soon card already in that state or city (R12 prefill).
+ * soon card already in that state or city (R12 prefill). When none exists
+ * they are cleared, never carried over from the previous pick.
  */
 export function withCity(
   form: ShowForm,
@@ -360,7 +361,11 @@ export function withCity(
     citySlug: city.slug,
     city: city.name,
     stateAbbr: city.region,
-    state: sameState?.state ?? form.state,
-    timezone: cityTimezone(snapshot.events, city.slug) || form.timezone,
+    // WHY empty, not the previous city's value: Chicago then an unconfigured
+    // touring city kept Illinois and America/Chicago, which then published
+    // for the wrong place. Blank fails validation, so the admin must enter
+    // the real state and zone. Keeping them would only be right by luck.
+    state: sameState?.state ?? "",
+    timezone: cityTimezone(snapshot.events, city.slug),
   };
 }

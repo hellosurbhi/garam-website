@@ -124,6 +124,8 @@ function adminLoad(): EventsAdminLoad {
     cities: [
       { slug: "chicago", name: "Chicago", region: "IL" },
       { slug: "austin", name: "Austin", region: "TX" },
+      // No saved show or card anywhere in Idaho.
+      { slug: "boise", name: "Boise", region: "ID" },
     ],
     waitlist: {
       live: { datedSlugs: [], cities: [] },
@@ -620,6 +622,22 @@ describe("ShowsTab", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it("clears the state when the next coming soon city has no saved state, and will not save without one", async () => {
+    routeFetch();
+    render(<ShowsTab />);
+    const city = await screen.findByLabelText(COMING_SOON.cityLabel);
+    const state = screen.getByLabelText<HTMLInputElement>(
+      COMING_SOON.stateLabel,
+    );
+    fireEvent.change(city, { target: { value: "chicago" } });
+    expect(state.value).toBe("Illinois");
+    fireEvent.change(city, { target: { value: "boise" } });
+    expect(state.value).toBe("");
+    fireEvent.click(screen.getByRole("button", { name: COMING_SOON.add }));
+    await screen.findByRole("alert");
+    expect(callsTo("/api/admin/events/draft")).toHaveLength(0);
   });
 
   it("shows a failed save inside the open editor", async () => {

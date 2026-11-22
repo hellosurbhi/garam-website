@@ -47,9 +47,12 @@ export default function ComingSoonCities({
     const city = cities.find((c) => c.slug === next);
     // Prefill the full state name from any show already in that state.
     const known = [...snapshot.events, ...snapshot.tbaCities].find(
-      (e) => e.stateAbbr === city?.region,
+      (e) => city && e.stateAbbr === city.region,
     );
-    if (known) setState(known.state);
+    // WHY cleared when unknown: keeping the last city's state let a new
+    // city be saved under it (Chicago, then an unconfigured city, saved as
+    // Illinois). An empty state fails validation, so it is typed on purpose.
+    setState(known?.state ?? "");
   }
 
   /** Checks with the server's rules first; true once the draft saved. */

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import type { EventEntry, EventsSnapshot } from "@/data/eventsSnapshot";
 import { EDITOR } from "@/data/adminShows";
-import { formFromEntry, type ShowForm } from "./showForm";
+import { emptyForm, formFromEntry, type ShowForm } from "./showForm";
 import { checkShowForm } from "./showIssues";
 
 // ── Fixtures (never production data) ─────────────────────────────────────
@@ -180,5 +180,30 @@ describe("checkShowForm", () => {
       path: "events.0.onSaleAt",
       message: EDITOR.skippedTime,
     });
+  });
+
+  it("refuses a new show whose state or zone was never set", () => {
+    const draft = { events: [chicago], tbaCities: [] };
+    // Everything filled in as for Manhattan, except what the city switch
+    // now clears.
+    const initial = emptyForm();
+    const filled = {
+      ...formFromEntry(nyc, [nyc]),
+      slug: undefined,
+    } as unknown as ShowForm;
+    const run = (over: Partial<ShowForm>) =>
+      checkShowForm({
+        form: { ...filled, ...over },
+        initial,
+        base: undefined,
+        index: 1,
+        snapshot: draft,
+        live: draft,
+        cities,
+        nowIso: "2026-11-11T21:00:00.000Z",
+      }).problems.map((p) => p.path);
+    expect(run({})).toEqual([]);
+    expect(run({ state: "" })).toContain("events.1.state");
+    expect(run({ timezone: "" })).toContain("events.1.timezone");
   });
 });

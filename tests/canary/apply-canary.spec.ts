@@ -84,6 +84,12 @@ test("a phone applicant can file an application with photos on the live stack", 
     }
   });
 
+  // WHY this marker: canary-alert.mjs reads it to tell "the live site failed
+  // this profile" from "the harness never reached the site". Playwright's own
+  // "Running N tests" banner prints before browser launch and secret checks,
+  // so a broken setup plus an empty read-back paged APPLICANTS AFFECTED.
+  // Printed after both, right before the first request to production.
+  process.stdout.write(`CANARY FILING STARTED: ${profile}\n`);
   await page.goto("/apply", { waitUntil: "domcontentloaded" });
   await page.waitForSelector("[data-testid=apply-form]", {
     state: "visible",

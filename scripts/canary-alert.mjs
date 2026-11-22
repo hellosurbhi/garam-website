@@ -75,9 +75,19 @@ export function canaryAlert({ verifyLog, browserLog, incident }) {
   const verify = verifyLog ?? "";
   const browser = browserFailures(browserLog);
   // WHY: the read-back runs even when browser setup failed, and then finds no
-  // drafts because none were filed. Without this, a failed browser install
-  // paged "APPLICANTS AFFECTED". Playwright prints this line before filing.
-  const filed = /^\s*Running \d+ tests? using/m.test(browserLog ?? "");
+  // drafts because none were filed. Only a profile that printed the spec's
+  // "CANARY FILING STARTED" marker reached production, so only its read-back
+  // failure means applicants are affected. Playwright's "Running N tests"
+  // banner was tried first: it prints before browser launch, so a launch
+  // failure still paged APPLICANTS AFFECTED.
+  const started = [
+    ...(browserLog ?? "").matchAll(/CANARY FILING STARTED: ([\w-]+)/g),
+  ].map((match) => match[1]);
+  const affected = verify
+    .split("\n")
+    .filter((line) => line.startsWith("- "))
+    .map((line) => line.slice(2))
+    .filter((line) => started.some((id) => line.startsWith(`${id}:`)));
   const where = browser.profiles.length
     ? ` on ${listOf(browser.profiles.map(profileName))}`
     : "";
@@ -94,13 +104,8 @@ export function canaryAlert({ verifyLog, browserLog, incident }) {
   let subject;
   let impact;
   let action;
-  if (verify.includes("CANARY VERIFY FAILED") && filed) {
-    const first =
-      verify
-        .split("\n")
-        .find((line) => line.startsWith("- "))
-        ?.slice(2) ?? "an application did not land";
-    subject = `APPLICANTS AFFECTED: ${first}`;
+  if (verify.includes("CANARY VERIFY FAILED") && affected.length) {
+    subject = `APPLICANTS AFFECTED: ${affected[0]}`;
     impact =
       "Test applications are NOT reaching the database. Real applicants are probably failing right now.";
     action =
@@ -115,7 +120,7 @@ export function canaryAlert({ verifyLog, browserLog, incident }) {
       "What to do: open garammasaladating.com/apply on your phone. If it works, nothing is urgent: tell Claude the check needs fixing. If it does not, tell Claude right away.";
   } else {
     subject = "Apply monitor could not run, applicant impact unknown";
-    impact = filed
+    impact = started.length
       ? "The apply canary could not read back its test applications, so nobody knows whether real applicants are affected."
       : "The apply canary never started filing test applications (its own setup failed), so nobody knows whether real applicants are affected.";
     action =

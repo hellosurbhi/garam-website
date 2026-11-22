@@ -7,6 +7,9 @@ import { browserFailures, canaryAlert } from "./canary-alert.mjs";
 const BROWSER_LOG = `
 Running 3 tests using 1 worker
 
+CANARY FILING STARTED: iphone-safari
+CANARY FILING STARTED: android-chrome
+CANARY FILING STARTED: instagram-webview
   1) [android-chrome] › tests/canary/apply-canary.spec.ts:50:1 › a phone applicant can file an application with photos on the live stack
 
     Error: direct upload to the bucket was blocked
@@ -111,7 +114,11 @@ describe("canaryAlert", () => {
   });
 
   it("does not blame applicants when browser setup failed before filing", () => {
-    for (const browserLog of ["", "Error: browserType.launch: Executable doesn't exist"]) {
+    for (const browserLog of [
+      "",
+      "Running 3 tests using 1 worker\n\nError: browserType.launch: Executable doesn't exist",
+      "Running 3 tests using 1 worker\n\nError: DRAFT_TOKEN_SECRET is not set",
+    ]) {
       const alert = canaryAlert({ verifyLog: VERIFY_FAILED, browserLog });
       expect(alert.subject).toBe(
         "Apply monitor could not run, applicant impact unknown",

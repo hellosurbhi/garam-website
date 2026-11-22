@@ -803,6 +803,77 @@ for (const [name, body, passes] of [
     false,
   ],
   [
+    "page naming a string main event that is another show, beside ours",
+    {
+      "@graph": [
+        { "@type": "WebPage", mainEntity: "#main" },
+        {
+          "@id": "#main",
+          "@type": "Event",
+          startDate: "2026-12-11T19:30:00-06:00",
+          location: atVenue,
+        },
+        { "@type": "Event", startDate: ourStart, location: atVenue },
+      ],
+    },
+    false,
+  ],
+  [
+    "page naming a string main event that is never described, beside ours",
+    {
+      "@graph": [
+        { "@type": "WebPage", mainEntity: "#main" },
+        { "@type": "Event", startDate: ourStart, location: atVenue },
+      ],
+    },
+    false,
+  ],
+  [
+    "page naming a string main event that is our show",
+    {
+      "@graph": [
+        { "@type": "WebPage", mainEntity: "#main" },
+        {
+          "@id": "#main",
+          "@type": "Event",
+          startDate: ourStart,
+          location: atVenue,
+        },
+      ],
+    },
+    true,
+  ],
+  [
+    "page naming a main event list with one member never described, beside ours",
+    {
+      "@graph": [
+        { "@type": "WebPage", mainEntity: [{ "@id": "#main" }, "#gone"] },
+        {
+          "@id": "#main",
+          "@type": "Event",
+          startDate: ourStart,
+          location: atVenue,
+        },
+      ],
+    },
+    false,
+  ],
+  [
+    "page naming a main event list of a string and an inline reference to our show",
+    {
+      "@graph": [
+        { "@type": "WebPage", mainEntity: ["#main", { "@id": "#main" }] },
+        {
+          "@id": "#main",
+          "@type": "Event",
+          startDate: ourStart,
+          location: atVenue,
+        },
+      ],
+    },
+    true,
+  ],
+  [
     "page whose main event is our show",
     {
       "@graph": [

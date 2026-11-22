@@ -190,13 +190,14 @@ jobs:
             exit 0
           fi
           # "<first failure date> <failed runs>" from the open incident issue.
-          # Counts distinct run ids in comments the workflow itself posted (one
-          # per failed run), so human replies never inflate the streak.
+          # Counts distinct run ids in the issue body and the comments the
+          # workflow itself posted (one per failed run), so human replies and
+          # reruns of the same run never inflate the streak.
           # A monitor that stays red escalates instead of fading into noise.
           # Empty when the lookup fails: the page still goes out and says the
           # history is unknown. The recover job closes the issue on a pass.
           # timeout 20: a stalled GitHub API call must not eat this step's
           # two minutes and block the email itself.
-          CANARY_INCIDENT=$(timeout 20 gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"APPLY FAILED: production apply canary\" in:title" --json createdAt,comments --jq '.[0] // empty | "\(.createdAt[0:10]) \([.comments[] | select(.author.login == "github-actions") | .body | scan("actions/runs/([0-9]+)")[]] | unique | length + 1)"' || true)
+          CANARY_INCIDENT=$(timeout 20 gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"APPLY FAILED: production apply canary\" in:title" --json createdAt,body,comments --jq '.[0] // empty | "\(.createdAt[0:10]) \([.body, (.comments[] | select(.author.login == "github-actions") | .body)] | map(scan("actions/runs/([0-9]+)")[]) | unique | length)"' || true)
           export CANARY_INCIDENT
           node scripts/canary-alert.mjs

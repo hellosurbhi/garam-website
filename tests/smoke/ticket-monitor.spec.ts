@@ -874,6 +874,117 @@ for (const [name, body, passes] of [
     true,
   ],
   [
+    "page whose main entity is an untyped node with another show's date, beside ours",
+    {
+      "@graph": [
+        { "@type": "WebPage", mainEntity: { "@id": "#main" } },
+        { "@id": "#main", startDate: "2026-12-11T19:30:00-06:00" },
+        { "@type": "Event", startDate: ourStart, location: atVenue },
+      ],
+    },
+    false,
+  ],
+  [
+    "page whose main entity is an inline untyped object, beside ours",
+    {
+      "@graph": [
+        {
+          "@type": "WebPage",
+          mainEntity: { startDate: "2026-12-11T19:30:00-06:00" },
+        },
+        { "@type": "Event", startDate: ourStart, location: atVenue },
+      ],
+    },
+    false,
+  ],
+  [
+    "page whose main entity has an empty type, beside ours",
+    {
+      "@graph": [
+        { "@type": "WebPage", mainEntity: { "@id": "#main" } },
+        { "@id": "#main", "@type": "", startDate: "2026-12-11T19:30:00-06:00" },
+        { "@type": "Event", startDate: ourStart, location: atVenue },
+      ],
+    },
+    false,
+  ],
+  [
+    "page whose main entity has an unreadable type, beside ours",
+    {
+      "@graph": [
+        { "@type": "WebPage", mainEntity: { "@id": "#main" } },
+        {
+          "@id": "#main",
+          "@type": [7, null],
+          startDate: "2026-12-11T19:30:00-06:00",
+        },
+        { "@type": "Event", startDate: ourStart, location: atVenue },
+      ],
+    },
+    false,
+  ],
+  [
+    "page whose main entity is a typed Question reference, beside ours",
+    {
+      "@graph": [
+        { "@type": "WebPage", mainEntity: "#main" },
+        { "@id": "#main", "@type": "Question", name: "Parking?" },
+        { "@type": "Event", startDate: ourStart, location: atVenue },
+      ],
+    },
+    true,
+  ],
+  [
+    "page whose main entity is an inline typed Organization, beside ours",
+    {
+      "@graph": [
+        {
+          "@type": "WebPage",
+          mainEntity: { "@type": ["Thing", "Organization"], name: "Garam" },
+        },
+        { "@type": "Event", startDate: ourStart, location: atVenue },
+      ],
+    },
+    true,
+  ],
+  [
+    "page whose main entity is null, beside ours",
+    {
+      "@graph": [
+        { "@type": "WebPage", mainEntity: null },
+        { "@type": "Event", startDate: ourStart, location: atVenue },
+      ],
+    },
+    true,
+  ],
+  [
+    "page whose main entity is a number, beside ours",
+    {
+      "@graph": [
+        { "@type": "WebPage", mainEntity: 7 },
+        { "@type": "Event", startDate: ourStart, location: atVenue },
+      ],
+    },
+    false,
+  ],
+  [
+    "page whose main entity is a typed-array Event of another date, beside ours",
+    {
+      "@graph": [
+        {
+          "@type": "WebPage",
+          mainEntity: {
+            "@type": ["Thing", "Event"],
+            startDate: "2026-12-11T19:30:00-06:00",
+            location: atVenue,
+          },
+        },
+        { "@type": "Event", startDate: ourStart, location: atVenue },
+      ],
+    },
+    false,
+  ],
+  [
     "page whose main event is our show",
     {
       "@graph": [

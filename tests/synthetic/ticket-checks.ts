@@ -184,16 +184,22 @@ export function extractListedEvents(html: string): ListedEvent[] {
   // Taking the union passed a wrong show's page that also had a WebPage
   // pointing at ours, and falling back to the other events let a
   // recommendation of ours stand in for a main event with conflicting dates.
-  // mainEntity shapes (schema.org values may be any of these, alone or in an
-  // array): an inline object, a {"@id"} reference, or a bare string id or
-  // IRI. Each is resolved through the id index. An Event is the main event;
-  // an inline non-event (an FAQ's Question) doesn't decide; anything declared
-  // but unreadable fails closed. An Event's own mainEntityOfPage is not
-  // consulted: it is the event's claim about itself, not the page's.
-  // WHY: a reference that can't be resolved (an id the page never describes,
-  // or a string id, which a first version ignored) named a main event we
-  // can't read. Treating it as "no main event" let a separate recommended
-  // event of ours pass. Only a page declaring no mainEntity may fall back.
+  // Decision table for a page's declared mainEntity (a WebPage or subtype).
+  // Each member, alone or in an array, is an inline object, a {"@id"}
+  // reference or a bare string id; it is resolved through the id index, then:
+  //   Event-family @type (string or array)  -> the main event; compared to ours
+  //   explicit @type, none an Event         -> doesn't decide (an FAQ's
+  //                                            Question, an Organization);
+  //                                            fallback to top-level events
+  //   no @type, or an empty/unreadable one  -> fail closed
+  //   unresolvable id, or a non-node value  -> fail closed
+  //   no mainEntity at all (absent or null) -> fallback to top-level events
+  // An Event's own mainEntityOfPage is not consulted: it is the event's claim
+  // about itself, not the page's.
+  // WHY fail closed on an untyped member: it may be an event we can't
+  // identify. Dropping it as "not an Event" let a separate recommended event
+  // of ours stand in for a main event with another show's date. Only an
+  // explicit non-event type proves the member isn't what the page sells.
   const unreadableMain = Symbol("unreadable main entity");
   const declaredMain = topLevel
     .map(resolve)
@@ -204,11 +210,15 @@ export function extractListedEvents(html: string): ListedEvent[] {
     .flatMap((node) => [node.mainEntity].flat())
     .filter((ref) => ref !== undefined && ref !== null)
     .map((ref) => {
-      if (typeof ref === "string")
-        return resolve({ "@id": ref }) ?? unreadableMain;
-      if (!isNode(ref)) return unreadableMain;
-      if (typeof ref["@id"] === "string") return resolve(ref) ?? unreadableMain;
-      return ref;
+      const node =
+        typeof ref === "string"
+          ? resolve({ "@id": ref })
+          : isNode(ref) && typeof ref["@id"] === "string"
+            ? resolve(ref)
+            : ref;
+      return isNode(node) && typesOf(node).some((t) => t.trim())
+        ? node
+        : unreadableMain;
     });
   if (declaredMain.includes(unreadableMain)) return [];
   const mainEvents = [

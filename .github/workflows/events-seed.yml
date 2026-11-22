@@ -1,0 +1,56 @@
+# WHY: one-time copy of today's show list into production Firestore, which the
+# Shows admin (PR 366) needs in place BEFORE it merges or production builds
+# fail. The admin key exists only as GitHub Actions secrets (the Mac has no
+# admin key by design, CI-only), and a workflow_dispatch workflow can only be
+# dispatched once its file is on main, so this lands first on its own.
+# The seed script (scripts/seed-events-firestore.mjs) writes every document
+# with an "exists: false" precondition in one atomic commit, so it refuses to
+# overwrite anything already there; a second run fails and changes nothing.
+# `execute` defaults to false: a practice run that prints what it would write
+# and touches nothing. The input goes through an env var, never interpolated
+# into the script text.
+# Required repo secrets: FIREBASE_PROJECT_ID, FIREBASE_ADMIN_CLIENT_EMAIL,
+# FIREBASE_ADMIN_PRIVATE_KEY.
+name: Events Seed
+
+on:
+  workflow_dispatch:
+    inputs:
+      execute:
+        description: "Write to the database (false = practice run, writes nothing)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: events-seed
+  cancel-in-progress: false
+
+jobs:
+  seed:
+    name: Seed the show list
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Run the seed
+        env:
+          PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_ADMIN_CLIENT_EMAIL: ${{ secrets.FIREBASE_ADMIN_CLIENT_EMAIL }}
+          FIREBASE_ADMIN_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY }}
+          SEED_EXECUTE: ${{ inputs.execute }}
+        run: |
+          if [ "$SEED_EXECUTE" = "true" ]; then
+            npm run events:seed -- --execute
+          else
+            npm run events:seed
+          fi

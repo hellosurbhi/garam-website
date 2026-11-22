@@ -135,6 +135,42 @@ export function useShowsAdmin() {
     return () => clearInterval(id);
   }, [locked]);
 
+  // WHY: `now` also decides which UTC day the shows list and previews use
+  // (ShowsWorkspace todayIso). Once the site is on the live version and no
+  // lock counts down, nothing else sets it, so a tab left open across UTC
+  // midnight kept sorting and previewing shows with yesterday's date. The
+  // clock is refreshed when the date can change: at the next UTC midnight
+  // (re-armed after it fires) and when the tab is seen again, because a
+  // sleeping laptop pauses timers. No fast interval: that would re-render
+  // the whole workspace for nothing.
+  useEffect(() => {
+    const refresh = () => setNow(Date.now());
+    const onVisible = () => {
+      if (document.visibilityState !== "hidden") refresh();
+    };
+    let id: ReturnType<typeof setTimeout>;
+    const arm = () => {
+      const t = new Date();
+      const midnight = Date.UTC(
+        t.getUTCFullYear(),
+        t.getUTCMonth(),
+        t.getUTCDate() + 1,
+      );
+      id = setTimeout(() => {
+        refresh();
+        arm();
+      }, midnight - t.getTime());
+    };
+    arm();
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", refresh);
+    return () => {
+      clearTimeout(id);
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", refresh);
+    };
+  }, []);
+
   const mutate = useCallback(
     async <T>(
       action: ShowsAction,

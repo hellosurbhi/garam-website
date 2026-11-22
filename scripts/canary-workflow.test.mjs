@@ -56,10 +56,12 @@ function streak(issue) {
   ).trim();
 }
 
+// Real REST shape: comments posted with GITHUB_TOKEN carry the login
+// "github-actions[bot]" (GraphQL says "github-actions"), checked against
+// issue 409's comments.
 const run = (id) => `Run: https://github.com/o/r/actions/runs/${id}`;
 const bot = (body) => ({
-  author: { login: "github-actions" },
-  user: { login: "github-actions" },
+  user: { login: "github-actions[bot]", type: "Bot" },
   body,
 });
 
@@ -77,8 +79,7 @@ it("counts distinct failed runs, ignoring reruns and human replies", () => {
       comments: [
         bot(run(1)),
         {
-          author: { login: "hellosurbhi" },
-          user: { login: "hellosurbhi" },
+          user: { login: "hellosurbhi", type: "User" },
           body: `see ${run(9)}`,
         },
         bot(run(2)),

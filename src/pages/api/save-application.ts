@@ -145,6 +145,7 @@ export const POST: APIRoute = async ({ request }) => {
       refuseAfterWelcome = false;
       capped = false;
       stale = [];
+      incomplete = [];
       // WHY: finalize() wipes the applicant's token, so no real client writes
       // to a finished application. A leaked token (30-day life) must not be
       // able to rewrite one. A repeated finalize is the exception: a lost
@@ -211,7 +212,6 @@ export const POST: APIRoute = async ({ request }) => {
       // (see the finalized guard above) with those answers missing; the client
       // resends them with a higher revision and finalizes then. The same holds
       // for text dropped over the size budget.
-      incomplete = [];
       if (finalize && merged.stale.length === 0 && !capped) {
         incomplete = missingRequiredAnswers(projected);
       }

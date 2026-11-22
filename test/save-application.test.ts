@@ -512,6 +512,24 @@ describe("save-application: finalize", () => {
     expect(mocks.sendMail).not.toHaveBeenCalled();
   });
 
+  it("an incomplete finalize that loses a race to a successful finalize reports no missing answers", async () => {
+    const first = await json(
+      await post({ rev: 1, fields: { ...COMPLETE, phone: "" } }),
+    );
+    mocks.state.racingFinalize = true;
+    const res = await post({
+      token: first.token,
+      rev: 2,
+      fields: {},
+      finalize: true,
+    });
+    const done = await json(res);
+    expect(res.status).toBe(200);
+    // The retried attempt sees an already finalized application: the first
+    // attempt's missing list must not leak into the answer.
+    expect(done.incomplete ?? []).toEqual([]);
+  });
+
   it("a finished application is closed to a later write with the same token", async () => {
     const first = await json(await post({ rev: 1, fields: { ...COMPLETE } }));
     await post({ token: first.token, rev: 2, fields: {}, finalize: true });

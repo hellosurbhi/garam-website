@@ -116,6 +116,8 @@ interface SaveResponse {
   maxRev?: number;
   /** Fields the server refused because it holds a newer revision. */
   stale?: string[];
+  /** Required answers still missing: the server kept the draft a Draft. */
+  incomplete?: string[];
   /** The server dropped text because the draft hit its size budget. */
   capped?: boolean;
   status?: string;
@@ -534,6 +536,20 @@ export class AutosaveController {
       }
       // A field refused as stale was queued again with a higher revision.
       if (data.stale && data.stale.length > 0) continue;
+      // WHY: the server keeps an incomplete application a Draft (no welcome
+      // email, hidden in the admin Draft section) and says so here. Marking it
+      // finalized cleared the recovery token and showed success for an
+      // application that was never filed (an older open tab, where phone was
+      // optional, hit this). Throwing keeps the token and queued fields and
+      // routes through the form's existing "could not finish" message, which
+      // names the gaps. Removing this brings the silent false success back.
+      if (data.incomplete && data.incomplete.length > 0) {
+        throw new ApplyRequestError(
+          "finalize",
+          null,
+          `these required answers are missing: ${data.incomplete.join(", ")}`,
+        );
+      }
       this.markFinalized();
       return data;
     }

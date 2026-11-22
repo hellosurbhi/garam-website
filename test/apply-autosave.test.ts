@@ -392,6 +392,25 @@ describe("AutosaveController: finalize", () => {
     expect(err.message).toBe("save_draft: HTTP 500: Database unavailable");
   });
 
+  it("an incomplete finalize answer is an error naming what is missing: the draft and token are kept", async () => {
+    // An older open tab (phone was optional there) finalizes without a phone;
+    // the server keeps it a Draft and lists the gaps.
+    const { fetchImpl } = harness((call) =>
+      call.body.finalize ? ok({ incomplete: ["phone", "termsAgreed"] }) : ok(),
+    );
+    const c = new AutosaveController({ fetchImpl });
+    c.setField("name", "A");
+    const result = c.finalize().catch((e: unknown) => e);
+    await vi.advanceTimersByTimeAsync(10);
+    const err = await result;
+    expect(err).toBeInstanceOf(ApplyRequestError);
+    expect((err as ApplyRequestError).stage).toBe("finalize");
+    expect((err as ApplyRequestError).detail).toContain("phone");
+    expect((err as ApplyRequestError).detail).toContain("termsAgreed");
+    expect(c.hasDraft).toBe(true);
+    expect(window.localStorage.getItem("apply-draft-v2")).not.toBeNull();
+  });
+
   it("a failed finalize leaves the fields queued so nothing is lost", async () => {
     const { fetchImpl } = harness(
       () => new Response(JSON.stringify({ error: "x" }), { status: 500 }),

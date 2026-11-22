@@ -15,9 +15,15 @@ export function categories(gate, checks) {
   if (checks.setup !== "success") result.push("harness");
   else {
     // Rules drift and a failed signup are separate incidents: drift must
-    // never hide whether customers can sign up.
+    // never hide whether customers can sign up. The signup test only runs
+    // once the pre-check found the live version ready; before that, flow is
+    // "skipped", not failed, and rules (also skipped) already reports it.
     if (checks.rules !== "success") result.push("deployment");
-    if (checks.flow !== "success" && checks.version !== "failure")
+    if (
+      checks.preversionState === "ready" &&
+      checks.flow !== "success" &&
+      checks.version !== "failure"
+    )
       result.push("flow");
   }
   if (checks.redirects === "failure") result.push("redirects");

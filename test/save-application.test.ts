@@ -395,6 +395,22 @@ describe("save-application: finalize completeness gate", () => {
     },
   );
 
+  it("the response names exactly which answers are missing", async () => {
+    const first = await json(
+      await post({
+        rev: 1,
+        fields: { ...complete, phone: "", termsAgreed: false },
+      }),
+    );
+    const done = await json(
+      await post({ token: first.token, rev: 2, fields: {}, finalize: true }),
+    );
+    expect(done.status).toBe("Draft");
+    expect([...(done.incomplete as string[])].sort()).toEqual(
+      ["phone", "termsAgreed"].sort(),
+    );
+  });
+
   it("a complete finalize becomes New with nothing missing", async () => {
     const first = await json(await post({ rev: 1, fields: complete }));
     const done = await json(

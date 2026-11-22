@@ -7,16 +7,17 @@
  * (scripts/seed-events-firestore.mjs), which calls fetchPublishedEnvelope to
  * prove the public read returns what it wrote, and reads OUTPUT_PATH, the
  * committed baseline src/data/events.published.json. The build integration
- * that renders the site from this file, the `npm run events:pull` command and
- * the runtime check that shares requiresLiveEventsRead arrive with PR 366
+ * that renders the site from this file and the runtime check that shares
+ * requiresLiveEventsRead arrive with PR 366
  * (https://github.com/hellosurbhi/garam-website/pull/366); nothing on main
- * calls the prebuild or --pull modes below yet, and the build is unchanged.
+ * calls the prebuild mode below yet, and the build is unchanged.
  *
- * Modes (used once PR 366 wires them in):
- *   prebuild (no flag): fetches on Vercel builds only. CI and local builds
- *     keep the committed baseline, so a build never rewrites a tracked file.
- *   --pull: fetches anywhere and rewrites the committed baseline, for a PR
- *     that should carry the latest list.
+ * Modes:
+ *   prebuild (no flag): fetches on Vercel builds only (PR 366 wires it in).
+ *     CI and local builds keep the committed baseline, so a build never
+ *     rewrites a tracked file.
+ *   --pull (npm run events:pull): fetches anywhere and rewrites the
+ *     committed baseline, for a PR that should carry the latest list.
  *
  * Failure policy: a production build fails closed and pages ops; every other
  * build keeps the committed baseline and says so.
@@ -169,7 +170,7 @@ async function pageOps(errorMessage, fetch) {
 export function eventsSource(env, { pull = false } = {}) {
   // WHY not fetch in CI and local builds: the output is a tracked file, and
   // a build that rewrites it leaves a diff nobody asked for. CI has no
-  // project id anyway. `--pull` (the events:pull command in PR 366) is the deliberate refresh.
+  // project id anyway. `npm run events:pull` is the deliberate refresh.
   if (!pull && !env.VERCEL) {
     return {
       source: "baseline",

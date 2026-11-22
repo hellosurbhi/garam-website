@@ -7,6 +7,7 @@ import { buildEventSchemas } from "@/utils/eventSchema";
 import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
 import { buildTaglineMap } from "@/utils/eventTaglines";
 import { getTicketPageUpcoming } from "@/utils/eventFilters";
+import { utcTodayIso } from "@/utils/date";
 import { PAGES } from "@/data/copy";
 import TicketCard from "@/components/tickets/TicketCard.astro";
 import WaitlistCities from "@/components/tickets/WaitlistCities.astro";
@@ -17,7 +18,7 @@ const DESC =
   "Get tickets to Garam Masala Dating shows in New York and beyond. America's #1 live desi comedy dating show and South Asian singles mixer. Find upcoming shows and join the waitlist for your city.";
 
 const now = new Date();
-const today = now.toISOString().slice(0, 10);
+const today = utcTodayIso(now);
 const upcomingEvents = getTicketPageUpcoming(allEvents, today, now);
 
 const taglineMap = buildTaglineMap(upcomingEvents);

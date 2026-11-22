@@ -21,24 +21,29 @@ vi.mock("@/lib/firestoreRest", () => ({
 }));
 vi.mock("@/lib/zohoMailer", () => ({ sendMail: mocks.sendMail }));
 vi.mock("@/data/emails", () => ({ waiverNudge: mocks.waiverNudge }));
-vi.mock("@/data/events", () => ({
-  events: [
-    {
-      city: "New York",
-      citySlug: "nyc",
-      isoDate: "2099-12-31",
-      date: "Dec 31 2099",
-      hidden: false,
-    },
-    {
-      city: "New York",
-      citySlug: "nyc",
-      isoDate: "2099-11-30",
-      date: "Nov 30 2099",
-      hidden: false,
-      status: "canceled",
-    },
-  ],
+// WHY getLiveEvents is mocked, not @/data/events: the route reads the live
+// published show list (issue 337), so these fixtures only resolve if it does.
+vi.mock("@/lib/publishedEvents.server", () => ({
+  getLiveEvents: async () => ({
+    allEvents: [],
+    events: [
+      {
+        city: "New York",
+        citySlug: "nyc",
+        isoDate: "2099-12-31",
+        date: "Dec 31 2099",
+        hidden: false,
+      },
+      {
+        city: "New York",
+        citySlug: "nyc",
+        isoDate: "2099-11-30",
+        date: "Nov 30 2099",
+        hidden: false,
+        status: "canceled",
+      },
+    ],
+  }),
 }));
 
 const { POST } = await import("@/pages/api/actions/send-waiver-nudge");

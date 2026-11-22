@@ -8,6 +8,20 @@ describe("offsetForZone", () => {
     );
   });
 
+  it("gives a repeated fall back time its first occurrence in every zone", () => {
+    // RFC 5545 3.3.5: an ambiguous local time means its first occurrence,
+    // the one still on daylight time, whichever side of UTC the zone is.
+    expect(offsetForZone("2027-11-07", "01:30", "America/New_York")).toBe(
+      "-04:00",
+    );
+    expect(offsetForZone("2027-10-31", "01:30", "Europe/London")).toBe(
+      "+01:00",
+    );
+    expect(offsetForZone("2027-04-04", "02:30", "Australia/Sydney")).toBe(
+      "+11:00",
+    );
+  });
+
   it("supports zones with a non-zero minute offset", () => {
     expect(offsetForZone("2026-10-24", "18:00", "Asia/Kolkata")).toBe("+05:30");
   });

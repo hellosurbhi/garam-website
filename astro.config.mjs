@@ -6,12 +6,24 @@ import { execSync } from "child_process";
 import { readFileSync, readdirSync } from "fs";
 import { journalPostsPublished } from "./src/data/journal/index.ts";
 import { cities } from "./src/data/cities/index.ts";
-import { events, allEvents } from "./src/data/events.ts";
+import {
+  events,
+  allEvents,
+  eventLastmodDates,
+} from "./src/data/events.ts";
+import publishedEvents from "./src/data/events.published.json" with { type: "json" };
+import { publishedEnvelopeSchema } from "./src/data/eventsSnapshot.ts";
 
 import {
   buildEventRedirects,
   isEventRedirectUrl,
 } from "./src/utils/eventRedirects.ts";
+
+// WHY the snapshot is validated here: src/data/events.ts only asserts its
+// type, because it reaches browser bundles and must not carry zod. Every
+// build loads this config, so a malformed snapshot fails the build before a
+// single page renders.
+publishedEnvelopeSchema.parse(publishedEvents);
 
 const eventRedirects = buildEventRedirects(allEvents);
 
@@ -74,29 +86,22 @@ function buildCityLastmodMap() {
 const cityLastmodMap = buildCityLastmodMap();
 
 /**
- * Map each event slug to a lastmod date for /events/[slug] sitemap entries.
- * Unlike cities/journal (one file per item), all events live in a single
- * src/data/events.ts, so there is no per-event git history to read: every
- * slug shares that file's git-lastmod date. Still strictly better than the
- * DEFAULT_LASTMOD fallback, which recomputes to "today" on every build/deploy
- * and would make an unchanged event page's lastmod churn on every deploy.
+ * Map each event slug to a lastmod date for /events/[slug] sitemap entries:
+ * each entry's own updatedAt from the published snapshot (issue 337), so
+ * editing one show no longer moves the lastmod of every show page. Entries
+ * without one (TBA cards) use the snapshot's publishedAt. Both are stable
+ * across rebuilds of the same version, unlike DEFAULT_LASTMOD ("today").
  *
- * WHY: must iterate allEvents, not events. /events/[slug].astro generates a
+ * WHY: must cover allEvents, not events. /events/[slug].astro generates a
  * static page for every entry in allEvents (confirmed shows + TBA/coming-soon
- * cities like chicago-tba), but this map used to iterate only `events`
- * (confirmed shows). That left every TBA slug unmapped, so the sitemap
- * serializer fell into its "no lastmod for event slug" warning branch on
- * every build. Caught by Codex pre-push review (2026-08-03) after the build
- * log was checked and the warnings were confirmed real.
+ * cities like chicago-tba); mapping only `events` once left every TBA slug in
+ * the serializer's "no lastmod for event slug" warning branch (Codex
+ * pre-push review, 2026-08-03).
  */
-function buildEventLastmodMap() {
-  const gitDate = getGitDate("src/data/events.ts") || TODAY_STR;
-  const map = {};
-  for (const e of allEvents) map[e.slug] = gitDate;
-  return map;
-}
-
-const eventLastmodMap = buildEventLastmodMap();
+const eventLastmodMap = eventLastmodDates(
+  allEvents,
+  publishedEvents.publishedAt,
+);
 
 /**
  * Scan src/pages/ and build a URL → git-lastmod map for all non-dynamic static pages.
@@ -282,6 +287,10 @@ export default defineConfig({
       "import.meta.env.BUILD_COMMIT_SHA": JSON.stringify(
         process.env.VERCEL_GIT_COMMIT_SHA ||
           execSync("git rev-parse HEAD", { encoding: "utf8" }).trim(),
+      ),
+      // Read by /api/version so the admin can tell when a publish is live.
+      "import.meta.env.BUILD_EVENTS_VERSION": JSON.stringify(
+        publishedEvents.version,
       ),
     },
     plugins: [gitDatesPlugin()],

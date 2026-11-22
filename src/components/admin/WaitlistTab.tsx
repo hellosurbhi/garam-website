@@ -1,11 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { getFirebaseAuth } from "@/lib/firebase";
 import type { WaitlistLead } from "@/pages/api/admin/leads";
+import { adminIdToken } from "./adminIdToken";
 import styles from "./WaitlistTab.module.css";
-
-async function adminIdToken(): Promise<string | null> {
-  return (await (await getFirebaseAuth()).currentUser?.getIdToken()) ?? null;
-}
 
 function fmtDate(iso: string): string {
   if (!iso) return "";

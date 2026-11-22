@@ -30,30 +30,35 @@ vi.mock("@/data/waiver", () => ({
   WAIVER_VERSION: "v1",
   WAIVER_TEXT: "Waiver text.",
 }));
-vi.mock("@/data/events", () => ({
-  events: [
-    {
-      hidden: false,
-      citySlug: "nyc",
-      isoDate: "2099-12-31",
-      city: "New York",
-      date: "December 31, 2099",
-      startTime: "20:00",
-      timezone: "America/New_York",
-      venue: { name: "Test Venue", streetAddress: "123 Main St" },
-    },
-    {
-      hidden: false,
-      status: "canceled",
-      citySlug: "nyc",
-      isoDate: "2099-11-30",
-      city: "New York",
-      date: "November 30, 2099",
-      startTime: "20:00",
-      timezone: "America/New_York",
-      venue: { name: "Test Venue", streetAddress: "123 Main St" },
-    },
-  ],
+// WHY getLiveEvents is mocked, not @/data/events: the route reads the live
+// published show list (issue 337), so these fixtures only resolve if it does.
+vi.mock("@/lib/publishedEvents.server", () => ({
+  getLiveEvents: async () => ({
+    allEvents: [],
+    events: [
+      {
+        hidden: false,
+        citySlug: "nyc",
+        isoDate: "2099-12-31",
+        city: "New York",
+        date: "December 31, 2099",
+        startTime: "20:00",
+        timezone: "America/New_York",
+        venue: { name: "Test Venue", streetAddress: "123 Main St" },
+      },
+      {
+        hidden: false,
+        status: "canceled",
+        citySlug: "nyc",
+        isoDate: "2099-11-30",
+        city: "New York",
+        date: "November 30, 2099",
+        startTime: "20:00",
+        timezone: "America/New_York",
+        venue: { name: "Test Venue", streetAddress: "123 Main St" },
+      },
+    ],
+  }),
 }));
 
 const { POST } = await import("@/pages/api/contestant-show-claim");

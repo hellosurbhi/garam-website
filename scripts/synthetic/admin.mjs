@@ -1,6 +1,7 @@
-import { SignJWT, importPKCS8 } from "jose";
+import { getServiceAccountToken } from "../lib/google-access-token.mjs";
 
-const trimmed = (value) => value?.trim().replace(/\\n$/, "");
+/** Secrets pasted with a trailing newline or a literal "\n" still work. */
+export const trimmed = (value) => value?.trim().replace(/\\n$/, "");
 export async function createAdmin(env = process.env, fetchImpl = fetch) {
   const project = trimmed(env.FIREBASE_PROJECT_ID);
   const bucket = trimmed(env.FIREBASE_STORAGE_BUCKET);
@@ -10,30 +11,16 @@ export async function createAdmin(env = process.env, fetchImpl = fetch) {
     throw new Error("Monitor administrator configuration is incomplete");
   if (!/^[a-z0-9-]+$/.test(project) || !/^[a-z0-9.-]+$/.test(bucket))
     throw new Error("Invalid monitor project or bucket");
-  const jwt = await new SignJWT({
-    scope:
-      "https://www.googleapis.com/auth/datastore https://www.googleapis.com/auth/devstorage.read_write",
-  })
-    .setProtectedHeader({ alg: "RS256" })
-    .setIssuer(email)
-    .setSubject(email)
-    .setAudience("https://oauth2.googleapis.com/token")
-    .setIssuedAt()
-    .setExpirationTime("1h")
-    .sign(await importPKCS8(key.replace(/\\n/g, "\n"), "RS256"));
-  const response = await fetchImpl("https://oauth2.googleapis.com/token", {
-    method: "POST",
-    signal: AbortSignal.timeout(10_000),
-    body: new URLSearchParams({
-      grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
-      assertion: jwt,
-    }),
+  const token = await getServiceAccountToken({
+    email,
+    privateKey: key,
+    scopes: [
+      "https://www.googleapis.com/auth/datastore",
+      "https://www.googleapis.com/auth/devstorage.read_write",
+    ],
+    label: "Monitor",
+    fetchImpl,
   });
-  if (!response.ok)
-    throw new Error(`Monitor authentication failed (${response.status})`);
-  const { access_token: token } = await response.json();
-  if (typeof token !== "string" || !token)
-    throw new Error("Monitor authentication returned no token");
   return createStore(project, bucket, token, fetchImpl);
 }
 

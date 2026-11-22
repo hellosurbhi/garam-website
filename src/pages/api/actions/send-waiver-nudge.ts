@@ -6,7 +6,7 @@ import { verifyAdminIdentity } from "@/lib/verifyToken";
 import { fsGet, fsPatch, fsAdd } from "@/lib/firestoreRest";
 import { sendMail } from "@/lib/zohoMailer";
 import { waiverNudge } from "@/data/emails";
-import { events } from "@/data/events";
+import { getLiveEvents } from "@/lib/publishedEvents.server";
 
 const Schema = z.object({
   applicationId: z
@@ -57,6 +57,8 @@ export const POST: APIRoute = async ({ request }) => {
       { error: "Application has no castEventId (not yet cast)" },
       400,
     );
+
+  const { events } = await getLiveEvents();
 
   const event = events.find(
     (e) =>

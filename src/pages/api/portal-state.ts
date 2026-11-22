@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { fsGet } from "@/lib/firestoreRest";
 import { verifyPortalToken } from "@/lib/portalToken";
-import { events } from "@/data/events";
+import { getLiveEvents } from "@/lib/publishedEvents.server";
 import { isEventPast } from "@/utils/eventDate";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 
@@ -57,6 +57,7 @@ export const GET: APIRoute = async ({ request }) => {
   const showId = url.searchParams.get("show");
 
   if (showId) {
+    const { events } = await getLiveEvents();
     const event = events.find(
       (e) =>
         !e.hidden &&

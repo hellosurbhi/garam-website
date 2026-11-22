@@ -1,7 +1,13 @@
 import { appendFile } from "node:fs/promises";
 import { setTimeout as sleep } from "node:timers/promises";
 export const PRODUCTION = "https://garammasaladating.com";
-export async function deployedCommit(fetchImpl = fetch) {
+/**
+ * What production reports it is running: commit and show list version.
+ * WHY this module imports nothing outside Node: the version gate and the
+ * reporter run it without installing dependencies. The show list check
+ * needs jose, so it lives in events-version.mjs.
+ */
+export async function deployedVersion(fetchImpl) {
   const res = await fetchImpl(`${PRODUCTION}/api/version`, {
     cache: "no-store",
     redirect: "error",
@@ -9,7 +15,10 @@ export async function deployedCommit(fetchImpl = fetch) {
   });
   if (!res.ok)
     throw new Error(`Deployment version unavailable (${res.status})`);
-  const { commit } = await res.json();
+  return res.json();
+}
+export async function deployedCommit(fetchImpl = fetch) {
+  const { commit } = await deployedVersion(fetchImpl);
   if (!/^[a-f0-9]{40}$/.test(commit))
     throw new Error("Deployment version is invalid");
   return commit;

@@ -40,7 +40,14 @@ jobs:
     needs: deployed
     if: needs.deployed.outputs.state != 'superseded'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # WHY 45, was 15: the ticket check may wait out a 20 minute show list
+    # rebuild inside its 25 minute test timeout (it never retries), on top of
+    # about 15 for setup, signup and cleanup. A job that hits this limit is
+    # cancelled, and report.mjs treats a cancelled check as superseded, so the
+    # limit must exceed the worst case. Cleanup of a large backlog of old
+    # test records has no time bound yet and can still outrun this; that is
+    # tracked in https://github.com/hellosurbhi/garam-website/issues/407.
+    timeout-minutes: 45
     concurrency:
       group: synthetic-apply
       cancel-in-progress: false
@@ -93,6 +100,10 @@ jobs:
         run: npx playwright test --config playwright.synthetic.config.ts --grep 'ticket redirects'
         env:
           PLAYWRIGHT_BASE_URL: https://garammasaladating.com
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          # Read only while a rebuild lags, to date the replaced version.
+          FIREBASE_ADMIN_CLIENT_EMAIL: ${{ secrets.FIREBASE_ADMIN_CLIENT_EMAIL }}
+          FIREBASE_ADMIN_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY }}
       - name: Recover and verify test cleanup
         id: cleanup
         if: always() && steps.setup.outcome == 'success'

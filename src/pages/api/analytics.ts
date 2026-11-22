@@ -4,7 +4,7 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import { verifyAdminToken } from "@/lib/verifyToken";
 import { getFirestoreAccessToken } from "@/lib/firestoreAdmin";
-import { events } from "@/data/events";
+import { getLiveEvents } from "@/lib/publishedEvents.server";
 import type {
   AnalyticsSnapshot,
   RevenueByShow,
@@ -229,12 +229,13 @@ export const GET: APIRoute = async ({ request, url }) => {
     const cutoff = computeCutoff(period);
 
     // Fetch all collections in parallel
-    const [orderDocs, leadDocs, applicationDocs, syncMetaData] =
+    const [orderDocs, leadDocs, applicationDocs, syncMetaData, { events }] =
       await Promise.all([
         listCollection(projectId, accessToken, "orders"),
         listCollection(projectId, accessToken, "leads"),
         listCollection(projectId, accessToken, "applications"),
         readSyncMeta(projectId, accessToken),
+        getLiveEvents(),
       ]);
 
     // ── Build event lookup by eventbriteId ────────────────────────────────────

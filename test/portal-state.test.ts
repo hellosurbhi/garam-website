@@ -13,28 +13,33 @@ vi.mock("@/lib/portalToken", () => ({
   verifyPortalToken: mocks.verifyPortalToken,
 }));
 vi.mock("@/utils/eventDate", () => ({ isEventPast: mocks.isEventPast }));
-vi.mock("@/data/events", () => ({
-  events: [
-    {
-      hidden: false,
-      citySlug: "nyc",
-      isoDate: "2099-12-31",
-      city: "New York",
-      date: "December 31, 2099",
-      startTime: "20:00",
-      venue: { name: "Test Venue" },
-    },
-    {
-      hidden: false,
-      status: "canceled",
-      citySlug: "nyc",
-      isoDate: "2099-11-30",
-      city: "New York",
-      date: "November 30, 2099",
-      startTime: "20:00",
-      venue: { name: "Test Venue" },
-    },
-  ],
+// WHY getLiveEvents is mocked, not @/data/events: the route reads the live
+// published show list (issue 337), so these fixtures only resolve if it does.
+vi.mock("@/lib/publishedEvents.server", () => ({
+  getLiveEvents: async () => ({
+    allEvents: [],
+    events: [
+      {
+        hidden: false,
+        citySlug: "nyc",
+        isoDate: "2099-12-31",
+        city: "New York",
+        date: "December 31, 2099",
+        startTime: "20:00",
+        venue: { name: "Test Venue" },
+      },
+      {
+        hidden: false,
+        status: "canceled",
+        citySlug: "nyc",
+        isoDate: "2099-11-30",
+        city: "New York",
+        date: "November 30, 2099",
+        startTime: "20:00",
+        venue: { name: "Test Venue" },
+      },
+    ],
+  }),
 }));
 
 const { GET } = await import("@/pages/api/portal-state");

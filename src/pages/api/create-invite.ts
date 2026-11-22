@@ -6,7 +6,7 @@ import { verifyAdminIdentity } from "@/lib/verifyToken";
 import { fsAdd, fsPatch } from "@/lib/firestoreRest";
 import { sendMail } from "@/lib/zohoMailer";
 import { inviteApproval } from "@/data/emails";
-import { events } from "@/data/events";
+import { getLiveEvents } from "@/lib/publishedEvents.server";
 
 const InviteSchema = z.object({
   applicantId: z
@@ -55,6 +55,8 @@ export const POST: APIRoute = async ({ request }) => {
 
   const { applicantId, applicantName, applicantEmail, showId, role } =
     parsed.data;
+
+  const { events } = await getLiveEvents();
 
   const event = events.find(
     (e) =>

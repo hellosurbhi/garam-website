@@ -2,6 +2,23 @@ import type { EventEntry } from "../data/events";
 
 type EventRedirect = { destination: string; status: 308 };
 
+/**
+ * Every date a show has been listed under: its current isoDate plus all
+ * former dates. Each one is a public link (`${citySlug}-${date}`) that must
+ * keep resolving, so the redirect builder and the publish validator
+ * (src/data/eventsSnapshot.ts) both derive aliases from this one list.
+ */
+export function eventAliasDates(
+  event: Pick<EventEntry, "isoDate" | "previousDate" | "previousDates">,
+): string[] {
+  const dates = new Set([
+    event.isoDate,
+    event.previousDate,
+    ...(event.previousDates ?? []),
+  ]);
+  return [...dates].filter((date): date is string => Boolean(date));
+}
+
 /** Generate direct redirects without renaming a show's permanent slug. */
 export function buildEventRedirects(
   events: readonly EventEntry[],
@@ -17,13 +34,7 @@ export function buildEventRedirects(
   const redirects: Record<string, EventRedirect> = {};
   for (const event of events) {
     if (!event.citySlug) continue;
-    const dates = new Set([
-      event.isoDate,
-      event.previousDate,
-      ...(event.previousDates ?? []),
-    ]);
-    for (const date of dates) {
-      if (!date) continue;
+    for (const date of eventAliasDates(event)) {
       const alias = `${event.citySlug}-${date}`;
       if (alias === event.slug) continue;
       const owner = owners.get(alias);

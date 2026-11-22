@@ -22,16 +22,21 @@ vi.mock("@/lib/capi", async (importActual) => ({
   ...(await importActual<typeof import("@/lib/capi")>()),
   sendCapiEvent: (...args: unknown[]) => sendCapiEvent(...args),
 }));
-vi.mock("@/data/events", () => ({
-  events: [
-    {
-      city: "Manhattan",
-      citySlug: "manhattan",
-      slug: "manhattan-show",
-      ticketSource: "our-eventbrite",
-      eventbriteId: "EB1",
-    },
-  ],
+// WHY getLiveEvents is mocked, not @/data/events: the route reads the live
+// published show list (issue 337), so these fixtures only resolve if it does.
+vi.mock("@/lib/publishedEvents.server", () => ({
+  getLiveEvents: async () => ({
+    allEvents: [],
+    events: [
+      {
+        city: "Manhattan",
+        citySlug: "manhattan",
+        slug: "manhattan-show",
+        ticketSource: "our-eventbrite",
+        eventbriteId: "EB1",
+      },
+    ],
+  }),
 }));
 
 import { POST } from "@/pages/api/sync-orders";

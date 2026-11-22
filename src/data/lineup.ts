@@ -11,7 +11,15 @@
 // it defines to its own dependency graph. See the matching note in events.ts.
 import { CREATOR_URLS } from "./socials";
 
-export type PerformerId = "surbhi" | "wyatt";
+/**
+ * Every performer id, as a runtime list so the events snapshot schema
+ * (src/data/eventsSnapshot.ts) can validate `lineup` without restating the
+ * union. PERFORMERS below is typed against it, so adding an id here without
+ * a bio is a type error.
+ */
+export const PERFORMER_IDS = ["surbhi", "wyatt"] as const;
+
+export type PerformerId = (typeof PERFORMER_IDS)[number];
 
 export interface Performer {
   id: PerformerId;

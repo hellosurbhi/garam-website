@@ -5,6 +5,10 @@ vi.mock("@/lib/verifyToken", () => ({
 vi.mock("@/lib/firestoreAdmin", () => ({
   getFirestoreAccessToken: vi.fn(async () => "fixture"),
 }));
+// The live show list is not under test here; keep the route off Firestore.
+vi.mock("@/lib/publishedEvents.server", () => ({
+  getLiveEvents: vi.fn(async () => ({ events: [], allEvents: [] })),
+}));
 import { GET } from "@/pages/api/analytics";
 it("excludes test leads and applications from the dashboard totals", async () => {
   const emails = [

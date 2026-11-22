@@ -17,7 +17,9 @@ function normalizeOptionalString(max: number) {
 }
 
 const emailSchema = z.preprocess(trimString, z.email().max(320));
-const httpsUrlSchema = z.preprocess(
+// Exported for src/data/eventsSnapshot.ts (ticket URLs), which imports it by
+// relative path; this module must therefore stay free of "@/" imports.
+export const httpsUrlSchema = z.preprocess(
   trimString,
   z.url({ protocol: /^https$/ }).max(2048),
 );

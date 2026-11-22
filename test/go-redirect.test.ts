@@ -10,10 +10,11 @@ vi.mock("@/lib/capi", () => ({
   sendCapiEvent: vi.fn(async () => ({ ok: true })),
 }));
 
-vi.mock("@/data/events", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/data/events")>();
-  return { ...actual, getEventBySlug: vi.fn() };
-});
+// WHY the live list is mocked and getEventBySlug is real: the route must
+// resolve slugs against the published list from getLiveEvents (issue 337),
+// never the build's baked list. Every fixture below exists only in the live
+// list, so a route that read the baked list would 404 them.
+vi.mock("@/lib/publishedEvents.server", () => ({ getLiveEvents: vi.fn() }));
 
 // WHY mocked instead of letting the real @vercel/functions waitUntil run
 // (added after Codex review, 2026-08-27): the real implementation is a
@@ -27,7 +28,8 @@ vi.mock("@vercel/functions", () => ({ waitUntil: vi.fn() }));
 
 const { enforceRateLimit } = await import("@/lib/rateLimit");
 const { sendCapiEvent } = await import("@/lib/capi");
-const { getEventBySlug } = await import("@/data/events");
+const { getLiveEvents } = await import("@/lib/publishedEvents.server");
+const { publishedSnapshot } = await import("@/data/events");
 const { waitUntil } = await import("@vercel/functions");
 const { GET } = await import("@/pages/api/go/[slug]");
 
@@ -50,6 +52,12 @@ function makeEvent(overrides: Partial<EventEntry> = {}): EventEntry {
   } as EventEntry;
 }
 
+/** Serve `event` (or nothing) as the whole live published list. */
+function serveLive(event?: EventEntry) {
+  const list = event ? [event] : [];
+  vi.mocked(getLiveEvents).mockResolvedValue({ events: list, allEvents: list });
+}
+
 function makeContext(slug: string, headers: Record<string, string> = {}) {
   const request = new Request(`https://garammasaladating.com/api/go/${slug}`, {
     headers,
@@ -69,20 +77,30 @@ describe("/api/go/[slug] tracked redirect", () => {
   });
 
   it("404s an unknown slug", async () => {
-    vi.mocked(getEventBySlug).mockReturnValue(undefined);
+    serveLive();
     const res = await GET(makeContext("nope"));
     expect(res.status).toBe(404);
     expect(sendCapiEvent).not.toHaveBeenCalled();
   });
 
+  it("resolves against the live list, not the build's baked list", async () => {
+    const baked = publishedSnapshot.events.find((e) =>
+      e.url.startsWith("https://"),
+    );
+    expect(baked).toBeDefined();
+    serveLive();
+    const res = await GET(makeContext(baked?.slug ?? ""));
+    expect(res.status).toBe(404);
+  });
+
   it("404s an event with no checkout destination yet", async () => {
-    vi.mocked(getEventBySlug).mockReturnValue(makeEvent({ url: "" }));
+    serveLive(makeEvent({ url: "" }));
     const res = await GET(makeContext("manhattan-2099-12-31"));
     expect(res.status).toBe(404);
   });
 
   it("redirects a live upcoming event to its checkout url with CAPI fired", async () => {
-    vi.mocked(getEventBySlug).mockReturnValue(makeEvent());
+    serveLive(makeEvent());
     const res = await GET(makeContext("manhattan-2099-12-31"));
     expect(res.status).toBe(302);
     const location = res.headers.get("Location")!;
@@ -92,9 +110,7 @@ describe("/api/go/[slug] tracked redirect", () => {
   });
 
   it("sends a canceled show to /tickets without firing CAPI", async () => {
-    vi.mocked(getEventBySlug).mockReturnValue(
-      makeEvent({ status: "canceled" }),
-    );
+    serveLive(makeEvent({ status: "canceled" }));
     const res = await GET(makeContext("manhattan-2099-12-31"));
     expect(res.status).toBe(302);
     expect(res.headers.get("Location")).toBe("/tickets");
@@ -102,7 +118,7 @@ describe("/api/go/[slug] tracked redirect", () => {
   });
 
   it("sends a past show to /tickets without firing CAPI", async () => {
-    vi.mocked(getEventBySlug).mockReturnValue(
+    serveLive(
       makeEvent({ isoDate: "2020-01-01", slug: "manhattan-2020-01-01" }),
     );
     const res = await GET(makeContext("manhattan-2020-01-01"));
@@ -115,7 +131,7 @@ describe("/api/go/[slug] tracked redirect", () => {
     vi.mocked(enforceRateLimit).mockResolvedValue(
       new Response("Too many requests", { status: 429 }),
     );
-    vi.mocked(getEventBySlug).mockReturnValue(makeEvent());
+    serveLive(makeEvent());
     const res = await GET(makeContext("manhattan-2099-12-31"));
     expect(res.status).toBe(302);
     expect(res.headers.get("Location")!.startsWith(CHECKOUT_URL)).toBe(true);
@@ -128,7 +144,7 @@ describe("/api/go/[slug] tracked redirect", () => {
       releaseLimiter = () => resolve(null);
     });
     vi.mocked(enforceRateLimit).mockReturnValue(pendingLimiter);
-    vi.mocked(getEventBySlug).mockReturnValue(makeEvent());
+    serveLive(makeEvent());
 
     // If GET ever went back to awaiting enforceRateLimit directly instead of
     // handing recordClickSignals() to waitUntil(), this would hang until the
@@ -146,7 +162,7 @@ describe("/api/go/[slug] tracked redirect", () => {
   });
 
   it("redirects a recognized unfurl bot without firing CAPI", async () => {
-    vi.mocked(getEventBySlug).mockReturnValue(makeEvent());
+    serveLive(makeEvent());
     const res = await GET(
       makeContext("manhattan-2099-12-31", {
         "user-agent":

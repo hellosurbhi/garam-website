@@ -47,6 +47,19 @@ function makeEvent(overrides: Partial<EventEntry> = {}): EventEntry {
 }
 
 describe("buildEventSchemas", () => {
+  it("names only the performers in the show's lineup", () => {
+    const parsed = JSON.parse(
+      buildEventSchemas([makeEvent({ lineup: ["surbhi"] })])[0],
+    );
+    expect(parsed.performer).toEqual([
+      {
+        "@type": "Person",
+        name: "Surbhi",
+        url: "https://www.instagram.com/lordmakemetaller/",
+      },
+    ]);
+  });
+
   it("returns an array of JSON strings for valid events", () => {
     const schemas = buildEventSchemas([makeEvent()]);
     expect(schemas).toHaveLength(1);

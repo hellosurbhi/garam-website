@@ -35,7 +35,7 @@ Key pages: `/` `/tickets` `/apply` `/links` `/faq` `/hosts` `/journal` `/cities/
 **All user-facing text lives in `src/data/` files, never hardcoded in components.**
 
 - `data/copy.ts`: site taglines, stats, testimonials, FAQs, experience steps, marquee items
-- `data/events.ts`: show dates, venues, Eventbrite URLs, taglines
+- `data/events.ts`: show dates, venues, Eventbrite URLs, taglines (records come from the admin Shows tab via `events.published.json`, see `src/data/CLAUDE.md`)
 - `data/press.ts`: press mentions
 - `data/socials.ts`: all social URLs
 - `data/journal.ts` / `data/tips.ts`: blog content

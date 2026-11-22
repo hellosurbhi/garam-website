@@ -195,6 +195,8 @@ jobs:
           # A monitor that stays red escalates instead of fading into noise.
           # Empty when the lookup fails: the page still goes out and says the
           # history is unknown. The recover job closes the issue on a pass.
-          CANARY_INCIDENT=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"APPLY FAILED: production apply canary\" in:title" --json createdAt,comments --jq '.[0] // empty | "\(.createdAt[0:10]) \([.comments[] | select(.body | test("actions/runs/[0-9]+"))] | length + 1)"' || true)
+          # timeout 20: a stalled GitHub API call must not eat this step's
+          # two minutes and block the email itself.
+          CANARY_INCIDENT=$(timeout 20 gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"APPLY FAILED: production apply canary\" in:title" --json createdAt,comments --jq '.[0] // empty | "\(.createdAt[0:10]) \([.comments[] | select(.body | test("actions/runs/[0-9]+"))] | length + 1)"' || true)
           export CANARY_INCIDENT
           node scripts/canary-alert.mjs

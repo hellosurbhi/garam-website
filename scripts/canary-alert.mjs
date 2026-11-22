@@ -48,8 +48,14 @@ export function browserFailures(log) {
   const errors = [];
   let inFailedList = false;
   for (const line of lines) {
-    const error = line.match(/^\s*Error: (.+?)\s*$/);
-    if (error && !errors.includes(error[1])) errors.push(error[1]);
+    // Playwright prints "Error: ...", typed errors such as "TimeoutError:
+    // locator.click: Timeout 20000ms exceeded." and the test deadline as a
+    // bare "Test timeout of 90000ms exceeded." line.
+    const error =
+      line.match(/^\s*Error: (.+?)\s*$/)?.[1] ??
+      line.match(/^\s*(\w+Error: .+?)\s*$/)?.[1] ??
+      line.match(/^\s*(Test timeout of \d+ms exceeded\.?)\s*$/)?.[1];
+    if (error && !errors.includes(error)) errors.push(error);
     if (/^\s*\d+ failed\s*$/.test(line)) {
       inFailedList = true;
       continue;

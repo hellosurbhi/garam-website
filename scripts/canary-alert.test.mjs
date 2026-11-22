@@ -42,6 +42,18 @@ describe("browserFailures", () => {
     });
   });
 
+  it("keeps timeout errors and the test deadline", () => {
+    const log = `
+    Test timeout of 90000ms exceeded.
+
+    TimeoutError: locator.click: Timeout 20000ms exceeded.
+`;
+    expect(browserFailures(log).errors).toEqual([
+      "Test timeout of 90000ms exceeded.",
+      "TimeoutError: locator.click: Timeout 20000ms exceeded.",
+    ]);
+  });
+
   it("returns nothing for a missing log", () => {
     expect(browserFailures(undefined)).toEqual({ profiles: [], errors: [] });
   });

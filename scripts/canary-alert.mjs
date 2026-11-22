@@ -7,11 +7,11 @@
  * The read-back step (scripts/canary-verify.mjs) then reads each draft and
  * its photos from the database. Their combination decides the page:
  *
- *   read-back FAILED  -> applications are not landing: real applicants are
- *                        affected, act now.
- *   read-back OK      -> nothing is being lost, but the browser check saw a
- *                        problem: either the check is wrong or applicants see
- *                        something broken, so look at /apply on a phone.
+ *   read-back FAILED  -> a test application was not saved: applicants are
+ *                        probably affected, act now.
+ *   read-back OK      -> the robot's own application was saved, which does
+ *                        not prove real applicants are fine: the browser
+ *                        check is broken or applicants see something broken.
  *   no read-back, or  -> the canary could not run at all: impact unknown.
  *   browser never
  *   started
@@ -105,55 +105,62 @@ export function canaryAlert({ verifyLog, browserLog, incident }) {
     ? ` on ${listOf(browser.profiles.map(profileName))}`
     : "";
   // The issue step comments before this page is built, so the current run is
-  // already counted: one run means this is the first failure.
-  // A passing run closes the issue (recover job), so the issue only spans
-  // one unbroken red streak. No incident means the lookup failed.
-  const streak = !incident
-    ? "The alarm history could not be read, so it is unknown how long this has been failing."
-    : incident.runs > 1
-      ? `This alarm has been failing since ${incident.since} (${incident.runs} failed runs in a row). A long red streak is itself a problem: tell Claude.`
-      : "This is the first failed run of this alarm.";
+  // already counted. A passing run closes the issue (recover job), so the
+  // issue only spans one unbroken red streak. No incident means the lookup
+  // failed, which is never reported as a first failure.
+  const streak = incident
+    ? `Failing since ${incident.since}, ${incident.runs} runs`
+    : "The alarm history could not be read, so it is unknown how long this has been failing.";
+  const runLink = "(the run link is at the bottom of this email)";
 
   let subject;
-  let impact;
-  let action;
+  let lines;
+  // The read-back log's "OK" lines describe the robot's own test application,
+  // so they are left out of the detail unless that is the failing evidence.
+  let verifyDetail = verify.trim();
   if (verify.includes("CANARY VERIFY FAILED") && affected.length) {
-    subject = `APPLICANTS AFFECTED: ${affected[0]}`;
-    impact =
-      "Test applications are NOT reaching the database. Real applicants are probably failing right now.";
-    action =
-      "What to do: open garammasaladating.com/apply on your phone now and try to apply, then tell Claude what happened.";
+    const profile = affected[0].split(":")[0];
+    subject = `APPLICANTS AFFECTED: ${profileName(profile)}`;
+    lines = [
+      "What failed: a test application could not be saved.",
+      `Evidence: ${affected[0]} ${runLink}.`,
+      "",
+      "Try garammasaladating.com/apply on your phone now and tell Claude.",
+    ];
   } else if (verify.includes("CANARY VERIFY OK")) {
     const what = browser.errors.length
       ? listOf(browser.errors)
       : "the browser check did not finish";
-    subject = `Apply page check failed${where}, applications still landing`;
-    impact = `Every test application and photo reached the database, so no application data is being lost. The browser check failed${where}: ${what}. Either the check is wrong or applicants see something broken.`;
-    action =
-      "What to do: open garammasaladating.com/apply on your phone. If it works, nothing is urgent: tell Claude the check needs fixing. If it does not, tell Claude right away.";
+    subject = "Apply page check failed (test application was saved)";
+    verifyDetail = "";
+    lines = [
+      "The robot's own application went through. That does not prove every real applicant is fine.",
+      `Evidence: the browser check failed${where}: ${what} ${runLink}.`,
+      "",
+      "Nothing urgent. Tell Claude.",
+    ];
   } else {
-    subject = "Apply monitor could not run, applicant impact unknown";
-    impact = rejected.length
-      ? "The site rejected the apply canary's own test credentials (the GitHub and Vercel secrets no longer match). Real applicants do not use them, so this alone does not block anyone, but the monitor is blind until it is fixed."
+    subject = "Apply monitor could not run";
+    const why = rejected.length
+      ? "The site rejected the apply canary's own test credentials (the GitHub and Vercel secrets no longer match), so the monitor is blind until they are fixed."
       : started.length
-        ? "The apply canary could not read back its test applications, so nobody knows whether real applicants are affected."
-        : "The apply canary never started filing test applications (its own setup failed), so nobody knows whether real applicants are affected.";
-    action =
-      "What to do: open garammasaladating.com/apply on your phone and try it, then tell Claude.";
+        ? "The apply canary could not read back its test applications."
+        : "The apply canary never started filing test applications (its own setup failed).";
+    lines = ["Applicant impact unknown.", why, "", "Tell Claude."];
   }
 
   const detail = [
     browser.errors.length || browser.profiles.length
       ? `Browser check: ${browser.errors.join("; ") || "failed"}${where}`
       : "",
-    verify.trim(),
+    verifyDetail,
   ]
     .filter(Boolean)
     .join("\n\n");
 
   return {
     subject,
-    message: [impact, "", action, "", streak].join("\n"),
+    message: [...lines, "", streak].join("\n"),
     detail,
   };
 }

@@ -60,63 +60,79 @@ describe("browserFailures", () => {
 });
 
 describe("canaryAlert", () => {
-  it("says applicants are affected when the read-back finds nothing landed", () => {
+  it("confirmed harm: names the profile, the failing check and what to do", () => {
     const alert = canaryAlert({
       verifyLog: VERIFY_FAILED,
       browserLog: BROWSER_LOG,
+      incident: { since: "2026-11-12", runs: 37 },
     });
-    expect(alert.subject).toBe(
-      "APPLICANTS AFFECTED: android-chrome: no draft carries this run's id",
-    );
-    expect(alert.message).toContain("Real applicants are probably failing");
-    expect(alert.message).toContain(
-      "What to do: open garammasaladating.com/apply on your phone now",
+    expect(alert.subject).toBe("APPLICANTS AFFECTED: Android Chrome");
+    expect(alert.message).toBe(
+      [
+        "What failed: a test application could not be saved.",
+        "Evidence: android-chrome: no draft carries this run's id (the run link is at the bottom of this email).",
+        "",
+        "Try garammasaladating.com/apply on your phone now and tell Claude.",
+        "",
+        "Failing since 2026-11-12, 37 runs",
+      ].join("\n"),
     );
   });
 
-  it("separates a failed browser check from lost applications", () => {
+  it("broken check: never says applicants are fine on the robot's own test", () => {
     const alert = canaryAlert({
       verifyLog: VERIFY_OK,
       browserLog: BROWSER_LOG,
+      incident: { since: "2026-11-12", runs: 2 },
     });
     expect(alert.subject).toBe(
-      "Apply page check failed on Android Chrome and the Instagram app, applications still landing",
+      "Apply page check failed (test application was saved)",
     );
-    expect(alert.subject).not.toMatch(/FAILED|AFFECTED/);
-    expect(alert.message).toContain("no application data is being lost");
-    expect(alert.message).toContain("direct upload to the bucket was blocked");
-    expect(alert.message).toContain("What to do:");
+    expect(alert.message).toBe(
+      [
+        "The robot's own application went through. That does not prove every real applicant is fine.",
+        "Evidence: the browser check failed on Android Chrome and the Instagram app: direct upload to the bucket was blocked (the run link is at the bottom of this email).",
+        "",
+        "Nothing urgent. Tell Claude.",
+        "",
+        "Failing since 2026-11-12, 2 runs",
+      ].join("\n"),
+    );
+    expect(alert.message).not.toMatch(/no application data is being lost/);
     expect(alert.detail).toContain(
       "Browser check: direct upload to the bucket was blocked on Android Chrome and the Instagram app",
     );
+    expect(alert.detail).not.toMatch(/\bOK\b/);
   });
 
-  it("says impact is unknown when the canary produced no read-back", () => {
-    const alert = canaryAlert({ verifyLog: "", browserLog: "" });
-    expect(alert.subject).toBe(
-      "Apply monitor could not run, applicant impact unknown",
+  it("monitor down: says impact is unknown when the canary produced no read-back", () => {
+    const alert = canaryAlert({
+      verifyLog: "",
+      browserLog: "",
+      incident: { since: "2026-11-22", runs: 1 },
+    });
+    expect(alert.subject).toBe("Apply monitor could not run");
+    expect(alert.message).toBe(
+      [
+        "Applicant impact unknown.",
+        "The apply canary never started filing test applications (its own setup failed).",
+        "",
+        "Tell Claude.",
+        "",
+        "Failing since 2026-11-22, 1 runs",
+      ].join("\n"),
     );
-    expect(alert.message).toContain("What to do:");
   });
 
-  it("escalates a long red streak in every email", () => {
+  it("ends with the incident line on a long red streak", () => {
     const alert = canaryAlert({
       verifyLog: VERIFY_OK,
       browserLog: BROWSER_LOG,
       incident: { since: "2026-11-12", runs: 37 },
     });
-    expect(alert.message).toContain(
-      "This alarm has been failing since 2026-11-12 (37 failed runs in a row)",
+    expect(alert.message.endsWith("Failing since 2026-11-12, 37 runs")).toBe(
+      true,
     );
-  });
-
-  it("marks a first failure as new, counting the run the issue step just logged", () => {
-    const alert = canaryAlert({
-      verifyLog: VERIFY_FAILED,
-      browserLog: BROWSER_LOG,
-      incident: { since: "2026-11-22", runs: 1 },
-    });
-    expect(alert.message).toContain("first failed run");
   });
 
   it("does not blame applicants when the site rejected the canary's own credentials", () => {
@@ -124,15 +140,14 @@ describe("canaryAlert", () => {
       verifyLog: VERIFY_FAILED,
       browserLog: `${BROWSER_LOG}\nCANARY AUTH REJECTED: android-chrome\nCANARY AUTH REJECTED: instagram-webview\n`,
     });
-    expect(alert.subject).toBe(
-      "Apply monitor could not run, applicant impact unknown",
-    );
+    expect(alert.subject).toBe("Apply monitor could not run");
+    expect(alert.message).toContain("Applicant impact unknown.");
     expect(alert.message).toContain("test credentials");
   });
 
   it("never calls a failed history lookup a first failure", () => {
     const alert = canaryAlert({ verifyLog: VERIFY_FAILED, browserLog: BROWSER_LOG });
-    expect(alert.message).not.toContain("first failed run");
+    expect(alert.message).not.toContain("Failing since");
     expect(alert.message).toContain("history could not be read");
   });
 
@@ -143,9 +158,7 @@ describe("canaryAlert", () => {
       "Running 3 tests using 1 worker\n\nError: DRAFT_TOKEN_SECRET is not set",
     ]) {
       const alert = canaryAlert({ verifyLog: VERIFY_FAILED, browserLog });
-      expect(alert.subject).toBe(
-        "Apply monitor could not run, applicant impact unknown",
-      );
+      expect(alert.subject).toBe("Apply monitor could not run");
       expect(alert.message).toContain("never started filing");
       expect(alert.detail).toContain("CANARY VERIFY FAILED");
     }

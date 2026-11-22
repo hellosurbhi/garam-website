@@ -86,14 +86,24 @@ export function canaryAlert({ verifyLog, browserLog, incident }) {
   // failure means applicants are affected. Playwright's "Running N tests"
   // banner was tried first: it prints before browser launch, so a launch
   // failure still paged APPLICANTS AFFECTED.
-  const marked = (label) =>
-    [
-      ...(browserLog ?? "").matchAll(new RegExp(`${label}: ([\\w-]+)`, "g")),
-    ].map((match) => match[1]);
-  const started = marked("CANARY FILING STARTED");
+  // WHY the final attempt only: Playwright retries a failed test once, so one
+  // profile can log two attempts. An auth rejection on attempt 1 followed by
+  // a successful sign-in and a failed submission on attempt 2 is a real
+  // failure, and the reverse is still the monitor's own credential problem.
+  // Each "CANARY FILING STARTED" marker begins a new attempt that discards
+  // the earlier attempt's auth evidence for that profile.
+  const attempts = new Map();
+  for (const line of (browserLog ?? "").split("\n")) {
+    const match = line.match(/CANARY (FILING STARTED|AUTH REJECTED): ([\w-]+)/);
+    if (!match) continue;
+    const [, kind, id] = match;
+    if (kind === "FILING STARTED") attempts.set(id, { rejected: false });
+    else if (attempts.has(id)) attempts.get(id).rejected = true;
+  }
+  const started = [...attempts.keys()];
   // A profile whose canary signature the site rejected was blocked by the
   // monitor's own credentials, which real applicants never send.
-  const rejected = marked("CANARY AUTH REJECTED");
+  const rejected = started.filter((id) => attempts.get(id).rejected);
   const affected = verify
     .split("\n")
     .filter((line) => line.startsWith("- "))

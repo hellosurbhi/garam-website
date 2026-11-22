@@ -145,8 +145,37 @@ describe("canaryAlert", () => {
     expect(alert.message).toContain("test credentials");
   });
 
+  it("classifies by the final attempt: an earlier auth rejection does not hide a real failure", () => {
+    const browserLog = `CANARY FILING STARTED: android-chrome
+CANARY AUTH REJECTED: android-chrome
+  Retry #1
+CANARY FILING STARTED: android-chrome
+  2 failed
+    [android-chrome] › tests/canary/apply-canary.spec.ts:50:1 › a phone applicant
+`;
+    const alert = canaryAlert({
+      verifyLog: VERIFY_FAILED.replace("- instagram-webview", "- x"),
+      browserLog,
+    });
+    expect(alert.subject).toBe("APPLICANTS AFFECTED: Android Chrome");
+  });
+
+  it("classifies by the final attempt: a rejection on the last attempt still means the monitor could not run", () => {
+    const browserLog = `CANARY FILING STARTED: android-chrome
+  Retry #1
+CANARY FILING STARTED: android-chrome
+CANARY AUTH REJECTED: android-chrome
+`;
+    const alert = canaryAlert({ verifyLog: VERIFY_FAILED, browserLog });
+    expect(alert.subject).toBe("Apply monitor could not run");
+    expect(alert.message).toContain("test credentials");
+  });
+
   it("never calls a failed history lookup a first failure", () => {
-    const alert = canaryAlert({ verifyLog: VERIFY_FAILED, browserLog: BROWSER_LOG });
+    const alert = canaryAlert({
+      verifyLog: VERIFY_FAILED,
+      browserLog: BROWSER_LOG,
+    });
     expect(alert.message).not.toContain("Failing since");
     expect(alert.message).toContain("history could not be read");
   });

@@ -484,10 +484,25 @@ async function renderedCheckouts(page: Page): Promise<RenderedCheckout[]> {
   );
 }
 
+// WHY: only these query params are added or rewritten by the site or its
+// visitors (buildTicketUrl adds aff; BaseLayout rewrites utm_medium on
+// mobile; ad clicks add fbclid and gclid), so they never say which listing a
+// link opens. Every other param can (Eventbrite-style `?event=...`), so it
+// must match. Comparing only origin and path let another event on the same
+// vendor path pass as the show's own destination.
+const TRACKING_PARAM = /^(utm_.+|aff|fbclid|gclid)$/i;
+
+/** origin + path + identifying query, order-insensitive, tracking removed. */
+function listingKey(url: URL): string {
+  const identifying = [...url.searchParams.entries()]
+    .filter(([key]) => !TRACKING_PARAM.test(key))
+    .map(([key, value]) => `${key}=${value}`)
+    .sort();
+  return [url.origin, url.pathname, ...identifying].join("\n");
+}
+
 // WHY: a sold-out card links straight to the vendor (TicketCard.astro uses
-// buildTicketUrl, which only adds aff and UTM query params, and BaseLayout
-// rewrites utm_medium on mobile), so it is compared on origin and path, not
-// the full URL. It must belong to a displayable show that really is sold
+// buildTicketUrl), so it is compared with listingKey, not the full URL. It must belong to a displayable show that really is sold
 // out: a sold-out card for an on-sale show would hide the checkout, and one
 // for a canceled or hidden show should not be on the page at all. A past
 // sold-out show's card is tolerated, unlike a past /api/go card that must
@@ -511,7 +526,7 @@ function soldOutProblem(
     const shown = new URL(link.href ?? "");
     const listing = new URL(event.url);
     if (shown.protocol !== "https:") return `${label} (not an https link)`;
-    if (shown.origin !== listing.origin || shown.pathname !== listing.pathname)
+    if (listingKey(shown) !== listingKey(listing))
       return `${label} (not the show's listing)`;
   } catch {
     return `${label} (unparseable)`;

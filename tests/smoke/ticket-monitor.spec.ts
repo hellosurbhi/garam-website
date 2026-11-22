@@ -330,6 +330,30 @@ const ownListing = `${nyc.url}?aff=garamsitetickets&utm_medium=mobile`;
 for (const [name, href, show, passes] of [
   ["linking to its own listing with tracking params", ownListing, {}, true],
   ["linking to another show's listing", chicago.url, {}, false],
+  [
+    "differing only by a tracking param",
+    `${nyc.url}?fbclid=x&gclid=y&utm_campaign=z&aff=other`,
+    {},
+    true,
+  ],
+  [
+    "keeping an identifying query param, in a different order",
+    `${nyc.url}?utm_medium=mobile&event=ours`,
+    { url: `${nyc.url}?event=ours` },
+    true,
+  ],
+  [
+    "linking to the same path with a different identifying param",
+    `${nyc.url}?event=other`,
+    { url: `${nyc.url}?event=ours` },
+    false,
+  ],
+  [
+    "linking to the same path without the identifying param",
+    nyc.url,
+    { url: `${nyc.url}?event=ours` },
+    false,
+  ],
   ["linking to an http listing", nyc.url.replace("https:", "http:"), {}, false],
   ["for a canceled show", ownListing, { status: "canceled" }, false],
   ["for a hidden show", ownListing, { hidden: true }, false],

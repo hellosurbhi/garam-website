@@ -10,7 +10,7 @@
 
 **What went wrong:** The apply canary counted a photo upload as blocked when Chrome marked the request aborted. Chrome does that after the bucket already answered 200, so the canary failed every run for ten days while all six photos landed.
 **Why:** The wrong assumption was that a browser network event describes the outcome. The status the server returned is the outcome; the browser's bookkeeping after it is not.
-**Rule:** (Applied in https://github.com/hellosurbhi/garam-website/pull/412.) An upload check passes on a 2xx response and fails on no response or an error status. Every apply canary page separates "the data did not land" (read back from the database) from "a browser check failed", so a wrong check can never look like an outage or the reverse.
+**Rule:** (This is fixed by PR 412: https://github.com/hellosurbhi/garam-website/pull/412.) An upload check passes on a 2xx response and fails on no response or an error status. Every apply canary page separates "the data did not land" (read back from the database) from "a browser check failed", so a wrong check can never look like an outage or the reverse.
 
 ## A pager step inside the job it watches can never page a hung job
 

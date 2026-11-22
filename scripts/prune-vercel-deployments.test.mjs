@@ -322,6 +322,24 @@ describe("deployment cleanup safeguards", () => {
       "DELETE",
     ]);
   });
+  it("deletes no preview and fails when the merged-PR lookup errors", async () => {
+    // WHY: a GitHub outage must never read as "merged", or every preview
+    // (including one whose branch has an open PR) could be deleted blind.
+    const base = fixture();
+    const api = vi.fn(async (path, method) => {
+      const result = await base(path, method);
+      if (path.startsWith("/v6/")) result.deployments.push(preview);
+      return result;
+    });
+    const canPrunePreview = vi.fn().mockRejectedValue(new Error("github down"));
+    await expect(
+      pruneDeployments(api, { apply: true, log: vi.fn(), canPrunePreview }),
+    ).rejects.toThrow("github down");
+    expect(api.mock.calls).not.toContainEqual([
+      `/v13/deployments/${preview.uid}`,
+      "DELETE",
+    ]);
+  });
   it("deletes only obsolete terminal production deployments without custom domains", async () => {
     const api = fixture();
     expect(await pruneDeployments(api, { apply: true, log: vi.fn() })).toBe(2);

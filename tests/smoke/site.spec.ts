@@ -667,14 +667,10 @@ test.describe("Tickets page deep", () => {
       const cards = page.locator(".ticket-card");
       expect(await cards.count()).toBeGreaterThan(0);
 
-      // Live cards are links
-      const liveCards = await page
-        .locator("a.ticket-card--live, a.ticket-card--soldout")
-        .all();
-      for (const card of liveCards) {
-        const href = await card.getAttribute("href");
-        expect(href, "Live ticket card should have href").toBeTruthy();
-      }
+      // Live and sold-out card links are checked by checkTicketListings in
+      // critical-flows.spec.ts. WHY not here: this loop selected
+      // a.ticket-card--live, which matches no live card (they are a div
+      // wrapping a.ticket-card__inner), so it never ran (issue 336).
 
       // TBA cards are buttons with data-notify-city
       const tbaCards = await page.locator("button.ticket-card--tba").all();

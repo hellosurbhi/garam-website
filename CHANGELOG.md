@@ -1,5 +1,14 @@
 # Changelog
 
+## Booking smoke checks real ticket links (2026-11-11)
+
+- Check that every on-sale show on /tickets links to its own checkout. The old test matched none of the live cards, so it passed whatever they linked to.
+- Recognize checkout links after the tracking script rewrites them with event ids. The production ticket monitor had failed on every run since that rewrite shipped.
+- Reject a checkout link that points at another site, a broken link, or a link paired with the wrong show card, and require every on-sale show to appear. The redirect check now follows the link exactly as rendered, tracking parameters included.
+- In the weekly and preview runs, open each vendor listing and confirm its published date and start time match the show.
+- Read only the event a listing page sells, not shows it recommends or a venue's whole calendar. Follow address links within the page, read a location given as a bare address and reject an online location.
+- Wait for the waiver form to finish loading before filling it, so the waiver smoke test stops timing out on production.
+
 ## fix(monitor): the ticket redirect check no longer reports a healthy page as broken (2026-11-12)
 
 - The live ticket check looked for a link with the exact path `/api/go/<show>`, but the site rewrites each checkout link to an absolute URL with an `?eid=` tag after the page loads. The check never found the link, failed on every run and paged the owner for a working page. It now matches the link path whether relative or absolute, with or without the tag, and still refuses a longer show name that only shares the same start. Verified against the live site and 95 fixture runs, including the new `?eid=` and prefix cases.

@@ -5,7 +5,7 @@ import { waitUntil } from "@vercel/functions";
 import { getEventBySlug, type EventEntry } from "@/data/events";
 import { isEventDatePast } from "@/utils/eventDate";
 import { enforceRateLimit, RATE_LIMITS, getClientIp } from "@/lib/rateLimit";
-import { applyUtmsToUrl } from "@/utils/utmForwarding";
+import { goRedirectDestination } from "@/utils/utmForwarding";
 import { withTimeout } from "@/utils/withTimeout";
 import { sendCapiEvent } from "@/lib/capi";
 import { isBotUserAgent } from "@/lib/isBotUserAgent";
@@ -148,21 +148,10 @@ export const GET: APIRoute = async ({ params, request }) => {
   // (no-JS fallback, direct link, bot): still a valid, if unpaired, signal.
   const eventId = requestUrl.searchParams.get("eid") || crypto.randomUUID();
 
-  const destination = applyUtmsToUrl(
+  const destination = goRedirectDestination(
     event.url,
-    {
-      utmSource: requestUrl.searchParams.get("utm_source") ?? undefined,
-      utmMedium: requestUrl.searchParams.get("utm_medium") ?? undefined,
-      utmCampaign: requestUrl.searchParams.get("utm_campaign") ?? undefined,
-      utmContent: requestUrl.searchParams.get("utm_content") ?? undefined,
-      utmTerm: requestUrl.searchParams.get("utm_term") ?? undefined,
-    },
-    {
-      utmSource: "garamsite",
-      utmMedium: "web",
-      utmCampaign: event.citySlug ?? "event",
-      utmContent: event.slug,
-    },
+    event,
+    requestUrl.searchParams,
   );
 
   waitUntil(recordClickSignals(request, requestUrl, event, eventId));

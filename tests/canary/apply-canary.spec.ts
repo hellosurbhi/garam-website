@@ -19,15 +19,7 @@ import {
   deriveDraftSecret,
   isCanaryKey,
 } from "../../src/lib/draftSecret";
-
-/** True for the Storage upload host itself, judged by parsed hostname. */
-function isStorageHost(url: string): boolean {
-  const host = new URL(url).hostname;
-  return (
-    host === "storage.googleapis.com" ||
-    host.endsWith(".storage.googleapis.com")
-  );
-}
+import { blockedPutCollector, isStorageHost } from "./storagePuts";
 
 const RUN_ID = process.env.CANARY_RUN_ID ?? "local";
 
@@ -108,12 +100,8 @@ test("a phone applicant can file an application with photos on the live stack", 
       );
     }
   });
-  const failedPuts: string[] = [];
-  page.on("requestfailed", (req) => {
-    if (req.method() === "PUT" && isStorageHost(req.url())) {
-      failedPuts.push(`${req.url()} ${req.failure()?.errorText ?? ""}`);
-    }
-  });
+  const failedPutCollector = blockedPutCollector();
+  page.on("requestfailed", (req) => failedPutCollector.onRequestFailed(req));
 
   // WHY this marker: canary-alert.mjs reads it to tell "the live site failed
   // this profile" from "the harness never reached the site". Playwright's own
@@ -197,6 +185,7 @@ test("a phone applicant can file an application with photos on the live stack", 
   // Both photos went straight to the bucket from the browser: this is also the
   // live CORS and CSP check, since the browser blocks a PUT the bucket or the
   // site's policy does not allow.
+  const failedPuts = await failedPutCollector.blocked();
   expect(failedPuts, "direct upload to the bucket was blocked").toEqual([]);
   expect(relayCalls, "a photo fell back to the server relay").toEqual([]);
   expect(storagePuts.length).toBeGreaterThanOrEqual(2);

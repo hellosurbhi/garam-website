@@ -12,6 +12,12 @@
 **Why:** The wrong assumption was that a browser network event describes the outcome. The status the server returned is the outcome; the browser's bookkeeping after it is not.
 **Rule:** (This is fixed by PR 412: https://github.com/hellosurbhi/garam-website/pull/412.) An upload check passes on a 2xx response and fails on no response or an error status. Every apply canary page separates "the data did not land" (read back from the database) from "a browser check failed", so a wrong check can never look like an outage or the reverse.
 
+## Chrome reports an accepted upload as failed when nobody reads the reply
+
+**What went wrong:** The apply canary's first live run failed Android Chrome and the Instagram browser with "direct upload to the bucket was blocked", while every photo had been filed.
+**Why:** The wrong assumption was that Playwright's `requestfailed` means the request never landed. Chromium also fires it (`net::ERR_ABORTED`) when the server already answered 200 and the page never read the empty reply body. WebKit does not, so only the Chromium profiles failed.
+**Rule:** Only for an upload whose reply body is empty and unread (the signed Storage PUT), a check that treats `requestfailed` as a failure must first ask `request.response()`: a 2xx answer means the upload landed, and only a missing answer or an error status is a real block. A download or any request whose body matters can still fail after a 200, so it keeps treating `requestfailed` as a failure.
+
 ## A pager step inside the job it watches can never page a hung job
 
 **What went wrong:** The canary workflow paged from `failure()` steps in the same job as the browser run. A job that timed out or was cancelled skips every remaining step, so the one case a hung production site produces paged nobody.

@@ -62,7 +62,7 @@ const descriptions = {
   "reporting failure":
     "The final monitoring report could not complete. Customer impact is unknown.",
   deployment:
-    "The live site version or security rules do not match the code, or the version check could not reach the site. If only the security rules differ, the signup test still ran and sends its own alert if applicants are blocked. If the site version check failed, the signup test did not run, so applicant impact is unknown. What to do: open garammasaladating.com/apply on your phone, then tell Claude.",
+    "The live site version or security rules do not match the code, or the version check could not reach the site. If only the security rules differ, the signup test still ran and sends its own alert if applicants are blocked. If the site version check failed, the signup test may not have run: unless a separate signup alert arrived, applicant impact is unknown. What to do: open garammasaladating.com/apply on your phone, then tell Claude.",
   harness:
     "The testing system could not run reliably. Customer impact is unknown.",
   flow: "A live signup check did not complete. Check the run for form errors or rate limiting before concluding customers are blocked.",

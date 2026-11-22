@@ -171,6 +171,16 @@ CANARY AUTH REJECTED: android-chrome
     expect(alert.message).toContain("test credentials");
   });
 
+  it("an unreadable auth response is unknown impact, never applicants affected", () => {
+    const alert = canaryAlert({
+      verifyLog: VERIFY_FAILED,
+      browserLog: `CANARY FILING STARTED: android-chrome\nCANARY AUTH UNKNOWN: android-chrome\n`,
+    });
+    expect(alert.subject).toBe("Apply monitor could not run");
+    expect(alert.message).toContain("Applicant impact unknown.");
+    expect(alert.message).toContain("could not be read");
+  });
+
   it("never calls a failed history lookup a first failure", () => {
     const alert = canaryAlert({
       verifyLog: VERIFY_FAILED,

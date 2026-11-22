@@ -47,6 +47,12 @@ function canaryHeaders(key: string): Record<string, string> {
   };
 }
 
+const pendingAuthReads: Promise<void>[] = [];
+
+test.afterEach(async () => {
+  await Promise.all(pendingAuthReads.splice(0));
+});
+
 test("a phone applicant can file an application with photos on the live stack", async ({
   page,
 }, testInfo) => {
@@ -84,13 +90,22 @@ test("a phone applicant can file an application with photos on the live stack", 
       res.status() === 401 &&
       /\/api\/(save-application|upload-application-photo)/.test(res.url())
     ) {
-      res
-        .text()
-        .then((body) => {
-          if (body.includes('"bad_signature"'))
-            process.stdout.write(`CANARY AUTH REJECTED: ${profile}\n`);
-        })
-        .catch(() => {});
+      // WHY the UNKNOWN marker and the pending list: a swallowed read error
+      // used to drop the marker, so an auth rejection looked like a real
+      // failure and paged APPLICANTS AFFECTED. An unreadable 401 is reported
+      // as unknown impact, and the afterEach below waits for every read so a
+      // marker is never lost to a test that ends first.
+      pendingAuthReads.push(
+        res
+          .text()
+          .then((body) => {
+            if (body.includes('"bad_signature"'))
+              process.stdout.write(`CANARY AUTH REJECTED: ${profile}\n`);
+          })
+          .catch(() => {
+            process.stdout.write(`CANARY AUTH UNKNOWN: ${profile}\n`);
+          }),
+      );
     }
   });
   const failedPuts: string[] = [];

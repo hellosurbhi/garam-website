@@ -94,22 +94,36 @@ export function canaryAlert({ verifyLog, browserLog, incident }) {
   // the earlier attempt's auth evidence for that profile.
   const attempts = new Map();
   for (const line of (browserLog ?? "").split("\n")) {
-    const match = line.match(/CANARY (FILING STARTED|AUTH REJECTED): ([\w-]+)/);
+    const match = line.match(
+      /CANARY (FILING STARTED|AUTH REJECTED|AUTH UNKNOWN): ([\w-]+)/,
+    );
     if (!match) continue;
     const [, kind, id] = match;
-    if (kind === "FILING STARTED") attempts.set(id, { rejected: false });
-    else if (attempts.has(id)) attempts.get(id).rejected = true;
+    if (kind === "FILING STARTED")
+      attempts.set(id, { rejected: false, unreadable: false });
+    else if (attempts.has(id)) {
+      if (kind === "AUTH REJECTED") attempts.get(id).rejected = true;
+      else attempts.get(id).unreadable = true;
+    }
   }
   const started = [...attempts.keys()];
   // A profile whose canary signature the site rejected was blocked by the
-  // monitor's own credentials, which real applicants never send.
+  // monitor's own credentials, which real applicants never send. A profile
+  // whose 401 reply could not be read might have been: that is unknown
+  // impact, so it is excluded from "affected" too.
   const rejected = started.filter((id) => attempts.get(id).rejected);
+  const unreadable = started.filter((id) => attempts.get(id).unreadable);
   const affected = verify
     .split("\n")
     .filter((line) => line.startsWith("- "))
     .map((line) => line.slice(2))
     .filter((line) =>
-      started.some((id) => line.startsWith(`${id}:`) && !rejected.includes(id)),
+      started.some(
+        (id) =>
+          line.startsWith(`${id}:`) &&
+          !rejected.includes(id) &&
+          !unreadable.includes(id),
+      ),
     );
   const where = browser.profiles.length
     ? ` on ${listOf(browser.profiles.map(profileName))}`
@@ -153,9 +167,11 @@ export function canaryAlert({ verifyLog, browserLog, incident }) {
     subject = "Apply monitor could not run";
     const why = rejected.length
       ? "The site rejected the apply canary's own test credentials (the GitHub and Vercel secrets no longer match), so the monitor is blind until they are fixed."
-      : started.length
-        ? "The apply canary could not read back its test applications."
-        : "The apply canary never started filing test applications (its own setup failed).";
+      : unreadable.length
+        ? "The site answered a test application with an authentication error whose reply could not be read, so it is unknown whether the monitor's credentials or the site failed."
+        : started.length
+          ? "The apply canary could not read back its test applications."
+          : "The apply canary never started filing test applications (its own setup failed).";
     lines = ["Applicant impact unknown.", why, "", "Tell Claude."];
   }
 

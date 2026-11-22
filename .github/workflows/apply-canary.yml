@@ -198,6 +198,19 @@ jobs:
           # history is unknown. The recover job closes the issue on a pass.
           # timeout 20: a stalled GitHub API call must not eat this step's
           # two minutes and block the email itself.
-          CANARY_INCIDENT=$(timeout 20 gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"APPLY FAILED: production apply canary\" in:title" --json createdAt,body,comments --jq '.[0] // empty | "\(.createdAt[0:10]) \([.body, (.comments[] | select(.author.login == "github-actions") | .body)] | map(scan("actions/runs/([0-9]+)")[]) | unique | length)"' || true)
+          # WHY comments are paged separately: `gh issue list --json comments` returns
+          # only the first 100 comments, so a long outage stopped counting at 100.
+          # `gh api --paginate` reads them all. Any lookup failure leaves
+          # CANARY_INCIDENT empty, which the email reports as unknown history.
+          CANARY_INCIDENT=""
+          LISTING=$(timeout 20 gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"APPLY FAILED: production apply canary\" in:title" --json number,createdAt,body --jq '.[0] // empty | "\(.number) \(.createdAt[0:10])", (.body | scan("actions/runs/([0-9]+)")[])' || true)
+          if [ -n "$LISTING" ]; then
+            ISSUE_NUMBER=$(printf '%s\n' "$LISTING" | sed -n 1p | cut -d' ' -f1)
+            ISSUE_DATE=$(printf '%s\n' "$LISTING" | sed -n 1p | cut -d' ' -f2)
+            if COMMENT_RUNS=$(timeout 20 gh api --paginate "repos/$GITHUB_REPOSITORY/issues/$ISSUE_NUMBER/comments" --jq '.[] | select(.user.login == "github-actions") | .body | scan("actions/runs/([0-9]+)")[]'); then
+              RUN_COUNT=$({ printf '%s\n' "$LISTING" | sed 1d; printf '%s\n' "$COMMENT_RUNS"; } | grep -E '^[0-9]+$' | sort -u | wc -l | tr -d ' ' || true)
+              CANARY_INCIDENT="$ISSUE_DATE $RUN_COUNT"
+            fi
+          fi
           export CANARY_INCIDENT
           node scripts/canary-alert.mjs

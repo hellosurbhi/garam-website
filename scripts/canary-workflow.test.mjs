@@ -1,23 +1,67 @@
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { chmodSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { expect, it } from "vitest";
 
 const source = readFileSync(".github/workflows/apply-canary.yml", "utf8");
-// The streak filter from the email step, run through the real jq binary.
-const filter = source.match(
-  /CANARY_INCIDENT=.*--json createdAt,body,comments --jq '(.+?)' \|\| true\)/,
+// The incident lookup from the email step, run as the real shell block.
+const lookup = source.match(
+  /\n\s*(CANARY_INCIDENT=[\s\S]*?)\n\s*export CANARY_INCIDENT/,
 )?.[1];
 
+// WHY a fake gh: the block must be tested as written, including how it pages
+// comments. The fake applies the caller's own --jq filter with the real jq
+// binary, per page like gh does. `gh issue list` mimics GitHub's GraphQL
+// bound of 100 comments per issue; `gh api --paginate` serves 100 per page.
+const FAKE_GH = `#!/bin/bash
+set -e
+fixture="$FIXTURE"
+args=("$@")
+jq_filter=""
+for ((i = 0; i < \${#args[@]}; i++)); do
+  if [ "\${args[$i]}" = "--jq" ]; then jq_filter="\${args[$((i + 1))]}"; fi
+done
+if [ "$1" = "issue" ]; then
+  jq '[.[] | .comments |= .[0:100]]' "$fixture" | jq -r "$jq_filter"
+elif [ "$1" = "api" ]; then
+  jq -c '.[0].comments | [range(0; length; 100) as $s | .[$s:$s+100]] | .[]' "$fixture" |
+    while read -r page; do echo "$page" | jq -r "$jq_filter"; done
+else
+  exit 1
+fi
+`;
+
 function streak(issue) {
-  if (!filter) throw new Error("Missing CANARY_INCIDENT jq filter");
-  return execFileSync("jq", ["-r", filter], {
-    input: JSON.stringify(issue ? [issue] : []),
-    encoding: "utf8",
-  }).trim();
+  if (!lookup) throw new Error("Missing CANARY_INCIDENT lookup block");
+  const dir = mkdtempSync(join(tmpdir(), "canary-gh-"));
+  writeFileSync(join(dir, "gh"), FAKE_GH);
+  chmodSync(join(dir, "gh"), 0o755);
+  const fixture = join(dir, "issues.json");
+  writeFileSync(
+    fixture,
+    JSON.stringify(issue ? [{ number: 7, ...issue }] : []),
+  );
+  return execFileSync(
+    "bash",
+    ["-c", `${lookup}\nprintf '%s' "$CANARY_INCIDENT"`],
+    {
+      encoding: "utf8",
+      env: {
+        PATH: `${dir}:${process.env.PATH}`,
+        FIXTURE: fixture,
+        GITHUB_REPOSITORY: "o/r",
+      },
+    },
+  ).trim();
 }
 
 const run = (id) => `Run: https://github.com/o/r/actions/runs/${id}`;
-const bot = (body) => ({ author: { login: "github-actions" }, body });
+const bot = (body) => ({
+  author: { login: "github-actions" },
+  user: { login: "github-actions" },
+  body,
+});
 
 it("counts the incident-opening run once", () => {
   expect(
@@ -32,13 +76,28 @@ it("counts distinct failed runs, ignoring reruns and human replies", () => {
       body: run(1),
       comments: [
         bot(run(1)),
-        { author: { login: "hellosurbhi" }, body: `see ${run(9)}` },
+        {
+          author: { login: "hellosurbhi" },
+          user: { login: "hellosurbhi" },
+          body: `see ${run(9)}`,
+        },
         bot(run(2)),
         bot(run(2)),
         bot(run(3)),
       ],
     }),
   ).toBe("2026-11-12 3");
+});
+
+it("counts every failed run when the incident has more than one page of comments", () => {
+  const comments = Array.from({ length: 150 }, (_, i) => bot(run(i + 2)));
+  expect(
+    streak({
+      createdAt: "2026-11-01T01:00:00Z",
+      body: run(1),
+      comments,
+    }),
+  ).toBe("2026-11-01 151");
 });
 
 it("is empty when no incident is open", () => {

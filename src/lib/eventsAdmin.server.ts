@@ -458,6 +458,7 @@ export async function rollbackTo(
     target.data.snapshot,
     body.targetVersion,
     body.note,
+    now.toISOString(),
   );
   const snapshot = validateCandidate(
     candidate,

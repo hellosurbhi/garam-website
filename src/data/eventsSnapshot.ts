@@ -385,7 +385,12 @@ export interface ValidateAgainstLiveOptions {
 }
 
 /** Fields a rollback rewrites on restored entries (R6, R14). */
-const ROLLBACK_MANAGED_FIELDS = ["note", "previousDate", "previousDates"];
+const ROLLBACK_MANAGED_FIELDS = [
+  "note",
+  "previousDate",
+  "previousDates",
+  "updatedAt",
+];
 
 /** JSON with sorted keys and undefined dropped, for order-blind equality. */
 function canonicalJson(value: unknown, omit: readonly string[] = []): string {
@@ -515,6 +520,19 @@ export function validateSnapshotAgainstLive(
       }
     }
 
+    // WHY: the sitemap's lastmod is the entry's updatedAt, so an edit that
+    // carries an older one would move that page's date backward.
+    if (
+      liveEntry?.updatedAt &&
+      (entry.updatedAt ?? "") < liveEntry.updatedAt &&
+      !sameContent(entry, liveEntry, ["updatedAt"])
+    ) {
+      at(
+        "updatedAt",
+        "An edited show cannot carry a time earlier than its last edit",
+      );
+    }
+
     if (liveEntry && sameContent(entry, liveEntry)) return;
     const target = targetBySlug.get(entry.slug);
     if (target && sameContent(entry, target, ROLLBACK_MANAGED_FIELDS)) return;
@@ -614,20 +632,26 @@ export function diffSnapshots(
  *    (never-delete: its page may be indexed or shared);
  *  - every date link live has stays an alias of the restored entry (R6);
  *  - a restored entry whose date differs from live gets a note saying so
- *    (R14), because a date change always needs one.
+ *    (R14), because a date change always needs one;
+ *  - every entry whose content differs from live is stamped `at`, the
+ *    rollback time, and one whose content is identical keeps live's
+ *    timestamp. WHY: the sitemap's lastmod is `updatedAt`, so copying the
+ *    target's old stamp moved dates backward and keeping a newly canceled
+ *    show's stamp left its changed page looking untouched.
  */
 export function buildRollbackSnapshot(
   live: EventsSnapshot,
   target: EventsSnapshot,
   k: number,
   requestNote: string,
+  at: string,
 ): EventsSnapshot {
   const liveBySlug = new Map(live.events.map((e) => [e.slug, e]));
   const targetSlugs = new Set(target.events.map((e) => e.slug));
 
   const restored = target.events.map((t): EventEntry => {
     const liveEntry = liveBySlug.get(t.slug);
-    if (!liveEntry) return t;
+    if (!liveEntry) return { ...t, updatedAt: at };
     const entry: EventEntry = { ...t };
     const have = new Set(eventAliasDates(t));
     const extra = eventAliasDates(liveEntry).filter((d) => !have.has(d));
@@ -640,6 +664,12 @@ export function buildRollbackSnapshot(
         `Restored to ${t.isoDate ?? "TBA"} by rollback to v${k}: ${requestNote}`,
       );
     }
+    if (sameContent(entry, liveEntry, ["updatedAt"])) {
+      if (liveEntry.updatedAt) entry.updatedAt = liveEntry.updatedAt;
+      else delete entry.updatedAt;
+    } else {
+      entry.updatedAt = at;
+    }
     return entry;
   });
 
@@ -650,6 +680,7 @@ export function buildRollbackSnapshot(
       hidden: true,
       status: "canceled",
       note: appendNote(e.note, `Removed by rollback to v${k}: ${requestNote}`),
+      updatedAt: at,
     }));
 
   return { events: [...restored, ...carried], tbaCities: target.tbaCities };

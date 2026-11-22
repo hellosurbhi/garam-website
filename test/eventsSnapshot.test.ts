@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { cities } from "../src/data/cities";
 import { buildAllEvents } from "../src/data/eventPages";
+import { eventLastmodDates } from "../src/data/events";
 import { buildEventRedirects } from "../src/utils/eventRedirects";
 import baselineJson from "./fixtures/events-migration-baseline.json" with { type: "json" };
 import liveJson from "../src/data/events.published.json" with { type: "json" };
@@ -21,6 +22,7 @@ import {
 
 const KNOWN = new Set(Object.keys(cities));
 const opts = { knownCitySlugs: KNOWN };
+const NOW_ISO = "2026-12-01T09:00:00.000Z";
 
 /** A fully valid new show: passes the write tier as is. */
 function newShow(overrides: Partial<EventEntry> = {}): EventEntry {
@@ -412,7 +414,7 @@ describe("buildRollbackSnapshot", () => {
   const added = newShow();
   const v1: EventsSnapshot = { events: [v1Show], tbaCities: [] };
   const v2: EventsSnapshot = { events: [v2Show, added], tbaCities: [] };
-  const rolled = buildRollbackSnapshot(v2, v1, 1, "Wrong date");
+  const rolled = buildRollbackSnapshot(v2, v1, 1, "Wrong date", NOW_ISO);
   const restored = rolled.events.find((e) => e.slug === v1Show.slug);
   const carried = rolled.events.find((e) => e.slug === added.slug);
 
@@ -449,13 +451,121 @@ describe("buildRollbackSnapshot", () => {
       events: [v2Show, added, { ...legacy, tagline: "x" }],
       tbaCities: [],
     };
-    const next = buildRollbackSnapshot(liveNow, target, 1, "Wrong date");
+    const next = buildRollbackSnapshot(
+      liveNow,
+      target,
+      1,
+      "Wrong date",
+      NOW_ISO,
+    );
     const result = validateSnapshotAgainstLive(next, liveNow, {
       ...opts,
       rollbackTarget: target,
     });
     expect(messages(result)).toEqual([]);
     expect(validateSnapshotAgainstLive(next, liveNow, opts).ok).toBe(false);
+  });
+});
+
+// WHY: the sitemap's lastmod for a show page is its updatedAt. A rollback that
+// copied the target's old timestamp moved the date backward, and one that kept
+// a carried show's timestamp left it unchanged although the page changed.
+describe("rollback timestamps and the sitemap", () => {
+  const ROLLBACK_AT = "2026-12-01T09:00:00.000Z";
+  const stable = newShow({
+    slug: "chicago-2027-02-06",
+    isoDate: "2027-02-06",
+    date: "Feb 6",
+    updatedAt: "2026-11-05T10:00:00.000Z",
+  });
+  const target = newShow({
+    slug: "chicago-2026-12-20",
+    isoDate: "2026-12-20",
+    date: "Dec 20",
+    tagline: "Early edition",
+    updatedAt: "2026-10-01T10:00:00.000Z",
+  });
+  const liveShow = {
+    ...target,
+    tagline: "Late edition",
+    updatedAt: "2026-11-20T10:00:00.000Z",
+  };
+  const added = newShow({ updatedAt: "2026-11-25T10:00:00.000Z" });
+  const v1: EventsSnapshot = {
+    events: [target, { ...stable, updatedAt: "2026-11-05T10:00:00.000Z" }],
+    tbaCities: [],
+  };
+  const v2: EventsSnapshot = {
+    events: [liveShow, stable, added],
+    tbaCities: [],
+  };
+  const rolled = buildRollbackSnapshot(v2, v1, 1, "Undo", ROLLBACK_AT);
+  const lastmod = eventLastmodDates(rolled.events, "2026-12-01T09:00:00.000Z");
+  const before = eventLastmodDates(v2.events, "2026-11-25T00:00:00.000Z");
+
+  it("stamps a show whose content the rollback changed with the rollback time", () => {
+    expect(rolled.events.find((e) => e.slug === target.slug)?.updatedAt).toBe(
+      ROLLBACK_AT,
+    );
+    expect(lastmod[target.slug]).toBe("2026-12-01");
+    expect(lastmod[target.slug] >= before[target.slug]).toBe(true);
+  });
+
+  it("stamps a carried show the rollback newly cancels", () => {
+    expect(rolled.events.find((e) => e.slug === added.slug)).toMatchObject({
+      status: "canceled",
+      updatedAt: ROLLBACK_AT,
+    });
+    expect(lastmod[added.slug]).toBe("2026-12-01");
+  });
+
+  it("keeps the timestamp of a show whose content is identical", () => {
+    expect(rolled.events.find((e) => e.slug === stable.slug)?.updatedAt).toBe(
+      stable.updatedAt,
+    );
+    expect(lastmod[stable.slug]).toBe("2026-11-05");
+  });
+
+  it("keeps live's timestamp when the target holds the same content with an older one", () => {
+    const olderTarget: EventsSnapshot = {
+      events: [{ ...stable, updatedAt: "2026-09-01T00:00:00.000Z" }, target],
+      tbaCities: [],
+    };
+    const r = buildRollbackSnapshot(v2, olderTarget, 1, "Undo", ROLLBACK_AT);
+    expect(r.events.find((e) => e.slug === stable.slug)?.updatedAt).toBe(
+      stable.updatedAt,
+    );
+  });
+
+  it("is accepted by validation as a rollback", () => {
+    const result = validateSnapshotAgainstLive(rolled, v2, {
+      ...opts,
+      rollbackTarget: v1,
+    });
+    expect(messages(result)).toEqual([]);
+  });
+});
+
+// WHY: publish has the same exposure. A save that changes a show but carries
+// an older updatedAt than live's would move that page's sitemap date backward.
+describe("edited shows never move their timestamp backward", () => {
+  const liveShow = newShow({ updatedAt: "2026-11-20T10:00:00.000Z" });
+  const liveSnap: EventsSnapshot = { events: [liveShow], tbaCities: [] };
+
+  it("refuses an edit stamped earlier than the live record", () => {
+    const next = withEvents(liveSnap, [
+      { ...liveShow, tagline: "Edited", updatedAt: "2026-11-01T10:00:00.000Z" },
+    ]);
+    expect(messages(validateSnapshotAgainstLive(next, liveSnap, opts))).toEqual(
+      [expect.stringContaining("earlier")],
+    );
+  });
+
+  it("accepts an edit stamped later", () => {
+    const next = withEvents(liveSnap, [
+      { ...liveShow, tagline: "Edited", updatedAt: "2026-11-21T10:00:00.000Z" },
+    ]);
+    expect(validateSnapshotAgainstLive(next, liveSnap, opts).ok).toBe(true);
   });
 });
 
@@ -514,7 +624,7 @@ describe("build-accepted snapshots", () => {
       price: undefined,
     };
     const v2: EventsSnapshot = { events: [hiddenRecord], tbaCities: [] };
-    const candidate = buildRollbackSnapshot(v2, v1, 1, "Wrong list");
+    const candidate = buildRollbackSnapshot(v2, v1, 1, "Wrong list", NOW_ISO);
     const result = validateSnapshotAgainstLive(candidate, v2, {
       ...opts,
       rollbackTarget: v1,

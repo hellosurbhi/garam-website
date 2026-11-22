@@ -141,7 +141,9 @@ const baseline = publishedJson.snapshot as EventsSnapshot;
 const LIVE_SHOW = "los-angeles-2026-11-13";
 const HOOK_URL = "https://api.vercel.com/v1/integrations/deploy/fixture";
 const ADMIN = { uid: "admin-uid", email: "admin@example.test" };
-const T0 = new Date("2026-11-11T20:00:00.000Z");
+// WHY after the baseline snapshot (20:03:52): an edit stamped earlier than the
+// record it edits is refused, because it would move its sitemap date backward.
+const T0 = new Date("2026-11-11T21:00:00.000Z");
 
 /** A new show with a fixture date, venue and ticket URL (plan section 8.1). */
 function fixtureShow(overrides: Partial<EventEntry> = {}): EventEntry {
@@ -960,11 +962,19 @@ describe("rollback", () => {
     expect((await publish(1)).json.version).toBe(2);
     afterDebounce();
 
+    const restoredAt = new Date().toISOString();
     const res = await rollback(1, 2);
 
     expect(res.status).toBe(200);
     expect(res.json).toMatchObject({ version: 3, rebuild: "requested" });
-    expect(liveDoc().snapshot).toEqual(baseline);
+    // The one show the rollback changed is stamped with the rollback time (its
+    // sitemap date moves forward); every other record is byte for byte v1.
+    expect(liveDoc().snapshot).toEqual(
+      replaceEntry(baseline, LIVE_SHOW, (e) => ({
+        ...e,
+        updatedAt: restoredAt,
+      })),
+    );
   });
 
   it("notes a restored date on an entry that had no note (R14)", async () => {
@@ -1009,11 +1019,15 @@ describe("rollback", () => {
     );
     afterDebounce();
 
+    const restoredAt = new Date().toISOString();
     const res = await rollback(1, 2);
 
     expect(res.status).toBe(200);
     const restored = bySlug(liveDoc().snapshot, slug);
-    expect(restored).toEqual(bySlug(baseline, slug));
+    expect(restored).toEqual({
+      ...bySlug(baseline, slug),
+      updatedAt: restoredAt,
+    });
     expect(restored).not.toHaveProperty("timezone");
   });
 

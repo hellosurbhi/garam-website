@@ -272,6 +272,24 @@ export async function alertOps(rawReport: OpsAlertReport): Promise<boolean> {
     // truncates.
     pushWebhook(rawReport),
   ]);
+  // WHY: the boolean below says only that SOMETHING got through. When one
+  // channel is down and the other carries the page, nothing recorded which one
+  // broke, so a dead webhook or dead mailer stayed invisible until the day both
+  // failed. Each failed channel is logged by name. The message is redacted
+  // because transport errors echo recipient addresses and server logs outlive
+  // the alert; removing this brings the silent single-channel outage back.
+  for (const [channel, result] of [
+    ["email", mailResult],
+    ["webhook", webhookResult],
+  ] as const) {
+    if (result.status === "rejected") {
+      const reason: unknown = result.reason;
+      console.error(
+        `[ops-alert] ${channel} channel failed:`,
+        redactEmails(reason instanceof Error ? reason.message : String(reason)),
+      );
+    }
+  }
   let timer: ReturnType<typeof setTimeout> | undefined;
   await Promise.race([
     persisted,

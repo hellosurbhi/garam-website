@@ -16,6 +16,16 @@ it("separates broken testing, deployment changes and cleanup from form failures"
     }),
   ).toEqual(["cleanup", "deployment"]);
 });
+it("reports a failed signup even while the deployed rules drift", () => {
+  const drift = { setup: "success", rules: "failure", version: "success" };
+  expect(categories("success", { ...drift, flow: "failure" })).toEqual([
+    "deployment",
+    "flow",
+  ]);
+  expect(categories("success", { ...drift, flow: "success" })).toEqual([
+    "deployment",
+  ]);
+});
 it("refuses stale production before any submission", async () => {
   await expect(
     requireVersion(

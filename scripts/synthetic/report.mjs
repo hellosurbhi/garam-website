@@ -13,9 +13,13 @@ export function categories(gate, checks) {
   if (checks.cleanup === "failure") result.push("cleanup");
   if (checks.version === "failure") result.push("deployment");
   if (checks.setup !== "success") result.push("harness");
-  else if (checks.rules !== "success") result.push("deployment");
-  else if (checks.flow !== "success" && checks.version !== "failure")
-    result.push("flow");
+  else {
+    // Rules drift and a failed signup are separate incidents: drift must
+    // never hide whether customers can sign up.
+    if (checks.rules !== "success") result.push("deployment");
+    if (checks.flow !== "success" && checks.version !== "failure")
+      result.push("flow");
+  }
   if (checks.redirects === "failure") result.push("redirects");
   return [...new Set(result)];
 }
@@ -58,7 +62,7 @@ const descriptions = {
   "reporting failure":
     "The final monitoring report could not complete. Customer impact is unknown.",
   deployment:
-    "The live version or database rules do not match this check. Production testing could not confirm the release.",
+    "The live site version or security rules do not match the code. This alone does not block applicants: the signup test still runs and sends its own alert if they are blocked. What to do: tell Claude, the rules or site need a deploy.",
   harness:
     "The testing system could not run reliably. Customer impact is unknown.",
   flow: "A live signup check did not complete. Check the run for form errors or rate limiting before concluding customers are blocked.",
@@ -207,9 +211,7 @@ export async function report(env = process.env, fetchImpl = fetch) {
               ? checks.rules === "success" && checks.version === "success"
               : category === "redirects"
                 ? checks.redirects === "success" && checks.version === "success"
-                : checks.flow === "success" &&
-                  checks.rules === "success" &&
-                  checks.version === "success");
+                : checks.flow === "success" && checks.version === "success");
       if (active.includes(category) || healthy)
         await incident(category, active.includes(category));
     } catch {

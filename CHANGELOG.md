@@ -1,5 +1,11 @@
 # Changelog
 
+## fix(monitor): a real apply outage now sends an email you can tell apart from a broken check (2026-11-22)
+
+- The apply canary paged "APPLY FAILED" on every red run and pasted only the read-back log, so for ten days it sent three "OK" lines while a wrong browser check was the only failure. A real outage would have looked the same. The page now says which of three things happened: test applications are not landing (applicants affected, act now), applications land but a browser check failed (look at /apply on a phone, likely the check) or the canary could not run (impact unknown). Each email names the failed check and the phones it failed on, says what to do and how long the alarm has been red.
+- The synthetic monitor skipped its signup test whenever the deployed security rules differed from the repo. The rules changed on Nov 11 and were never deployed, so nothing tested signup for eleven days. The signup test now runs either way, and rules drift is reported as its own incident.
+- Tests: the three email cases, the red streak count, the Playwright log parsing, the signup test running after a failed rules check and drift plus a failed signup reported as two incidents. The new monitor tests fail on the previous code.
+
 ## fix(monitor): the ticket redirect check no longer reports a healthy page as broken (2026-11-12)
 
 - The live ticket check looked for a link with the exact path `/api/go/<show>`, but the site rewrites each checkout link to an absolute URL with an `?eid=` tag after the page loads. The check never found the link, failed on every run and paged the owner for a working page. It now matches the link path whether relative or absolute, with or without the tag, and still refuses a longer show name that only shares the same start. Verified against the live site and 95 fixture runs, including the new `?eid=` and prefix cases.

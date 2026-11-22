@@ -64,7 +64,11 @@ jobs:
         # step so the read-back and the upload below still run. A job-level
         # timeout kills every remaining step and would page nobody.
         timeout-minutes: 10
-        run: npx playwright test --config playwright.canary.config.ts
+        # browser.log feeds the page: without it the email cannot say which
+        # check failed or on which phone (scripts/canary-alert.mjs).
+        run: |
+          set -o pipefail
+          npx playwright test --config playwright.canary.config.ts 2>&1 | tee browser.log
         env:
           PLAYWRIGHT_BASE_URL: https://garammasaladating.com
           FIREBASE_ADMIN_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY }}
@@ -90,6 +94,7 @@ jobs:
           name: apply-canary-report
           path: |
             verify.log
+            browser.log
             playwright-report/
           if-no-files-found: ignore
           retention-days: 7
@@ -154,8 +159,17 @@ jobs:
           PAGER_EMAIL_TO: ${{ secrets.PAGER_EMAIL_TO }}
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           CANARY_RESULT: ${{ needs.canary.result }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # A test_pager dispatch whose canary ALSO genuinely failed still
           # pages for real; only a passing drill sends the test message.
-          if [ "$CANARY_RESULT" != "success" ]; then MODE=page; else MODE=test; fi
-          DETAIL="$(head -c 3500 verify.log 2>/dev/null || true)" node scripts/send-pager-email.mjs "$MODE"
+          if [ "$CANARY_RESULT" = "success" ]; then
+            node scripts/send-pager-email.mjs test
+            exit 0
+          fi
+          # "<first failure date> <failed runs>" from the open incident issue,
+          # so a monitor that stays red escalates instead of fading into noise.
+          # Empty when the lookup fails: the page still goes out.
+          CANARY_INCIDENT=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"APPLY FAILED: production apply canary\" in:title" --json createdAt,comments --jq '.[0] // empty | "\(.createdAt[0:10]) \(.comments | length + 1)"' || true)
+          export CANARY_INCIDENT
+          node scripts/canary-alert.mjs

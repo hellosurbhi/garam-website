@@ -99,6 +99,28 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
+  # Closes the open incident when a run passes. WHY: the page counts the
+  # issue's runs as one unbroken red streak. With no close, a failure after a
+  # recovery was reported as "failing since" the first outage weeks earlier.
+  recover:
+    name: Close the incident on a passing run
+    needs: canary
+    if: ${{ needs.canary.result == 'success' }}
+    permissions:
+      issues: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Close the open canary incident
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          EXISTING=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"APPLY FAILED: production apply canary\" in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTING" ]; then
+            gh issue close "$EXISTING" --repo "$GITHUB_REPOSITORY" --comment "Recovered: the apply canary passed. Run: $RUN_URL"
+          fi
+
   # WHY a separate job: steps after a failure inside the canary job never run
   # when the job times out or is cancelled, which is exactly when a hung
   # production site most needs to page. A dependent job runs on failure,
@@ -169,7 +191,8 @@ jobs:
           fi
           # "<first failure date> <failed runs>" from the open incident issue,
           # so a monitor that stays red escalates instead of fading into noise.
-          # Empty when the lookup fails: the page still goes out.
+          # Empty when the lookup fails: the page still goes out and says the
+          # history is unknown. The recover job closes the issue on a pass.
           CANARY_INCIDENT=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"APPLY FAILED: production apply canary\" in:title" --json createdAt,comments --jq '.[0] // empty | "\(.createdAt[0:10]) \(.comments | length + 1)"' || true)
           export CANARY_INCIDENT
           node scripts/canary-alert.mjs

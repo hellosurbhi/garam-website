@@ -5,6 +5,8 @@ import { browserFailures, canaryAlert } from "./canary-alert.mjs";
 // Shape of run 44993267596 (Nov 22 2026): the browser step failed two
 // profiles on a wrong assertion while every draft and photo landed.
 const BROWSER_LOG = `
+Running 3 tests using 1 worker
+
   1) [android-chrome] › tests/canary/apply-canary.spec.ts:50:1 › a phone applicant can file an application with photos on the live stack
 
     Error: direct upload to the bucket was blocked
@@ -89,18 +91,33 @@ describe("canaryAlert", () => {
       incident: { since: "2026-11-12", runs: 37 },
     });
     expect(alert.message).toContain(
-      "This alarm has been failing since 2026-11-12 (37 failed runs)",
+      "This alarm has been failing since 2026-11-12 (37 failed runs in a row)",
     );
   });
 
   it("marks a first failure as new, counting the run the issue step just logged", () => {
-    for (const incident of [undefined, { since: "2026-11-22", runs: 1 }]) {
-      const alert = canaryAlert({
-        verifyLog: VERIFY_FAILED,
-        browserLog: "",
-        incident,
-      });
-      expect(alert.message).toContain("first failed run");
+    const alert = canaryAlert({
+      verifyLog: VERIFY_FAILED,
+      browserLog: BROWSER_LOG,
+      incident: { since: "2026-11-22", runs: 1 },
+    });
+    expect(alert.message).toContain("first failed run");
+  });
+
+  it("never calls a failed history lookup a first failure", () => {
+    const alert = canaryAlert({ verifyLog: VERIFY_FAILED, browserLog: BROWSER_LOG });
+    expect(alert.message).not.toContain("first failed run");
+    expect(alert.message).toContain("history could not be read");
+  });
+
+  it("does not blame applicants when browser setup failed before filing", () => {
+    for (const browserLog of ["", "Error: browserType.launch: Executable doesn't exist"]) {
+      const alert = canaryAlert({ verifyLog: VERIFY_FAILED, browserLog });
+      expect(alert.subject).toBe(
+        "Apply monitor could not run, applicant impact unknown",
+      );
+      expect(alert.message).toContain("never started filing");
+      expect(alert.detail).toContain("CANARY VERIFY FAILED");
     }
   });
 

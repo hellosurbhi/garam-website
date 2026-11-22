@@ -12,7 +12,9 @@
  *   read-back OK      -> nothing is being lost, but the browser check saw a
  *                        problem: either the check is wrong or applicants see
  *                        something broken, so look at /apply on a phone.
- *   no read-back      -> the canary could not run at all: impact unknown.
+ *   no read-back, or  -> the canary could not run at all: impact unknown.
+ *   browser never
+ *   started
  *
  * WHY: the first version paged "APPLY FAILED" for every red run and pasted
  * only the read-back log. For ten days (Nov 2026) it paged with three "OK"
@@ -72,20 +74,27 @@ export function browserFailures(log) {
 export function canaryAlert({ verifyLog, browserLog, incident }) {
   const verify = verifyLog ?? "";
   const browser = browserFailures(browserLog);
+  // WHY: the read-back runs even when browser setup failed, and then finds no
+  // drafts because none were filed. Without this, a failed browser install
+  // paged "APPLICANTS AFFECTED". Playwright prints this line before filing.
+  const filed = /^\s*Running \d+ tests? using/m.test(browserLog ?? "");
   const where = browser.profiles.length
     ? ` on ${listOf(browser.profiles.map(profileName))}`
     : "";
   // The issue step comments before this page is built, so the current run is
   // already counted: one run means this is the first failure.
-  const streak =
-    incident?.since && incident.runs > 1
-      ? `This alarm has been failing since ${incident.since} (${incident.runs} failed runs). A long red streak is itself a problem: tell Claude.`
+  // A passing run closes the issue (recover job), so the issue only spans
+  // one unbroken red streak. No incident means the lookup failed.
+  const streak = !incident
+    ? "The alarm history could not be read, so it is unknown how long this has been failing."
+    : incident.runs > 1
+      ? `This alarm has been failing since ${incident.since} (${incident.runs} failed runs in a row). A long red streak is itself a problem: tell Claude.`
       : "This is the first failed run of this alarm.";
 
   let subject;
   let impact;
   let action;
-  if (verify.includes("CANARY VERIFY FAILED")) {
+  if (verify.includes("CANARY VERIFY FAILED") && filed) {
     const first =
       verify
         .split("\n")
@@ -106,8 +115,9 @@ export function canaryAlert({ verifyLog, browserLog, incident }) {
       "What to do: open garammasaladating.com/apply on your phone. If it works, nothing is urgent: tell Claude the check needs fixing. If it does not, tell Claude right away.";
   } else {
     subject = "Apply monitor could not run, applicant impact unknown";
-    impact =
-      "The apply canary could not file or read back its test applications, so nobody knows whether real applicants are affected.";
+    impact = filed
+      ? "The apply canary could not read back its test applications, so nobody knows whether real applicants are affected."
+      : "The apply canary never started filing test applications (its own setup failed), so nobody knows whether real applicants are affected.";
     action =
       "What to do: open garammasaladating.com/apply on your phone and try it, then tell Claude.";
   }

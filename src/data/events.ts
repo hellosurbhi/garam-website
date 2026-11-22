@@ -12,9 +12,8 @@
 // admin Shows tab publishes new versions of that snapshot, and the build
 // validates it with the schemas in ./eventsSnapshot (see below). Never delete a record
 // from it (src/data/CLAUDE.md); cancel or hide instead.
-import { DEFAULT_LINEUP } from "./lineup";
 import publishedJson from "./events.published.json" with { type: "json" };
-import { buildEventSlug } from "./eventSlug";
+import { buildAllEvents, computeAllEvents, tbaCityToEvent } from "./eventPages";
 import type {
   EventEntry,
   EventsSnapshot,
@@ -30,6 +29,7 @@ export type {
   TicketSource,
 } from "./eventsSnapshot";
 export { isDisplayable } from "./eventPredicates";
+export { buildAllEvents, computeAllEvents, tbaCityToEvent };
 
 const TODAY_ISO = new Date().toISOString().slice(0, 10);
 
@@ -56,65 +56,7 @@ const TBA_CITIES: TbaCity[] = publishedSnapshot.tbaCities;
 
 export const TBA_CITY_SLUGS: string[] = TBA_CITIES.map((c) => c.citySlug);
 
-/** The notify-me card for a city with no announced date. */
-export function tbaCityToEvent(city: TbaCity): EventEntry {
-  return {
-    date: "TBA",
-    city: city.city,
-    state: city.state,
-    stateAbbr: city.stateAbbr,
-    citySlug: city.citySlug,
-    slug: buildEventSlug(city.citySlug),
-    description: `Garam Masala Dating hasn't announced a date in ${city.city} yet. Join the list to be first to know when tickets drop.`,
-    lineup: DEFAULT_LINEUP,
-    ticketSource: "none",
-    url: "",
-    tagline: "Coming soon",
-  };
-}
-
 export const comingSoonEvents: EventEntry[] = TBA_CITIES.map(tbaCityToEvent);
-
-/**
- * Confirmed shows + TBA notify-me cards. A city's TBA card is suppressed
- * while that city has an upcoming displayable show; a canceled show must
- * NOT suppress it (the canceled Manhattan date is exactly when the New
- * York notify card needs to reappear). Pure and exported for tests.
- */
-export function computeAllEvents(
-  eventList: EventEntry[],
-  tbaList: EventEntry[],
-  todayISO: string,
-): EventEntry[] {
-  return [
-    ...eventList,
-    ...tbaList.filter(
-      (tba) =>
-        !eventList.some(
-          (e) =>
-            e.citySlug === tba.citySlug &&
-            e.status !== "canceled" &&
-            e.isoDate &&
-            e.isoDate >= todayISO,
-        ),
-    ),
-  ];
-}
-
-/**
- * Every show page for a snapshot: confirmed shows plus TBA cities. Shared
- * by this build and the admin preview so both compute it identically.
- */
-export function buildAllEvents(
-  snapshot: EventsSnapshot,
-  todayIso: string,
-): EventEntry[] {
-  return computeAllEvents(
-    snapshot.events,
-    snapshot.tbaCities.map(tbaCityToEvent),
-    todayIso,
-  );
-}
 
 /** All events: confirmed shows + TBA cities (suppressed when city has an upcoming confirmed show) */
 export const allEvents: EventEntry[] = buildAllEvents(

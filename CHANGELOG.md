@@ -14,6 +14,7 @@
 - Keep the Shows tab and its pending saves alive when you switch to another tab and come back, so a reopened editor never loads an older draft. The server now refuses a draft save built on a draft that changed since it was loaded, the same check publishing uses.
 - Add `npm run events:seed`, the one time setup that copies today's show list into Firestore as version 1. It only prints what it would do unless given `--execute`, refuses to touch a list that already exists and checks the public read afterwards. Its writes are tested against the admin's own publish code so the two stay identical.
 - An open show editor now saves against the draft it was opened from. If another admin's save reaches the tab while it is open, the editor is set aside with a notice instead of saving its older values over theirs. Restoring a version is refused when the draft changed after the confirmation was shown, so an unpublished save is never lost.
+- Refuse a Coming soon city whose link another show already uses (Edison, for one). The Shows tab now runs the exact check the site build runs, so a draft the admin can save is a draft the build accepts, and a restore that would bring back such a clash is refused with a plain message.
 
 ## fix(monitor): the ticket redirect check no longer reports a healthy page as broken (2026-11-12)
 

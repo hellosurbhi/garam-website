@@ -709,6 +709,33 @@ describe("publish", () => {
     expect(publicationCommits()).toHaveLength(0);
   });
 
+  it("refuses a stored draft whose coming soon city collides with a show link", async () => {
+    // edison-tba is a hidden show record in the baseline; listing Edison under
+    // Coming soon cities would make the next build stop on a duplicate slug.
+    putDoc(
+      "eventsDraft/current",
+      {
+        snapshotJson: JSON.stringify({
+          ...baseline,
+          tbaCities: [
+            ...baseline.tbaCities,
+            {
+              city: "Edison",
+              state: "New Jersey",
+              stateAbbr: "NJ",
+              citySlug: "edison",
+            },
+          ],
+        }),
+      },
+      true,
+    );
+    const res = await publish(1);
+    expect(res.status).toBe(400);
+    expect(JSON.stringify(res.json.issues)).toContain("edison-tba");
+    expect(publicationCommits()).toHaveLength(0);
+  });
+
   it("answers 400 with field errors for a bad body", async () => {
     const res = await call(publishRoute.POST as Route, "POST", {
       expectedVersion: 1,
@@ -739,6 +766,32 @@ describe("draft save", () => {
     const issues = res.json.issues as Array<{ path: string }>;
     expect(issues.map((i) => i.path)).toContain(path);
     expect(draftDoc().snapshot).toEqual(baseline);
+  });
+
+  it("rejects a coming soon city whose link a show already uses, in plain words", async () => {
+    const before = structuredClone([...store.entries()]);
+    const res = await saveDraft(
+      {
+        ...baseline,
+        tbaCities: [
+          ...baseline.tbaCities,
+          {
+            city: "Edison",
+            state: "New Jersey",
+            stateAbbr: "NJ",
+            citySlug: "edison",
+          },
+        ],
+      },
+      1,
+    );
+    expect(res.status).toBe(400);
+    expect(res.json.issues).toContainEqual({
+      path: "events",
+      message:
+        "Duplicate event slug: edison-tba. Another show or Coming soon city already uses that link, so one of them has to change.",
+    });
+    expect([...store.entries()]).toEqual(before);
   });
 
   it("rejects a ticket URL with ticketSource none", async () => {

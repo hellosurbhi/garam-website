@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { cities } from "../src/data/cities";
-import { publishedSnapshot } from "../src/data/events";
+import { buildAllEvents, publishedSnapshot } from "../src/data/events";
+import { buildEventRedirects } from "../src/utils/eventRedirects";
 import publishedJson from "../src/data/events.published.json" with { type: "json" };
 import {
   buildEventSlug,
@@ -452,5 +453,84 @@ describe("buildRollbackSnapshot", () => {
     });
     expect(messages(result)).toEqual([]);
     expect(validateSnapshotAgainstLive(next, liveNow, opts).ok).toBe(false);
+  });
+});
+
+// Everything the admin can save must be something the build accepts. The
+// build runs buildEventRedirects over buildAllEvents (astro.config.mjs), so
+// the validator is tested against that same pair, not a copy of its rules.
+describe("build-accepted snapshots", () => {
+  const edison = {
+    city: "Edison",
+    state: "New Jersey",
+    stateAbbr: "NJ",
+    citySlug: "edison",
+  };
+  const edisonRecord = live.events.find((e) => e.slug === "edison-tba");
+  if (!edisonRecord) throw new Error("fixture record edison-tba missing");
+  const withEdison = { ...live, tbaCities: [...live.tbaCities, edison] };
+
+  it("refuses a coming soon city whose link a show record already uses", () => {
+    const result = validateSnapshotAgainstLive(withEdison, live, opts);
+    expect(result.ok).toBe(false);
+    expect(messages(result)).toEqual([
+      "Duplicate event slug: edison-tba. Another show or Coming soon city already uses that link, so one of them has to change.",
+    ]);
+  });
+
+  it("refuses it even while an upcoming show hides the card today", () => {
+    // The build suppresses a city's coming soon card while it has an upcoming
+    // show, but a later build (after that show passes) shows it again, so the
+    // collision has to be refused now, not when the date moves.
+    const upcoming = newShow({
+      slug: "edison-2099-01-01",
+      citySlug: "edison",
+      city: "Edison",
+      state: "New Jersey",
+      stateAbbr: "NJ",
+      isoDate: "2099-01-01",
+      date: "Jan 1",
+    });
+    const result = validateSnapshotAgainstLive(
+      { ...withEdison, events: [...live.events, upcoming] },
+      live,
+      opts,
+    );
+    expect(messages(result).join(" ")).toContain("edison-tba");
+  });
+
+  it("refuses a rollback that would bring back a colliding coming soon city", () => {
+    // v1 listed Edison under Coming soon. v2 added the edison-tba record,
+    // which was legal then. Rolling back to v1 keeps that record (hidden and
+    // canceled, never deleted) and restores the Coming soon city: a collision.
+    const v1: EventsSnapshot = { events: [], tbaCities: [edison] };
+    const hiddenRecord: EventEntry = {
+      ...edisonRecord,
+      ticketSource: "none",
+      eventbriteId: undefined,
+      price: undefined,
+    };
+    const v2: EventsSnapshot = { events: [hiddenRecord], tbaCities: [] };
+    const candidate = buildRollbackSnapshot(v2, v1, 1, "Wrong list");
+    const result = validateSnapshotAgainstLive(candidate, v2, {
+      ...opts,
+      rollbackTarget: v1,
+    });
+    expect(result.ok).toBe(false);
+    expect(messages(result).join(" ")).toContain("edison-tba");
+  });
+
+  it("only accepts snapshots the build's own check accepts, on any build date", () => {
+    const accepted = validateSnapshotAgainstLive(
+      { ...live, tbaCities: [...live.tbaCities] },
+      live,
+      opts,
+    );
+    if (!accepted.ok) throw new Error(messages(accepted).join("; "));
+    for (const day of ["2026-11-22", "2027-06-01", "2099-12-31"]) {
+      expect(() =>
+        buildEventRedirects(buildAllEvents(accepted.snapshot, day)),
+      ).not.toThrow();
+    }
   });
 });

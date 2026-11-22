@@ -21,6 +21,7 @@ import { httpsUrlSchema } from "../lib/schemas";
 import { buildEventRedirects, eventAliasDates } from "../utils/eventRedirects";
 import { isSkippedLocalTime, offsetForZone } from "../utils/timezone";
 import { isSchemaEligible } from "./eventPredicates";
+import { buildAllEvents } from "./eventPages";
 import { buildEventSlug } from "./eventSlug";
 import { PERFORMER_IDS } from "./lineup";
 
@@ -418,6 +419,9 @@ export function appendNote(note: string | undefined, addition: string): string {
   return note ? `${note}; ${addition}` : addition;
 }
 
+/** A build date after every show, so no Coming soon card is hidden. */
+const NO_UPCOMING_SHOWS_DATE = "9999-12-31";
+
 const rawSnapshotSchema = z.object({
   events: z.array(z.unknown()),
   tbaCities: z.array(z.unknown()),
@@ -456,13 +460,23 @@ export function validateSnapshotAgainstLive(
   const tbaSlugs = new Set(snapshot.tbaCities.map((c) => c.citySlug));
   const nextSlugs = new Set(snapshot.events.map((e) => e.slug));
 
-  // Unique slugs and alias conflicts: the same function the build uses.
+  // Unique slugs and alias conflicts: the exact check astro.config.mjs runs
+  // (buildEventRedirects over buildAllEvents), so anything accepted here is
+  // something the build accepts.
+  // WHY a date no show is upcoming on: the build hides a city's Coming soon
+  // card while that city has an upcoming show, so a collision with that card
+  // is invisible today and breaks the first build after the show passes.
+  // Building the list with nothing upcoming includes every card, the worst
+  // case for any build date.
   try {
-    buildEventRedirects(snapshot.events);
+    buildEventRedirects(buildAllEvents(snapshot, NO_UPCOMING_SHOWS_DATE));
   } catch (err) {
+    const reason = err instanceof Error ? err.message : String(err);
     issues.push({
       path: ["events"],
-      message: err instanceof Error ? err.message : String(err),
+      message: reason.startsWith("Duplicate event slug")
+        ? `${reason}. Another show or Coming soon city already uses that link, so one of them has to change.`
+        : reason,
     });
   }
 

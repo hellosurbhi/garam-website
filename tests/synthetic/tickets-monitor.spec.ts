@@ -1,7 +1,7 @@
 import { test } from "@playwright/test";
 import { allEvents } from "../../src/data/events";
 import { requireVersion } from "../../scripts/synthetic/deployment.mjs";
-import { checkTicketListings } from "./ticket-checks";
+import { checkTicketListings, TICKET_CHECK_BUDGET_MS } from "./ticket-checks";
 
 // WHY no retry, when the config retries once: a second 5 minute attempt
 // after a slow first one could outlast the 15 minute job, and a cancelled
@@ -12,12 +12,9 @@ test("live ticket redirects use their configured checkout destinations", async (
   page,
   request,
 }) => {
-  // WHY 5 minutes, not the config's 2: each on-sale show can spend 10
-  // seconds on its redirect and 15 on a vendor that never answers, so a
-  // slow vendor day would cut the run short and page as a wrong link. 5
-  // minutes covers about 12 such shows (more than are ever on sale) and,
-  // with no retry, stays inside the 15 minute job alongside signup.
-  test.setTimeout(5 * 60_000);
+  // WHY this budget: see TICKET_CHECK_BUDGET_MS. With no retry it also stays
+  // inside the 15 minute job alongside signup.
+  test.setTimeout(TICKET_CHECK_BUDGET_MS);
   await requireVersion(process.env.GITHUB_SHA);
   // Identify synthetic HTTP requests and block marketing collection before navigation.
   await page.setExtraHTTPHeaders({ "User-Agent": "GaramMasalaMonitor/1.0" });

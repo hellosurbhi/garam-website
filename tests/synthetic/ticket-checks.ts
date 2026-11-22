@@ -520,6 +520,16 @@ function soldOutProblem(
 }
 
 /**
+ * Time budget for a whole checkTicketListings run against a deployed site.
+ * WHY 5 minutes, not a runner's default 30 or 120 seconds: each on-sale show
+ * can spend 10 seconds on its redirect and 15 on a vendor that never answers,
+ * and the requests run one after another, so a slow vendor day would cut the
+ * run short and fail as a wrong link. 5 minutes covers about 12 such shows
+ * (more than are ever on sale). Callers pass it to test.setTimeout.
+ */
+export const TICKET_CHECK_BUDGET_MS = 5 * 60_000;
+
+/**
  * Checks the visible ticket links on a ticket page against the show list.
  *
  * Every on-sale show must have a card whose own href is a same-origin

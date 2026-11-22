@@ -12,7 +12,10 @@
 
 import { test, expect, type Page } from "@playwright/test";
 import { allEvents } from "../../src/data/events";
-import { checkTicketListings } from "../synthetic/ticket-checks";
+import {
+  checkTicketListings,
+  TICKET_CHECK_BUDGET_MS,
+} from "../synthetic/ticket-checks";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -478,6 +481,9 @@ test.describe("Ticket link integrity", () => {
     page,
     request,
   }) => {
+    // WHY: the default 30 seconds (playwright.config.ts) cannot cover the
+    // sequential redirect and vendor requests; the monitor uses the same budget.
+    test.setTimeout(TICKET_CHECK_BUDGET_MS);
     // "load" so the presale reveal script has run before :visible is read.
     await page.goto("/tickets", { waitUntil: "load" });
     // The static preview serves no /api/go route; a deployed target gets

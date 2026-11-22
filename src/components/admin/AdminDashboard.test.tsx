@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import type { Timestamp } from "firebase/firestore";
+import { limit, type Timestamp } from "firebase/firestore";
 import type { Application } from "@/types/application";
 import AdminDashboard from "./AdminDashboard";
 
@@ -179,6 +179,31 @@ describe("AdminDashboard", () => {
       expect(screen.getByText("Priya")).toBeInTheDocument();
     });
     expect(screen.getByText("Anika")).toBeInTheDocument();
+  });
+
+  it("lists all 60 applications, not just the first 50", async () => {
+    const all = Array.from({ length: 60 }, (_, i) => ({
+      id: `app-${i}`,
+      data: () => ({ ...makeApp({ id: `app-${i}`, name: `Applicant ${i}` }) }),
+    }));
+    // A fake Firestore that honours limit(n): the old paged query got 50 rows
+    // back, so this fails against any version that still pages.
+    vi.mocked(limit).mockImplementation(
+      (n: number) => ({ _limit: n }) as unknown as ReturnType<typeof limit>,
+    );
+    mockGetDocs.mockImplementation(async (q: { _args: unknown[] }) => {
+      const cap = q._args.find(
+        (a): a is { _limit: number } =>
+          typeof a === "object" && a !== null && "_limit" in a,
+      );
+      return { docs: cap ? all.slice(0, cap._limit) : all };
+    });
+    render(<AdminDashboard onLogout={onLogout} />);
+    await waitFor(() => {
+      expect(screen.getByText("Applicant 0")).toBeInTheDocument();
+    });
+    expect(screen.getByText("Applicant 59")).toBeInTheDocument();
+    expect(screen.getAllByText(/^Applicant \d+$/)).toHaveLength(60);
   });
 
   it("hides reserved synthetic identities but does not hide customers with a forged flag", async () => {

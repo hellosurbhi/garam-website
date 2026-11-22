@@ -114,6 +114,15 @@ const { issueDraftToken, newDraftId } = await import("@/lib/draftToken");
 
 const ORIGIN = "https://garammasaladating.com";
 
+/** Every required answer, so a finalize in these tests is promoted to New. */
+const COMPLETE = {
+  name: "P",
+  email: "p@example.com",
+  phone: "5551230100",
+  instagram: "p",
+  termsAgreed: true,
+};
+
 function canaryHeaders(
   key: "iphone-safari" | "android-chrome" | "instagram-webview",
   ageSeconds = 0,
@@ -356,12 +365,103 @@ describe("save-application: ordering and duplicates", () => {
   });
 });
 
+describe("save-application: finalize completeness gate", () => {
+  const complete = {
+    name: "Priya",
+    email: "p@example.com",
+    phone: "5551230100",
+    instagram: "priya",
+    termsAgreed: true,
+  };
+
+  it.each([
+    ["name", { ...complete, name: "" }],
+    ["email", { ...complete, email: "" }],
+    ["a malformed email", { ...complete, email: "not-an-email" }],
+    ["phone", { ...complete, phone: " " }],
+    ["instagram", { ...complete, instagram: "@" }],
+    ["terms", { ...complete, termsAgreed: false }],
+  ])(
+    "finalize with %s missing keeps the draft a Draft",
+    async (_label, fields) => {
+      const first = await json(await post({ rev: 1, fields }));
+      const res = await post({
+        token: first.token,
+        rev: 2,
+        fields: {},
+        finalize: true,
+      });
+      const done = await json(res);
+      // WHY 422: a browser tab opened before this deploy ignores `incomplete`
+      // and treats any 2xx with ok:true as filed; only a non-2xx makes it keep
+      // its recovery token (see the compatibility test below).
+      expect(res.status).toBe(422);
+      expect(done.ok).toBe(false);
+      expect(done.status).toBe("Draft");
+      expect((done.incomplete as string[]).length).toBeGreaterThan(0);
+      expect(stored(first.draftId as string)?.finalizedAt).toBeUndefined();
+      expect(mocks.sendMail).not.toHaveBeenCalled();
+    },
+  );
+
+  it("the response names exactly which answers are missing, and the draft is still saved", async () => {
+    const first = await json(
+      await post({
+        rev: 1,
+        fields: { ...complete, phone: "", termsAgreed: false },
+      }),
+    );
+    const res = await post({
+      token: first.token,
+      rev: 2,
+      fields: { name: "Priya Renamed" },
+      finalize: true,
+    });
+    const done = await json(res);
+    expect(res.status).toBe(422);
+    expect(done.status).toBe("Draft");
+    expect([...(done.incomplete as string[])].sort()).toEqual(
+      ["phone", "termsAgreed"].sort(),
+    );
+    const doc = stored(first.draftId as string);
+    expect(doc?.status).toBe("Draft");
+    expect(doc?.name).toBe("Priya Renamed");
+    expect(doc?.finalizedAt).toBeUndefined();
+    expect(mocks.sendMail).not.toHaveBeenCalled();
+  });
+
+  it("a complete finalize becomes New with nothing missing", async () => {
+    const first = await json(await post({ rev: 1, fields: complete }));
+    const done = await json(
+      await post({ token: first.token, rev: 2, fields: {}, finalize: true }),
+    );
+    expect(done.status).toBe("New");
+    expect(done.incomplete).toEqual([]);
+  });
+
+  it("a draft finalized while incomplete is promoted once the missing answer arrives", async () => {
+    const first = await json(
+      await post({ rev: 1, fields: { ...complete, instagram: "" } }),
+    );
+    await post({ token: first.token, rev: 2, fields: {}, finalize: true });
+    const done = await json(
+      await post({
+        token: first.token,
+        rev: 3,
+        fields: { instagram: "priya" },
+        finalize: true,
+      }),
+    );
+    expect(done.status).toBe("New");
+  });
+});
+
 describe("save-application: finalize", () => {
   it("finalize moves Draft to New, stamps finalizedAt and sends one welcome email", async () => {
     const first = await json(
       await post({
         rev: 1,
-        fields: { name: "Priya", email: "p@example.com", city: "NYC" },
+        fields: { ...COMPLETE, name: "Priya", city: "NYC" },
       }),
     );
     const done = await json(
@@ -374,18 +474,14 @@ describe("save-application: finalize", () => {
   });
 
   it("finalizing twice does not send a second welcome email", async () => {
-    const first = await json(
-      await post({ rev: 1, fields: { name: "P", email: "p@example.com" } }),
-    );
+    const first = await json(await post({ rev: 1, fields: { ...COMPLETE } }));
     await post({ token: first.token, rev: 2, fields: {}, finalize: true });
     await post({ token: first.token, rev: 3, fields: {}, finalize: true });
     expect(mocks.sendMail).toHaveBeenCalledTimes(1);
   });
 
   it("a retried finalize resends the welcome email when the first send never finished", async () => {
-    const first = await json(
-      await post({ rev: 1, fields: { name: "P", email: "p@example.com" } }),
-    );
+    const first = await json(await post({ rev: 1, fields: { ...COMPLETE } }));
     await post({ token: first.token, rev: 2, fields: {}, finalize: true });
     const doc = stored(first.draftId as string)!;
     // The function died after the claim: no delivery stamp, claim is old.
@@ -399,9 +495,7 @@ describe("save-application: finalize", () => {
   });
 
   it("the plain save the client sends first also resends, and still answers finalized", async () => {
-    const first = await json(
-      await post({ rev: 1, fields: { name: "P", email: "p@example.com" } }),
-    );
+    const first = await json(await post({ rev: 1, fields: { ...COMPLETE } }));
     await post({ token: first.token, rev: 2, fields: {}, finalize: true });
     const doc = stored(first.draftId as string)!;
     delete doc.welcomeDeliveredAt;
@@ -416,9 +510,7 @@ describe("save-application: finalize", () => {
   });
 
   it("a retried finalize right after the claim does not resend while the first send may still run", async () => {
-    const first = await json(
-      await post({ rev: 1, fields: { name: "P", email: "p@example.com" } }),
-    );
+    const first = await json(await post({ rev: 1, fields: { ...COMPLETE } }));
     await post({ token: first.token, rev: 2, fields: {}, finalize: true });
     delete stored(first.draftId as string)!.welcomeDeliveredAt;
     await post({ token: first.token, rev: 3, fields: {}, finalize: true });
@@ -426,9 +518,7 @@ describe("save-application: finalize", () => {
   });
 
   it("a finalize that loses a race to another finalize sends no welcome email of its own", async () => {
-    const first = await json(
-      await post({ rev: 1, fields: { name: "P", email: "p@example.com" } }),
-    );
+    const first = await json(await post({ rev: 1, fields: { ...COMPLETE } }));
     mocks.state.racingFinalize = true;
     const res = await post({
       token: first.token,
@@ -441,8 +531,26 @@ describe("save-application: finalize", () => {
     expect(mocks.sendMail).not.toHaveBeenCalled();
   });
 
+  it("an incomplete finalize that loses a race to a successful finalize reports no missing answers", async () => {
+    const first = await json(
+      await post({ rev: 1, fields: { ...COMPLETE, phone: "" } }),
+    );
+    mocks.state.racingFinalize = true;
+    const res = await post({
+      token: first.token,
+      rev: 2,
+      fields: {},
+      finalize: true,
+    });
+    const done = await json(res);
+    expect(res.status).toBe(200);
+    // The retried attempt sees an already finalized application: the first
+    // attempt's missing list must not leak into the answer.
+    expect(done.incomplete ?? []).toEqual([]);
+  });
+
   it("a finished application is closed to a later write with the same token", async () => {
-    const first = await json(await post({ rev: 1, fields: { name: "P" } }));
+    const first = await json(await post({ rev: 1, fields: { ...COMPLETE } }));
     await post({ token: first.token, rev: 2, fields: {}, finalize: true });
     const res = await post({
       token: first.token,
@@ -458,7 +566,7 @@ describe("save-application: finalize", () => {
   });
 
   it("a repeated finalize (lost response) succeeds without rewriting anything", async () => {
-    const first = await json(await post({ rev: 1, fields: { name: "P" } }));
+    const first = await json(await post({ rev: 1, fields: { ...COMPLETE } }));
     await post({ token: first.token, rev: 2, fields: {}, finalize: true });
     const again = await post({
       token: first.token,
@@ -496,9 +604,7 @@ describe("save-application: finalize", () => {
 
   it("a failed welcome email still files the application and alerts with the raw error", async () => {
     mocks.sendMail.mockRejectedValueOnce(new Error("SMTP 535 auth failed"));
-    const first = await json(
-      await post({ rev: 1, fields: { name: "P", email: "p@example.com" } }),
-    );
+    const first = await json(await post({ rev: 1, fields: { ...COMPLETE } }));
     const res = await post({
       token: first.token,
       rev: 2,
@@ -513,16 +619,20 @@ describe("save-application: finalize", () => {
     });
   });
 
-  it("no email on file means no welcome email and no error", async () => {
-    const first = await json(await post({ rev: 1, fields: { name: "P" } }));
+  it("no email on file means no welcome email and the draft stays a Draft (answered 422)", async () => {
+    const first = await json(
+      await post({ rev: 1, fields: { ...COMPLETE, email: "" } }),
+    );
     const res = await post({
       token: first.token,
       rev: 2,
       fields: {},
       finalize: true,
     });
-    expect(res.status).toBe(200);
+    // Incomplete (no email): saved, kept a Draft, and answered with the 422.
+    expect(res.status).toBe(422);
     expect(mocks.sendMail).not.toHaveBeenCalled();
+    expect(stored(first.draftId as string)?.status).toBe("Draft");
   });
 });
 
@@ -600,7 +710,7 @@ describe("save-application: production canary", () => {
     const res = await post(
       {
         rev: 1,
-        fields: { name: "CANARY", email: "c@example.com" },
+        fields: { ...COMPLETE, name: "CANARY", email: "c@example.com" },
         finalize: true,
       },
       canaryHeaders(key),
@@ -631,14 +741,14 @@ describe("save-application: production canary", () => {
     const key = "iphone-safari" as const;
     const id = canaryDraftId(key);
     await post(
-      { rev: 1, fields: { name: "run1" }, finalize: true },
+      { rev: 1, fields: { ...COMPLETE, name: "run1" }, finalize: true },
       canaryHeaders(key),
     );
     const first = mocks.state.docs.get(`_canary/${id}`)?.fields
       .finalizedAt as Date;
     await new Promise((r) => setTimeout(r, 5));
     await post(
-      { rev: 2, fields: { name: "run2" }, finalize: true },
+      { rev: 2, fields: { ...COMPLETE, name: "run2" }, finalize: true },
       canaryHeaders(key),
     );
     const second = mocks.state.docs.get(`_canary/${id}`)?.fields

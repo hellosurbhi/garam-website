@@ -106,6 +106,23 @@ export class DraftResetError extends Error {
   }
 }
 
+/**
+ * The server saved the draft but keeps it a Draft: required answers are
+ * missing. Final for this attempt, so it is never retried automatically.
+ */
+export class IncompleteApplicationError extends ApplyRequestError {
+  constructor(
+    status: number,
+    readonly missing: string[],
+  ) {
+    super(
+      "finalize",
+      status,
+      `these required answers are missing: ${missing.join(", ")}`,
+    );
+  }
+}
+
 const MAX_FINALIZE_ROUNDS = 4;
 
 interface SaveResponse {
@@ -116,6 +133,8 @@ interface SaveResponse {
   maxRev?: number;
   /** Fields the server refused because it holds a newer revision. */
   stale?: string[];
+  /** Required answers still missing: the server kept the draft a Draft. */
+  incomplete?: string[];
   /** The server dropped text because the draft hit its size budget. */
   capped?: boolean;
   status?: string;
@@ -380,6 +399,18 @@ export class AutosaveController {
       return { ok: true };
     }
 
+    // WHY before the generic failure: the answer is a final "not complete", not
+    // a transient fault. The token and queued fields stay, so the applicant
+    // fixes the gaps and submits again. The server answers 422 (not 200) so
+    // tabs opened before this deploy also keep their token.
+    if (
+      res.status === 422 &&
+      data.error === "incomplete" &&
+      Array.isArray(data.incomplete)
+    ) {
+      throw new IncompleteApplicationError(res.status, data.incomplete);
+    }
+
     if (!res.ok || data.ok !== true) {
       throw new ApplyRequestError(
         data.stage ?? (finalize ? "finalize" : "save_draft"),
@@ -491,6 +522,7 @@ export class AutosaveController {
       } catch (err) {
         // Retrying cannot help: the draft changed, finalize must re-settle.
         if (err instanceof DraftResetError) throw err;
+        if (err instanceof IncompleteApplicationError) throw err;
         lastError = err;
         if (attempt < 2) {
           await new Promise((r) => setTimeout(r, 1_000 * 2 ** attempt));

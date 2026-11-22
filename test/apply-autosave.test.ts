@@ -392,6 +392,54 @@ describe("AutosaveController: finalize", () => {
     expect(err.message).toBe("save_draft: HTTP 500: Database unavailable");
   });
 
+  const incompleteReply = (call: Call) =>
+    call.body.finalize
+      ? new Response(
+          JSON.stringify({
+            ok: false,
+            error: "incomplete",
+            status: "Draft",
+            incomplete: ["phone", "termsAgreed"],
+          }),
+          { status: 422 },
+        )
+      : ok();
+
+  it("an incomplete finalize (422) is an error naming what is missing: the draft and token are kept, no retry loop", async () => {
+    const { calls, fetchImpl } = harness(incompleteReply);
+    const c = new AutosaveController({ fetchImpl });
+    c.setField("name", "A");
+    const result = c.finalize().catch((e: unknown) => e);
+    await vi.advanceTimersByTimeAsync(10);
+    const err = await result;
+    expect(err).toBeInstanceOf(ApplyRequestError);
+    expect((err as ApplyRequestError).stage).toBe("finalize");
+    expect((err as ApplyRequestError).detail).toContain("phone");
+    expect((err as ApplyRequestError).detail).toContain("termsAgreed");
+    // The answer is final, so waiting and resending would only delay the message.
+    expect(calls.filter((x) => x.body.finalize)).toHaveLength(1);
+    expect(c.hasDraft).toBe(true);
+    expect(window.localStorage.getItem("apply-draft-v2")).not.toBeNull();
+  });
+
+  it("compatibility: the pre-deploy client logic rejects the 422 and keeps its token", () => {
+    // origin/main src/lib/applyAutosave.ts:383 throws for `!res.ok ||
+    // data.ok !== true`, before markFinalized (line 434) can run, and only
+    // lines 356 (401 invalid_token) and 374 (409 finalized) clear the token.
+    // Reproduced here with the exact condition, since that module is gone.
+    const res = { ok: false, status: 422 };
+    const data = { ok: false, error: "incomplete" } as {
+      ok?: boolean;
+      error?: string;
+    };
+    const clearsToken =
+      (res.status === 401 && data.error === "invalid_token") ||
+      (res.status === 409 && data.error === "finalized");
+    const rejected = !res.ok || data.ok !== true;
+    expect(clearsToken).toBe(false);
+    expect(rejected).toBe(true);
+  });
+
   it("a failed finalize leaves the fields queued so nothing is lost", async () => {
     const { fetchImpl } = harness(
       () => new Response(JSON.stringify({ error: "x" }), { status: 500 }),

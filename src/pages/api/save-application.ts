@@ -5,6 +5,7 @@ import { alertOpsOnce } from "@/lib/alertDedupe";
 import {
   docFieldsFor,
   mergeDraft,
+  missingRequiredAnswers,
   sanitizeFields,
 } from "@/lib/applicationDraft";
 import { resolveDraftAuth } from "@/lib/draftAuth";
@@ -129,6 +130,8 @@ export const POST: APIRoute = async ({ request }) => {
   // A plain save that only triggered a welcome resend still answers "finalized".
   let refuseAfterWelcome = false;
   let stale: string[] = [];
+  // Required answers missing at finalize; the draft stays "Draft" until filled.
+  let incomplete: string[] = [];
   let storedMaxRev = 0;
 
   try {
@@ -142,6 +145,7 @@ export const POST: APIRoute = async ({ request }) => {
       refuseAfterWelcome = false;
       capped = false;
       stale = [];
+      incomplete = [];
       // WHY: finalize() wipes the applicant's token, so no real client writes
       // to a finished application. A leaked token (30-day life) must not be
       // able to rewrite one. A repeated finalize is the exception: a lost
@@ -209,6 +213,14 @@ export const POST: APIRoute = async ({ request }) => {
       // resends them with a higher revision and finalizes then. The same holds
       // for text dropped over the size budget.
       if (finalize && merged.stale.length === 0 && !capped) {
+        incomplete = missingRequiredAnswers(projected);
+      }
+      if (
+        finalize &&
+        merged.stale.length === 0 &&
+        !capped &&
+        incomplete.length === 0
+      ) {
         if (!before || before.status === "Draft") patch.status = "New";
         // WHY the canary restamps: its one document is reused every run, so a
         // first-run-only timestamp let the read-back mistake an old run's
@@ -267,6 +279,29 @@ export const POST: APIRoute = async ({ request }) => {
 
     const status =
       typeof outcome.after.status === "string" ? outcome.after.status : "Draft";
+    // WHY 422 and not 200: the fields above are already saved, but a browser
+    // tab opened before this deploy ignores `incomplete` and treats any 2xx
+    // with ok:true as filed, clearing its recovery token and showing success.
+    // Its check (`!res.ok || data.ok !== true`, then throw) keeps the token on
+    // any other status. Not 401 invalid_token or 409 finalized: those make an
+    // old client drop the draft or mark it filed. Changing this to 2xx brings
+    // back the false success.
+    if (incomplete.length > 0) {
+      return jsonResponse(
+        {
+          ok: false,
+          error: "incomplete",
+          draftId,
+          rev,
+          maxRev: Math.max(storedMaxRev, rev),
+          status,
+          stale,
+          incomplete,
+          capped,
+        },
+        422,
+      );
+    }
     return jsonResponse({
       ok: true,
       draftId,
@@ -277,6 +312,7 @@ export const POST: APIRoute = async ({ request }) => {
       maxRev: Math.max(storedMaxRev, rev),
       status,
       stale,
+      incomplete,
       capped,
     });
   } catch (err) {

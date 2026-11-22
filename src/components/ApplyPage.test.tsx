@@ -122,6 +122,9 @@ describe("ApplyPage", () => {
     fireEvent.change(screen.getByPlaceholderText("you@example.com"), {
       target: { value: "jane@example.com" },
     });
+    fireEvent.change(screen.getByPlaceholderText("+1 (555) 000-0000"), {
+      target: { value: "5551230100" },
+    });
     fireEvent.change(screen.getByRole("textbox", { name: /instagram/i }), {
       target: { value: "janedoe" },
     });

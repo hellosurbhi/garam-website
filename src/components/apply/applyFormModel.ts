@@ -81,6 +81,7 @@ export function getFieldErrors(
   if (!form.city.trim()) errs.city = msg.required;
   const emailErr = validateEmail(form.email);
   if (emailErr) errs.email = emailErr;
+  if (!form.phone.trim()) errs.phone = msg.required;
   if (!form.instagram.trim().replace(/^@/, "")) errs.instagram = msg.required;
   if (photoCount === 0) errs.photo = msg.photoRequired;
   const isNomination = form.applicationType === "Nomination";

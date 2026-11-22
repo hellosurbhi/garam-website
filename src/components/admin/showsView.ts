@@ -103,13 +103,17 @@ export function previewShows(
   const notify = new Set(waitlist.datedSlugs);
   const out = new Map<string, ShowPreview>();
   for (const e of snapshot.events) {
+    // WHY: `waitlist` was chosen by the server on the day of the last load.
+    // A show that has since passed must read Past even before the refetch
+    // for the new day answers.
+    const past = Boolean(e.isoDate && e.isoDate < todayIso);
     if (listed.has(e.slug)) {
       const status = getEventDisplayStatus(e);
       const label = status
         ? `${SHOWS_LIST.listed}: ${status}`
         : SHOWS_LIST.listed;
       out.set(e.slug, { label, tone: "listed" });
-    } else if (notify.has(e.slug)) {
+    } else if (!past && notify.has(e.slug)) {
       out.set(e.slug, { label: SHOWS_LIST.notifyCard, tone: "listed" });
     } else {
       out.set(e.slug, { label: offLabel(e, todayIso), tone: "off" });

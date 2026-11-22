@@ -14,6 +14,7 @@ import {
   SHOWS_ROUTES,
   type ApiResult,
 } from "./showsApi";
+import { utcTodayIso } from "@/utils/date";
 import { lockRemainingMs } from "./showsView";
 
 export type ShowsLoad =
@@ -67,19 +68,31 @@ export function useShowsAdmin() {
   // so it never opens on a list that one still out is about to replace.
   const [reloading, setReloading] = useState(0);
 
-  const fetchOrdered = useCallback(async (isMounted: () => boolean) => {
-    issuedLoads.current += 1;
-    const ticket = issuedLoads.current;
-    const next = await fetchShows();
-    if (!isMounted() || ticket <= appliedLoad.current) return;
-    appliedLoad.current = ticket;
-    setLoad(next);
-    setNow(Date.now());
-  }, []);
+  // The UTC day the shown data was fetched on (see the clock effect below).
+  const loadedDay = useRef<string | null>(null);
+
+  const fetchOrdered = useCallback(
+    async (isMounted: () => boolean, keepOnError: boolean) => {
+      issuedLoads.current += 1;
+      const ticket = issuedLoads.current;
+      const day = utcTodayIso(new Date());
+      const next = await fetchShows();
+      // WHY keepOnError: a day-change refresh runs unprompted, so a blip must
+      // not replace a list the admin is reading with an error screen. The
+      // day is not recorded, so the next focus tries again.
+      const keep = keepOnError && next.kind === "error";
+      if (!isMounted() || ticket <= appliedLoad.current || keep) return;
+      appliedLoad.current = ticket;
+      loadedDay.current = day;
+      setLoad(next);
+      setNow(Date.now());
+    },
+    [],
+  );
 
   const reload = useCallback(async () => {
     setReloading((n) => n + 1);
-    await fetchOrdered(() => true);
+    await fetchOrdered(() => true, false);
     setReloading((n) => n - 1);
   }, [fetchOrdered]);
 
@@ -87,7 +100,7 @@ export function useShowsAdmin() {
   // after the tab unmounted, and state is only set in the async callback.
   useEffect(() => {
     let cancelled = false;
-    void fetchOrdered(() => !cancelled);
+    void fetchOrdered(() => !cancelled, false);
     return () => {
       cancelled = true;
     };
@@ -135,16 +148,26 @@ export function useShowsAdmin() {
     return () => clearInterval(id);
   }, [locked]);
 
-  // WHY: `now` also decides which UTC day the shows list and previews use
-  // (ShowsWorkspace todayIso). Once the site is on the live version and no
-  // lock counts down, nothing else sets it, so a tab left open across UTC
-  // midnight kept sorting and previewing shows with yesterday's date. The
-  // clock is refreshed when the date can change: at the next UTC midnight
-  // (re-armed after it fires) and when the tab is seen again, because a
-  // sleeping laptop pauses timers. No fast interval: that would re-render
-  // the whole workspace for nothing.
+  // WHY: everything on this screen that depends on the date has to move
+  // together when the UTC day changes. `now` alone is not enough: the server
+  // computes the Notify Me selection against its own date at load time, so
+  // a tab left open across UTC midnight kept labeling yesterday's show with
+  // a Notify Me card. When the day differs from the one the data was
+  // fetched on, the data is refetched (without locking the editor) and the
+  // clock moves; when it has not changed, only the clock moves. Triggers:
+  // the next UTC midnight (re-armed after it fires) and the tab being seen
+  // again, because a sleeping laptop pauses timers. No fast interval.
   useEffect(() => {
-    const refresh = () => setNow(Date.now());
+    let active = true;
+    const refresh = () => {
+      setNow(Date.now());
+      if (
+        loadedDay.current !== null &&
+        loadedDay.current !== utcTodayIso(new Date())
+      ) {
+        void fetchOrdered(() => active, true);
+      }
+    };
     const onVisible = () => {
       if (document.visibilityState !== "hidden") refresh();
     };
@@ -165,11 +188,12 @@ export function useShowsAdmin() {
     document.addEventListener("visibilitychange", onVisible);
     window.addEventListener("focus", refresh);
     return () => {
+      active = false;
       clearTimeout(id);
       document.removeEventListener("visibilitychange", onVisible);
       window.removeEventListener("focus", refresh);
     };
-  }, []);
+  }, [fetchOrdered]);
 
   const mutate = useCallback(
     async <T>(

@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, renderHook } from "@testing-library/react";
 import { utcTodayIso } from "@/utils/date";
 import { useShowsAdmin } from "./useShowsAdmin";
+import { showsRequest } from "./showsApi";
 
 vi.mock("./showsApi", async (importOriginal) => ({
   ...(await importOriginal<typeof import("./showsApi")>()),
@@ -78,6 +79,49 @@ describe("useShowsAdmin clock", () => {
       window.dispatchEvent(new Event("focus"));
     });
     expect(today(result.current.now)).toBe("2026-11-23");
+  });
+
+  // WHY: the server computes the Notify Me selection against its own date at
+  // load time, so a new day must refetch it, not only move `now`.
+  const loads = () => vi.mocked(showsRequest).mock.calls.length;
+
+  it("reloads the show data when UTC midnight passes", async () => {
+    const { result } = await mountIdle();
+    const before = loads();
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(31 * 60_000);
+    });
+    expect(loads()).toBe(before + 1);
+    expect(result.current.load.kind).toBe("ready");
+  });
+
+  it("reloads on return to the tab only when the day changed", async () => {
+    await mountIdle();
+    const before = loads();
+    await act(async () => {
+      window.dispatchEvent(new Event("focus"));
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    expect(loads()).toBe(before);
+    vi.setSystemTime(new Date("2026-11-22T08:00:00Z"));
+    await act(async () => {
+      document.dispatchEvent(new Event("visibilitychange"));
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    expect(loads()).toBe(before + 1);
+  });
+
+  it("keeps the shown list when the reload on a new day fails", async () => {
+    const { result } = await mountIdle();
+    vi.mocked(showsRequest).mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      error: "down",
+    } as never);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(31 * 60_000);
+    });
+    expect(result.current.load.kind).toBe("ready");
   });
 
   it("stops its timer and listeners on unmount", async () => {

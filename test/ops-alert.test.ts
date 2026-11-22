@@ -171,6 +171,51 @@ describe("alertOps push webhook", () => {
     expect(delivered).toBe(false);
   });
 
+  it("mail disabled and webhook answering 500 reports failure and names the webhook", async () => {
+    delete import.meta.env.NOTIFICATION_EMAIL;
+    const logged = vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(globalThis, "fetch").mockImplementation(
+      (async () => new Response("boom", { status: 500 })) as typeof fetch,
+    );
+    const delivered = await alertOps({
+      flow: "ops",
+      stage: "cron_post_show",
+      errorMessage: "boom",
+    });
+    expect(delivered).toBe(false);
+    expect(logged).toHaveBeenCalledWith(
+      "[ops-alert] webhook channel failed:",
+      "alert webhook responded HTTP 500",
+    );
+  });
+
+  it("mail disabled and a healthy webhook reports delivered", async () => {
+    delete import.meta.env.NOTIFICATION_EMAIL;
+    expect(
+      await alertOps({
+        flow: "ops",
+        stage: "cron_post_show",
+        errorMessage: "x",
+      }),
+    ).toBe(true);
+  });
+
+  it("email failing while the webhook works reports delivered and logs the email failure without addresses", async () => {
+    mockSend.mockRejectedValue(new Error("SMTP 535 for admin@example.com"));
+    const logged = vi.spyOn(console, "error").mockImplementation(() => {});
+    expect(
+      await alertOps({
+        flow: "ops",
+        stage: "cron_post_show",
+        errorMessage: "x",
+      }),
+    ).toBe(true);
+    expect(logged).toHaveBeenCalledWith(
+      "[ops-alert] email channel failed:",
+      "SMTP 535 for [email redacted]",
+    );
+  });
+
   it("still counts as delivered when email works and the webhook is down", async () => {
     vi.spyOn(globalThis, "fetch").mockImplementation(
       (async () => new Response("no", { status: 500 })) as typeof fetch,

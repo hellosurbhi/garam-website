@@ -1,5 +1,9 @@
 # Changelog
 
+## fix(alerts): a failed alert channel is now logged by name, with addresses redacted (2026-11-22)
+
+- A webhook that answers HTTP 500 already counted as not delivered, so when email also fails the alert reports failure, and when either channel works it reports delivered. What was missing: nothing recorded which channel broke when the other one carried the page, so a dead webhook or mailer stayed invisible until both died. Each failed channel now logs one line. Tests: mail disabled plus a 500 webhook reports failure and logs the webhook; a failing mailer with a working webhook reports delivered and logs the email without its address.
+
 ## fix(monitor): the ticket redirect check no longer reports a healthy page as broken (2026-11-12)
 
 - The live ticket check looked for a link with the exact path `/api/go/<show>`, but the site rewrites each checkout link to an absolute URL with an `?eid=` tag after the page loads. The check never found the link, failed on every run and paged the owner for a working page. It now matches the link path whether relative or absolute, with or without the tag, and still refuses a longer show name that only shares the same start. Verified against the live site and 95 fixture runs, including the new `?eid=` and prefix cases.

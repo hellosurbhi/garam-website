@@ -1,5 +1,10 @@
 # Changelog
 
+## feat(events): seed tool and a manual seed job, ahead of the Shows admin (2026-11-22)
+
+- The Shows admin needs today's show list copied into the database once before it merges. This adds the copy tool (`scripts/seed-events-firestore.mjs`, `npm run events:seed`), the saved show list it copies and a manual-only GitHub job (`Events Seed`) with a practice setting that writes nothing. The tool refuses to overwrite: if a show list document already exists, nothing is written.
+- Nothing on the live site changes and the build is untouched. Tests cover the dry run, the one three-document write, the already-seeded refusal, the public read-back check and the bad project id and baseline refusals.
+
 ## fix(monitor): the ticket redirect check no longer reports a healthy page as broken (2026-11-12)
 
 - The live ticket check looked for a link with the exact path `/api/go/<show>`, but the site rewrites each checkout link to an absolute URL with an `?eid=` tag after the page loads. The check never found the link, failed on every run and paged the owner for a working page. It now matches the link path whether relative or absolute, with or without the tag, and still refuses a longer show name that only shares the same start. Verified against the live site and 95 fixture runs, including the new `?eid=` and prefix cases.

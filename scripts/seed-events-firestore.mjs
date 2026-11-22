@@ -1,5 +1,5 @@
 /**
- * One-time seed of the admin Shows tab (issue 337, plan section 7 step 3).
+ * One-time seed of the admin Shows tab (issue 337).
  *
  *   npm run events:seed               # dry run: prints what it would write
  *   npm run events:seed -- --execute  # writes, then reads it back publicly
@@ -15,12 +15,14 @@
  * FIREBASE_ADMIN_PRIVATE_KEY (from .env.local). Run it only with the
  * owner's go-ahead, after the Firestore rules are deployed.
  *
- * WHY a plain script that rebuilds the commit body instead of importing
- * src/lib/eventsStore.server.ts: those modules read Astro's import.meta.env,
- * which plain Node does not have. scripts/seed-events-firestore.test.ts
- * pins this body byte for byte to what the admin's own publish path
- * (buildPublicationWrites + fsCommit) sends for the same version, so the
- * two cannot drift.
+ * WHY a plain script that builds the commit body itself instead of importing
+ * the admin's publish code: that code reads Astro's import.meta.env, which
+ * plain Node does not have. The admin publish path arrives with PR 366
+ * (https://github.com/hellosurbhi/garam-website/pull/366), together with a
+ * parity test that pins this body byte for byte to what that path sends for
+ * the same version. Until then scripts/seed-events-firestore.test.mjs covers
+ * the body this script writes: exactly three documents, each required not to
+ * exist yet.
  */
 import { readFile } from "node:fs/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";

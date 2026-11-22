@@ -3,7 +3,7 @@ import { SignJWT, importPKCS8 } from "jose";
 /**
  * Exchange the Firebase service account for a short-lived Google access
  * token (JWT bearer grant). Shared by the Node scripts that write Firestore
- * outside Astro: the synthetic monitor and the show list seed. The app
+ * outside Astro: today the show list seed. The app
  * itself uses src/lib/firestoreAdmin.ts, which reads Astro's import.meta.env.
  *
  * Throws a message naming `label`, never the key or the token.

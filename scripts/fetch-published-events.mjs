@@ -1,24 +1,29 @@
 /**
- * Pull the published show list into src/data/events.published.json before
- * the build (issue 337, plan section 5 and R3).
+ * Read the published show list from Firestore `eventsPublished/current`
+ * (issue 337). The document is public-read, so this needs only the project
+ * id, never a credential.
  *
- * The admin Shows tab publishes a snapshot to Firestore `eventsPublished/
- * current`, and the static pages (/, /tickets, /events/[slug], sitemap,
- * redirects) render whatever this file holds. The document is public-read,
- * so this needs only the project id, never a credential.
+ * On main this module is used only by the seed script
+ * (scripts/seed-events-firestore.mjs), which calls fetchPublishedEnvelope to
+ * prove the public read returns what it wrote, and reads OUTPUT_PATH, the
+ * committed baseline src/data/events.published.json. The build integration
+ * that renders the site from this file, the `npm run events:pull` command and
+ * the runtime check that shares requiresLiveEventsRead arrive with PR 366
+ * (https://github.com/hellosurbhi/garam-website/pull/366); nothing on main
+ * calls the prebuild or --pull modes below yet, and the build is unchanged.
  *
- * Modes:
+ * Modes (used once PR 366 wires them in):
  *   prebuild (no flag): fetches on Vercel builds only. CI and local builds
  *     keep the committed baseline, so a build never rewrites a tracked file.
- *   --pull (npm run events:pull): fetches anywhere and rewrites the
- *     committed baseline, for a PR that should carry the latest list.
+ *   --pull: fetches anywhere and rewrites the committed baseline, for a PR
+ *     that should carry the latest list.
  *
- * Failure policy (plan section 5, step 3): a production build fails closed
- * and pages ops; every other build keeps the committed baseline and says so.
+ * Failure policy: a production build fails closed and pages ops; every other
+ * build keeps the committed baseline and says so.
  *
  * WHY plain .mjs that only transports: src/ modules use extensionless
  * imports and import.meta.env, which plain Node cannot load, so the full zod
- * validation runs once, in TypeScript, when astro.config.mjs parses this
+ * validation is meant to run once, in TypeScript, where PR 366 parses this
  * file. Here we check only the envelope's shape.
  */
 import { writeFile } from "node:fs/promises";
@@ -149,10 +154,10 @@ async function pageOps(errorMessage, fetch) {
 
 /**
  * The ONE rule for "does this build read Firestore or use the committed
- * baseline". The prebuild (run, below) and the postbuild runtime check
- * (check-server-runtime.mjs, through requiresLiveEventsRead) both call it,
- * so they cannot disagree again: a preview without a project id used the
- * baseline here while the runtime check still demanded a live read and
+ * baseline". The prebuild (run, below) and, once PR 366 lands, the postbuild
+ * runtime check (check-server-runtime.mjs, through requiresLiveEventsRead)
+ * both call it, so they cannot disagree: a preview without a project id used
+ * the baseline here while the runtime check still demanded a live read and
  * failed the build.
  *
  *   not a Vercel build, not --pull        -> baseline
@@ -164,7 +169,7 @@ async function pageOps(errorMessage, fetch) {
 export function eventsSource(env, { pull = false } = {}) {
   // WHY not fetch in CI and local builds: the output is a tracked file, and
   // a build that rewrites it leaves a diff nobody asked for. CI has no
-  // project id anyway. `npm run events:pull` is the deliberate refresh.
+  // project id anyway. `--pull` (the events:pull command in PR 366) is the deliberate refresh.
   if (!pull && !env.VERCEL) {
     return {
       source: "baseline",
@@ -240,8 +245,8 @@ export async function run({
     envelope = await fetchPublishedEnvelope(projectId, { fetch, sleep });
   } catch (cause) {
     const message = `Could not read the published show list: ${errorText(cause)}`;
-    // WHY a production build fails instead of using the baseline (plan
-    // section 5, step 3): Vercel keeps the last successful deployment live,
+    // WHY a production build fails instead of using the baseline (see the
+    // failure policy above): Vercel keeps the last successful deployment live,
     // and it already carries the last published shows. Falling back to the
     // committed baseline would silently roll the site back to whatever list
     // was last committed, undoing every publish since.
@@ -251,8 +256,8 @@ export async function run({
   }
 
   if (!envelope) {
-    // WHY production fails on a missing document: the rollout order (plan
-    // section 7, step 4) seeds eventsPublished/current BEFORE this merges, so
+    // WHY production fails on a missing document: the rollout order (seed
+    // first, then merge PR 366) seeds eventsPublished/current BEFORE this merges, so
     // a production build never legitimately finds it missing. Missing means
     // it was deleted or the project id points at an unseeded database, and
     // building from the committed baseline would bring back canceled shows

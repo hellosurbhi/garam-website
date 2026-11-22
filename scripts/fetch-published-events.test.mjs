@@ -264,9 +264,10 @@ describe("toEnvelope", () => {
   });
 });
 
-// WHY one matrix: the prebuild and the postbuild runtime check must make the
-// same Firestore-or-baseline call for every build kind. Each row runs the
-// real prebuild and asks the runtime check's rule, and both must agree.
+// WHY one matrix: the prebuild and the postbuild runtime check (which arrives
+// with PR 366) must make the same Firestore-or-baseline call for every build
+// kind. Each row runs the real prebuild and asks the shared rule
+// (requiresLiveEventsRead), and both must agree.
 describe("prebuild and runtime check share one rule", () => {
   const ID = "demo-test";
   const rows = [

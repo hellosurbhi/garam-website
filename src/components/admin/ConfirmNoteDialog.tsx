@@ -67,6 +67,9 @@ export default function ConfirmNoteDialog({
               className={styles.input}
               value={note}
               required
+              // WHY: the note sent is the one shown; typing during the
+              // request would be silently dropped when the dialog closes.
+              disabled={busy}
               maxLength={500}
               aria-invalid={noteError}
               aria-describedby={noteError ? "confirm-note-error" : undefined}

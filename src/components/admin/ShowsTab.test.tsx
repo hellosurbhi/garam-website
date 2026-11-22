@@ -640,6 +640,55 @@ describe("ShowsTab", () => {
     expect(callsTo("/api/admin/events/draft")).toHaveLength(0);
   });
 
+  it("locks the coming soon inputs while its save is out and clears them after", async () => {
+    let finish: (r: Response) => void = () => {};
+    routeFetch(200, {
+      "/api/admin/events/draft": () =>
+        new Promise<Response>((resolve) => (finish = resolve)),
+    });
+    render(<ShowsTab />);
+    const city = await screen.findByLabelText<HTMLSelectElement>(
+      COMING_SOON.cityLabel,
+    );
+    const state = screen.getByLabelText<HTMLInputElement>(
+      COMING_SOON.stateLabel,
+    );
+    fireEvent.change(city, { target: { value: "boise" } });
+    fireEvent.change(state, { target: { value: "Idaho" } });
+    fireEvent.click(screen.getByRole("button", { name: COMING_SOON.add }));
+    await waitFor(() =>
+      expect(callsTo("/api/admin/events/draft")).toHaveLength(1),
+    );
+    // Typing now would belong to the next city, and the finished save
+    // used to wipe it.
+    expect(city.disabled).toBe(true);
+    expect(state.disabled).toBe(true);
+    finish(json(200, { version: 3, rebuild: "requested", changes: noChanges }));
+    await waitFor(() => expect(city.value).toBe(""));
+    expect(state.value).toBe("");
+    expect(city.disabled).toBe(false);
+  });
+
+  it("locks a confirmation's note while its request is out", async () => {
+    let finish: (r: Response) => void = () => {};
+    routeFetch(200, {
+      "/api/admin/events/publish": () =>
+        new Promise<Response>((resolve) => (finish = resolve)),
+    });
+    render(<ShowsTab />);
+    fireEvent.click(await screen.findByRole("button", { name: "Publish" }));
+    const note = screen.getByLabelText<HTMLTextAreaElement>(
+      "What changed and why",
+    );
+    fireEvent.change(note, { target: { value: "Austin is booked" } });
+    fireEvent.click(screen.getByRole("button", { name: "Publish now" }));
+    await waitFor(() => expect(note.disabled).toBe(true));
+    finish(json(200, { version: 4, rebuild: "requested", changes: noChanges }));
+    await waitFor(() =>
+      expect(screen.queryByText("Publish these changes?")).toBeNull(),
+    );
+  });
+
   it("shows a failed save inside the open editor", async () => {
     routeFetch();
     render(<ShowsTab />);

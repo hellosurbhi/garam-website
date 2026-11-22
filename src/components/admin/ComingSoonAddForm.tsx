@@ -14,7 +14,11 @@ interface ComingSoonAddFormProps {
   onSubmit: (e: SubmitEvent<HTMLFormElement>) => void;
 }
 
-/** The city and state inputs that add a coming soon city. */
+/**
+ * The city and state inputs that add a coming soon city. WHY the inputs are
+ * disabled while a request is out: values typed meanwhile belong to the next
+ * city, and the finished save used to clear them.
+ */
 export default function ComingSoonAddForm({
   choices,
   slug,
@@ -31,6 +35,7 @@ export default function ComingSoonAddForm({
         <select
           className={styles.input}
           value={slug}
+          disabled={busy}
           onChange={(e) => onPick(e.target.value)}
         >
           <option value="">{EDITOR.pickOne}</option>
@@ -46,6 +51,7 @@ export default function ComingSoonAddForm({
         <input
           className={styles.input}
           value={state}
+          disabled={busy}
           onChange={(e) => onState(e.target.value)}
         />
       </label>

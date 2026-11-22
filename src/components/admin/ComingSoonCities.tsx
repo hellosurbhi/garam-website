@@ -85,8 +85,10 @@ export default function ComingSoonCities({
       citySlug: city.slug,
     };
     if (!(await save([...snapshot.tbaCities, entry]))) return;
-    setSlug("");
-    setState("");
+    // WHY only what was submitted: anything changed since is the admin's next
+    // entry and must survive this save finishing.
+    setSlug((now) => (now === city.slug ? "" : now));
+    setState((now) => (now === state ? "" : now));
   }
 
   return (

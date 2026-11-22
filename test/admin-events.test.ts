@@ -1086,6 +1086,31 @@ describe("rebuild", () => {
     });
   });
 
+  it("keeps a newer publish's rebuild record when an older request answers late", async () => {
+    // The manual rebuild of v1 waits on the deploy hook while v2 publishes.
+    let answerSlow: (r: Response) => void = () => {};
+    fetchMock.mockImplementationOnce(
+      () => new Promise<Response>((resolve) => (answerSlow = resolve)),
+    );
+    const slow = rebuild();
+    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+
+    const show = fixtureShow();
+    await saveDraft({ ...baseline, events: [...baseline.events, show] }, 1);
+    expect((await publish(1)).json).toMatchObject({
+      version: 2,
+      rebuild: "requested",
+    });
+    const v2Rebuild = liveDoc().rebuild;
+    expect(v2Rebuild).toMatchObject({ version: 2 });
+
+    answerSlow(Response.json({ job: { id: "late-job", state: "PENDING" } }));
+    expect((await slow).json).toMatchObject({ rebuild: "requested" });
+
+    expect(liveDoc().rebuild).toEqual(v2Rebuild);
+    expect(mocks.alertOps).not.toHaveBeenCalled();
+  });
+
   it("refuses within 60 s of the last request, then allows it", async () => {
     await rebuild();
     vi.setSystemTime(new Date(T0.getTime() + 59_000));

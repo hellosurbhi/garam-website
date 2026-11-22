@@ -23,8 +23,8 @@ import {
   fsCommit,
   fsGetDocument,
   fsGetPublic,
-  fsPatch,
   fsQueryOrdered,
+  FsConflictError,
   type FsDocument,
   type FsPrecondition,
   type FsWrite,
@@ -231,12 +231,47 @@ export async function saveEventsDraft(
   );
 }
 
-/** Record that a rebuild was requested for the live version. */
+/** How often a lost race on the live pointer is re-read before giving up. */
+const REBUILD_RECORD_ATTEMPTS = 3;
+
+/**
+ * Record that a rebuild was requested for `rebuild.version`.
+ * WHY guarded: the deploy hook call is slow, so a request for v1 can finish
+ * after v2 published. An unconditional patch then put v1's request on v2's
+ * pointer and the admin showed v2 as never rebuilt. The pointer is read, and
+ * the write only lands when it still holds this version and is unchanged
+ * since that read (a commit precondition). A newer live version is not an
+ * error: nothing is written and "superseded" tells the caller, because the
+ * publish that replaced it requested its own rebuild.
+ */
 export async function recordRebuildRequest(
   rebuild: RebuildRequest,
   signal?: AbortSignal,
-): Promise<void> {
-  await fsPatch(EVENTS_PUBLISHED_PATH, { rebuild }, signal);
+): Promise<"recorded" | "superseded"> {
+  for (let attempt = 1; ; attempt++) {
+    const live = await readPublishedEvents(signal);
+    if (!live || live.data.version !== rebuild.version) return "superseded";
+    try {
+      await fsCommit(
+        [
+          {
+            docPath: EVENTS_PUBLISHED_PATH,
+            fields: { rebuild },
+            merge: true,
+            precondition: { updateTime: live.updateTime },
+          },
+        ],
+        signal,
+      );
+      return "recorded";
+    } catch (err) {
+      if (
+        !(err instanceof FsConflictError) ||
+        attempt >= REBUILD_RECORD_ATTEMPTS
+      )
+        throw err;
+    }
+  }
 }
 
 export type PublicationKind =

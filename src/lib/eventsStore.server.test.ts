@@ -287,18 +287,69 @@ describe("writers", () => {
     );
   });
 
-  it("recordRebuildRequest patches only the rebuild field", async () => {
+  describe("recordRebuildRequest", () => {
     const rebuild = {
       requestedAt: NOW.toISOString(),
       jobId: "job-1",
       version: 5,
     };
-    await recordRebuildRequest(rebuild);
-    expect(fsPatch).toHaveBeenCalledWith(
-      EVENTS_PUBLISHED_PATH,
-      { rebuild },
-      undefined,
-    );
+    function liveDoc(version: number, updateTime: string): FsDocument {
+      const [, pointer] = buildPublicationWrites({
+        ...publication({ kind: "publish" }),
+        live: { version: version - 1, updateTime: UPDATE_TIME },
+      });
+      return { fields: pointer.fields, updateTime };
+    }
+
+    it("patches only the rebuild field, guarded by the live pointer's updateTime", async () => {
+      fsGetDocument.mockResolvedValueOnce(liveDoc(5, "t1"));
+      fsCommit.mockResolvedValueOnce(undefined);
+      await expect(recordRebuildRequest(rebuild)).resolves.toBe("recorded");
+      expect(fsCommit).toHaveBeenCalledWith(
+        [
+          {
+            docPath: EVENTS_PUBLISHED_PATH,
+            fields: { rebuild },
+            merge: true,
+            precondition: { updateTime: "t1" },
+          },
+        ],
+        undefined,
+      );
+    });
+
+    it("writes nothing when a newer version is live", async () => {
+      fsGetDocument.mockResolvedValueOnce(liveDoc(6, "t2"));
+      await expect(recordRebuildRequest(rebuild)).resolves.toBe("superseded");
+      expect(fsCommit).not.toHaveBeenCalled();
+      expect(fsPatch).not.toHaveBeenCalled();
+    });
+
+    it("re-reads after losing a race and then sees the newer version", async () => {
+      fsGetDocument
+        .mockResolvedValueOnce(liveDoc(5, "t1"))
+        .mockResolvedValueOnce(liveDoc(6, "t2"));
+      fsCommit.mockRejectedValueOnce(
+        new CommitConflictError("FAILED_PRECONDITION", "lost"),
+      );
+      await expect(recordRebuildRequest(rebuild)).resolves.toBe("superseded");
+      expect(fsCommit).toHaveBeenCalledTimes(1);
+    });
+
+    it("retries with the fresh updateTime when only the pointer's metadata moved", async () => {
+      fsGetDocument
+        .mockResolvedValueOnce(liveDoc(5, "t1"))
+        .mockResolvedValueOnce(liveDoc(5, "t1b"));
+      fsCommit
+        .mockRejectedValueOnce(
+          new CommitConflictError("FAILED_PRECONDITION", "lost"),
+        )
+        .mockResolvedValueOnce(undefined);
+      await expect(recordRebuildRequest(rebuild)).resolves.toBe("recorded");
+      expect(fsCommit.mock.calls[1][0][0].precondition).toEqual({
+        updateTime: "t1b",
+      });
+    });
   });
 });
 

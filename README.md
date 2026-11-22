@@ -92,6 +92,7 @@ The admin Shows tab keeps the show list in Firestore (`eventsPublished/current`,
 1. Deploy `firestore.rules`, which lets anyone read the published list (it is what the site already shows) and keeps history and drafts admin only.
 2. `npm run events:seed` prints what it would write. `npm run events:seed -- --execute` writes version 1 from `src/data/events.published.json` in one step and checks the public read returns it. It refuses to run once any of the three documents exists.
 3. Make sure `PUBLIC_FIREBASE_PROJECT_ID` is set for Vercel builds.
+4. Set `VERCEL_DEPLOY_HOOK` as a Vercel environment variable for **Production**. It is the URL of a Vercel Deploy Hook for the production branch (Project Settings, Git, Deploy Hooks). Publishing, restoring and the Rebuild site button POST to it to rebuild the website with the new show list. It is read when the admin acts, so it must be a runtime variable of the deployed site, not only a build setting, and it is a secret: never commit it. If it is missing or Vercel refuses it, the version is still saved and live for ticket links, but the admin shows "Version N is published but the rebuild didn't start. Press Rebuild site." and an alert email goes to ops. Add the variable, redeploy and press Rebuild site.
 
 ## Deployment
 

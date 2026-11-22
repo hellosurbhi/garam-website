@@ -279,6 +279,29 @@ export const POST: APIRoute = async ({ request }) => {
 
     const status =
       typeof outcome.after.status === "string" ? outcome.after.status : "Draft";
+    // WHY 422 and not 200: the fields above are already saved, but a browser
+    // tab opened before this deploy ignores `incomplete` and treats any 2xx
+    // with ok:true as filed, clearing its recovery token and showing success.
+    // Its check (`!res.ok || data.ok !== true`, then throw) keeps the token on
+    // any other status. Not 401 invalid_token or 409 finalized: those make an
+    // old client drop the draft or mark it filed. Changing this to 2xx brings
+    // back the false success.
+    if (incomplete.length > 0) {
+      return jsonResponse(
+        {
+          ok: false,
+          error: "incomplete",
+          draftId,
+          rev,
+          maxRev: Math.max(storedMaxRev, rev),
+          status,
+          stale,
+          incomplete,
+          capped,
+        },
+        422,
+      );
+    }
     return jsonResponse({
       ok: true,
       draftId,

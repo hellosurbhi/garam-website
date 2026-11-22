@@ -385,9 +385,18 @@ describe("save-application: finalize completeness gate", () => {
     "finalize with %s missing keeps the draft a Draft",
     async (_label, fields) => {
       const first = await json(await post({ rev: 1, fields }));
-      const done = await json(
-        await post({ token: first.token, rev: 2, fields: {}, finalize: true }),
-      );
+      const res = await post({
+        token: first.token,
+        rev: 2,
+        fields: {},
+        finalize: true,
+      });
+      const done = await json(res);
+      // WHY 422: a browser tab opened before this deploy ignores `incomplete`
+      // and treats any 2xx with ok:true as filed; only a non-2xx makes it keep
+      // its recovery token (see the compatibility test below).
+      expect(res.status).toBe(422);
+      expect(done.ok).toBe(false);
       expect(done.status).toBe("Draft");
       expect((done.incomplete as string[]).length).toBeGreaterThan(0);
       expect(stored(first.draftId as string)?.finalizedAt).toBeUndefined();
@@ -395,20 +404,30 @@ describe("save-application: finalize completeness gate", () => {
     },
   );
 
-  it("the response names exactly which answers are missing", async () => {
+  it("the response names exactly which answers are missing, and the draft is still saved", async () => {
     const first = await json(
       await post({
         rev: 1,
         fields: { ...complete, phone: "", termsAgreed: false },
       }),
     );
-    const done = await json(
-      await post({ token: first.token, rev: 2, fields: {}, finalize: true }),
-    );
+    const res = await post({
+      token: first.token,
+      rev: 2,
+      fields: { name: "Priya Renamed" },
+      finalize: true,
+    });
+    const done = await json(res);
+    expect(res.status).toBe(422);
     expect(done.status).toBe("Draft");
     expect([...(done.incomplete as string[])].sort()).toEqual(
       ["phone", "termsAgreed"].sort(),
     );
+    const doc = stored(first.draftId as string);
+    expect(doc?.status).toBe("Draft");
+    expect(doc?.name).toBe("Priya Renamed");
+    expect(doc?.finalizedAt).toBeUndefined();
+    expect(mocks.sendMail).not.toHaveBeenCalled();
   });
 
   it("a complete finalize becomes New with nothing missing", async () => {
@@ -600,7 +619,7 @@ describe("save-application: finalize", () => {
     });
   });
 
-  it("no email on file means no welcome email and no error (the draft stays a Draft)", async () => {
+  it("no email on file means no welcome email and the draft stays a Draft (answered 422)", async () => {
     const first = await json(
       await post({ rev: 1, fields: { ...COMPLETE, email: "" } }),
     );
@@ -610,8 +629,10 @@ describe("save-application: finalize", () => {
       fields: {},
       finalize: true,
     });
-    expect(res.status).toBe(200);
+    // Incomplete (no email): saved, kept a Draft, and answered with the 422.
+    expect(res.status).toBe(422);
     expect(mocks.sendMail).not.toHaveBeenCalled();
+    expect(stored(first.draftId as string)?.status).toBe("Draft");
   });
 });
 
@@ -689,7 +710,7 @@ describe("save-application: production canary", () => {
     const res = await post(
       {
         rev: 1,
-        fields: { name: "CANARY", email: "c@example.com" },
+        fields: { ...COMPLETE, name: "CANARY", email: "c@example.com" },
         finalize: true,
       },
       canaryHeaders(key),

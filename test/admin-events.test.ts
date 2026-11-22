@@ -515,6 +515,29 @@ describe("publish", () => {
     expect(mocks.alertOps).toHaveBeenCalledTimes(2);
   });
 
+  it("with VERCEL_DEPLOY_HOOK unset, saves the publish whole, says the rebuild did not start and pages", async () => {
+    vi.stubEnv("VERCEL_DEPLOY_HOOK", "");
+    const show = fixtureShow();
+    await saveDraft({ ...baseline, events: [...baseline.events, show] }, 1);
+
+    const res = await publish(1);
+
+    // The publish is one atomic commit and stays saved; the response carries
+    // rebuild "failed" so the admin toast says the site was not rebuilt.
+    expect(res.status).toBe(200);
+    expect(res.json).toMatchObject({ version: 2, rebuild: "failed" });
+    expect(publicationCommits()).toHaveLength(1);
+    expect(bySlug(liveDoc().snapshot, show.slug)).toEqual(show);
+    expect(liveDoc().rebuild).toBeNull();
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(mocks.alertOps).toHaveBeenCalledWith(
+      expect.objectContaining({
+        stage: "events_rebuild",
+        errorMessage: expect.stringContaining("VERCEL_DEPLOY_HOOK is not set"),
+      }),
+    );
+  });
+
   it("refuses a stale expectedVersion with 409 and writes nothing", async () => {
     await saveDraft(
       { ...baseline, events: [...baseline.events, fixtureShow()] },

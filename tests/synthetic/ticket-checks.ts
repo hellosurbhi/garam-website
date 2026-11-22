@@ -184,15 +184,29 @@ export function extractListedEvents(html: string): ListedEvent[] {
   // Taking the union passed a wrong show's page that also had a WebPage
   // pointing at ours, and falling back to the other events let a
   // recommendation of ours stand in for a main event with conflicting dates.
+  const declaredMain = topLevel
+    .map(resolve)
+    .filter(
+      (node): node is Node =>
+        isNode(node) && typesOf(node).some((t) => t.endsWith("Page")),
+    )
+    .flatMap((node) => [node.mainEntity].flat());
+  // WHY: a mainEntity that points at an id the page never describes names a
+  // main event we can't read. Filtering it out as "not an event" made the page
+  // look like it had no main event at all, so a separate recommended event of
+  // ours passed. Only a page that declares no main entity may fall back.
+  if (
+    declaredMain.some(
+      (ref) =>
+        isNode(ref) &&
+        typeof ref["@id"] === "string" &&
+        resolve(ref) === undefined,
+    )
+  )
+    return [];
   const mainEvents = [
     ...new Map(
-      topLevel
-        .map(resolve)
-        .filter(
-          (node): node is Node =>
-            isNode(node) && typesOf(node).some((t) => t.endsWith("Page")),
-        )
-        .flatMap((node) => [node.mainEntity].flat())
+      declaredMain
         .map(resolve)
         .filter(isEventTyped)
         .map((node) => [JSON.stringify(node), node] as const),

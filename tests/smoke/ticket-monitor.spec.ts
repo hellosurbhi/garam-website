@@ -769,6 +769,16 @@ for (const [name, body, passes] of [
     false,
   ],
   [
+    "page whose declared main event is never described, beside a separate event of ours",
+    {
+      "@graph": [
+        { "@type": "WebPage", mainEntity: { "@id": "#main" } },
+        { "@type": "Event", startDate: ourStart, location: atVenue },
+      ],
+    },
+    false,
+  ],
+  [
     "page whose main event is our show",
     {
       "@graph": [

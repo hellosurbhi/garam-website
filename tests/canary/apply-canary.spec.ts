@@ -76,6 +76,22 @@ test("a phone applicant can file an application with photos on the live stack", 
     if (res.url().includes("/api/upload-application-photo?relay=1")) {
       relayCalls.push(res.url());
     }
+    // WHY: a canary signature the site rejects (GitHub and Vercel secrets
+    // differ) blocks only this monitor, never real applicants, who send no
+    // canary headers. canary-alert.mjs reads this marker so that case pages
+    // "monitor could not run" instead of APPLICANTS AFFECTED.
+    if (
+      res.status() === 401 &&
+      /\/api\/(save-application|upload-application-photo)/.test(res.url())
+    ) {
+      res
+        .text()
+        .then((body) => {
+          if (body.includes('"bad_signature"'))
+            process.stdout.write(`CANARY AUTH REJECTED: ${profile}\n`);
+        })
+        .catch(() => {});
+    }
   });
   const failedPuts: string[] = [];
   page.on("requestfailed", (req) => {

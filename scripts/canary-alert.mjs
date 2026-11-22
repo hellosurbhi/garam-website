@@ -86,14 +86,21 @@ export function canaryAlert({ verifyLog, browserLog, incident }) {
   // failure means applicants are affected. Playwright's "Running N tests"
   // banner was tried first: it prints before browser launch, so a launch
   // failure still paged APPLICANTS AFFECTED.
-  const started = [
-    ...(browserLog ?? "").matchAll(/CANARY FILING STARTED: ([\w-]+)/g),
-  ].map((match) => match[1]);
+  const marked = (label) =>
+    [
+      ...(browserLog ?? "").matchAll(new RegExp(`${label}: ([\\w-]+)`, "g")),
+    ].map((match) => match[1]);
+  const started = marked("CANARY FILING STARTED");
+  // A profile whose canary signature the site rejected was blocked by the
+  // monitor's own credentials, which real applicants never send.
+  const rejected = marked("CANARY AUTH REJECTED");
   const affected = verify
     .split("\n")
     .filter((line) => line.startsWith("- "))
     .map((line) => line.slice(2))
-    .filter((line) => started.some((id) => line.startsWith(`${id}:`)));
+    .filter((line) =>
+      started.some((id) => line.startsWith(`${id}:`) && !rejected.includes(id)),
+    );
   const where = browser.profiles.length
     ? ` on ${listOf(browser.profiles.map(profileName))}`
     : "";
@@ -126,9 +133,11 @@ export function canaryAlert({ verifyLog, browserLog, incident }) {
       "What to do: open garammasaladating.com/apply on your phone. If it works, nothing is urgent: tell Claude the check needs fixing. If it does not, tell Claude right away.";
   } else {
     subject = "Apply monitor could not run, applicant impact unknown";
-    impact = started.length
-      ? "The apply canary could not read back its test applications, so nobody knows whether real applicants are affected."
-      : "The apply canary never started filing test applications (its own setup failed), so nobody knows whether real applicants are affected.";
+    impact = rejected.length
+      ? "The site rejected the apply canary's own test credentials (the GitHub and Vercel secrets no longer match). Real applicants do not use them, so this alone does not block anyone, but the monitor is blind until it is fixed."
+      : started.length
+        ? "The apply canary could not read back its test applications, so nobody knows whether real applicants are affected."
+        : "The apply canary never started filing test applications (its own setup failed), so nobody knows whether real applicants are affected.";
     action =
       "What to do: open garammasaladating.com/apply on your phone and try it, then tell Claude.";
   }

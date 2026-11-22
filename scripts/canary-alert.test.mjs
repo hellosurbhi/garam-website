@@ -119,6 +119,17 @@ describe("canaryAlert", () => {
     expect(alert.message).toContain("first failed run");
   });
 
+  it("does not blame applicants when the site rejected the canary's own credentials", () => {
+    const alert = canaryAlert({
+      verifyLog: VERIFY_FAILED,
+      browserLog: `${BROWSER_LOG}\nCANARY AUTH REJECTED: android-chrome\nCANARY AUTH REJECTED: instagram-webview\n`,
+    });
+    expect(alert.subject).toBe(
+      "Apply monitor could not run, applicant impact unknown",
+    );
+    expect(alert.message).toContain("test credentials");
+  });
+
   it("never calls a failed history lookup a first failure", () => {
     const alert = canaryAlert({ verifyLog: VERIFY_FAILED, browserLog: BROWSER_LOG });
     expect(alert.message).not.toContain("first failed run");

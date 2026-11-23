@@ -39,6 +39,12 @@ function canaryHeaders(key: string): Record<string, string> {
   };
 }
 
+const pendingAuthReads: Promise<void>[] = [];
+
+test.afterEach(async () => {
+  await Promise.all(pendingAuthReads.splice(0));
+});
+
 test("a phone applicant can file an application with photos on the live stack", async ({
   page,
 }, testInfo) => {
@@ -68,10 +74,41 @@ test("a phone applicant can file an application with photos on the live stack", 
     if (res.url().includes("/api/upload-application-photo?relay=1")) {
       relayCalls.push(res.url());
     }
+    // WHY: a canary signature the site rejects (GitHub and Vercel secrets
+    // differ) blocks only this monitor, never real applicants, who send no
+    // canary headers. canary-alert.mjs reads this marker so that case pages
+    // "monitor could not run" instead of APPLICANTS AFFECTED.
+    if (
+      res.status() === 401 &&
+      /\/api\/(save-application|upload-application-photo)/.test(res.url())
+    ) {
+      // WHY the UNKNOWN marker and the pending list: a swallowed read error
+      // used to drop the marker, so an auth rejection looked like a real
+      // failure and paged APPLICANTS AFFECTED. An unreadable 401 is reported
+      // as unknown impact, and the afterEach below waits for every read so a
+      // marker is never lost to a test that ends first.
+      pendingAuthReads.push(
+        res
+          .text()
+          .then((body) => {
+            if (body.includes('"bad_signature"'))
+              process.stdout.write(`CANARY AUTH REJECTED: ${profile}\n`);
+          })
+          .catch(() => {
+            process.stdout.write(`CANARY AUTH UNKNOWN: ${profile}\n`);
+          }),
+      );
+    }
   });
   const failedPutCollector = blockedPutCollector();
   page.on("requestfailed", (req) => failedPutCollector.onRequestFailed(req));
 
+  // WHY this marker: canary-alert.mjs reads it to tell "the live site failed
+  // this profile" from "the harness never reached the site". Playwright's own
+  // "Running N tests" banner prints before browser launch and secret checks,
+  // so a broken setup plus an empty read-back paged APPLICANTS AFFECTED.
+  // Printed after both, right before the first request to production.
+  process.stdout.write(`CANARY FILING STARTED: ${profile}\n`);
   await page.goto("/apply", { waitUntil: "domcontentloaded" });
   await page.waitForSelector("[data-testid=apply-form]", {
     state: "visible",

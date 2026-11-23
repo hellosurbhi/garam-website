@@ -13,9 +13,19 @@ export function categories(gate, checks) {
   if (checks.cleanup === "failure") result.push("cleanup");
   if (checks.version === "failure") result.push("deployment");
   if (checks.setup !== "success") result.push("harness");
-  else if (checks.rules !== "success") result.push("deployment");
-  else if (checks.flow !== "success" && checks.version !== "failure")
-    result.push("flow");
+  else {
+    // Rules drift and a failed signup are separate incidents: drift must
+    // never hide whether customers can sign up. The signup test only runs
+    // once the pre-check found the live version ready; before that, flow is
+    // "skipped", not failed, and rules (also skipped) already reports it.
+    if (checks.rules !== "success") result.push("deployment");
+    if (
+      checks.preversionState === "ready" &&
+      checks.flow !== "success" &&
+      checks.version !== "failure"
+    )
+      result.push("flow");
+  }
   if (checks.redirects === "failure") result.push("redirects");
   return [...new Set(result)];
 }
@@ -58,7 +68,7 @@ const descriptions = {
   "reporting failure":
     "The final monitoring report could not complete. Customer impact is unknown.",
   deployment:
-    "The live version or database rules do not match this check. Production testing could not confirm the release.",
+    "The live site version or security rules do not match the code, or the version check could not reach the site. If only the security rules differ, the signup test still ran and sends its own alert if applicants are blocked. If the site version check failed, the signup test may not have run: unless a separate signup alert arrived, applicant impact is unknown. What to do: open garammasaladating.com/apply on your phone, then tell Claude.",
   harness:
     "The testing system could not run reliably. Customer impact is unknown.",
   flow: "A live signup check did not complete. Check the run for form errors or rate limiting before concluding customers are blocked.",
@@ -207,9 +217,7 @@ export async function report(env = process.env, fetchImpl = fetch) {
               ? checks.rules === "success" && checks.version === "success"
               : category === "redirects"
                 ? checks.redirects === "success" && checks.version === "success"
-                : checks.flow === "success" &&
-                  checks.rules === "success" &&
-                  checks.version === "success");
+                : checks.flow === "success" && checks.version === "success");
       if (active.includes(category) || healthy)
         await incident(category, active.includes(category));
     } catch {

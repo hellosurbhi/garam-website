@@ -64,7 +64,11 @@ jobs:
         # step so the read-back and the upload below still run. A job-level
         # timeout kills every remaining step and would page nobody.
         timeout-minutes: 10
-        run: npx playwright test --config playwright.canary.config.ts
+        # browser.log feeds the page: without it the email cannot say which
+        # check failed or on which phone (scripts/canary-alert.mjs).
+        run: |
+          set -o pipefail
+          npx playwright test --config playwright.canary.config.ts 2>&1 | tee browser.log
         env:
           PLAYWRIGHT_BASE_URL: https://garammasaladating.com
           FIREBASE_ADMIN_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY }}
@@ -90,9 +94,32 @@ jobs:
           name: apply-canary-report
           path: |
             verify.log
+            browser.log
             playwright-report/
           if-no-files-found: ignore
           retention-days: 7
+
+  # Closes the open incident when a run passes. WHY: the page counts the
+  # issue's runs as one unbroken red streak. With no close, a failure after a
+  # recovery was reported as "failing since" the first outage weeks earlier.
+  recover:
+    name: Close the incident on a passing run
+    needs: canary
+    if: ${{ needs.canary.result == 'success' }}
+    permissions:
+      issues: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Close the open canary incident
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          EXISTING=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"APPLY FAILED: production apply canary\" in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTING" ]; then
+            gh issue close "$EXISTING" --repo "$GITHUB_REPOSITORY" --comment "Recovered: the apply canary passed. Run: $RUN_URL"
+          fi
 
   # WHY a separate job: steps after a failure inside the canary job never run
   # when the job times out or is cancelled, which is exactly when a hung
@@ -154,8 +181,40 @@ jobs:
           PAGER_EMAIL_TO: ${{ secrets.PAGER_EMAIL_TO }}
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           CANARY_RESULT: ${{ needs.canary.result }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # A test_pager dispatch whose canary ALSO genuinely failed still
           # pages for real; only a passing drill sends the test message.
-          if [ "$CANARY_RESULT" != "success" ]; then MODE=page; else MODE=test; fi
-          DETAIL="$(head -c 3500 verify.log 2>/dev/null || true)" node scripts/send-pager-email.mjs "$MODE"
+          if [ "$CANARY_RESULT" = "success" ]; then
+            node scripts/send-pager-email.mjs test
+            exit 0
+          fi
+          # "<first failure date> <failed runs>" from the open incident issue.
+          # Counts distinct run ids in the issue body and the comments the
+          # workflow itself posted (one per failed run), so human replies and
+          # reruns of the same run never inflate the streak.
+          # A monitor that stays red escalates instead of fading into noise.
+          # Empty when the lookup fails: the page still goes out and says the
+          # history is unknown. The recover job closes the issue on a pass.
+          # timeout 20: a stalled GitHub API call must not eat this step's
+          # two minutes and block the email itself.
+          # WHY comments are paged separately: `gh issue list --json comments` returns
+          # only the first 100 comments, so a long outage stopped counting at 100.
+          # `gh api --paginate` reads them all. Any lookup failure leaves
+          # CANARY_INCIDENT empty, which the email reports as unknown history.
+          # WHY the login is "github-actions[bot]": the REST comments API names
+          # the bot that way, while gh's GraphQL JSON says "github-actions".
+          # Matching the GraphQL name here dropped every run comment and held
+          # the streak at 1.
+          CANARY_INCIDENT=""
+          LISTING=$(timeout 20 gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"APPLY FAILED: production apply canary\" in:title" --json number,createdAt,body --jq '.[0] // empty | "\(.number) \(.createdAt[0:10])", (.body | scan("actions/runs/([0-9]+)")[])' || true)
+          if [ -n "$LISTING" ]; then
+            ISSUE_NUMBER=$(printf '%s\n' "$LISTING" | sed -n 1p | cut -d' ' -f1)
+            ISSUE_DATE=$(printf '%s\n' "$LISTING" | sed -n 1p | cut -d' ' -f2)
+            if COMMENT_RUNS=$(timeout 20 gh api --paginate "repos/$GITHUB_REPOSITORY/issues/$ISSUE_NUMBER/comments" --jq '.[] | select(.user.login == "github-actions[bot]") | .body | scan("actions/runs/([0-9]+)")[]'); then
+              RUN_COUNT=$({ printf '%s\n' "$LISTING" | sed 1d; printf '%s\n' "$COMMENT_RUNS"; } | grep -E '^[0-9]+$' | sort -u | wc -l | tr -d ' ' || true)
+              CANARY_INCIDENT="$ISSUE_DATE $RUN_COUNT"
+            fi
+          fi
+          export CANARY_INCIDENT
+          node scripts/canary-alert.mjs

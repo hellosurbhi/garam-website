@@ -16,6 +16,33 @@ it("separates broken testing, deployment changes and cleanup from form failures"
     }),
   ).toEqual(["cleanup", "deployment"]);
 });
+it("reports a failed signup even while the deployed rules drift", () => {
+  const drift = {
+    setup: "success",
+    rules: "failure",
+    version: "success",
+    preversionState: "ready",
+  };
+  expect(categories("success", { ...drift, flow: "failure" })).toEqual([
+    "deployment",
+    "flow",
+  ]);
+  expect(categories("success", { ...drift, flow: "success" })).toEqual([
+    "deployment",
+  ]);
+});
+it("never calls a signup test that was skipped by the version pre-check a failure", () => {
+  // Pre-check not ready: rules and flow both skipped, final version passed.
+  expect(
+    categories("success", {
+      setup: "success",
+      rules: "skipped",
+      flow: "skipped",
+      version: "success",
+      preversionState: "pending",
+    }),
+  ).toEqual(["deployment"]);
+});
 it("refuses stale production before any submission", async () => {
   await expect(
     requireVersion(
@@ -66,6 +93,7 @@ function reportFixture() {
       redirects: "success",
       cleanup: "success",
       version: "success",
+      preversionState: "ready",
     }),
     GITHUB_REPOSITORY: "owner/repo",
     GITHUB_RUN_ID: "123",

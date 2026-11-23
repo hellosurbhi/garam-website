@@ -1,5 +1,17 @@
 # Lessons
 
+## A monitor's precondition must never skip its main test
+
+**What went wrong:** The synthetic monitor checked the deployed security rules first and skipped the signup test when they drifted. Rules changed on Nov 11 were never deployed, so for eleven days nothing checked that a real person could sign up, and the only alarm said "deployment".
+**Why:** The wrong assumption was that a failed precondition makes the main test meaningless. Drift says production differs from the repo; it says nothing about whether customers are blocked, which is the one thing the monitor exists to answer.
+**Rule:** In this repo's monitors (synthetic apply, apply canary), a deployment or rules drift check reports as its own incident and never gates the customer test. Only a missing prerequisite the test literally cannot run without (no harness, superseded revision) may skip it.
+
+## Judge an upload by the server's answer, not a browser event
+
+**What went wrong:** The apply canary counted a photo upload as blocked when Chrome marked the request aborted. Chrome does that after the bucket already answered 200, so the canary failed every run for ten days while all six photos landed.
+**Why:** The wrong assumption was that a browser network event describes the outcome. The status the server returned is the outcome; the browser's bookkeeping after it is not.
+**Rule:** (This is fixed by PR 412: https://github.com/hellosurbhi/garam-website/pull/412.) An upload check passes on a 2xx response and fails on no response or an error status. Every apply canary page separates "the data did not land" (read back from the database) from "a browser check failed", so a wrong check can never look like an outage or the reverse.
+
 ## Chrome reports an accepted upload as failed when nobody reads the reply
 
 **What went wrong:** The apply canary's first live run failed Android Chrome and the Instagram browser with "direct upload to the bucket was blocked", while every photo had been filed.

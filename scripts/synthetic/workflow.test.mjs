@@ -43,3 +43,29 @@ it.each([
     ).toBe(expected);
   },
 );
+it.each([
+  ["ready", true, false, true],
+  ["ready", false, true, true],
+  ["superseded", false, true, false],
+  [undefined, false, true, false],
+])(
+  "runs the signup test on revision %s even after a failed rules check",
+  (state, succeeded, failed, expected) => {
+    const expression = source.match(
+      /id: flow\n(?:\s+#[^\n]*\n)*\s+if: ([^\n]+)/,
+    )?.[1];
+    expect(expression).toBeDefined();
+    expect(expression).not.toMatch(/steps\.rules/);
+    expect(
+      runInNewContext(
+        expression,
+        {
+          success: () => succeeded,
+          failure: () => failed,
+          steps: { preversion: { outputs: { state } } },
+        },
+        { timeout: 1000 },
+      ),
+    ).toBe(expected);
+  },
+);

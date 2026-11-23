@@ -1,5 +1,10 @@
 # Changelog
 
+## feat(events): seed tool and a manual seed job, ahead of the Shows admin (2026-11-22)
+
+- The Shows admin needs today's show list copied into the database once before it merges. This adds the copy tool (`scripts/seed-events-firestore.mjs`, `npm run events:seed`), plus `npm run events:pull` to refresh the saved list from the database (reads only), the saved show list it copies and a manual-only GitHub job (`Events Seed`) with a practice setting that writes nothing. The tool refuses to overwrite: if a show list document already exists, nothing is written.
+- Nothing on the live site changes and the build is untouched. Tests cover the dry run, the one three-document write, the already-seeded refusal, the public read-back check and the bad project id and baseline refusals.
+
 ## fix(canary): a photo the bucket accepted no longer counts as a blocked upload on Android (2026-11-12)
 
 - The apply canary failed Android Chrome and the Instagram browser on its first live run, saying the direct photo upload to the bucket was blocked. Every photo had in fact been filed. Chrome reports an upload as failed when the bucket answers "OK" with an empty reply the page never reads, and the canary counted that as a block. iPhone Safari does not do this, which is why only the two Android profiles failed.

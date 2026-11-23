@@ -174,6 +174,32 @@ const { source = "notify-modal" } = Astro.props;
       openerEl = null;
     });
 
+    // Native buttons synthesize clicks for both keys. Preserve that behavior
+    // while supporting focusable non-native triggers inserted by server islands.
+    document.addEventListener("keydown", (event) => {
+      if (
+        event.defaultPrevented ||
+        event.repeat ||
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey ||
+        (event.key !== "Enter" && event.key !== " ")
+      )
+        return;
+      const el = event.target;
+      if (
+        !(el instanceof HTMLElement) ||
+        !el.matches("[data-notify-city]") ||
+        el instanceof HTMLButtonElement ||
+        el.getAttribute("aria-disabled") === "true"
+      )
+        return;
+      // Links already synthesize Enter clicks; Space needs button behavior.
+      if (event.key === "Enter" && el.matches("a[href]")) return;
+      event.preventDefault();
+      el.click();
+    });
+
     // Delegation also handles the daily ranked cards loaded after the page.
     document.addEventListener("click", (event) => {
       const el =
@@ -181,6 +207,8 @@ const { source = "notify-modal" } = Astro.props;
           ? event.target.closest<HTMLElement>("[data-notify-city]")
           : null;
       if (!el) return;
+      // A modal trigger is an action, including legacy triggers with an href.
+      event.preventDefault();
       const city = el.dataset.notifyCity ?? "";
       // Prefer the slug the trigger button carries (from EventEntry.citySlug
       // in src/data/events.ts); fall back to slugifying the display name
@@ -228,7 +256,7 @@ const { source = "notify-modal" } = Astro.props;
         errorEl.setAttribute("hidden", "");
       }
       notifyDocId = null;
-      openerEl = document.activeElement as HTMLElement;
+      openerEl = el;
       trackLeadEvent("notify_modal_opened", {
         source: composeSource(citySlug),
         sourceCitySlug: citySlug || undefined,

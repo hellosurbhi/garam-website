@@ -1,5 +1,10 @@
 # Changelog
 
+## fix(notify): restore keyboard activation and opener focus (2026-11-23)
+
+- Notify Me triggers inserted after page load now support Enter and Space even when they are focusable non-native controls. Existing native buttons keep their browser keyboard behavior without opening twice, and ordinary ticket links retain navigation.
+- Closing the dialog returns focus to the matched trigger, including nested clicks that did not focus it first. Regression checks cover keyboard activation, Escape and Close, late triggers, ticket navigation, and native button semantics in all seven trigger branches.
+
 ## feat(events): seed tool and a manual seed job, ahead of the Shows admin (2026-11-22)
 
 - The Shows admin needs today's show list copied into the database once before it merges. This adds the copy tool (`scripts/seed-events-firestore.mjs`, `npm run events:seed`), plus `npm run events:pull` to refresh the saved list from the database (reads only), the saved show list it copies and a manual-only GitHub job (`Events Seed`) with a practice setting that writes nothing. The tool refuses to overwrite: if a show list document already exists, nothing is written.

@@ -1,4 +1,4 @@
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { chmodSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -32,11 +32,58 @@ else
 fi
 `;
 
-function streak(issue) {
-  if (!lookup) throw new Error("Missing CANARY_INCIDENT lookup block");
+// WHY a timeout shim: the workflow block calls coreutils `timeout`, which
+// ubuntu runners have and stock macOS does not. Without it the lookup failed
+// into its own `|| true` and returned empty, so the counting tests failed on
+// a laptop whatever the workflow said. The workflow text stays untouched; the
+// test supplies a portable stand-in first on PATH. Same contract as coreutils
+// for what the block needs: run the command, kill it after N seconds and exit
+// 124, otherwise pass its exit code through. Do not drop it to rely on the
+// host: that is the failure this fixes.
+const TIMEOUT_SHIM = `#!${process.execPath}
+const { spawn } = require("node:child_process");
+const [seconds, cmd, ...args] = process.argv.slice(2);
+const child = spawn(cmd, args, { stdio: "inherit" });
+let timedOut = false;
+const timer = setTimeout(() => {
+  timedOut = true;
+  child.kill("SIGTERM");
+}, Number(seconds) * 1000);
+child.on("error", () => process.exit(127));
+child.on("close", (code, signal) => {
+  clearTimeout(timer);
+  process.exit(timedOut ? 124 : (code ?? 128));
+});
+`;
+
+function toolDir() {
   const dir = mkdtempSync(join(tmpdir(), "canary-gh-"));
+  writeFileSync(join(dir, "timeout"), TIMEOUT_SHIM);
+  chmodSync(join(dir, "timeout"), 0o755);
   writeFileSync(join(dir, "gh"), FAKE_GH);
   chmodSync(join(dir, "gh"), 0o755);
+  return dir;
+}
+
+it("needs jq installed, and says so plainly when it is missing", () => {
+  const found = spawnSync("sh", ["-c", "command -v jq"], { encoding: "utf8" });
+  if (found.status !== 0) {
+    throw new Error(
+      "jq is required to run scripts/canary-workflow.test.mjs (the fake gh applies --jq filters with it). Install jq and rerun.",
+    );
+  }
+});
+
+it("timeout shim exits 124 when the command overruns and passes other codes through", () => {
+  const shim = join(toolDir(), "timeout");
+  expect(spawnSync(shim, ["1", "sleep", "10"]).status).toBe(124);
+  expect(spawnSync(shim, ["5", "sh", "-c", "exit 3"]).status).toBe(3);
+  expect(spawnSync(shim, ["5", "true"]).status).toBe(0);
+});
+
+function streak(issue) {
+  if (!lookup) throw new Error("Missing CANARY_INCIDENT lookup block");
+  const dir = toolDir();
   const fixture = join(dir, "issues.json");
   writeFileSync(
     fixture,

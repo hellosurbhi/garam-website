@@ -1,5 +1,10 @@
 # Lessons
 
+## Delegated modal triggers need keyboard parity and an explicit opener
+
+**What went wrong:** The Notify Me document click listener handled late content but omitted keyboard activation for focusable non-native triggers and remembered the previously focused element instead of the clicked trigger.
+**Rule:** Prefer native buttons for modal actions. When supporting legacy non-native triggers, delegate Enter/Space too, while letting native controls synthesize their own clicks. Restore focus to the matched opener; pointer clicks do not focus buttons in every browser. Test late insertion, both keys, and closing with Escape and the Close button.
+
 ## Chrome reports an accepted upload as failed when nobody reads the reply
 
 **What went wrong:** The apply canary's first live run failed Android Chrome and the Instagram browser with "direct upload to the bucket was blocked", while every photo had been filed.
